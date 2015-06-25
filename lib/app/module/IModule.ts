@@ -1,0 +1,4 @@
+interface IModule{
+
+}
+export = IModule;

@@ -1,0 +1,5 @@
+js
+node_modules
+.DS_STORE
+.idea
+typings

@@ -1,0 +1,33 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "typings",
+  "bundle": "typings/tsd.d.ts",
+  "installed": {
+    "node/node.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "express/express.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "sequelize/sequelize.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "serve-static/serve-static.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "mime/mime.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "bluebird/bluebird.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "debug/debug.d.ts": {
+      "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    }
+  }
+}
