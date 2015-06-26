@@ -71,3 +71,33 @@ describe("Artwave is instantioned, but none modules are added to Artwave. Basic 
             });
     });
 });
+describe("Artwave is instantioned, added instance of SimpleModule with name 'simple'. Basic app has route '/' and none 404 fallback. Artwave app has route 'test': ", function() {
+    beforeEach(function (done) {
+        app = require('./helpers/app')();
+        myApp = new Core.Application();
+        var simpleModule = new Core.SimpleModule("simple");
+        myApp.addModule(simpleModule);
+        app.use("/test/",myApp.run());
+        app.get('/', function (req, res) {
+            res.sendStatus(200);
+        });
+        app.use(function (req, res, next) {
+            res.sendStatus(500);
+        });
+        done();
+    });
+    it("should return status code 200 when accessing '/test'", function (done) {
+        request(app).get("/test")
+            .end(function (err, res) {
+                expect(res.status).to.be.equal(200);
+                done();
+            });
+    });
+    it("should return status code 400 when accessing '/test/simple/index';  'index' is SimpleModule default controller route", function (done) {
+        request(app).get("/test/simple/index/")
+            .end(function (err, res) {
+                expect(res.status).to.be.equal(400);
+                done();
+            });
+    });
+});

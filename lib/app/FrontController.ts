@@ -1,23 +1,23 @@
 
-import IDispatcher = require("./dispatcher/IDispatcher");
-import IModuleManager = require("./moduleManager/IModuleManager");
+import Dispatcher = require("./dispatcher/Dispatcher");
+import ModuleManager = require("./moduleManager/ModuleManager");
 
 class FrontController {
     public static DISPATCHER_NONE: string = "Need 'dispatcher'";
     public static MODULE_MANAGER_NONE: string = "Need 'moduleManager'";
 
-    private dispatcher:IDispatcher;
-    private moduleManager:IModuleManager.IModuleManager;
+    private dispatcher: Dispatcher;
+    private moduleManager: ModuleManager;
     constructor() {
 
     }
-    public setDispatcher(dispatcher:IDispatcher):void{
+    public setDispatcher(dispatcher: Dispatcher):void{
         this.dispatcher = dispatcher;
     }
-    public setModuleManager(moduleManager:IModuleManager.IModuleManager):void{
+    public setModuleManager(moduleManager:ModuleManager):void{
         this.moduleManager = moduleManager;
     }
-    public getModuleManager():IModuleManager.IModuleManager{
+    public getModuleManager():ModuleManager{
         return this.moduleManager;
     }
     private setup():void{
@@ -30,8 +30,8 @@ class FrontController {
     }
     public run():void{
         this.setup();
-        //this.moduleManager.
-        this.dispatcher.run();
+        this.moduleManager.initModules();
+        this.dispatcher.createRoutes(this.moduleManager.getModuleList());
     }
 }
 export = FrontController;

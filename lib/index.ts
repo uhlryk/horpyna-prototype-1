@@ -10,4 +10,6 @@
 export import Application = require("./app/Application");
 export import IModule = require("./app/module/IModule");
 export import Module = require("./app/module/Module");
-export import ResourceModule = require("./app/module/ResourceModule");
+export import SimpleModule = require("./app/module/SimpleModule");
+export import Controller = require("./app/module/controller/Controller");
+export import SimpleController = require("./app/module/controller/SimpleController");
