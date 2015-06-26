@@ -28,6 +28,9 @@
     },
     "debug/debug.d.ts": {
       "commit": "448c3509f1ae76930ebd2d79df23e288172f5a0a"
+    },
+    "body-parser/body-parser.d.ts": {
+      "commit": "e1182d56ccb192379eade6055d9ba3fb6a0bacc4"
     }
   }
 }

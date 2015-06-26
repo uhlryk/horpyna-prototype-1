@@ -5,7 +5,7 @@ class Module implements IModule{
     private routeName:string;
     private options:any;
     private controllerList:IController[];
-    constructor(name:string, options:any){
+    constructor(name:string, options?:any){
         //console.log("Module.constructor name: "+name);
         this.name = name;
         this.options = options || {};
