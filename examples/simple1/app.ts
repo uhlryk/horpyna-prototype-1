@@ -9,11 +9,11 @@
  * each one can be configured
  * then there is second instance on same module named test2
  * go to url:
- * http://localhost:3000/test2/user
+ * http://localhost:3000/test2/user/std
  *
  * then there is second istance of library myApp2 in route 'some' with same module called test
  * go to url:
- * http://localhost:3000/some/test/user
+ * http://localhost:3000/some/test/user/std
  * long paths results of use library directly, not by npm
  * Warning: this instance (myApp2) must be set before first instance(myApp), because when first instance is run for route '/'
  * then it take care of fallbacks and nothing go to myApp2

@@ -6,16 +6,16 @@ import IActionMethod = require("./../action/IActionMethod");
 class SimpleController extends  Controller{
     public onInit(){
         super.onInit();
-        var getAction = new MethodAction.Get();
+        var getAction = new MethodAction.Get("std");
         getAction.set(this.get);
         this.addAction(getAction);
-        var postAction = new MethodAction.Post();
+        var postAction = new MethodAction.Post("std");
         postAction.set(this.post);
         this.addAction(postAction);
-        var putAction = new MethodAction.Put();
+        var putAction = new MethodAction.Put("std");
         putAction.set(this.put);
         this.addAction(putAction);
-        var deleteAction = new MethodAction.Delete();
+        var deleteAction = new MethodAction.Delete("std");
         deleteAction.set(this.delete);
         this.addAction(deleteAction);
     }

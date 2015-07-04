@@ -94,7 +94,7 @@ describe("Artwave is instantioned, added instance of SimpleModule with name 'sim
             });
     });
     it("should return status code 400 when accessing '/test/simple/index';  'index' is SimpleModule default controller route", function (done) {
-        request(app).get("/test/simple/index/")
+        request(app).get("/test/simple/index/std")
             .end(function (err, res) {
                 expect(res.status).to.be.equal(400);
                 done();
