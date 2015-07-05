@@ -1,29 +1,35 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
 import Module = require("./Module");
-import SimpleController = require("./controller/SimpleController");
+import MethodAction = require("./action/MethodAction");
+import IActionMethod = require("./action/IActionMethod");
 class SimpleModule extends  Module{
-    public controller:SimpleController;
-    public onInit(){
-        super.onInit();
-        this.controller = new SimpleController("index");
-        this.controller.get = this.get;
-        this.controller.post = this.post;
-        this.controller.put = this.put;
-        this.controller.delete = this.delete;
-        this.addController(this.controller);
-    }
-    protected get(req:express.Request, res:express.Response){
-        res.sendStatus(400);
-    }
-    protected post(req:express.Request, res:express.Response){
-        res.sendStatus(400);
-    }
-    protected put(req:express.Request, res:express.Response){
-        res.sendStatus(400);
-    }
-    protected delete(req:express.Request, res:express.Response){
-        res.sendStatus(400);
-    }
+	public onInit(){
+		super.onInit();
+		var getAction = new MethodAction.Get("List");
+		getAction.set(this.get);
+		this.addAction(getAction);
+		var postAction = new MethodAction.Post("Edit");
+		postAction.set(this.post);
+		this.addAction(postAction);
+		var putAction = new MethodAction.Put("Update");
+		putAction.set(this.put);
+		this.addAction(putAction);
+		var deleteAction = new MethodAction.Delete("Delete");
+		deleteAction.set(this.delete);
+		this.addAction(deleteAction);
+	}
+	public get(req:express.Request, res:express.Response){
+		res.sendStatus(400);
+	}
+	public post(req:express.Request, res:express.Response){
+		res.sendStatus(400);
+	}
+	public put(req:express.Request, res:express.Response){
+		res.sendStatus(400);
+	}
+	public delete(req:express.Request, res:express.Response){
+		res.sendStatus(400);
+	}
 }
 export = SimpleModule;

@@ -1,7 +1,6 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
 import IModule = require("./../module/IModule");
-import IController = require("./../module/controller/IController");
 import IAction = require("./../module/action/IAction");
 import IActionMethod = require("./../module/action/IActionMethod");
 class Dispatcher{
@@ -48,33 +47,29 @@ class Dispatcher{
 	private createActionRoutes(routeName:string, actionList:IAction[]){
 		for(var actionIndex in actionList) {
 			var action:IAction = actionList[actionIndex];
-			var actionRouteName = action.getRouteName();
-			this.createMethodRoutes(routeName+"/"+actionRouteName, action);
-
-		}
-
-	}
-	private createControllerRoutes(routeName:string, controllerList:IController[]){
-		for(var controllerIndex in controllerList){
-			var controller:IController = controllerList[controllerIndex];
-			var controllerRouteName = controller.getRouteName();
-			var actionList = controller.getActionList();
-			this.createActionRoutes(routeName+"/"+controllerRouteName, actionList);
+			routeName = this.buildRoute(routeName, action.getRouteName());
+			this.createMethodRoutes(routeName, action);
 		}
 	}
-	private createModuleRoutes(moduleList:IModule[]){
+	private createModuleRoutes(routeName:string, moduleList:IModule[]){
 		for(var moduleIndex in moduleList){
 			var module:IModule = moduleList[moduleIndex];
-			var moduleRouteName = module.getRouteName();
-			var controllerList = module.getControllerList();
-			this.createControllerRoutes("/"+moduleRouteName, controllerList);
+			routeName = this.buildRoute(routeName, module.getRouteName());
+			this.createModuleRoutes(routeName, module.getModuleList());
+			this.createActionRoutes(routeName, module.getActionList());
 		};
 	}
 	public createRoutes(moduleList:IModule[]):void{
 		this.baseRoute();
 
-		this.createModuleRoutes(moduleList);
+		this.createModuleRoutes("", moduleList);
 		this.fallbackRoute();
+	}
+	private buildRoute(baseRoute:string, partRoute:string):string{
+		if(baseRoute.slice(-1) !== "/"){
+			baseRoute = baseRoute + "/";
+		}
+		return baseRoute + partRoute + "/";
 	}
 }
 export = Dispatcher;

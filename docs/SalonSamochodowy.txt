@@ -1,0 +1,156 @@
+Mamy wiele salonów samochodowych, które sprzedają samochody klientom.
+
+Mamy zasoby:
+Salon - posiada fizyczną lokację
+Auto - typ samochodu czyli marka i model
+Klient - osoba która kupiła auto, jest rejestrowana w systemie
+Sprzedawca - osoba która dokonała sprzedaży i zarejestrowała klienta, przypisana do salonu
+Sprzedaz - informacja kto sprzedał, co, gdzie i komu
+
+Aplikacja pozwalać ma się rejestrować Sprzedawcom i Klientom do osobnych paneli.
+
+Używane moduły:
+ResourceModule
+wyspecjalizowany moduł który posiada podstawowe akcje dla CRUD i jeden Model dla danych i jeden Form do dodawania edycji, który domyślnie się
+generuje na podstawie Modelu.
+Możemy w konfiguracji podać relacje typu: belongsTo
+Tylko takie relacje obsługuje moduł, gdyż nie może mieć on wiedzy o tym gdzie jest używany (relacja hasMany).
+Moduł ten dziedziczy po SimpleModule - który jest prostym modułem z akcjamy get,post,put,delete, nie posiada modelu do bazy danych
+SimpleModule dziedziczy po Module który jest bazowym modułem i w sumie zawiera podstawową logikę (dodawanie nowych modułów i akcji,
+zwracanie ścieżki dostępu)
+
+AuthorizationModule
+moduł autoryzujący, który wpina się w eventy systemu by przed routowaniem akcji sprawdzić uprawnienia.
+
+
+var myApp = new Application();
+var salonModule = new ResourceModule("Salon");
+salonModule.getModel()
+  .addColumn(new StringColumn("adres"));
+myApp.addModule(salonModule);
+
+var autoModule = new ResourceModule("Auto");
+autoModule.getModel()
+  .addColumn(new StringColumn("marka"))
+  .addColumn(new StringColumn("model"));
+myApp.addModule(autoModule);
+
+var sprzedawcaModule = new ResourceModule("Sprzedawca");
+sprzedawcaModule.getModel()
+  .addColumn(new StringColumn("firstname"))
+  .addColumn(new StringColumn("lastname"))
+  .addColumn(new StringColumn("login"))
+  .addColumn(new StringColumn("password"))
+  .belongsTo(salonModule,"salonId");//drugi argument oznacza jak ma się nazywać kolumna w tabeli
+myApp.addModule(sprzedawcaModule);
+
+var sprzedawcaAuthorization = new AuthorizationModule("AutoryzacjaSprzedawca");
+sprzedawcaAuthorization.addLoginColumn(sprzedawcaModule.getModel().getColumn("login"));
+sprzedawcaAuthorization.addPasswordColumn(sprzedawcaModule.getModel().getColumn("password"));
+sprzedawcaAuthorization.passwordType(AuthorizationModule.PASSWORD_MD5);
+/**
+* mam za wczesny koncept tego jak określić co w  sesji ma być przechowywane - dana krotka usera jest jasna,
+* chodzi o określenie z relacyjnych modułów,
+**/
+
+
+myApp.addModule(sprzedawcaAuthorization);
+/**
+* Core aplikacji w kluczowych momentach wywołuje eventy, moduły mogą je nasłuchiwać i robić odpowiednie zachowanie,
+* Każdy moduł też ma swoje eventy, Np ResourceModule odpala event OnCreate i OnUpdate. Sam w sobie moduł sprzedawcy
+* powinien ignorować uprawnienia, bo to nie jego rola. Dlatego myślę że również nie szyfruje hasła. Ale moduł autoryzacyjny
+* mógły nasłuchiwać na OnCreate i OnUpdate i przed zapisem danych zaszyfrować password. Wtedy modułem zależnym jest tylko
+* Authorization
+*
+* nie mam jeszcze w pełni zadowalającego rozwiązania ACL które da 100% elastyczności
+* to poniżej to bardzo robocza wersja i na razie przedstawię role w kodzie wpisane. Na potrzeby poniższego trzeba wiedzieć
+* że moduł może być utworzony przez dziedziczenie innego, mniej lub bardziej wyspecjalizowanego lub przez kompozycje
+* gdzie do modułu możemy dodać dowolną liczbę innych modułów (mamy dostęp przez getModule("someModule")), modeli (model
+* reprezentuje jeden zasób bazodanowy, mamy dostęp getModel("someName") - ResourceModule - ma tylko jeden model więc dostęp
+* miał bez nazwy) i mamy Formy (które głównie służą do walidacji danych otrzymywanych postem - ResourceModule automatycznie
+* tworzy forma na podstawie modelu i automatycznie zapisuje z Forma do modelu otrzymane dane) i Akcji (akcja może mieć swoją nazwę
+* która rozbuduje ścieżke url, ma jedną z metod POST,GET, PUT, DELETE) większość logiki będzie pisana w akcjach (wyspecjalizowane
+* moduły mają już napisaną logikę w akcjach, ale nic nie stoi na przeszkodzie by je nadpisać, lub zastąpić, dodać kolejne akcje
+* z nową logiką) ACL chcę oprzez o moduły i akcje. Jeśli moduł zawiera inne moduły które mają akcje to acl będzie dawał uprawnienia
+* do każdego z podmodułów i każdej z akcji osobno. Nie mam uprawnień do zapis odczyt, uprawnienie jest to Akcji POST, GET, PUT, DELETE
+* które bardzo często oznaczają odpowiednio zapis, odczyt, edycja, usunięcie
+*
+* nie oznaczyłem w sprzedawcaAuthorization jaką rolę ma user - jaka kolumna to przechowuje, to przyjmuje moduł domyślną rolę
+**/
+sprzedawcaAuthorization.addPermission("List",new Permission(autoModule.getAction("List")));
+sprzedawcaAuthorization.allow("List", AuthorizationModule.ROLE_DEFAULT);
+//czyli każdy sprzedawca widzi listę samochodów
+
+/**
+* Mała dygresja
+* Jak mamy relację ale podstawowy moduł nie wie o tym że inny jest od niego zależny (ma model z belongsTo) to jak mamy wyświetlić
+* na liście pobranych danych podstawowego modułu też dane z zależnego? Np Lista salonów razem z listą sprzedawców?
+* Ja chcę to zrobić znów używając eventów. Gdy moduł salon ma wyświetlić listę to odpali event OnShowList,
+* Nasłuchujące moduły mają do tego dostęp i mogły by dokleić do wyniku również swoje dane. Można by dodać parametr deep,
+* który by pozwolił dokleić dane z jeszcze innego zależnego do danego zależnego modułu
+**/
+
+
+/**
+* Inna dygresja:)
+* Wacham się między takimi stylami
+* addColumn(new StringColumn("lastname"));
+* addColumn("lastname", ResourceModule.Type.STRING);
+* pierwszy bardziej pokazuje że mamy do czynienia z obiektami - wszystko to obiekt, które mogą być zastępowane, zmieniane itp
+* ale łatwo użytkownik może się dać ponieść i daną kolumnę doda do kilku modeli - nie analizowałem co to by zrobiło,
+* ale pierwszy model pewnie by stracił tą kolumnę i dostał drugi:)
+**/
+
+var klientModule = new ResourceModule("Klient");
+klientModule.getModel()
+  .addColumn(new StringColumn("name"))
+  .addColumn(new StringColumn("vin"))
+myApp.addModule(klientModule);
+
+var sprzedazModule = new ResourceModule("Sprzedaz");
+sprzedazModule.getModel()
+  .addColumn(new StringColumn("ilosc"))
+  .belongsTo(salonModule,"salonId")
+  .belongsTo(klientModule,"klientId")
+  .belongsTo(sprzedawcaModule,"sprzedawcaId");
+myApp.addModule(sprzedazModule);
+
+var klientAuthorization = new AuthorizationModule("AutoryzacjaKlient");
+klientAuthorization.addLoginColumn(klientModule.getModel().getColumn("name"));
+klientAuthorization.addPasswordColumn(klientModule.getModel().getColumn("vin"));
+klientAuthorization.passwordType(AuthorizationModule.PASSWORD_PURE);
+//poniżej próba specyficznego uprawnienia gdzie oprócz zasobu musi id usera być odpowiednie
+klientAuthorization.addPermission("List",new EqualPermission(sprzedazModule.getAction("List"),klientAuthorization.getSession("id"),sprzedazModule.getColumn("klientId")));
+klientAuthorization.allow("List", AuthorizationModule.ROLE_DEFAULT);
+
+Docelowo powyższe będzie można zakodować w xml lub w czymś innym. Poniżej na szybko szkic
+
+<Application>
+  <ResourceModule name="Salon">
+    <Model>
+      <StringColumn name="adres"></StringColumn>
+    </Model>
+  </ResourceModule>
+  <ResourceModule name="Auto">
+    <Model>
+      <StringColumn name="marka"></StringColumn>
+      <StringColumn name="model"></StringColumn>
+    </Model>
+  </ResourceModule>
+  <ResourceModel name="Sprzedawca">
+    <Model>
+      <StringColumn name="firstname"></StringColumn>
+      <StringColumn name="lastname"></StringColumn>
+      <StringColumn name="login"></StringColumn>
+      <StringColumn name="password"></StringColumn>
+      <BelongsTo module="Salon">
+        <BelongsTo model="">
+          <BelongsColumn name="salonId"></BelongsColumn>
+        </BelongsTo>
+      </BelongsTo>
+    </Model>
+  </ResourceModel>
+  ... dalej nie rozpisuje zasada jak wyżej
+</Application>
+
+
