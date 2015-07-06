@@ -3,7 +3,7 @@ import IAction = require("./action/IAction");
 interface IModule {
 	init():void;
 	getName():string;
-	getRouteName():string;
+	getRoute():string;
 	getActionList():IAction[];
 	getModuleList():IModule[];
 	//getControllerList():IController[];

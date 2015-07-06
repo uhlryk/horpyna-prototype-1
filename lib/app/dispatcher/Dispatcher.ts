@@ -47,14 +47,14 @@ class Dispatcher{
 	private createActionRoutes(routeName:string, actionList:IAction[]){
 		for(var actionIndex in actionList) {
 			var action:IAction = actionList[actionIndex];
-			routeName = this.buildRoute(routeName, action.getRouteName());
+			routeName = this.buildRoute(routeName, action.getRoute());
 			this.createMethodRoutes(routeName, action);
 		}
 	}
 	private createModuleRoutes(routeName:string, moduleList:IModule[]){
 		for(var moduleIndex in moduleList){
 			var module:IModule = moduleList[moduleIndex];
-			routeName = this.buildRoute(routeName, module.getRouteName());
+			routeName = this.buildRoute(routeName, module.getRoute());
 			this.createModuleRoutes(routeName, module.getModuleList());
 			this.createActionRoutes(routeName, module.getActionList());
 		};

@@ -4,7 +4,7 @@ import IActionMethod = require("./IActionMethod");
 
 interface IAction{
 	getMethod():IActionMethod;
-	getRouteName():string;
+	getRoute():string;
 	init():void;
 	set(cb:express.RequestHandler):void;
 	getHandler():express.RequestHandler;

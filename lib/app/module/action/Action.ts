@@ -1,24 +1,21 @@
 /// <reference path="../../../../typings/tsd.d.ts" />
 import express = require("express");
+import RouteComponent = require("../RouteComponent");
 import IAction = require("./IAction");
 import IActionMethod = require("./IActionMethod");
-class Action implements IAction{
+class Action extends RouteComponent implements IAction{
 	private method:IActionMethod;
-	private name:string;
-	private routeName:string;
-	private options:any;
 	private cb:express.RequestHandler;
 	/**
 	 * Określa czy dana akcja jest defaultowa. Jeśli tak to nie zwraca route
 	 */
 	private default:boolean;
 	constructor(method:IActionMethod, name:string, options?:any){
+		super(name,options);
 		//console.log("Action.constructor method: "+ IActionMethod[method]);
 		this.method = method;
-		this.name = name;
-		this.options = options || {};
-		this.routeName = this.options.routeName || this.name;
-		this.default = this.options.default || false;
+		options = options || {};
+		this.default = options.default || false;
 	}
 	public init():void{
 		//console.log("Action.constructor method: "+ IActionMethod[this.method]);
@@ -26,9 +23,6 @@ class Action implements IAction{
 	}
 	protected onInit():void{
 
-	}
-	public getRouteName():string{
-		return this.routeName;
 	}
 	public getMethod():IActionMethod {
 		return this.method;

@@ -1,17 +1,11 @@
 import IModule = require("./IModule");
+import RouteComponent = require("./RouteComponent");
 import IAction = require("./action/IAction");
-class Module implements IModule{
-	private name:string;
-	private routeName:string;
-	private options:any;
-	//private controllerList:IController[];
+class Module extends RouteComponent implements IModule{
 	private actionList:IAction[];
 	private moduleList:IModule[];
 	constructor(name:string, options?:any){
-		//console.log("Module.constructor name: "+name);
-		this.name = name;
-		this.options = options || {};
-		this.routeName = this.options.routeName || this.name;
+		super(name,options);
 		this.actionList = [];
 		this.moduleList = [];
 	}
@@ -39,25 +33,6 @@ class Module implements IModule{
 	protected onInit(){
 
 	}
-	public getName():string {
-		return this.name;
-	}
-	/**
-	 * Zwraca nazwę route która powinna wskazywać na ten obiekt
-	 */
-	public getRouteName():string{
-		return this.routeName;
-	}
-	//public getControllerList():IController[]{
-	//	return this.controllerList;
-	//}
-	/**
-	 * It should be available in inheriting modules but not outside. This method should be use only in
-	 * onInit method. Maybe throw errow when use in other situations
-	 */
-	//protected addController(controller:IController){
-	//	this.controllerList.push(controller);
-	//}
 	protected addAction(action:IAction){
 	this.actionList.push(action);
 }
