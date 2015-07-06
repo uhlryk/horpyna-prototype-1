@@ -118,20 +118,25 @@ describe("Application is instantioned, added instance of SimpleModule with name 
 				done();
 			});
 	});
-	it("should return status code 400 when accessing '/test/simple/List';  'index' is SimpleModule default controller route", function (done) {
-		request(app).get("/test/simple/List")
+	it("should return status code 400 when accessing '/test/simple/list';  'index' is SimpleModule default controller route", function (done) {
+		request(app).get("/test/simple/list")
 			.end(function (err, res) {
 				expect(res.status).to.be.equal(400);
 				done();
 			});
 	});
 });
-describe("Application is instantioned, added instance of SimpleModule with name 'simple'. Basic app has route '/' and none 404 fallback. Artwave app has route 'test'.Actions are set default ", function() {
+describe("Check actions set as default (default action not return routeName, use parent module routeName only)", function() {
 	beforeEach(function (done) {
 		app = require('./helpers/app')();
 		myApp = new Core.Application();
-		var simpleModule = new Core.SimpleModule("simple");
-		myApp.addModule(simpleModule);
+		var module = new Core.Module("simple");
+		myApp.addModule(module);
+		var action1 = new Core.Action(Core.Action.GET,"action1");
+		module.addAction(action1);
+		var action2 = new Core.Action(Core.Action.GET,"action2");
+		module.addAction(action2);
+		action2.setDefault(true);
 		app.use("/test/",myApp.run());
 		app.get('/', function (req, res) {
 			res.sendStatus(200);
@@ -141,8 +146,15 @@ describe("Application is instantioned, added instance of SimpleModule with name 
 		});
 		done();
 	});
-	it("should return status code 400 when accessing '/test/simple/index';  'index' is SimpleModule default controller route", function (done) {
-		request(app).get("/test/simple/List")
+	it("should return status code 200 when accessing '/test/simple/action1' where 'action1' is action routeName ", function (done) {
+		request(app).get("/test/simple/action1")
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(400);
+				done();
+			});
+	});
+	it("should return status code 200 when accessing '/test/simple/', because action is default", function (done) {
+		request(app).get("/test/simple/")
 			.end(function (err, res) {
 				expect(res.status).to.be.equal(400);
 				done();

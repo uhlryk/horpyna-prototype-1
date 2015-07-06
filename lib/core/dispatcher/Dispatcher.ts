@@ -25,7 +25,7 @@ class Dispatcher{
 		});
 	}
 	private createMethodRoutes(routeName:string, action:Action){
-		var handler = action.getHandler();
+		var handler = action.getRequestHandler();
 		switch(action.getMethod()){
 			case Action.ALL:
 				this.router.all(routeName,handler);
@@ -47,16 +47,16 @@ class Dispatcher{
 	private createActionRoutes(routeName:string, actionList:Action[]){
 		for(var actionIndex in actionList) {
 			var action:Action = actionList[actionIndex];
-			routeName = this.buildRoute(routeName, action.getRoute());
-			this.createMethodRoutes(routeName, action);
+			var newRouteName = this.buildRoute(routeName, action.getRoute());
+			this.createMethodRoutes(newRouteName, action);
 		}
 	}
 	private createModuleRoutes(routeName:string, moduleList:Module[]){
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
-			routeName = this.buildRoute(routeName, module.getRoute());
-			this.createModuleRoutes(routeName, module.getModuleList());
-			this.createActionRoutes(routeName, module.getActionList());
+			var newRouteName = this.buildRoute(routeName, module.getRoute());
+			this.createModuleRoutes(newRouteName, module.getModuleList());
+			this.createActionRoutes(newRouteName, module.getActionList());
 		};
 	}
 	public createRoutes(moduleList:Module[]):void{
@@ -69,7 +69,11 @@ class Dispatcher{
 		if(baseRoute.slice(-1) !== "/"){
 			baseRoute = baseRoute + "/";
 		}
-		return baseRoute + partRoute + "/";
+		if(partRoute) {
+			return baseRoute + partRoute + "/";
+		} else {
+			return baseRoute;
+		}
 	}
 }
 export = Dispatcher;

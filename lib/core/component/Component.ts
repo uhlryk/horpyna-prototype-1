@@ -6,6 +6,7 @@
  */
 class Component{
 	public static WRONG_NAME: string = "Name can contain only a-zA-Z0-9-";
+	public static EMPTY_NAME: string = "Name can't be null";
 	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
 	//static count : number = 0;
 	private name:string;
@@ -36,6 +37,9 @@ class Component{
 	 * @param name
 	 */
 	protected checkName(name:string){
+		if(!name){
+			throw new SyntaxError(Component.EMPTY_NAME);
+		}
 		if (name.search(/[^a-zA-Z0-9\-]+/) !== -1) {
 			throw new SyntaxError(Component.WRONG_NAME);
 		}

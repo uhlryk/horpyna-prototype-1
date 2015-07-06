@@ -17,7 +17,6 @@ class Application {
     private dispatcher:Dispatcher;
     private moduleManager:ModuleManager;
     constructor() {
-        console.log("Application.constructor");
         this.frontController = new FrontController();
         this.dispatcher = new Dispatcher();
         this.moduleManager = new ModuleManager();
