@@ -1,6 +1,6 @@
-/// <reference path="../../../../typings/tsd.d.ts" />
+/// <reference path="../../../../../../typings/tsd.d.ts" />
 import express = require("express");
-import RouteComponent = require("../RouteComponent");
+import RouteComponent = require("../../RouteComponent");
 import IAction = require("./IAction");
 import IActionMethod = require("./IActionMethod");
 class Action extends RouteComponent implements IAction{

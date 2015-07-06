@@ -1,8 +1,8 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
-import Module = require("./Module");
-import MethodAction = require("./action/MethodAction");
-import IActionMethod = require("./action/IActionMethod");
+import Module = require("../../core/component/routeComponent/module/Module");
+import MethodAction = require("../../core/component/routeComponent/module/action/MethodAction");
+import IActionMethod = require("../../core/component/routeComponent/module/action/IActionMethod");
 class SimpleModule extends  Module{
 	public onInit(){
 		super.onInit();

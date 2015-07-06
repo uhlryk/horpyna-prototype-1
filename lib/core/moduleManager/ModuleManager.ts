@@ -1,4 +1,4 @@
-import IModule = require("./../module/IModule");
+import IModule = require("./../component/routeComponent/module/IModule");
 
 class ModuleManager{
     private list:IModule[];

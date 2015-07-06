@@ -1,8 +1,8 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
-import IModule = require("./../module/IModule");
-import IAction = require("./../module/action/IAction");
-import IActionMethod = require("./../module/action/IActionMethod");
+import IModule = require("./../component/routeComponent/module/IModule");
+import IAction = require("./../component/routeComponent/module/action/IAction");
+import IActionMethod = require("./../component/routeComponent/module/action/IActionMethod");
 class Dispatcher{
 	private router:express.Router;
 	constructor() {

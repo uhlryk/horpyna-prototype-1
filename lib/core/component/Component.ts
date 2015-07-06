@@ -5,6 +5,7 @@
  *
  */
 class Component{
+	public static WRONG_NAME: string = "Name can contain only a-zA-Z";
 	//static count : number = 0;
 	private name:string;
 	constructor(name:string,options?:any){
@@ -19,7 +20,7 @@ class Component{
 	 */
 	protected checkName(name:string){
 		if (name.search(/[^a-zA-Z\-]+/) !== -1) {
-			throw new SyntaxError("Name can contain only a-zA-Z");
+			throw new SyntaxError(Component.WRONG_NAME);
 		}
 	}
 	public getName():string{

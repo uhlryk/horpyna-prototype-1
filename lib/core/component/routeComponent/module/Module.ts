@@ -1,5 +1,5 @@
 import IModule = require("./IModule");
-import RouteComponent = require("./RouteComponent");
+import RouteComponent = require("../RouteComponent");
 import IAction = require("./action/IAction");
 class Module extends RouteComponent implements IModule{
 	private actionList:IAction[];

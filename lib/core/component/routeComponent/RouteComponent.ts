@@ -3,7 +3,7 @@
  * Formularze, kolumny modele dziedziczą po Component
  *
  */
-import Component = require("./Component");
+import Component = require("../Component");
 class RouteComponent extends Component{
 	private route:string;
 	constructor(name:string,options?:any){
