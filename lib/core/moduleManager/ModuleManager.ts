@@ -1,23 +1,23 @@
-import IModule = require("./../component/routeComponent/module/IModule");
+import Module = require("./../component/routeComponent/module/Module");
 
 class ModuleManager{
-    private list:IModule[];
+    private list:Module[];
     constructor() {
         this.list = [];
     }
-    public addModule(moduleInstance:IModule) : void{
+    public addModule(moduleInstance:Module) : void{
         this.list.push(moduleInstance);
 
     }
     public getModule(name:string){
         return this.list[name];
     }
-    public getModuleList() : IModule[]{
+    public getModuleList() : Module[]{
         return this.list;
     }
     public initModules(){
         for(var name in this.list){
-            var module:IModule = this.list[name];
+            var module:Module = this.list[name];
             module.init();
         };
     }

@@ -1,21 +1,21 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
 import Module = require("../../core/component/routeComponent/module/Module");
-import MethodAction = require("../../core/component/routeComponent/module/action/MethodAction");
-import IActionMethod = require("../../core/component/routeComponent/module/action/IActionMethod");
+import Action = require("../../core/component/routeComponent/module/action/Action");
+
 class SimpleModule extends  Module{
 	public onInit(){
 		super.onInit();
-		var getAction = new MethodAction.Get("List");
+		var getAction = new Action(Action.GET, "List");
 		getAction.set(this.get);
 		this.addAction(getAction);
-		var postAction = new MethodAction.Post("Edit");
+		var postAction = new Action(Action.POST, "Edit");
 		postAction.set(this.post);
 		this.addAction(postAction);
-		var putAction = new MethodAction.Put("Update");
+		var putAction = new Action(Action.PUT, "Update");
 		putAction.set(this.put);
 		this.addAction(putAction);
-		var deleteAction = new MethodAction.Delete("Delete");
+		var deleteAction = new Action(Action.DELETE, "Delete");
 		deleteAction.set(this.delete);
 		this.addAction(deleteAction);
 	}

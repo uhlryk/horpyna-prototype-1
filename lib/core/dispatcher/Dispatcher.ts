@@ -1,8 +1,8 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
-import IModule = require("./../component/routeComponent/module/IModule");
-import IAction = require("./../component/routeComponent/module/action/IAction");
-import IActionMethod = require("./../component/routeComponent/module/action/IActionMethod");
+import Module = require("./../component/routeComponent/module/Module");
+import Action = require("./../component/routeComponent/module/action/Action");
+//import IActionMethod = require("./../component/routeComponent/module/action/IActionMethod");
 class Dispatcher{
 	private router:express.Router;
 	constructor() {
@@ -24,42 +24,42 @@ class Dispatcher{
 			res.sendStatus(404);
 		});
 	}
-	private createMethodRoutes(routeName:string, action:IAction){
+	private createMethodRoutes(routeName:string, action:Action){
 		var handler = action.getHandler();
 		switch(action.getMethod()){
-			case IActionMethod.ALL:
+			case Action.ALL:
 				this.router.all(routeName,handler);
 				break;
-			case IActionMethod.GET:
+			case Action.GET:
 				this.router.get(routeName,handler);
 				break;
-			case IActionMethod.POST:
+			case Action.POST:
 				this.router.post(routeName,handler);
 				break;
-			case IActionMethod.PUT:
+			case Action.PUT:
 				this.router.put(routeName,handler);
 				break;
-			case IActionMethod.DELETE:
+			case Action.DELETE:
 				this.router.delete(routeName,handler);
 				break;
 		}
 	}
-	private createActionRoutes(routeName:string, actionList:IAction[]){
+	private createActionRoutes(routeName:string, actionList:Action[]){
 		for(var actionIndex in actionList) {
-			var action:IAction = actionList[actionIndex];
+			var action:Action = actionList[actionIndex];
 			routeName = this.buildRoute(routeName, action.getRoute());
 			this.createMethodRoutes(routeName, action);
 		}
 	}
-	private createModuleRoutes(routeName:string, moduleList:IModule[]){
+	private createModuleRoutes(routeName:string, moduleList:Module[]){
 		for(var moduleIndex in moduleList){
-			var module:IModule = moduleList[moduleIndex];
+			var module:Module = moduleList[moduleIndex];
 			routeName = this.buildRoute(routeName, module.getRoute());
 			this.createModuleRoutes(routeName, module.getModuleList());
 			this.createActionRoutes(routeName, module.getActionList());
 		};
 	}
-	public createRoutes(moduleList:IModule[]):void{
+	public createRoutes(moduleList:Module[]):void{
 		this.baseRoute();
 
 		this.createModuleRoutes("", moduleList);

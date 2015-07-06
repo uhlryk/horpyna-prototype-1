@@ -9,5 +9,5 @@
 
 export import Application = require("./core/Application");
 export import Module = require("./core/component/routeComponent/module/Module");
-export import MethodAction = require("./core/component/routeComponent/module/action/MethodAction");
+export import Action = require("./core/component/routeComponent/module/action/Action");
 export import SimpleModule = require("./app/module/SimpleModule");

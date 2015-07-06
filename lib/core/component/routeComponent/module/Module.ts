@@ -1,9 +1,8 @@
-import IModule = require("./IModule");
 import RouteComponent = require("../RouteComponent");
-import IAction = require("./action/IAction");
-class Module extends RouteComponent implements IModule{
-	private actionList:IAction[];
-	private moduleList:IModule[];
+import Action = require("./action/Action");
+class Module extends RouteComponent{
+	private actionList:Action[];
+	private moduleList:Module[];
 	constructor(name:string, options?:any){
 		super(name,options);
 		this.actionList = [];
@@ -16,13 +15,13 @@ class Module extends RouteComponent implements IModule{
 	}
 	public initModules(){
 		for(var index in this.moduleList){
-			var childModule:IModule = this.moduleList[index];
+			var childModule:Module = this.moduleList[index];
 			childModule.init();
 		};
 	}
 	public initActions(){
 		for(var index in this.actionList){
-			var action:IAction = this.actionList[index];
+			var action:Action = this.actionList[index];
 			action.init();
 		};
 	}
@@ -33,16 +32,18 @@ class Module extends RouteComponent implements IModule{
 	protected onInit(){
 
 	}
-	protected addAction(action:IAction){
-	this.actionList.push(action);
-}
-	public getActionList():IAction[]{
+	protected addAction(action:Action){
+		this.actionList.push(action);
+		action.setParent(this);
+	}
+	public getActionList():Action[]{
 		return this.actionList;
 	}
-	protected addModule(module:IModule){
+	protected addModule(module:Module){
 		this.moduleList.push(module);
+		module.setParent(this);
 	}
-	public getModuleList():IModule[]{
+	public getModuleList():Module[]{
 		return this.moduleList;
 	}
 }

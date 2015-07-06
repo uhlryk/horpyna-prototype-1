@@ -9,7 +9,7 @@ import express = require("express");
 import FrontController = require("./FrontController");
 import Dispatcher = require("./dispatcher/Dispatcher");
 import ModuleManager = require("./moduleManager/ModuleManager");
-import IModule = require("./component/routeComponent/module/IModule");
+import Module = require("./component/routeComponent/module/Module");
 class Application {
     public static MODULE_PATH_NONE: string = "Need 'module path'";
 
@@ -24,7 +24,7 @@ class Application {
         this.frontController.setDispatcher(this.dispatcher);
         this.frontController.setModuleManager(this.moduleManager);
     }
-    public addModule(moduleInstance:IModule):void{
+    public addModule(moduleInstance:Module):void{
         this.moduleManager.addModule(moduleInstance);
     }
     public run():express.Router{

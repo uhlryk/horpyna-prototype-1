@@ -1,30 +1,34 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 import express = require("express");
 import RouteComponent = require("../../RouteComponent");
-import IAction = require("./IAction");
-import IActionMethod = require("./IActionMethod");
-class Action extends RouteComponent implements IAction{
-	private method:IActionMethod;
+class Action extends RouteComponent {
+	private method:string;
+
 	private cb:express.RequestHandler;
 	/**
 	 * Określa czy dana akcja jest defaultowa. Jeśli tak to nie zwraca route
 	 */
 	private default:boolean;
-	constructor(method:IActionMethod, name:string, options?:any){
-		super(name,options);
-		//console.log("Action.constructor method: "+ IActionMethod[method]);
+
+	public static ALL:string = "all";
+	public static POST:string = "post";
+	public static GET:string = "get";
+	public static PUT:string = "put";
+	public static DELETE:string = "delete";
+
+	constructor(method:string, name:string, options?:any){
+		super(name, options);
 		this.method = method;
 		options = options || {};
 		this.default = options.default || false;
 	}
 	public init():void{
-		//console.log("Action.constructor method: "+ IActionMethod[this.method]);
 		this.onInit();
 	}
 	protected onInit():void{
 
 	}
-	public getMethod():IActionMethod {
+	public getMethod():string {
 		return this.method;
 	}
 	public set(cb:express.RequestHandler):void{

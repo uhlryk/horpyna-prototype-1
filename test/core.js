@@ -149,3 +149,21 @@ describe("Application is instantioned, added instance of SimpleModule with name 
 			});
 	});
 });
+describe("Check if application protect from multiple use of Component single instance", function(){
+	var moduleParent1, moduleParent2;
+	beforeEach(function(done){
+		app = require('./helpers/app')();
+		myApp = new Core.Application();
+		moduleParent1 = new Core.SimpleModule("simple1");
+		moduleParent2 = new Core.SimpleModule("simple2");
+		done();
+	});
+	it("should throw error when child module is added to both moduleParent1 and moduleParent2", function(done){
+		moduleChild = new Core.SimpleModule("simple3");
+		moduleParent1.addModule(moduleChild);
+		expect(function(){
+			moduleParent2.addModule(moduleChild);
+		}).to.throw(SyntaxError);
+		done();
+	});
+});
