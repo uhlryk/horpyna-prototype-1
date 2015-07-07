@@ -2,7 +2,7 @@
 import express = require("express");
 import Module = require("./../component/routeComponent/module/Module");
 import Action = require("./../component/routeComponent/module/action/Action");
-//import IActionMethod = require("./../component/routeComponent/module/action/IActionMethod");
+import Param = require("./../component/routeComponent/module/action/param/Param");
 class Dispatcher{
 	private router:express.Router;
 	constructor() {
@@ -48,6 +48,11 @@ class Dispatcher{
 		for(var actionIndex in actionList) {
 			var action:Action = actionList[actionIndex];
 			var newRouteName = this.buildRoute(routeName, action.getRoute());
+			var paramList = action.getParamList();
+			for(var paramIndex in paramList){
+				var param:Param = paramList[paramIndex];
+				newRouteName = this.buildRoute(newRouteName, ":" + param.getParam());
+			}
 			this.createMethodRoutes(newRouteName, action);
 		}
 	}

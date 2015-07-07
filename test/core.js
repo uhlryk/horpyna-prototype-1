@@ -118,10 +118,10 @@ describe("Application is instantioned, added instance of SimpleModule with name 
 				done();
 			});
 	});
-	it("should return status code 400 when accessing '/test/simple/list';  'index' is SimpleModule default controller route", function (done) {
+	it("should return status code 200 when accessing '/test/simple/list';  'index' is SimpleModule default controller route", function (done) {
 		request(app).get("/test/simple/list")
 			.end(function (err, res) {
-				expect(res.status).to.be.equal(400);
+				expect(res.status).to.be.equal(200);
 				done();
 			});
 	});
@@ -149,14 +149,14 @@ describe("Check actions set as default (default action not return routeName, use
 	it("should return status code 200 when accessing '/test/simple/action1' where 'action1' is action routeName ", function (done) {
 		request(app).get("/test/simple/action1")
 			.end(function (err, res) {
-				expect(res.status).to.be.equal(400);
+				expect(res.status).to.be.equal(200);
 				done();
 			});
 	});
 	it("should return status code 200 when accessing '/test/simple/', because action is default", function (done) {
 		request(app).get("/test/simple/")
 			.end(function (err, res) {
-				expect(res.status).to.be.equal(400);
+				expect(res.status).to.be.equal(200);
 				done();
 			});
 	});
@@ -177,5 +177,29 @@ describe("Check if application protect from multiple use of Component single ins
 			moduleParent2.addModule(moduleChild);
 		}).to.throw(SyntaxError);
 		done();
+	});
+});
+describe("Add to action params and then check route paths", function(){
+
+	beforeEach(function(done){
+		app = require('./helpers/app')();
+		myApp = new Core.Application();
+		var myModule = new Core.Module("mod1");
+		myApp.addModule(myModule);
+		var myAction = new Core.Action(Core.Action.GET, "act1");
+		myModule.addAction(myAction);
+		var myParam1 = new Core.Param("test");
+		var myParam2 = new Core.Param("par2");
+		myAction.addParam(myParam1);
+		myAction.addParam(myParam2);
+		app.use(myApp.run());
+		done();
+	});
+	it("should return status code 200 when accessing '/mod1/act1/999/32' where 999 is param ':test' and 32 is 'par2'", function(done){
+		request(app).get("/mod1/act1/999/32")
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(200);
+				done();
+			});
 	});
 });
