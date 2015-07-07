@@ -13,7 +13,9 @@
     "express": "~4.12.4",
     "hjs": "~0.0.6",
     "morgan": "~1.5.3",
+    "mysql": "^2.7.0",
     "node-compass": "0.2.3",
+    "sequelize": "^3.3.2",
     "serve-favicon": "~2.2.1"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import Component = require("../../../../Component");
 class Column extends Component{
-	constructor(name:string){
+	//public static DataType:Column;
+	constructor(name:string, type:string){
 		super(name);
 	}
 	public init():void{

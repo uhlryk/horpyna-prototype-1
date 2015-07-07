@@ -203,3 +203,27 @@ describe("Add to action params and then check route paths", function(){
 			});
 	});
 });
+describe("Check db connection", function(){
+
+	beforeEach(function(done){
+		app = require('./helpers/app')();
+		myApp = new Core.Application();
+		myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
+		var myModule = new Core.Module("module1");
+		myApp.addModule(myModule);
+		var myAction = new Core.Action(Core.Action.GET, "act1");
+		myModule.addAction(myAction);
+		var myModel = new Core.Model("model1");
+		myModel.addColumn(new Core.Model.Column("test"));
+		myModule.addModel(myModel);
+		app.use(myApp.run());
+		done();
+	});
+	it("should return status code 200 when accessing '/mod1/act1/999/32' where 999 is param ':test' and 32 is 'par2'", function(done){
+		request(app).get("/module1/act1")
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(200);
+				done();
+			});
+	});
+});
