@@ -26,5 +26,13 @@ class Model extends Component{
 	public getColumnList():Column[]{
 		return this.columnList;
 	}
+	public getColumn(name:string):Column{
+		for(var index in this.columnList){
+			var column:Column = this.columnList[index];
+			if(column.getName() === name){
+				return column;
+			}
+		}
+	}
 }
 export = Model;

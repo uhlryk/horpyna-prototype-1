@@ -67,6 +67,30 @@ class Action extends RouteComponent {
 	public getMethod():string {
 		return this.method;
 	}
+	public getParam(name:string):Param{
+		for(var index in this.paramList){
+			var param:Param = this.paramList[index];
+			if(param.getName() === name){
+				return param;
+			}
+		}
+	}
+	public getBody(name:string):Param{
+		for(var index in this.bodyList){
+			var param:Param = this.bodyList[index];
+			if(param.getName() === name){
+				return param;
+			}
+		}
+	}
+	public getQuery(name:string):Param{
+		for(var index in this.queryList){
+			var param:Param = this.queryList[index];
+			if(param.getName() === name){
+				return param;
+			}
+		}
+	}
 	protected requestHandler(req:express.Request, res:express.Response){
 		res.sendStatus(200);
 	}

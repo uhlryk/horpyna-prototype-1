@@ -39,5 +39,13 @@ class Param extends Component {
 	public getParam():string{
 		return this.param;
 	}
+	public getValidator(name:string):Validator{
+		for(var index in this.validatorList){
+			var validator:Validator = this.validatorList[index];
+			if(validator.getName() === name){
+				return validator;
+			}
+		}
+	}
 }
 export  = Param;
