@@ -40,7 +40,7 @@ class Model extends Component{
 	protected onInit(){
 
 	}
-	protected addColumn(column:Column){
+	public addColumn(column:Column){
 		this.columnList.push(column);
 		column.setParent(this);
 	}
@@ -66,7 +66,6 @@ class Model extends Component{
 			var column:Column = this.columnList[index];
 			tableStructure[column.getName()] = column.build();
 		}
-		console.log(tableStructure);
 		var m = this.connection.getDb().define(tableName, tableStructure);
 	}
 }

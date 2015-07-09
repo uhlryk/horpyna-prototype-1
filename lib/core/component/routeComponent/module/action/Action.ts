@@ -1,13 +1,13 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 import express = require("express");
 import RouteComponent = require("../../RouteComponent");
+import Event = require("../../../event/Event");
 import Param = require("./param/Param");
 class Action extends RouteComponent {
 	private paramList:Param[];
 	private queryList:Param[];
 	private bodyList:Param[];
 	private method:string;
-	private cb:express.RequestHandler;
 	public static ALL:string = "all";
 	public static POST:string = "post";
 	public static GET:string = "get";
@@ -20,7 +20,6 @@ class Action extends RouteComponent {
 		this.paramList = [];
 		this.queryList = [];
 		this.bodyList = [];
-		this.setRequestHandler(this.requestHandler);
 	}
 	public init():void{
 		this.onInit();
@@ -92,13 +91,18 @@ class Action extends RouteComponent {
 		}
 	}
 	protected requestHandler(req:express.Request, res:express.Response){
-		res.sendStatus(200);
-	}
-	public setRequestHandler(cb:express.RequestHandler):void{
-		this.cb = cb;
+		var onStartActionPublisher = new Event.OnStartAction.Publisher();
+		var onsStartActionResponse = new Event.OnStartAction.Response(this.publish(onStartActionPublisher));
+		if(onsStartActionResponse.isAllow()) {
+			res.sendStatus(200);
+		} else {
+			res.sendStatus(400);
+		}
 	}
 	public getRequestHandler():express.RequestHandler{
-		return this.cb;
+		return (req:express.Request, res:express.Response)=>{
+			this.requestHandler(req,res);
+		}
 	}
 }
 export  = Action;

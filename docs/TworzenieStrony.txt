@@ -1,0 +1,15 @@
+jest to przykryty dodatkową abstrakcją system.
+
+var app = new ClickSystem();
+//poniższe metody tak właściwie dodają wpisy do tabelki Page
+var page = new Page();
+page.title = "moj tytuł";
+app.addPage(page);
+var row1 = new Row();
+var col1 = new Col1(4);
+var col2 = new Col2(2);
+row1.addColumn(col1);
+row1.addColumn(col2);
+//stworzona strona która ma jeden wiersz z dwoma kolumnamy gdzie pierwsza jest 2x większa od drugiej
+
+var

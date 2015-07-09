@@ -1,15 +1,18 @@
 import RouteComponent = require("../RouteComponent");
+import Event = require("../../event/Event");
 import Action = require("./action/Action");
 import Model = require("./model/Model");
 class Module extends RouteComponent{
 	private actionList:Action[];
 	private modelList:Model[];
 	private moduleList:Module[];
+	private subscriberList:Event.BaseEvent.Subscriber[];
 	constructor(name:string, options?:any){
 		super(name,options);
 		this.actionList = [];
 		this.moduleList = [];
 		this.modelList = [];
+		this.subscriberList = [];
 	}
 	public init():void{
 		this.onInit();
@@ -86,6 +89,21 @@ class Module extends RouteComponent{
 				return model;
 			}
 		}
+	}
+	public subscribe(subscriber:Event.BaseEvent.Subscriber){
+		this.subscriberList.push(subscriber);
+	}
+	protected onSendPublisher(data:any):any{
+		for(var index in this.subscriberList){
+			var subscriber:Event.BaseEvent.Subscriber = this.subscriberList[index];
+			var callback = subscriber.getCallback();
+			var dataResponse:Event.BaseEvent.Data = new subscriber.responseObject(subscriber.getType(),data);
+			console.log(subscriber.responseObject);
+			callback(dataResponse);
+			console.log("A");
+			console.log(dataResponse.getRawData());
+		}
+		return data;
 	}
 }
 export = Module;
