@@ -1,3 +1,5 @@
+/// <reference path="../../../typings/tsd.d.ts" />
+import Promise = require("bluebird");
 import Connection = require("./connection/Connection");
 /**
  * Obsługuje komunikację z bazą danych
@@ -40,11 +42,10 @@ class DbManager {
 	public init(){
 
 	}
-	public build(){
-		for(var index in this.connectionList){
-			var connection:Connection = this.connectionList[index];
-			connection.getDb().sync();
-		}
+	public build():Promise<any>{
+		return Promise.map(this.connectionList, function (connection:Connection) {
+			return connection.getDb().sync({force:true});
+		});
 	}
 }
 export = DbManager;

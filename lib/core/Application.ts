@@ -19,6 +19,7 @@ class Application {
 	private dispatcher:Dispatcher;
 	private moduleManager:ModuleManager;
 	private dbManager:DbManager;
+	private router:express.Router;
 	constructor() {
 		this.frontController = new FrontController();
 		this.dispatcher = new Dispatcher();
@@ -27,6 +28,7 @@ class Application {
 		this.frontController.setDispatcher(this.dispatcher);
 		this.frontController.setModuleManager(this.moduleManager);
 		this.frontController.setDbManager(this.dbManager);
+		this.router = express.Router();
 	}
 	public addModule(moduleInstance:Module):void{
 		this.moduleManager.addModule(moduleInstance);
@@ -35,11 +37,13 @@ class Application {
 		var connection = new Connection(dbType, host, port, dbName, userName, userPassword);
 		this.dbManager.addConnection(connection, true);
 	}
-	public run():express.Router{
-		var router:express.Router = express.Router();
-		this.dispatcher.setRouter(router);
-		this.frontController.run();
-		return router;
+	public init():Promise<any>{
+		this.dispatcher.setRouter(this.router);
+		var promise = this.frontController.init();
+		return promise;
+	}
+	public getMiddleware():express.Router{
+		return this.router;
 	}
 }
 export = Application;

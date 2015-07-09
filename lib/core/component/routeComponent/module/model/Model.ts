@@ -1,8 +1,26 @@
 import Component = require("../../../Component");
 import Column = require("./column/Column");
+import StringColumn = require("./column/StringColumn");
+import IntegerColumn = require("./column/IntegerColumn");
+import BigIntColumn = require("./column/BigIntColumn");
+import TextColumn = require("./column/TextColumn");
+import FloatColumn = require("./column/FloatColumn");
+import DecimalColumn = require("./column/DecimalColumn");
+import DateColumn = require("./column/DateColumn");
+import BoleanColumn = require("./column/BoleanColumn");
+import EnumColumn = require("./column/EnumColumn");
 import Connection = require("../../../../dbManager/connection/Connection");
 class Model extends Component{
 	public static Column = Column;
+	public static StringColumn = StringColumn;
+	public static IntegerColumn = IntegerColumn;
+	public static TextColumn = TextColumn;
+	public static BigIntColumn = BigIntColumn;
+	public static FloatColumn = FloatColumn;
+	public static DecimalColumn = DecimalColumn;
+	public static DateColumn = DateColumn;
+	public static BoleanColumn = BoleanColumn;
+	public static EnumColumn = EnumColumn;
 	private columnList:Column[];
 	private connection:Connection;
 	constructor(name:string){
@@ -46,8 +64,9 @@ class Model extends Component{
 		var tableStructure = {};
 		for(var index in this.columnList){
 			var column:Column = this.columnList[index];
-			tableStructure[column.getName()] = Connection.DB.STRING;
+			tableStructure[column.getName()] = column.build();
 		}
+		console.log(tableStructure);
 		var m = this.connection.getDb().define(tableName, tableStructure);
 	}
 }

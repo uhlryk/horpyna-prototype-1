@@ -28,7 +28,8 @@ describe("Application is instantioned, but none modules are added to Application
 			});
 	});
 	it("should return status code 200 when accessing '/' and Artwave router is added to app.use", function(done){
-		app.use(myApp.run());
+		myApp.init();
+		app.use(myApp.getMiddleware());
 		request(app).get("/")
 			.end(function(err, res) {
 				expect(res.status).to.be.equal(200);
@@ -47,7 +48,8 @@ describe("Application is instantioned, but none modules are added to Artwave. Ba
 	beforeEach(function (done) {
 		app = require('./helpers/app')();
 		myApp = new Core.Application();
-		app.use("/test/",myApp.run());
+		myApp.init();
+		app.use("/test/",myApp.getMiddleware());
 		app.get('/', function (req, res) {
 			res.sendStatus(200);
 		});
@@ -75,6 +77,7 @@ describe("Check if application checking of right names and route names working c
 	before(function(done){
 		app = require('./helpers/app')();
 		myApp = new Core.Application();
+
 		done();
 	});
 	it("should throw error when module name contain wrong chars 'ą'", function(done){
@@ -102,7 +105,8 @@ describe("Application is instantioned, added instance of SimpleModule with name 
 		myApp = new Core.Application();
 		var simpleModule = new Core.SimpleModule("simple");
 		myApp.addModule(simpleModule);
-		app.use("/test/",myApp.run());
+		myApp.init();
+		app.use("/test/",myApp.getMiddleware());
 		app.get('/', function (req, res) {
 			res.sendStatus(200);
 		});
@@ -137,7 +141,8 @@ describe("Check actions set as default (default action not return routeName, use
 		var action2 = new Core.Action(Core.Action.GET,"action2");
 		module.addAction(action2);
 		action2.setDefault(true);
-		app.use("/test/",myApp.run());
+		myApp.init();
+		app.use("/test/",myApp.getMiddleware());
 		app.get('/', function (req, res) {
 			res.sendStatus(200);
 		});
@@ -192,7 +197,8 @@ describe("Add to action params and then check route paths", function(){
 		var myParam2 = new Core.Param("par2");
 		myAction.addParam(myParam1);
 		myAction.addParam(myParam2);
-		app.use(myApp.run());
+		myApp.init();
+		app.use(myApp.getMiddleware());
 		done();
 	});
 	it("should return status code 200 when accessing '/mod1/act1/999/32' where 999 is param ':test' and 32 is 'par2'", function(done){
@@ -214,10 +220,17 @@ describe("Check db connection", function(){
 		var myAction = new Core.Action(Core.Action.GET, "act1");
 		myModule.addAction(myAction);
 		var myModel = new Core.Model("model1");
-		myModel.addColumn(new Core.Model.Column("test"));
+		myModel.addColumn(new Core.Model.StringColumn("a1"));
+		myModel.addColumn(new Core.Model.TextColumn("a2"));
+		myModel.addColumn(new Core.Model.StringColumn("a3",10,true));
+		var col3= new Core.Model.EnumColumn("a3");
+		col3.setList(["kot","ala","ma"]);
+		myModel.addColumn(col3);
 		myModule.addModel(myModel);
-		app.use(myApp.run());
-		done();
+		app.use(myApp.getMiddleware());
+		myApp.init().then(function(){
+			done();
+		});
 	});
 	it("should return status code 200 when accessing '/mod1/act1/999/32' where 999 is param ':test' and 32 is 'par2'", function(done){
 		request(app).get("/module1/act1")

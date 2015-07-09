@@ -53,13 +53,14 @@ class FrontController {
 			};
 		};
 	}
-	public run():void{
+	public init():Promise<any>{
 		this.setup();
 		this.dbManager.init();
 		this.moduleManager.initModules();
 		this.setConnectionToModels();
-		this.dbManager.build();
+		var promise = this.dbManager.build();
 		this.dispatcher.createRoutes(this.moduleManager.getModuleList());
+		return promise;
 	}
 }
 export = FrontController;

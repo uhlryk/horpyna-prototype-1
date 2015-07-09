@@ -27,15 +27,17 @@ import MyModule = require('./modules/myModule/module');
 var app = express();
 app.use(bodyParser.json());
 //-----begin-------
-var myApp2 = new Core.Application();
-myApp2.addModule(new MyModule("test3"));
-app.use("/some", myApp2.run());
-
-var myApp = new Core.Application();
-myApp.addModule(new MyModule("test"));
-myApp.addModule(new MyModule("test2"));
-app.use(myApp.run());
-
+//var myApp2 = new Core.Application();
+//myApp2.addModule(new MyModule("test3"));
+//myApp2.init();
+//app.use("/some", myApp2.getMiddleware());
+//
+//var myApp = new Core.Application();
+//myApp.addModule(new MyModule("test"));
+//myApp.addModule(new MyModule("test2"));
+//myApp.init();
+//app.use(myApp.getMiddleware());
+//
 
 //------end--------
 var server = app.listen(3000, function () {

@@ -23,6 +23,9 @@ class Connection {
 		this.dbName = dbName;
 		this.userName = userName;
 		this.userPassword = userPassword;
+
+		var a = SequelizeConstructor.STRING;
+
 	}
 	public getDb():SequelizeConstructor.Sequelize{
 		return this.sequelize;
