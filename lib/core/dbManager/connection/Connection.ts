@@ -2,7 +2,6 @@
 
 import Sequelize = require("sequelize");
 class Connection {
-	public static DB = Sequelize;
 	private dbType:string;
 	private host:string;
 	private port:number;
