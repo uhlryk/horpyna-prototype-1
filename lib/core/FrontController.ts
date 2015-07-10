@@ -60,7 +60,7 @@ class FrontController {
 		this.componentManager.initModules();
 		this.setConnectionToModels();
 		var promise = this.dbManager.build();
-		this.dispatcher.createRoutes(this.componentManager.getModuleList());
+		this.dispatcher.createRoutes(this.componentManager.getModuleList(), this.componentManager.getDefaultModule());
 		return promise;
 	}
 }

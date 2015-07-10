@@ -44,13 +44,13 @@ class Dispatcher{
 				break;
 		}
 	}
-	private createActionRoutes(routeName:string, actionList:Action[], parent?:Module){
+	private createActionRoutes(routeName:string, actionList:Action[], defaultActionList?:Action[]){
 		for(var actionIndex in actionList) {
 			var action:Action = actionList[actionIndex];
 			var newRouteName;
-			if(!parent || parent.getDefaultActionList().indexOf(action) === -1){
+			if(!defaultActionList || defaultActionList.indexOf(action) === -1){//nie jest na liście default
 				newRouteName = this.buildRoute(routeName, action.getRoute());
-			} else{
+			} else{//jest default
 				newRouteName = routeName;
 			}
 			var paramList = action.getParamList();
@@ -61,23 +61,23 @@ class Dispatcher{
 			this.createMethodRoutes(newRouteName, action);
 		}
 	}
-	private createModuleRoutes(routeName:string, moduleList:Module[], parent?:Module){
+	private createModuleRoutes(routeName:string, moduleList:Module[], defaultModule?:Module){
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
 			var newRouteName;
-			if(parent && parent.getDefaultModule() === module){
+			if(defaultModule === module){//dany moduł jest defaultowy
 				newRouteName = routeName;
 			} else {
 				newRouteName = this.buildRoute(routeName, module.getRoute());
 			}
-			this.createModuleRoutes(newRouteName, module.getModuleList(), module);
-			this.createActionRoutes(newRouteName, module.getActionList(), module);
+			this.createModuleRoutes(newRouteName, module.getModuleList(), module.getDefaultModule());
+			this.createActionRoutes(newRouteName, module.getActionList(), module.getDefaultActionList());
 		};
 	}
-	public createRoutes(moduleList:Module[]):void{
+	public createRoutes(moduleList:Module[], defaultModule?:Module):void{
 		this.baseRoute();
 
-		this.createModuleRoutes("", moduleList);
+		this.createModuleRoutes("", moduleList, defaultModule);
 		this.fallbackRoute();
 	}
 	private buildRoute(baseRoute:string, partRoute:string):string{

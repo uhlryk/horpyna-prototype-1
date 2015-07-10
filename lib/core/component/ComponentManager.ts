@@ -3,19 +3,30 @@ import Component = require("./Component");
 
 class ComponentManager extends Component{
 	private list:Module[];
+	/**
+	 * Ustawiamy moduł który będzie defaultowy dla route i nie będzie dodawał się do path
+	 * Możemy więc przez jakiś moduł mieć dostęp do "/"
+	 */
+	private defaultModule : Module;
 	constructor() {
 		super("ComponentManager");
 		this.list = [];
 	}
-	public addModule(moduleInstance:Module) : void{
-		this.list.push(moduleInstance);
-		moduleInstance.setParent(this);
+	public addModule(module:Module,isDefault?:boolean) : void{
+		this.list.push(module);
+		module.setParent(this);
+		if(isDefault === true){
+			this.defaultModule = module;
+		}
 	}
 	public getModule(name:string){
 		return this.list[name];
 	}
 	public getModuleList() : Module[]{
 		return this.list;
+	}
+	public getDefaultModule():Module{
+		return this.defaultModule;
 	}
 	public initModules(){
 		for(var name in this.list){
