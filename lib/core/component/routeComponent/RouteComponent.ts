@@ -10,10 +10,13 @@ class RouteComponent extends Component{
 	 * Określa czy dana akcja jest defaultowa. Jeśli tak to nie zwraca route
 	 */
 	private default:boolean;
-	constructor(name:string,options?:any){
-		super(name, options);
-		options = options || {};
-		this.route = options.routeName || this.getName();
+	constructor(name:string){
+		super(name);
+		this.route =  this.getName();
+		this.checkName(this.route);
+	}
+	public setRouteName(name:string){
+		this.route =  this.getName();
 		this.checkName(this.route);
 	}
 	public getRoute():string{

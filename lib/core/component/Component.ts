@@ -1,4 +1,5 @@
 import Event = require("./event/Event");
+import Debuger = require("../util/Debuger");
 /**
  * Klasa bazowa do wszystkich obiektów które są kompoentami. Nazwa jest obowiązkowa
  * ponieważ jest to wskaźnik na obiekt.
@@ -9,15 +10,20 @@ class Component{
 	public static WRONG_NAME: string = "Name can contain only a-zA-Z0-9-";
 	public static EMPTY_NAME: string = "Name can't be null";
 	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
-	//static count : number = 0;
 	private name:string;
 	private parent:Component;
-	constructor(name:string,options?:any){
-		//Component.count++;
+	private debuger: Debuger;
+	public static count = 0;
+	constructor(name:string){
 		this.name = name;
 		this.checkName(name);
+		Component.count++;
+		this.debuger = new Debuger("component:"+this.name+":");
+		this.debug('constructor %s a', this.name);
 	}
-
+	public debug(...args: any[]){
+		this.debuger.debug(args);
+	}
 	/**
 	 * Metoda wywoływana jest gdy dany komponent jest dodawany do struktury innego komponentu.
 	 * Dodaje do komponentu referencje na parent component. Dodatkowo sprawdza czy dany komponent

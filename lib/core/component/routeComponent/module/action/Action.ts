@@ -14,8 +14,8 @@ class Action extends RouteComponent {
 	public static PUT:string = "put";
 	public static DELETE:string = "delete";
 
-	constructor(method:string, name:string, options?:any){
-		super(name, options);
+	constructor(method:string, name:string){
+		super(name);
 		this.method = method;
 		this.paramList = [];
 		this.queryList = [];

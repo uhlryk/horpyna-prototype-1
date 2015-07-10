@@ -7,8 +7,8 @@ class Module extends RouteComponent{
 	private modelList:Model[];
 	private moduleList:Module[];
 	private subscriberList:Event.BaseEvent.Subscriber[];
-	constructor(name:string, options?:any){
-		super(name,options);
+	constructor(name:string){
+		super(name);
 		this.actionList = [];
 		this.moduleList = [];
 		this.modelList = [];

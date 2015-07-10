@@ -1,3 +1,5 @@
+import Debuger = require("../../util/Debuger");
+
 /**
  * Jest to bazowy Event który może być przekazywany z wywołania eventa do nasłuchujących obiektów.
  * Obiekt który chce wywołać event, używa określonego dziedziczącego eventa lub bazwego, podając jego typ.
@@ -20,11 +22,16 @@
  */
 class BaseEvent{
 	private type:string;
+	private debuger: Debuger;
 	constructor(type){
 		this.type = type;
+		this.debuger = new Debuger("event:"+this.type+":");
 	}
 	public getType():string{
 		return this.type;
+	}
+	public debug(...args: any[]){
+		this.debuger.debug(args);
 	}
 }
 /**
