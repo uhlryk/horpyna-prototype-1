@@ -4,12 +4,16 @@ import Action = require("./action/Action");
 import Model = require("./model/Model");
 class Module extends RouteComponent{
 	private actionList:Action[];
+	private defaultActionList:Action[];//może być więcej niż jedna akcja domyślna więc są one jako lista
 	private modelList:Model[];
+	private defaultModel:Model;
 	private moduleList:Module[];
+	private defaultModule : Module;
 	private subscriberList:Event.BaseEvent.Subscriber[];
 	constructor(name:string){
 		super(name);
 		this.actionList = [];
+		this.defaultActionList = [];
 		this.moduleList = [];
 		this.modelList = [];
 		this.subscriberList = [];
@@ -45,9 +49,12 @@ class Module extends RouteComponent{
 	protected onInit(){
 
 	}
-	protected addAction(action:Action){
+	protected addAction(action:Action,isDefault?:boolean){
 		this.actionList.push(action);
 		action.setParent(this);
+		if(isDefault === true){
+			this.defaultActionList.push(action);
+		}
 	}
 	public getActionList():Action[]{
 		return this.actionList;
@@ -60,9 +67,15 @@ class Module extends RouteComponent{
 			}
 		}
 	}
-	protected addModule(module:Module){
+	public getDefaultActionList():Action[]{
+		return this.defaultActionList;
+	}
+	protected addModule(module:Module,isDefault?:boolean){
 		this.moduleList.push(module);
 		module.setParent(this);
+		if(isDefault === true){
+			this.defaultModule = module;
+		}
 	}
 	public getModuleList():Module[]{
 		return this.moduleList;
@@ -75,12 +88,21 @@ class Module extends RouteComponent{
 			}
 		}
 	}
-	protected addModel(model:Model){
+	public getDefaultModule():Module{
+		return this.defaultModule;
+	}
+	protected addModel(model:Model,isDefault?:boolean){
 		this.modelList.push(model);
 		model.setParent(this);
+		if(isDefault === true){
+			this.defaultModel = model;
+		}
 	}
 	public getModelList():Model[]{
 		return this.modelList;
+	}
+	public getDefaultModel():Model{
+		return this.defaultModel;
 	}
 	public getModel(name:string):Model{
 		for(var index in this.modelList){

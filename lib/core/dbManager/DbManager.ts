@@ -18,8 +18,6 @@ class DbManager {
 		this.connectionList.push(connection);
 		if(isDefault === true){
 			this.defaultConnection = connection;
-		}else{
-			throw new Error(DbManager.NOT_IMPLEMENTED);
 		}
 	}
 	public getConnection(name?:string):Connection{

@@ -139,8 +139,7 @@ describe("Check actions set as default (default action not return routeName, use
 		var action1 = new Core.Action(Core.Action.GET,"action1");
 		module.addAction(action1);
 		var action2 = new Core.Action(Core.Action.GET,"action2");
-		module.addAction(action2);
-		action2.setDefault(true);
+		module.addAction(action2,true);
 		myApp.init();
 		app.use("/test/",myApp.getMiddleware());
 		app.get('/', function (req, res) {

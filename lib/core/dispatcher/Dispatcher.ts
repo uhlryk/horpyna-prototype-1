@@ -44,10 +44,15 @@ class Dispatcher{
 				break;
 		}
 	}
-	private createActionRoutes(routeName:string, actionList:Action[]){
+	private createActionRoutes(routeName:string, actionList:Action[], parent?:Module){
 		for(var actionIndex in actionList) {
 			var action:Action = actionList[actionIndex];
-			var newRouteName = this.buildRoute(routeName, action.getRoute());
+			var newRouteName;
+			if(!parent || parent.getDefaultActionList().indexOf(action) === -1){
+				newRouteName = this.buildRoute(routeName, action.getRoute());
+			} else{
+				newRouteName = routeName;
+			}
 			var paramList = action.getParamList();
 			for(var paramIndex in paramList){
 				var param:Param = paramList[paramIndex];
@@ -56,12 +61,17 @@ class Dispatcher{
 			this.createMethodRoutes(newRouteName, action);
 		}
 	}
-	private createModuleRoutes(routeName:string, moduleList:Module[]){
+	private createModuleRoutes(routeName:string, moduleList:Module[], parent?:Module){
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
-			var newRouteName = this.buildRoute(routeName, module.getRoute());
-			this.createModuleRoutes(newRouteName, module.getModuleList());
-			this.createActionRoutes(newRouteName, module.getActionList());
+			var newRouteName;
+			if(parent && parent.getDefaultModule() === module){
+				newRouteName = routeName;
+			} else {
+				newRouteName = this.buildRoute(routeName, module.getRoute());
+			}
+			this.createModuleRoutes(newRouteName, module.getModuleList(), module);
+			this.createActionRoutes(newRouteName, module.getActionList(), module);
 		};
 	}
 	public createRoutes(moduleList:Module[]):void{
