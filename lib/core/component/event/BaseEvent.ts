@@ -75,7 +75,7 @@ export class Subscriber extends BaseEvent{
  */
 export class Data extends BaseEvent{
 	private rawData:any;
-	constructor(type:string, rawData:any){
+	constructor(rawData:any, type:string){
 		super(type);
 		this.rawData= rawData;
 	}
@@ -91,7 +91,7 @@ export class Data extends BaseEvent{
  */
 export class Response extends BaseEvent{
 	private rawData:any;
-	constructor(type:string, rawData:any){
+	constructor(rawData:any, type:string){
 		super(type);
 		this.rawData= rawData;
 	}

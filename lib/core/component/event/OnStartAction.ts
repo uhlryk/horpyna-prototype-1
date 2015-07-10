@@ -19,7 +19,7 @@ export class Subscriber extends BaseEvent.Subscriber{
 }
 export class Data extends BaseEvent.Data{
 	constructor(rawData:any){
-		super(TYPE_NAME, rawData);
+		super(rawData, TYPE_NAME);
 	}
 	public allow(access:boolean){
 		var data:boolean = this.getRawData();
@@ -31,7 +31,7 @@ export class Data extends BaseEvent.Data{
 }
 export class Response extends BaseEvent.Response{
 	constructor(rawData:any){
-		super(TYPE_NAME, rawData);
+		super(rawData, TYPE_NAME);
 	}
 	public isAllow():boolean{
 		return this.getRawData();
