@@ -2,29 +2,21 @@
 import Sequelize = require("sequelize");
 import Component = require("../../../Component");
 import Column = require("./column/Column");
-import StringColumn = require("./column/StringColumn");
-import IntegerColumn = require("./column/IntegerColumn");
-import BigIntColumn = require("./column/BigIntColumn");
-import TextColumn = require("./column/TextColumn");
-import FloatColumn = require("./column/FloatColumn");
-import DecimalColumn = require("./column/DecimalColumn");
-import DateColumn = require("./column/DateColumn");
-import BoleanColumn = require("./column/BoleanColumn");
-import EnumColumn = require("./column/EnumColumn");
+
 import Connection = require("../../../../dbManager/connection/Connection");
 class Model extends Component{
-	public static Column = Column;
-	public static StringColumn = StringColumn;
-	public static IntegerColumn = IntegerColumn;
-	public static TextColumn = TextColumn;
-	public static BigIntColumn = BigIntColumn;
-	public static FloatColumn = FloatColumn;
-	public static DecimalColumn = DecimalColumn;
-	public static DateColumn = DateColumn;
-	public static BoleanColumn = BoleanColumn;
-	public static EnumColumn = EnumColumn;
+	public static BaseColumn = Column.BaseColumn;
+	public static StringColumn = Column.StringColumn;
+	public static IntegerColumn = Column.IntegerColumn;
+	public static TextColumn = Column.TextColumn;
+	public static BigIntColumn = Column.BigIntColumn;
+	public static FloatColumn = Column.FloatColumn;
+	public static DecimalColumn = Column.DecimalColumn;
+	public static DateColumn = Column.DateColumn;
+	public static BoleanColumn = Column.BoleanColumn;
+	public static EnumColumn = Column.EnumColumn;
 
-	private columnList:Column[];
+	private columnList:Column.BaseColumn[];
 	private connection:Connection;
 	private connectionName:string;
 	private model : Sequelize.Model<any,any>;
@@ -43,23 +35,23 @@ class Model extends Component{
 	}
 	public initColumns(){
 		for(var index in this.columnList){
-			var column:Column = this.columnList[index];
+			var column:Column.BaseColumn = this.columnList[index];
 			column.init();
 		};
 	}
 	protected onInit(){
 
 	}
-	public addColumn(column:Column){
+	public addColumn(column:Column.BaseColumn){
 		this.columnList.push(column);
 		column.setParent(this);
 	}
-	public getColumnList():Column[]{
+	public getColumnList():Column.BaseColumn[]{
 		return this.columnList;
 	}
-	public getColumn(name:string):Column{
+	public getColumn(name:string):Column.BaseColumn{
 		for(var index in this.columnList){
-			var column:Column = this.columnList[index];
+			var column:Column.BaseColumn = this.columnList[index];
 			if(column.getName() === name){
 				return column;
 			}
@@ -90,7 +82,7 @@ class Model extends Component{
 		var tableName = this.getParent().getName() + "_" + this.getName();
 		var tableStructure = {};
 		for(var index in this.columnList){
-			var column:Column = this.columnList[index];
+			var column:Column.BaseColumn = this.columnList[index];
 			tableStructure[column.getName()] = column.build();
 		}
 		this.model = this.connection.getDb().define(tableName, tableStructure);

@@ -1,5 +1,5 @@
-import Column = require("./Column");
-class DecimalColumn extends Column{
+import BaseColumn = require("./BaseColumn");
+class DecimalColumn extends BaseColumn{
 	private total:number;
 	private decimal:number;
 	constructor(name:string, total?:number, decimal?:number){
@@ -16,11 +16,11 @@ class DecimalColumn extends Column{
 	private createColumn(){
 		var type;
 		if(this.total && this.decimal){
-			type = Column.DataTypes.DECIMAL(this.total, this.decimal);
+			type = BaseColumn.DataTypes.DECIMAL(this.total, this.decimal);
 		} else if(this.total){
-			type = Column.DataTypes.DECIMAL(this.total);
+			type = BaseColumn.DataTypes.DECIMAL(this.total);
 		} else {
-			type = Column.DataTypes.DECIMAL;
+			type = BaseColumn.DataTypes.DECIMAL;
 		}
 		this.setType(type);
 	}

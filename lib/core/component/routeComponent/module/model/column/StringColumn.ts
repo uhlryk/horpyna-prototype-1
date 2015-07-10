@@ -1,5 +1,5 @@
-import Column = require("./Column");
-class StringColumn extends Column{
+import BaseColumn = require("./BaseColumn");
+class StringColumn extends BaseColumn{
 	private length:number;
 	private binary:boolean;
 	constructor(name:string, length?:number, binary?:boolean){
@@ -20,9 +20,9 @@ class StringColumn extends Column{
 	private createColumn(){
 		var type;
 		if(this.length){
-			type = Column.DataTypes.STRING(this.length);
+			type = BaseColumn.DataTypes.STRING(this.length);
 		} else {
-			type = Column.DataTypes.STRING;
+			type = BaseColumn.DataTypes.STRING;
 		}
 		if(this.binary){
 			type = type.BINARY;

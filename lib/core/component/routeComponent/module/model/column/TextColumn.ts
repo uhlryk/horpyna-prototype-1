@@ -1,8 +1,8 @@
-import Column = require("./Column");
-class TextColumn extends Column{
+import BaseColumn = require("./BaseColumn");
+class TextColumn extends BaseColumn{
 	constructor(name:string){
 		super(name);
-		this.setType(Column.DataTypes.TEXT);
+		this.setType(BaseColumn.DataTypes.TEXT);
 	}
 }
 export = TextColumn;

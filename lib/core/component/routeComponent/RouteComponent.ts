@@ -16,11 +16,7 @@ class RouteComponent extends Component{
 		this.checkName(this.route);
 	}
 	public getRoute():string{
-		if(this.default){
-			return "";
-		} else {
-			return this.route;
-		}
+		return this.route;
 	}
 }
 export = RouteComponent;

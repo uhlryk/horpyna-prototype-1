@@ -1,8 +1,8 @@
-import Column = require("./Column");
-class BoleanColumn extends Column{
+import BaseColumn = require("./BaseColumn");
+class BoleanColumn extends BaseColumn{
 	constructor(name:string){
 		super(name);
-		this.setType(Column.DataTypes.BOOLEAN);
+		this.setType(BaseColumn.DataTypes.BOOLEAN);
 	}
 }
 export = BoleanColumn;

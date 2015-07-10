@@ -1,12 +1,12 @@
-import Column = require("./Column");
-class BigIntColumn extends Column{
+import BaseColumn = require("./BaseColumn");
+class BigIntColumn extends BaseColumn{
 	constructor(name:string, length?:number){
 		super(name);
 		var type;
 		if(length){
-			type = Column.DataTypes.BIGINT(length);
+			type = BaseColumn.DataTypes.BIGINT(length);
 		} else {
-			type = Column.DataTypes.BIGINT;
+			type = BaseColumn.DataTypes.BIGINT;
 		}
 		this.setType(type);
 	}

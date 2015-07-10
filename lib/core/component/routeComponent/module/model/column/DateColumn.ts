@@ -1,8 +1,8 @@
-import Column = require("./Column");
-class DateColumn extends Column{
+import BaseColumn = require("./BaseColumn");
+class DateColumn extends BaseColumn{
 	constructor(name:string){
 		super(name);
-		this.setType(Column.DataTypes.DATE);
+		this.setType(BaseColumn.DataTypes.DATE);
 	}
 }
 export = DateColumn;

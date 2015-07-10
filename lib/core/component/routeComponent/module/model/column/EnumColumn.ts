@@ -1,5 +1,5 @@
-import Column = require("./Column");
-class EnumColumn extends Column{
+import BaseColumn = require("./BaseColumn");
+class EnumColumn extends BaseColumn{
 	private list:Array<string>;
 	constructor(name:string, list?:Array<string>){
 		super(name);
@@ -11,7 +11,7 @@ class EnumColumn extends Column{
 		this.createColumn();
 	}
 	private createColumn(){
-		this.setType(Column.DataTypes.ENUM.apply(this,this.list));
+		this.setType(BaseColumn.DataTypes.ENUM.apply(this,this.list));
 	}
 }
 export = EnumColumn;
