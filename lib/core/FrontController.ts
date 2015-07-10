@@ -1,27 +1,27 @@
 
 import Dispatcher = require("./dispatcher/Dispatcher");
-import ModuleManager = require("./moduleManager/ModuleManager");
+import ComponentManager = require("./component/ComponentManager");
 import DbManager = require("./dbManager/DbManager");
 import Module = require("./component/routeComponent/module/Module");
 import Model = require("./component/routeComponent/module/model/Model");
 class FrontController {
 	public static DISPATCHER_NONE: string = "Need 'dispatcher'";
-	public static MODULE_MANAGER_NONE: string = "Need 'moduleManager'";
+	public static COMPONENT_MANAGER_NONE: string = "Need 'ComponentManager'";
 	public static DB_MANAGER_NONE: string = "Need 'dbManager'";
 
 	private dispatcher: Dispatcher;
-	private moduleManager: ModuleManager;
+	private componentManager: ComponentManager;
 	private dbManager: DbManager;
 	constructor() {
 	}
 	public setDispatcher(dispatcher: Dispatcher):void{
 		this.dispatcher = dispatcher;
 	}
-	public setModuleManager(moduleManager:ModuleManager):void{
-		this.moduleManager = moduleManager;
+	public setComponentManager(moduleManager:ComponentManager):void{
+		this.componentManager = moduleManager;
 	}
-	public getModuleManager():ModuleManager{
-		return this.moduleManager;
+	public getModuleManager():ComponentManager{
+		return this.componentManager;
 	}
 	public setDbManager(dbManager:DbManager):void{
 		this.dbManager = dbManager;
@@ -33,15 +33,15 @@ class FrontController {
 		if(this.dispatcher == undefined){
 			throw new Error(FrontController.DISPATCHER_NONE);
 		}
-		if(this.moduleManager == undefined){
-			throw new Error(FrontController.MODULE_MANAGER_NONE);
+		if(this.componentManager == undefined){
+			throw new Error(FrontController.COMPONENT_MANAGER_NONE);
 		}
 		if(this.dbManager == undefined){
 			throw new Error(FrontController.DB_MANAGER_NONE);
 		}
 	}
 	private setConnectionToModels(){
-		var moduleList:Module[] =this.moduleManager.getModuleList();
+		var moduleList:Module[] =this.componentManager.getModuleList();
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
 			var modelList:Model[] = module.getModelList();
@@ -56,10 +56,10 @@ class FrontController {
 	public init():Promise<any>{
 		this.setup();
 		this.dbManager.init();
-		this.moduleManager.initModules();
+		this.componentManager.initModules();
 		this.setConnectionToModels();
 		var promise = this.dbManager.build();
-		this.dispatcher.createRoutes(this.moduleManager.getModuleList());
+		this.dispatcher.createRoutes(this.componentManager.getModuleList());
 		return promise;
 	}
 }

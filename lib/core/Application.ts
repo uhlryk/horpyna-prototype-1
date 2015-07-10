@@ -10,28 +10,28 @@ import FrontController = require("./FrontController");
 import Dispatcher = require("./dispatcher/Dispatcher");
 import DbManager = require("./dbManager/DbManager");
 import Connection = require("./dbManager/connection/Connection");
-import ModuleManager = require("./moduleManager/ModuleManager");
+import ComponentManager = require("./component/ComponentManager");
 import Module = require("./component/routeComponent/module/Module");
 class Application {
 	public static MODULE_PATH_NONE: string = "Need 'module path'";
 
 	private frontController:FrontController;
 	private dispatcher:Dispatcher;
-	private moduleManager:ModuleManager;
+	private componentManager:ComponentManager;
 	private dbManager:DbManager;
 	private router:express.Router;
 	constructor() {
 		this.frontController = new FrontController();
 		this.dispatcher = new Dispatcher();
-		this.moduleManager = new ModuleManager();
+		this.componentManager = new ComponentManager();
 		this.dbManager = new DbManager();
 		this.frontController.setDispatcher(this.dispatcher);
-		this.frontController.setModuleManager(this.moduleManager);
+		this.frontController.setComponentManager(this.componentManager);
 		this.frontController.setDbManager(this.dbManager);
 		this.router = express.Router();
 	}
 	public addModule(moduleInstance:Module):void{
-		this.moduleManager.addModule(moduleInstance);
+		this.componentManager.addModule(moduleInstance);
 	}
 	public setDbDefaultConnection(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string){
 		var connection = new Connection(dbType, host, port, dbName, userName, userPassword);
