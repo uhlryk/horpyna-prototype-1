@@ -10,12 +10,13 @@ class SimpleModule extends  Module{
 
 		this.addAction(getAction);
 		var onStartActionEvent = new OnStartActionEvent.Subscriber();
+		//onStartActionEvent.setPublic();
 		onStartActionEvent.addCallback(function(data:OnStartActionEvent.Data){
 			data = <OnStartActionEvent.Data>data;
 
 			console.log("z1");
 
-			data.allow(false);
+			data.allow(true);
 			console.log(data);
 		});
 		this.subscribe(onStartActionEvent);

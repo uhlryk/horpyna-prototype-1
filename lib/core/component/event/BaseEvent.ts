@@ -65,7 +65,8 @@ export class Subscriber extends BaseEvent{
 	public getCallback():ISubscriberCallback<Data>{
 		return this.callback;
 	}
-	public setPublic(publicEvent:boolean){
+	public setPublic(publicEvent?:boolean){
+		if(publicEvent === undefined ) publicEvent = false;
 		this.publicEvent= publicEvent;
 	}
 	public isPublic():boolean{

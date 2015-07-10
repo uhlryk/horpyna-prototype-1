@@ -96,10 +96,12 @@ class Module extends RouteComponent{
 	protected onSendPublisher(data:any):any{
 		for(var index in this.subscriberList){
 			var subscriber:Event.BaseEvent.Subscriber = this.subscriberList[index];
-			var callback = subscriber.getCallback();
-			var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
-			callback(dataResponse);
-			data = dataResponse.getRawData();
+			if(subscriber.isPublic() === false) {
+				var callback = subscriber.getCallback();
+				var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
+				callback(dataResponse);
+				data = dataResponse.getRawData();
+			}
 		}
 		return data;
 	}
