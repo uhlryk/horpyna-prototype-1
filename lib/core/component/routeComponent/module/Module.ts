@@ -105,5 +105,21 @@ class Module extends RouteComponent{
 		}
 		return data;
 	}
+	public broadcastPublisher(data:any):any{
+		for(var index in this.subscriberList){
+			var subscriber:Event.BaseEvent.Subscriber = this.subscriberList[index];
+			if(subscriber.isPublic() === true) {
+				var callback = subscriber.getCallback();
+				var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
+				callback(dataResponse);
+				data = dataResponse.getRawData();
+			}
+		}
+		for(var index in this.moduleList){
+			var module:Module = this.moduleList[index];
+			data = module.broadcastPublisher(data);
+		}
+		return data;
+	}
 }
 export = Module;
