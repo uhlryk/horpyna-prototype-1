@@ -20,14 +20,8 @@ class FrontController {
 	public setComponentManager(moduleManager:ComponentManager):void{
 		this.componentManager = moduleManager;
 	}
-	public getModuleManager():ComponentManager{
-		return this.componentManager;
-	}
 	public setDbManager(dbManager:DbManager):void{
 		this.dbManager = dbManager;
-	}
-	public getDbManager():DbManager{
-		return this.dbManager;
 	}
 	private setup():void{
 		if(this.dispatcher == undefined){
@@ -47,7 +41,14 @@ class FrontController {
 			var modelList:Model[] = module.getModelList();
 			for(var modelIndex in modelList){
 				var model:Model = modelList[modelIndex];
-				model.setConnection(this.dbManager.getConnection());
+				if(model.isConnection() === false) {
+					var modelConnectionName = model.getConnectionName();
+					if(modelConnectionName){
+						model.setConnection(this.dbManager.getConnection("modelConnectionName"));
+					} else {
+						model.setConnection(this.dbManager.getConnection());//zwraca domyślne bo nie podaliśmy nazwy
+					}
+				}
 				model.prepare();
 
 			};

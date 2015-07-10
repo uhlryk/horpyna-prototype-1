@@ -1,18 +1,18 @@
 /// <reference path="../../../../typings/tsd.d.ts" />
 
-import SequelizeConstructor = require("sequelize");
+import Sequelize = require("sequelize");
 class Connection {
-
-	public static DB = SequelizeConstructor;
+	public static DB = Sequelize;
 	private dbType:string;
 	private host:string;
 	private port:number;
 	private dbName:string;
 	private userName:string;
 	private userPassword:string;
-	private sequelize:SequelizeConstructor.Sequelize;
-	constructor(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string) {
-		this.sequelize = new SequelizeConstructor(dbName, userName, userPassword, {
+	private sequelize:Sequelize.Sequelize;
+	private connectionName:string;
+	constructor(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string, connectionName:string) {
+		this.sequelize = new Sequelize(dbName, userName, userPassword, {
 			host : host,
 			dialect : dbType,
 			port : port
@@ -23,13 +23,13 @@ class Connection {
 		this.dbName = dbName;
 		this.userName = userName;
 		this.userPassword = userPassword;
-
-		var a = SequelizeConstructor.STRING;
-
+		this.connectionName = connectionName;
 	}
-	public getDb():SequelizeConstructor.Sequelize{
+	public getDb():Sequelize.Sequelize{
 		return this.sequelize;
 	}
-
+	public getConnectionName():string{
+		return this.connectionName;
+	}
 }
 export = Connection;

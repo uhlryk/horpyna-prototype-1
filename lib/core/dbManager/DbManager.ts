@@ -8,7 +8,7 @@ import Connection = require("./connection/Connection");
  */
 class DbManager {
 	public static DEFAULT_CONNECTION_EMPTY: string = "Default connection must be defined";
-	public static NOT_IMPLEMENTED: string = "Not implemented";
+	public static NO_CONNECTION_NAME: string = "Connection not found";
 	private defaultConnection:Connection;
 	private connectionList:Connection[];
 	constructor() {
@@ -29,7 +29,13 @@ class DbManager {
 			}
 			return this.defaultConnection;
 		} else{
-			throw new Error(DbManager.NOT_IMPLEMENTED);
+			for(var index in this.connectionList){
+				var connection:Connection = this.connectionList[index];
+				if(connection.getConnectionName() === name){
+					return connection;
+				}
+			};
+			throw new SyntaxError(DbManager.NO_CONNECTION_NAME);
 		}
 	}
 	public getDb(name?:string){

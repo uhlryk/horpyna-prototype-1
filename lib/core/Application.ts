@@ -34,7 +34,7 @@ class Application {
 		this.componentManager.addModule(moduleInstance);
 	}
 	public setDbDefaultConnection(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string){
-		var connection = new Connection(dbType, host, port, dbName, userName, userPassword);
+		var connection = new Connection(dbType, host, port, dbName, userName, userPassword,"default");
 		this.dbManager.addConnection(connection, true);
 	}
 	public init():Promise<any>{

@@ -1,3 +1,5 @@
+/// <reference path="../../../../../../typings/tsd.d.ts" />
+import Sequelize = require("sequelize");
 import Component = require("../../../Component");
 import Column = require("./column/Column");
 import StringColumn = require("./column/StringColumn");
@@ -21,11 +23,19 @@ class Model extends Component{
 	public static DateColumn = DateColumn;
 	public static BoleanColumn = BoleanColumn;
 	public static EnumColumn = EnumColumn;
+
 	private columnList:Column[];
 	private connection:Connection;
+	private connectionName:string;
+	private model : Sequelize.Model<any,any>;
+	/**
+	 * Jeśli true to znaczy że połączenie jest dodane.
+	 */
+	private connectionSet:boolean;
 	constructor(name:string){
 		super(name);
 		this.columnList = [];
+		this.connectionSet = false;
 	}
 	public init():void{
 		this.onInit();
@@ -55,8 +65,25 @@ class Model extends Component{
 			}
 		}
 	}
+
+	/**
+	 * możemy podać jak ma nazywać się połączenie, a system przy dodawaniu
+	 * połączeń doda to o tej nazwie, lub możemy sami ręcznie dodać połączenie
+	 * W przeciwnym razie system sam doda połączenie domyślne
+	 */
+	public setConnectionName(connectionName:string){
+		this.connectionName = connectionName;
+	}
+	public getConnectionName():string{
+		return this.connectionName;
+	}
 	public setConnection(connection:Connection){
 		this.connection = connection;
+		this.connectionName = this.connection.getConnectionName();
+		this.connectionSet=true;
+	}
+	public isConnection():boolean{
+		return this.connectionSet;
 	}
 	public prepare(){
 		//tu musi być nazwa zawierająca całą ścieżkę modułów i nazwę modelu
@@ -66,7 +93,10 @@ class Model extends Component{
 			var column:Column = this.columnList[index];
 			tableStructure[column.getName()] = column.build();
 		}
-		var m = this.connection.getDb().define(tableName, tableStructure);
+		this.model = this.connection.getDb().define(tableName, tableStructure);
+	}
+	public getModel(){
+		return this.model;
 	}
 }
 export = Model;

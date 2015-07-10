@@ -210,6 +210,27 @@ describe("Add to action params and then check route paths", function(){
 	});
 });
 describe("Check db connection", function(){
+	var myModule;
+	beforeEach(function(done){
+		app = require('./helpers/app')();
+		myApp = new Core.Application();
+		myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
+		myModule = new Core.SimpleModule("simple1");
+		app.use(myApp.getMiddleware());
+		done();
+	});
+	//nie działa test trzeba użyć sidon
+	//it("should throw error when model need connection that not exist", function(done){
+	//	var myModel = new Core.Model("model1");
+	//	myModel.setConnectionName("nieistniejacy");
+	//	myModule.addModel(myModel);
+	//	expect(function(){
+	//		myApp.init();
+	//	}).to.throw(SyntaxError);
+	//	done();
+	//});
+});
+describe("Check db connection", function(){
 
 	beforeEach(function(done){
 		app = require('./helpers/app')();
