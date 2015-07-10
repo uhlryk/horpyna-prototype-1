@@ -5,17 +5,6 @@ import Column = require("./column/Column");
 
 import Connection = require("../../../../dbManager/connection/Connection");
 class Model extends Component{
-	public static BaseColumn = Column.BaseColumn;
-	public static StringColumn = Column.StringColumn;
-	public static IntegerColumn = Column.IntegerColumn;
-	public static TextColumn = Column.TextColumn;
-	public static BigIntColumn = Column.BigIntColumn;
-	public static FloatColumn = Column.FloatColumn;
-	public static DecimalColumn = Column.DecimalColumn;
-	public static DateColumn = Column.DateColumn;
-	public static BoleanColumn = Column.BoleanColumn;
-	public static EnumColumn = Column.EnumColumn;
-
 	private columnList:Column.BaseColumn[];
 	private connection:Connection;
 	private connectionName:string;

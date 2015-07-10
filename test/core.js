@@ -240,10 +240,10 @@ describe("Check db connection", function(){
 		var myAction = new Core.Action(Core.Action.GET, "act1");
 		myModule.addAction(myAction);
 		var myModel = new Core.Model("model1");
-		myModel.addColumn(new Core.Model.StringColumn("a1"));
-		myModel.addColumn(new Core.Model.TextColumn("a2"));
-		myModel.addColumn(new Core.Model.StringColumn("a3",10,true));
-		var col3= new Core.Model.EnumColumn("a3");
+		myModel.addColumn(new Core.Column.StringColumn("a1"));
+		myModel.addColumn(new Core.Column.TextColumn("a2"));
+		myModel.addColumn(new Core.Column.StringColumn("a3",10,true));
+		var col3= new Core.Column.EnumColumn("a3");
 		col3.setList(["kot","ala","ma"]);
 		myModel.addColumn(col3);
 		myModule.addModel(myModel);
