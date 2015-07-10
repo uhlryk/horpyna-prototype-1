@@ -92,7 +92,7 @@ class Action extends RouteComponent {
 	}
 	protected requestHandler(req:express.Request, res:express.Response){
 		var onStartActionPublisher = new Event.OnStartAction.Publisher();
-		var onsStartActionResponse = new Event.OnStartAction.Response(this.publish(onStartActionPublisher));
+		var onsStartActionResponse:Event.OnStartAction.Response = this.publish(onStartActionPublisher);
 		if(onsStartActionResponse.isAllow()) {
 			res.sendStatus(200);
 		} else {

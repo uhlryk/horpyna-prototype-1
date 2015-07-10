@@ -65,7 +65,8 @@ class Component{
 	public publish(publisher:Event.BaseEvent.Publisher):any{
 		var eventList: Array<Component> = [];
 		var responseData = this.sendPublisher(publisher.getType(), publisher.getRawData(), eventList);
-		return responseData;
+		var response = new publisher.responseObject(publisher.getType(), responseData);
+		return response;
 	}
 
 	/**

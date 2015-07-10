@@ -9,18 +9,16 @@ export class Publisher extends BaseEvent.Publisher{
 		super(TYPE_NAME);
 		var data:boolean=true;
 		this.setRawData(data);
+		this.responseObject = Response;
 	}
 }
 export class Subscriber extends BaseEvent.Subscriber{
 	constructor(){
 		super(TYPE_NAME);
-		this.responseObject = Data;
+		this.dataObject = Data;
 	}
 }
 export class Data extends BaseEvent.Data{
-	constructor(rawData:any){
-		super(rawData, TYPE_NAME);
-	}
 	public allow(access:boolean){
 		var data:boolean = this.getRawData();
 		if(data === true){
@@ -30,9 +28,6 @@ export class Data extends BaseEvent.Data{
 	}
 }
 export class Response extends BaseEvent.Response{
-	constructor(rawData:any){
-		super(rawData, TYPE_NAME);
-	}
 	public isAllow():boolean{
 		return this.getRawData();
 	}

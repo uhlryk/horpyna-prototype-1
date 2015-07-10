@@ -97,11 +97,9 @@ class Module extends RouteComponent{
 		for(var index in this.subscriberList){
 			var subscriber:Event.BaseEvent.Subscriber = this.subscriberList[index];
 			var callback = subscriber.getCallback();
-			var dataResponse:Event.BaseEvent.Data = new subscriber.responseObject(data, subscriber.getType());
-			console.log(subscriber.responseObject);
+			var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
 			callback(dataResponse);
-			console.log("A");
-			console.log(dataResponse.getRawData());
+			data = dataResponse.getRawData();
 		}
 		return data;
 	}
