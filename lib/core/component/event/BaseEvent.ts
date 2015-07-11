@@ -23,7 +23,7 @@ import Debuger = require("../../util/Debuger");
 class BaseEvent{
 	private type:string;
 	private debuger: Debuger;
-	constructor(type){
+	constructor(type:string){
 		this.type = type;
 		this.debuger = new Debuger("event:"+this.type+":");
 	}
@@ -52,21 +52,35 @@ class BaseRawDataEvent extends BaseEvent {
   */
 export class Publisher extends BaseRawDataEvent {
 	public responseObject:any;
+	private subtype:string;
 	constructor(type:string){
 		super(type);
 		this.responseObject = Response;
 	}
+	public setSubtype(subtype:string){
+		this.subtype =subtype;
+	}
+	public getSubtype():string{
+		return this.subtype;
+	}
 }
 export interface ISubscriberCallback<T extends Data>{
-	(data:T):void;
+	(data:T, done):void;
 }
 /**
  * Wywoływany by odebrać event
  */
 export class Subscriber extends BaseEvent{
 	public dataObject:any;
+	private subtype:string;
 	private callback:ISubscriberCallback<Data>;
 	public publicEvent:boolean;
+	/**
+	 * warunek określający czy subscirber ma nasłuchiwać na dany event
+	 * zawiera nazwy komponentów od których wyszedł event,
+	 * /mod2/mod1/akcja1
+	 */
+	private emiterRegExp:RegExp;
 	constructor(type:string){
 		super(type);
 		this.dataObject = Data;
@@ -84,6 +98,18 @@ export class Subscriber extends BaseEvent{
 	}
 	public isPublic():boolean{
 		return this.publicEvent;
+	}
+	public setSubtype(subtype:string){
+		this.subtype =subtype;
+	}
+	public getSubtype():string{
+		return this.subtype;
+	}
+	public setEmiterRegexp(emiterRegExp:RegExp){
+		this.emiterRegExp = emiterRegExp;
+	}
+	public getEmiterRegExp():RegExp{
+		return this.emiterRegExp;
 	}
 }
 /**

@@ -116,34 +116,53 @@ class Module extends RouteComponent{
 	public subscribe(subscriber:Event.BaseEvent.Subscriber){
 		this.subscriberList.push(subscriber);
 	}
-	protected onSendPublisher(data:any):any{
-		for(var index in this.subscriberList){
-			var subscriber:Event.BaseEvent.Subscriber = this.subscriberList[index];
-			if(subscriber.isPublic() === false) {
-				var callback = subscriber.getCallback();
-				var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
-				callback(dataResponse);
-				data = dataResponse.getRawData();
+	protected callSubscribers(type:string, subtype:string, emiterPath:string, isPublic:boolean, data:Object, done):void{
+		Util.Promise.map(this.subscriberList, (subscriber:Event.BaseEvent.Subscriber)=> {
+			//tu logika testów type, subtype i i nazw komponentów
+			if(subscriber.isPublic() !== isPublic) {
+				return;
 			}
-		}
-		return data;
-	}
-	public broadcastPublisher(data:any):any{
-		for(var index in this.subscriberList){
-			var subscriber:Event.BaseEvent.Subscriber = this.subscriberList[index];
-			if(subscriber.isPublic() === true) {
-				var callback = subscriber.getCallback();
-				var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType());
-				dataResponse.setRawData(data);
-				callback(dataResponse);
-				data = dataResponse.getRawData();
+			if(subscriber.getType() !== type){
+				return;
 			}
-		}
-		for(var index in this.moduleList){
-			var module:Module = this.moduleList[index];
-			data = module.broadcastPublisher(data);
-		}
-		return data;
+			//subtype nie jest obowiązkowy, jeśli subscriber go nie zdefiniował to nie sprawdzamy jego zgodności
+			if(subscriber.getSubtype() && subscriber.getSubtype() !== subtype){
+				return;
+			}
+			//określenie patternu do ścieżki nie jest obowiązkowe więc dopasowanie będzie tylko jeśli jest on zdefiniowany
+			if(subscriber.getEmiterRegExp() &&this.checkSubscriberEmiterPath(subscriber.getEmiterRegExp(), emiterPath) === false){
+				return;
+			}
+			var callback = subscriber.getCallback();
+			var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
+			return new Util.Promise<void>((resolve:() => void) => {
+				callback(dataResponse, resolve);
+			});
+		})
+		.then(()=>{
+				done();
+		});
 	}
+	public broadcastPublisher(type:string, subtype:string, emiterPath:string, data:Object):Util.Promise<void>{
+		return new Util.Promise<void>((resolve:() => void) => {
+			this.callSubscribers(type, subtype, emiterPath, true, data, resolve);
+		})
+		.then(()=> {
+			Util.Promise.map(this.moduleList, (module:Module)=> {
+				return module.broadcastPublisher(type, subtype, emiterPath, data);
+			})
+		});
+	}
+
+	/**
+	 * sprawdza czy dana ścieżka jest na nasłuchu
+	 */
+	private checkSubscriberEmiterPath(subscriberRegExp:RegExp, emiterPath:string):boolean{
+		if(emiterPath.match(subscriberRegExp)){
+			return true;
+		}
+		return false;
+	}
+
 }
 export = Module;

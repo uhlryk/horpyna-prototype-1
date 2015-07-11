@@ -65,31 +65,39 @@ class Component{
 	 * przez ten sam wyspecjalizowany event
 	 * @param publisher obiekt publishera
 	 * @returns {K}
-	 * TODO: response dorobić by można było odpowiedzi otrzymać w evencie, problemem jest by była spójność dziedziczonych generycznych danych
 	 */
-	//protected publish<T extends Event.Publisher, K extends Event.Response>(publisher:T):K{
-	public publish(publisher:Event.BaseEvent.Publisher):any{
-		var eventList: Array<Component> = [];
-		var responseData = this.sendPublisher(publisher.getType(), publisher.getRawData(), eventList);
-		var response = new publisher.responseObject(publisher.getType());
-		response.setRawData(responseData);
-		return response;
+	public publish(publisher:Event.BaseEvent.Publisher):Util.Promise<any>{
+		return new Util.Promise<any>((resolve) => {
+			var rawDataCopy = publisher.getRawData();
+			var emiterPath: string = "/";
+			return this.emitPublisher(publisher.getType(), publisher.getSubtype(), emiterPath, rawDataCopy)
+			.then(()=>{
+				var response = new publisher.responseObject(publisher.getType());
+				response.setRawData(rawDataCopy);
+				resolve(response);
+			});
+		});
 	}
 
 	/**
 	 * Metoda wysyła do kolejnych wyżej postawionych komponentów informacje o publikacji
 	 * @param publisher
-	 * @param eventList każdy kolejny wyżej komponent dodaje referencje na samego siebie do tej listy
-	 * Ponieważ chcemy wiedzieć np jakiego modułu akcja została wywołana, a nie tylko wywołanie akcji
+	 * @param eventList każdy kolejny wyżej komponent dodaje referencje na samego siebie do tej listy.
+	 * Ponieważ chcemy wiedzieć np jakiego modułu akcja została wywołana, a nie tylko wywołanie akcji.
+	 * Jest to więc lista modułów przez które przechodził moduł. Jest bez sensu bo w sumie przejdzie przez wszystkie
+	 * moduły.
 	 * @returns {K}
 	 */
-	private sendPublisher(type:string, data:any, eventList:Array<Component>):any{
-		eventList.push(this);
-		var response:any = this.onSendPublisher(data);
-		if(this.parent) {
-			response = this.parent.sendPublisher(type, response, eventList);
-		}
-		return response;
+	private emitPublisher(type:string, subtype:string, emiterPath:string, data:Object):Util.Promise<void>{
+		emiterPath = "/" + this.getName() + emiterPath;
+		return new Util.Promise<void>((resolve:() => void) => {
+			this.callSubscribers(type, subtype, emiterPath, false, data, resolve);
+		})
+		.then(()=>{
+			if (this.parent) {
+				return this.parent.emitPublisher(type, subtype, emiterPath, data);
+			}
+		});
 	}
 
 	/**
@@ -97,8 +105,8 @@ class Component{
 	 * @param data
 	 * @returns {any}
 	 */
-	protected onSendPublisher(data:any):any{
-		return data;
+	protected callSubscribers(type:string, subtype:string, emiterPath:string, isPublic:boolean, data:Object, done):void{
+		done();
 	}
 }
 export = Component;

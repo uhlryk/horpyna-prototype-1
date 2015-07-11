@@ -94,12 +94,14 @@ class Action extends RouteComponent {
 		var onStartActionPublisher = new Event.OnStartAction.Publisher();
 		var a = Object;
 		onStartActionPublisher.setRawData(a)
-		var onsStartActionResponse:Event.OnStartAction.Response = this.publish(onStartActionPublisher);
-		if(onsStartActionResponse.isAllow()) {
-			res.sendStatus(200);
-		} else {
-			res.sendStatus(400);
-		}
+		this.publish(onStartActionPublisher)
+		.then((response:Event.OnStartAction.Response)=>{
+			if(response.isAllow()) {
+				res.sendStatus(200);
+			} else {
+				res.sendStatus(400);
+			}
+		});
 	}
 	public getRequestHandler():express.RequestHandler{
 		return (req:express.Request, res:express.Response)=>{
