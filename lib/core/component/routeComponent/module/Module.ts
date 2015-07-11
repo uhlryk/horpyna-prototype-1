@@ -132,7 +132,8 @@ class Module extends RouteComponent{
 			var subscriber:Event.BaseEvent.Subscriber = this.subscriberList[index];
 			if(subscriber.isPublic() === true) {
 				var callback = subscriber.getCallback();
-				var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
+				var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType());
+				dataResponse.setRawData(data);
 				callback(dataResponse);
 				data = dataResponse.getRawData();
 			}

@@ -34,21 +34,27 @@ class BaseEvent{
 		this.debuger.debug(args);
 	}
 }
+class BaseRawDataEvent extends BaseEvent {
+	private rawData:Object;
+	constructor(type:string){
+		super(type);
+		this.rawData = Object;
+	}
+	public setRawData(rawData:Object){
+		this.rawData = rawData;
+	}
+	public getRawData():Object{
+		return this.rawData;
+	}
+}
 /**
  * Wywoływany by opublikować event
   */
-export class Publisher extends BaseEvent {
+export class Publisher extends BaseRawDataEvent {
 	public responseObject:any;
-	private rawData:any;
 	constructor(type:string){
 		super(type);
 		this.responseObject = Response;
-	}
-	public setRawData(rawData:any){
-		this.rawData = rawData;
-	}
-	public getRawData():any{
-		return this.rawData;
 	}
 }
 export interface ISubscriberCallback<T extends Data>{
@@ -83,29 +89,16 @@ export class Subscriber extends BaseEvent{
 /**
  * Argument callbacka Subscirbera
  */
-export class Data extends BaseEvent{
-	private rawData:any;
-	constructor(type:string, rawData:any){
+export class Data extends BaseRawDataEvent{
+	constructor(type:string){
 		super(type);
-		this.rawData= rawData;
-	}
-	public setRawData(rawData:any){
-		this.rawData = rawData;
-	}
-	public getRawData():any{
-		return this.rawData;
 	}
 }
 /**
  * Zwracane dane do obiektu publish
  */
-export class Response extends BaseEvent{
-	private rawData:any;
-	constructor(type:string, rawData:any){
+export class Response extends BaseRawDataEvent{
+	constructor(type:string){
 		super(type);
-		this.rawData= rawData;
-	}
-	public getRawData():any{
-		return this.rawData;
 	}
 }

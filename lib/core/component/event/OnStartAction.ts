@@ -7,8 +7,8 @@ var TYPE_NAME = "OnStartAction";
 export class Publisher extends BaseEvent.Publisher{
 	constructor(){
 		super(TYPE_NAME);
-		var data:boolean=true;
-		this.setRawData(data);
+		var data = this.getRawData();
+		data["allow"] = true;
 		this.responseObject = Response;
 	}
 }
@@ -20,15 +20,15 @@ export class Subscriber extends BaseEvent.Subscriber{
 }
 export class Data extends BaseEvent.Data{
 	public allow(access:boolean){
-		var data:boolean = this.getRawData();
-		if(data === true){
-			data = access;
+		var data = this.getRawData();
+		if(data["allow"] === true){
+			data["allow"] = access;
 		}
-		this.setRawData(data);
 	}
 }
 export class Response extends BaseEvent.Response{
 	public isAllow():boolean{
-		return this.getRawData();
+		var data = this.getRawData();
+		return data["allow"];
 	}
 }
