@@ -1,5 +1,4 @@
-/// <reference path="../../../typings/tsd.d.ts" />
-import Promise = require("bluebird");
+import Promise = require("../util/Promise");
 import Connection = require("./connection/Connection");
 /**
  * Obsługuje komunikację z bazą danych
