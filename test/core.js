@@ -277,7 +277,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		done();
 	});
 	it("kod 400 blokada 'on', nasłuch lokalny", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.addCallback(function(data, done){
 			data.allow(false);
 			done();
@@ -292,7 +292,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		});
 	});
 	it("kod 200 blokada 'off', nasłuch lokalny", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.addCallback(function(data, done){
 			data.allow(true);
 			done();
@@ -307,7 +307,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		});
 	});
 	it("kod 400 blokada 'on', nasłuch lokalny od parent module", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.addCallback(function(data, done){
 			data.allow(false);
 			done();
@@ -322,7 +322,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		});
 	});
 	it("kod 200 blokada 'on' - nie zadziała bo nasłuch lokalny ale od modułu niespokrewnionego", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.addCallback(function(data, done){
 			data.allow(false);
 			done();
@@ -337,7 +337,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		});
 	});
 	it("kod 400 blokada 'on', nasłuch publiczny od modułu niespokrewnionego", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.setPublic();
 		event1.addCallback(function(data, done){
 			data.allow(false);
@@ -353,7 +353,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		});
 	});
 	it("kod 200 blokada 'on' - nie zadziała bo nasłuch oczekuje podtypu 'dummy' którego event nie ma", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.setSubtype("dummy");
 		event1.addCallback(function(data, done){
 			data.allow(false);
@@ -369,7 +369,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		});
 	});
 	it("kod 400 blokada 'on' - nasłuch publiczny, emiter path '/act1'", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.setEmiterRegexp(/act1/);
 		event1.setPublic();
 		event1.addCallback(function(data, done){
@@ -386,7 +386,7 @@ describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
 		});
 	});
 	it("kod 200 blokada 'on' - nasłuch publiczny, emiter path '/dummy' -nie ma takiej ścieżki", function(done){
-		var event1= new Core.Event.OnStartAction.Subscriber();
+		var event1= new Core.Event.Action.OnStartAction.Subscriber();
 		event1.setEmiterRegexp(/dummy/);
 		event1.setPublic();
 		event1.addCallback(function(data, done){

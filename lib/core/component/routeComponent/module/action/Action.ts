@@ -42,21 +42,21 @@ class Action extends RouteComponent {
 			param.init();
 		};
 	}
-	protected addQuery(param:Param){
+	public addQuery(param:Param){
 		this.queryList.push(param);
 		param.setParent(this);
 	}
 	public getQueryList():Param[]{
 		return this.queryList;
 	}
-	protected addParam(param:Param){
+	public addParam(param:Param){
 		this.paramList.push(param);
 		param.setParent(this);
 	}
 	public getParamList():Param[]{
 		return this.paramList;
 	}
-	protected addBody(param:Param){
+	public addBody(param:Param){
 		this.bodyList.push(param);
 		param.setParent(this);
 	}
@@ -91,11 +91,11 @@ class Action extends RouteComponent {
 		}
 	}
 	protected requestHandler(req:express.Request, res:express.Response){
-		var onStartActionPublisher = new Event.OnStartAction.Publisher();
+		var onStartActionPublisher = new Event.Action.OnStartAction.Publisher();
 		var a = Object;
 		onStartActionPublisher.setRawData(a)
 		this.publish(onStartActionPublisher)
-		.then((response:Event.OnStartAction.Response)=>{
+		.then((response:Event.Action.OnStartAction.Response)=>{
 			if(response.isAllow()) {
 				res.sendStatus(200);
 			} else {

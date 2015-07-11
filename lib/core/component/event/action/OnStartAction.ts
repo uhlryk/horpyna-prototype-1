@@ -1,4 +1,4 @@
-import BaseEvent = require("./BaseEvent");
+import BaseEvent = require("../BaseEvent");
 var TYPE_NAME = "OnStartAction";
 /**
  * Event odpala się na początku akcji
