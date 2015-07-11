@@ -1,5 +1,5 @@
 import Event = require("./event/Event");
-import Debuger = require("../util/Debuger");
+import Util = require("../util/Util");
 /**
  * Klasa bazowa do wszystkich obiektów które są kompoentami. Nazwa jest obowiązkowa
  * ponieważ jest to wskaźnik na obiekt.
@@ -12,13 +12,13 @@ class Component{
 	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
 	private name:string;
 	private parent:Component;
-	private debuger: Debuger;
+	private debuger: Util.Debuger;
 	public static count = 0;
 	constructor(name:string){
 		this.name = name;
 		this.checkName(name);
 		Component.count++;
-		this.debuger = new Debuger("component:"+this.name+":");
+		this.debuger = new Util.Debuger("component:"+this.name+":");
 		this.debug('constructor %s a', this.name);
 	}
 	public debug(...args: any[]){

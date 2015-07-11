@@ -2,6 +2,7 @@ import RouteComponent = require("../RouteComponent");
 import Event = require("../../event/Event");
 import Action = require("./action/Action");
 import Model = require("./model/Model");
+import Util = require("../../../util/Util");
 class Module extends RouteComponent{
 	private actionList:Action[];
 	private defaultActionList:Action[];//może być więcej niż jedna akcja domyślna więc są one jako lista

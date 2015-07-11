@@ -1,4 +1,4 @@
-import Promise = require("../util/Promise");
+import Util = require("../util/Util");
 import Connection = require("./connection/Connection");
 /**
  * Obsługuje komunikację z bazą danych
@@ -45,8 +45,8 @@ class DbManager {
 	public init(){
 
 	}
-	public build():Promise<any>{
-		return Promise.map(this.connectionList, function (connection:Connection) {
+	public build():Util.Promise<any>{
+		return Util.Promise.map(this.connectionList, function (connection:Connection) {
 			return connection.getDb().sync({force:true});
 		});
 	}
