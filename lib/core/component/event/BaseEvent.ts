@@ -63,6 +63,16 @@ export class Publisher extends BaseRawDataEvent {
 	public getSubtype():string{
 		return this.subtype;
 	}
+	public getCloneData():Object{
+		var cloneData = Object;
+		var rawData =  this.getRawData();
+		for (var key in this) {
+			if(Object.prototype.hasOwnProperty.call(rawData, key)) {
+				cloneData[key] = rawData[key];
+			}
+		}
+		return cloneData;
+	}
 }
 export interface ISubscriberCallback<T extends Data>{
 	(data:T, done):void;
@@ -93,7 +103,7 @@ export class Subscriber extends BaseEvent{
 		return this.callback;
 	}
 	public setPublic(publicEvent?:boolean){
-		if(publicEvent === undefined ) publicEvent = false;
+		if(publicEvent === undefined ) publicEvent = true;
 		this.publicEvent= publicEvent;
 	}
 	public isPublic():boolean{

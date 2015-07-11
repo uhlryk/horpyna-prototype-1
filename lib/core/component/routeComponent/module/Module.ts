@@ -118,7 +118,6 @@ class Module extends RouteComponent{
 	}
 	protected callSubscribers(type:string, subtype:string, emiterPath:string, isPublic:boolean, data:Object, done):void{
 		Util.Promise.map(this.subscriberList, (subscriber:Event.BaseEvent.Subscriber)=> {
-			//tu logika testów type, subtype i i nazw komponentów
 			if(subscriber.isPublic() !== isPublic) {
 				return;
 			}

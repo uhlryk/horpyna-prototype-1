@@ -260,3 +260,146 @@ describe("Check db connection", function(){
 			});
 	});
 });
+describe("sprawdza działanie subskrypcji na event OnStartAction", function(){
+	var moduleParent1, moduleParent2, moduleChild1;
+	beforeEach(function(done){
+		app = require('./helpers/app')();
+		myApp = new Core.Application();
+		moduleParent1 = new Core.Module("modu1");
+		myApp.addModule(moduleParent1);
+		moduleChild1 = new Core.Module("child1");
+		moduleParent1.addModule(moduleChild1);
+		var action1 = new Core.Action(Core.Action.GET, "act1");
+		moduleChild1.addAction(action1);
+		moduleParent2 = new Core.Module("modu2");
+		myApp.addModule(moduleParent2);
+		app.use(myApp.getMiddleware());
+		done();
+	});
+	it("kod 400 blokada 'on', nasłuch lokalny", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.addCallback(function(data, done){
+			data.allow(false);
+			done();
+		});
+		moduleChild1.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(400);
+					done();
+				});
+		});
+	});
+	it("kod 200 blokada 'off', nasłuch lokalny", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.addCallback(function(data, done){
+			data.allow(true);
+			done();
+		});
+		moduleChild1.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+	});
+	it("kod 400 blokada 'on', nasłuch lokalny od parent module", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.addCallback(function(data, done){
+			data.allow(false);
+			done();
+		});
+		moduleParent1.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(400);
+					done();
+				});
+		});
+	});
+	it("kod 200 blokada 'on' - nie zadziała bo nasłuch lokalny ale od modułu niespokrewnionego", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.addCallback(function(data, done){
+			data.allow(false);
+			done();
+		});
+		moduleParent2.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+	});
+	it("kod 400 blokada 'on', nasłuch publiczny od modułu niespokrewnionego", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.setPublic();
+		event1.addCallback(function(data, done){
+			data.allow(false);
+			done();
+		});
+		moduleParent2.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(400);
+					done();
+				});
+		});
+	});
+	it("kod 200 blokada 'on' - nie zadziała bo nasłuch oczekuje podtypu 'dummy' którego event nie ma", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.setSubtype("dummy");
+		event1.addCallback(function(data, done){
+			data.allow(false);
+			done();
+		});
+		moduleParent1.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+	});
+	it("kod 400 blokada 'on' - nasłuch publiczny, emiter path '/act1'", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.setEmiterRegexp(/act1/);
+		event1.setPublic();
+		event1.addCallback(function(data, done){
+			data.allow(false);
+			done();
+		});
+		moduleParent2.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(400);
+					done();
+				});
+		});
+	});
+	it("kod 200 blokada 'on' - nasłuch publiczny, emiter path '/dummy' -nie ma takiej ścieżki", function(done){
+		var event1= new Core.Event.OnStartAction.Subscriber();
+		event1.setEmiterRegexp(/dummy/);
+		event1.setPublic();
+		event1.addCallback(function(data, done){
+			data.allow(false);
+			done();
+		});
+		moduleParent2.subscribe(event1);
+		myApp.init().then(function(){
+			request(app).get("/modu1/child1/act1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+	});
+});

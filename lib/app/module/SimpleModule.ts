@@ -12,14 +12,12 @@ class SimpleModule extends  Module{
 		var onStartActionEvent = new OnStartActionEvent.Subscriber();
 		onStartActionEvent.setPublic();
 		onStartActionEvent.addCallback(function(data:OnStartActionEvent.Data, done){
-			console.log("public");
 			data.allow(true);
 			done();
 		});
 		this.subscribe(onStartActionEvent);
 		var onStartActionEvent2 = new OnStartActionEvent.Subscriber();
 		onStartActionEvent2.addCallback(function(data:OnStartActionEvent.Data, done){
-			console.log("private");
 			data.allow(true);
 			done();
 		});
