@@ -5,7 +5,7 @@ class Create extends BaseQuery{
 	private values:Object;
 	constructor(){
 		super();
-		this.rawValues = Object;
+		this.rawValues = new Object();
 		this.values = Object;
 	}
 	public addValue(columnName:string, value:any){
@@ -29,7 +29,7 @@ class Create extends BaseQuery{
 	 * tylko istniejące są dodawane do zbioru poprawnych wertości
 	 */
 	private filterModelColumn(){
-		this.values = Object;
+		this.values = new Object();
 		for (var columnName in this.rawValues) {
 			if(Object.prototype.hasOwnProperty.call(this.rawValues, columnName)) {
 				if(this.getModel() && this.getModel().getColumn(columnName)) {
@@ -40,7 +40,6 @@ class Create extends BaseQuery{
 	}
 	public run(){
 		this.filterModelColumn();
-		console.log("A1");
 		this.getModel().getModel().create(this.values);
 	}
 }

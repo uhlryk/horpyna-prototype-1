@@ -5,7 +5,6 @@ class ResourceModule extends  SimpleModule{
 	public static RESOURCE_MODEL = "model";
 	public onConstructor(){
 		super.onConstructor();
-		console.log("A1");
 		var resourceModel = new Core.Model(ResourceModule.RESOURCE_MODEL);
 		this.addModel(resourceModel);
 	}
