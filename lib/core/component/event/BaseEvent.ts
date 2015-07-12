@@ -66,7 +66,7 @@ export class Publisher extends BaseRawDataEvent {
 	public getCloneData():Object{
 		var cloneData = Object;
 		var rawData =  this.getRawData();
-		for (var key in this) {
+		for (var key in rawData) {
 			if(Object.prototype.hasOwnProperty.call(rawData, key)) {
 				cloneData[key] = rawData[key];
 			}

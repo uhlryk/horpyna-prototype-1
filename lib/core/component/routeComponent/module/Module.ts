@@ -12,12 +12,16 @@ class Module extends RouteComponent{
 	private defaultModule : Module;
 	private subscriberList:Event.BaseEvent.Subscriber[];
 	constructor(name:string){
-		super(name);
 		this.actionList = [];
 		this.defaultActionList = [];
 		this.moduleList = [];
 		this.modelList = [];
 		this.subscriberList = [];
+		super(name);
+		this.onConstructor();
+	}
+	public onConstructor(){
+
 	}
 	public init():void{
 		this.onInit();

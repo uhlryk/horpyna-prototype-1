@@ -69,7 +69,7 @@ class Component{
 	public publish(publisher:Event.BaseEvent.Publisher):Util.Promise<any>{
 		return new Util.Promise<any>((resolve) => {
 			var rawDataCopy = publisher.getCloneData();
-			var emiterPath: string = "/";
+			var emiterPath: string = "";
 			return this.emitPublisher(publisher.getType(), publisher.getSubtype(), emiterPath, rawDataCopy)
 			.then(()=>{
 				var response = new publisher.responseObject(publisher.getType());

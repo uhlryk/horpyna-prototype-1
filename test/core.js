@@ -403,3 +403,57 @@ describe("sprawdza działanie subskrypcji na event Action.BeforeStart", function
 		});
 	});
 });
+describe("sprawdza działanie ResourceModule", function(){
+	var moduleResource1;
+	before(function(done){
+		app = require('./helpers/app')();
+		myApp = new Core.Application();
+		myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
+		moduleResource1 = new Core.ResourceModule("res1");
+		myApp.addModule(moduleResource1);
+		var resModel = moduleResource1.getModel(Core.ResourceModule.RESOURCE_MODEL);
+		var nameCol = new Core.Column.StringColumn("name",50);
+		resModel.addColumn(nameCol);
+		var passCol = new Core.Column.StringColumn("pass",50);
+		resModel.addColumn(passCol);
+		app.use(myApp.getMiddleware());
+		myApp.init().then(function() {
+			done();
+		});
+	});
+	it("kod 200 list", function(done){
+		request(app).get("/res1/")
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(200);
+				done();
+			});
+	});
+	it("kod 200 detail", function(done){
+		request(app).get("/res1/1")
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(200);
+				done();
+			});
+	});
+	it("kod 200 create", function(done){
+		request(app).post("/res1/")
+		.end(function (err, res) {
+			expect(res.status).to.be.equal(200);
+			done();
+		});
+	});
+	it("kod 200 edit", function(done){
+		request(app).put("/res1/1")
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(200);
+				done();
+			});
+	});
+	it("kod 200 delete", function(done){
+		request(app).delete("/res1/1")
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(200);
+				done();
+			});
+	});
+});

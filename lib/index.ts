@@ -5,4 +5,6 @@ export import Model = require("./core/component/routeComponent/module/model/Mode
 export import Column = require("./core/component/routeComponent/module/model/column/Column");
 export import Action = require("./core/component/routeComponent/module/action/Action");
 export import Param = require("./core/component/routeComponent/module/action/param/Param");
+export import Query = require("./core/component/routeComponent/module/query/Query");
 export import SimpleModule = require("./app/module/SimpleModule");
+export import ResourceModule = require("./app/module/ResourceModule");
