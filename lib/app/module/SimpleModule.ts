@@ -5,66 +5,68 @@ import Model = require("../../core/component/routeComponent/module/model/Model")
 import Event = require("../../core/component/event/Event");
 
 class SimpleModule extends  Module{
+	public static ACTION_LIST = "list";
+	public static ACTION_DETAIL = "detail";
+	public static ACTION_CREATE = "create";
+	public static ACTION_UPDATE = "update";
+	public static ACTION_DELETE = "delete";
 	public onInit(){
 		super.onInit();
 
-		var listAction:Action = new Action(Action.GET, "list");
+		var listAction:Action = new Action(Action.GET, SimpleModule.ACTION_LIST);
 		this.addAction(listAction);
-		var onListAction = new Event.Action.OnAction.Subscriber();
+		var onListAction = new Event.Action.OnReady.Subscriber();
 		onListAction.setEmiterRegexp(/list$/);
 		onListAction.addCallback(this.onListAction);
 		this.subscribe(onListAction);
 
-		var detailAction:Action = new Action(Action.GET, "detail");
+		var detailAction:Action = new Action(Action.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(detailAction);
 		var idParam:Param= new Param("id");
 		detailAction.addParam(idParam);
-		var onDetailAction = new Event.Action.OnAction.Subscriber();
+		var onDetailAction = new Event.Action.OnReady.Subscriber();
 		onDetailAction.setEmiterRegexp(/detail$/);
 		onDetailAction.addCallback(this.onDetailAction);
 		this.subscribe(onDetailAction);
 
-		var createAction:Action = new Action(Action.POST, "create");
+		var createAction:Action = new Action(Action.POST, SimpleModule.ACTION_CREATE);
 		this.addAction(createAction);
-		var onCreateActionEvent = new Event.Action.OnAction.Subscriber();
+		var onCreateActionEvent = new Event.Action.OnReady.Subscriber();
 		onCreateActionEvent.setEmiterRegexp(/create$/);
 		onCreateActionEvent.addCallback(this.onCreateAction);
 		this.subscribe(onCreateActionEvent);
 
-		var updateAction:Action = new Action(Action.PUT, "update");
+		var updateAction:Action = new Action(Action.PUT, SimpleModule.ACTION_UPDATE);
 		this.addAction(updateAction);
 		var idParam:Param= new Param("id");
 		updateAction.addParam(idParam);
-		var onUpdateAction = new Event.Action.OnAction.Subscriber();
+		var onUpdateAction = new Event.Action.OnReady.Subscriber();
 		onUpdateAction.setEmiterRegexp(/update$/);
 		onUpdateAction.addCallback(this.onUpdateAction);
 		this.subscribe(onUpdateAction);
 
-		var deleteAction:Action = new Action(Action.DELETE, "delete");
+		var deleteAction:Action = new Action(Action.DELETE, SimpleModule.ACTION_DELETE);
 		this.addAction(deleteAction);
 		var idParam:Param= new Param("id");
 		deleteAction.addParam(idParam);
-		var onDeleteAction = new Event.Action.OnAction.Subscriber();
+		var onDeleteAction = new Event.Action.OnReady.Subscriber();
 		onDeleteAction.setEmiterRegexp(/delete$/);
 		onDeleteAction.addCallback(this.onDeleteAction);
 		this.subscribe(onDeleteAction);
-
-		var deleteAction = new Action(Action.DELETE, "delete");
-		this.addAction(deleteAction);
 	}
-	public onListAction (data:Event.Action.OnAction.Data, done){
+	public onListAction (data:Event.Action.OnReady.Data, done){
 		done();
 	}
-	public onDetailAction (data:Event.Action.OnAction.Data, done){
+	public onDetailAction (data:Event.Action.OnReady.Data, done){
 		done();
 	}
-	public onCreateAction (data:Event.Action.OnAction.Data, done){
+	public onCreateAction (data:Event.Action.OnReady.Data, done){
 		done();
 	}
-	public onUpdateAction (data:Event.Action.OnAction.Data, done){
+	public onUpdateAction (data:Event.Action.OnReady.Data, done){
 		done();
 	}
-	public onDeleteAction (data:Event.Action.OnAction.Data, done){
+	public onDeleteAction (data:Event.Action.OnReady.Data, done){
 		done();
 	}
 }

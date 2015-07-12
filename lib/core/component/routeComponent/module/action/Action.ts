@@ -91,14 +91,22 @@ class Action extends RouteComponent {
 		}
 	}
 	protected requestHandler(req:express.Request, res:express.Response){
-		var onStartActionPublisher = new Event.Action.OnStartAction.Publisher();
-		var a = Object;
-		onStartActionPublisher.setRawData(a)
-		this.publish(onStartActionPublisher)
-		.then((response:Event.Action.OnStartAction.Response)=>{
+		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
+		this.publish(beforeStartPublisher)
+		.then((response:Event.Action.BeforeStart.Response)=>{
 			if(response.isAllow()) {
-				res.sendStatus(200);
+				var onReadyPublisher = new Event.Action.OnReady.Publisher();
+				onReadyPublisher.setQuery(req.query);
+				onReadyPublisher.setBody(req.body);
+				onReadyPublisher.setParams(req.params);
+				this.publish(onReadyPublisher)
+				.then((response:Event.Action.OnReady.Response)=>{
+					//TODO: widoki i szablony
+					//TODO: event BeforeEnd
+					res.sendStatus(200);
+				});
 			} else {
+				//TODO: przemyśleć obsługę blokady
 				res.sendStatus(400);
 			}
 		});

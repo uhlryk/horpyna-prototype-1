@@ -1,3 +1,2 @@
-export import OnStartAction = require("./OnStartAction");
-
-export import OnAction = require("./OnAction");
+export import BeforeStart = require("./BeforeStart");
+export import OnReady = require("./OnReady");

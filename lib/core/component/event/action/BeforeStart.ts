@@ -1,5 +1,5 @@
 import BaseEvent = require("../BaseEvent");
-var TYPE_NAME = "OnStartAction";
+var TYPE_NAME = "Action.BeforeStart";
 /**
  * Event odpala się na początku akcji
  * Jeśli subskrybent
