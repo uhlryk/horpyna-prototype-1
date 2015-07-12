@@ -38,7 +38,7 @@ class BaseRawDataEvent extends BaseEvent {
 	private rawData:Object;
 	constructor(type:string){
 		super(type);
-		this.rawData = Object;
+		this.rawData = new Object();
 	}
 	public setRawData(rawData:Object){
 		this.rawData = rawData;
@@ -64,7 +64,7 @@ export class Publisher extends BaseRawDataEvent {
 		return this.subtype;
 	}
 	public getCloneData():Object{
-		var cloneData = Object;
+		var cloneData = new Object();
 		var rawData =  this.getRawData();
 		for (var key in rawData) {
 			if(Object.prototype.hasOwnProperty.call(rawData, key)) {

@@ -137,7 +137,8 @@ class Module extends RouteComponent{
 				return;
 			}
 			var callback = subscriber.getCallback();
-			var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType(), data);
+			var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType());
+			dataResponse.setRawData(data);
 			return new Util.Promise<void>((resolve:() => void) => {
 				callback(dataResponse, resolve);
 			});

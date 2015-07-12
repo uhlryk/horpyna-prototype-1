@@ -259,6 +259,7 @@ describe("sprawdza działanie subskrypcji na event Action.BeforeStart", function
 		var event1= new Core.Event.Action.BeforeStart.Subscriber();
 		event1.addCallback(function(data, done){
 			data.allow(false);
+			console.log(data.getRawData());
 			done();
 		});
 		moduleChild1.subscribe(event1);
