@@ -401,6 +401,15 @@ describe("sprawdza działanie ResourceModule", function(){
 			done();
 		});
 	});
+	it("kod 200 create", function(done){
+		request(app).post("/res1/")
+			.send({name : "olek"})
+			.send({pass : "bolek"})
+			.end(function (err, res) {
+				expect(res.status).to.be.equal(200);
+				done();
+			});
+	});
 	it("kod 200 list", function(done){
 		request(app).get("/res1/")
 			.end(function (err, res) {
@@ -415,17 +424,11 @@ describe("sprawdza działanie ResourceModule", function(){
 				done();
 			});
 	});
-	it("kod 200 create", function(done){
-		request(app).post("/res1/")
-			.send({name : "olek"})
-			.send({pass : "bolek"})
-		.end(function (err, res) {
-			expect(res.status).to.be.equal(200);
-			done();
-		});
-	});
+
 	it("kod 200 edit", function(done){
 		request(app).put("/res1/1")
+			.send({name : "ala"})
+			.send({pass : "doda"})
 			.end(function (err, res) {
 				expect(res.status).to.be.equal(200);
 				done();

@@ -1,14 +1,12 @@
-/// <reference path="../../../../../../typings/tsd.d.ts" />
-import Sequelize = require("sequelize");
 import Component = require("../../../Component");
 import Column = require("./column/Column");
-
+import Orm = require("../../../../util/Orm");
 import Connection = require("../../../../dbManager/connection/Connection");
 class Model extends Component{
 	private columnList:Column.BaseColumn[];
 	private connection:Connection;
 	private connectionName:string;
-	private model : Sequelize.Model<any,any>;
+	private model : Orm.Model<any,any>;
 	/**
 	 * Jeśli true to znaczy że połączenie jest dodane.
 	 */
@@ -76,7 +74,7 @@ class Model extends Component{
 		}
 		this.model = this.connection.getDb().define(tableName, tableStructure);
 	}
-	public getModel(){
+	public getModel():Orm.Model<any, any>{
 		return this.model;
 	}
 }
