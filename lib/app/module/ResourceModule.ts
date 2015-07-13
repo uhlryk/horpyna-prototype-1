@@ -12,49 +12,55 @@ class ResourceModule extends  SimpleModule{
 		super.onInit();
 
 	}
-	public onListAction (data:Core.Event.Action.OnReady.Data, done){
+	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.List();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 		list.run()
-		.then(function(modelList){
-			console.log(modelList[0].toJSON());
-			done();
-		});
-	}
-	public onDetailAction (data:Core.Event.Action.OnReady.Data, done){
-		var find = new Core.Query.Find();
-		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		find.where("id",data.getParams()['id']);
-		find.run()
-			.then(function(model){
-				console.log(model.toJSON());
+			.then(function(modelList){
+				var responseContent = [];
+				response.setContent(responseContent);
+					
+				for(var i=0;i<modelList.length; i++){
+					var model = modelList[i];
+					responseContent.push(model.toJSON());
+				}
 				done();
 			});
 	}
-	public onCreateAction (data:Core.Event.Action.OnReady.Data, done){
+	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
+		var find = new Core.Query.Find();
+		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+		find.where("id",request.getParam('id'));
+		find.run()
+			.then(function(model){
+				response.setContent(model.toJSON());	
+				done();
+			});
+	}
+	public onCreateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var create = new Core.Query.Create();
 		create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		create.populate(data.getBody());
+		create.populate(request.getBodyList());
 		create.run()
-		.then(function(model){
-				console.log(model.toJSON());
-			done();
-		});
+			.then(function(model){
+				response.setContent(model.toJSON());
+				done(model.toJSON());
+			});
 	}
-	public onUpdateAction (data:Core.Event.Action.OnReady.Data, done){
+	public onUpdateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var update = new Core.Query.Update();
 		update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		update.where("id",data.getParams()['id']);
-		update.populate(data.getBody());
+		update.where("id",request.getParam('id'));
+		update.populate(request.getBodyList());
 		update.run()
 			.then(function(){
 				done();
 			});
 	}
-	public onDeleteAction (data:Core.Event.Action.OnReady.Data, done){
+	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.Delete();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		list.where("id",data.getParams()['id']);
+		list.where("id",request.getBodyList());
 		list.run()
 			.then(function(){
 				done();

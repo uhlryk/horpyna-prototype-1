@@ -406,6 +406,7 @@ describe("sprawdza działanie ResourceModule", function(){
 			.send({name : "olek"})
 			.send({pass : "bolek"})
 			.end(function (err, res) {
+				console.log(res.body);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -413,6 +414,7 @@ describe("sprawdza działanie ResourceModule", function(){
 	it("kod 200 list", function(done){
 		request(app).get("/res1/")
 			.end(function (err, res) {
+				console.log(res.body);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -420,6 +422,7 @@ describe("sprawdza działanie ResourceModule", function(){
 	it("kod 200 detail", function(done){
 		request(app).get("/res1/1")
 			.end(function (err, res) {
+				console.log(res.body);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -430,6 +433,7 @@ describe("sprawdza działanie ResourceModule", function(){
 			.send({name : "ala"})
 			.send({pass : "doda"})
 			.end(function (err, res) {
+				console.log(res.body);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -437,6 +441,7 @@ describe("sprawdza działanie ResourceModule", function(){
 	it("kod 200 delete", function(done){
 		request(app).delete("/res1/1")
 			.end(function (err, res) {
+				console.log(res.body);
 				expect(res.status).to.be.equal(200);
 				done();
 			});

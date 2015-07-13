@@ -3,7 +3,15 @@ import express = require("express");
 import RouteComponent = require("../../RouteComponent");
 import Event = require("../../../event/Event");
 import Param = require("./param/Param");
+import Util = require("./../../../../util/Util");
+import Response = require("./Response");
+import Request = require("./Request");
+interface IActionHandler{
+	(request:Request, response:Response, done:()=>void):void;
+}
+
 class Action extends RouteComponent {
+	private actionHandler:IActionHandler;
 	private paramList:Param[];
 	private queryList:Param[];
 	private bodyList:Param[];
@@ -90,26 +98,53 @@ class Action extends RouteComponent {
 			}
 		}
 	}
+	public addActionHandler(actionHandler:IActionHandler){
+		this.actionHandler = actionHandler;
+	}
 	protected requestHandler(req:express.Request, res:express.Response){
+		var request = this.createRequest(req);
+		var response = new Response();	
+
 		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
 		this.publish(beforeStartPublisher)
-		.then((response:Event.Action.BeforeStart.Response)=>{
-			if(response.isAllow()) {
+		.then((resp:Event.Action.BeforeStart.Response)=>{
+			if(resp.isAllow()) {
+				//TODO: validacja formularzy w promise
 				var onReadyPublisher = new Event.Action.OnReady.Publisher();
 				onReadyPublisher.setQuery(req.query);
 				onReadyPublisher.setBody(req.body);
 				onReadyPublisher.setParams(req.params);
 				this.publish(onReadyPublisher)
-				.then((response:Event.Action.OnReady.Response)=>{
-					//TODO: widoki i szablony
-					//TODO: event BeforeEnd
-					res.sendStatus(200);
+				.then((responseOnReady:Event.Action.OnReady.Response)=> {
+					return new Util.Promise<void>((resolve:()=>void)=> {
+						if (this.actionHandler) {
+							this.actionHandler(request, response, resolve);
+						} else {
+							resolve();
+						}
+					})
+				})
+				.then(()=>{
+						res.status(response.getStatus()).send(response.getContent());
 				});
 			} else {
 				//TODO: przemyśleć obsługę blokady
 				res.sendStatus(400);
 			}
 		});
+	}
+	private createRequest(req:express.Request):Request{
+		var request = new Request();
+		for(var index in req.body){
+			request.addBody(index, req.body[index]);
+		}
+		for(var index in req.query){
+			request.addQuery(index, req.query[index]);
+		}
+		for(var index in req.params){
+			request.addParam(index, req.params[index]);
+		}
+		return request;
 	}
 	public getRequestHandler():express.RequestHandler{
 		return (req:express.Request, res:express.Response)=>{

@@ -43,4 +43,17 @@ export class Data extends BaseEvent.Data{
 		return data["body"];
 	}
 }
-export class Response extends BaseEvent.Response{}
+export class Response extends BaseEvent.Response{
+	public getQuery():Object{
+		var data = this.getRawData();
+		return data["params"];
+	}
+	public getParams():Object{
+		var data = this.getRawData();
+		return data["params"];
+	}
+	public getBody():Object{
+		var data = this.getRawData();
+		return data["body"];
+	}
+}
