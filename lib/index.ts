@@ -1,5 +1,6 @@
 export import Application = require("./core/Application");
 export import Module = require("./core/component/routeComponent/module/Module");
+export import View = require("./core/view/View");
 export import Event = require("./core/component/event/Event");
 export import Model = require("./core/component/routeComponent/module/model/Model");
 export import Column = require("./core/component/routeComponent/module/model/column/Column");

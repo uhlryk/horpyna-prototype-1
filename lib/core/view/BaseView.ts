@@ -1,9 +1,9 @@
 class BaseView{
-	private response;
+	private expressResponse;
 	private content:Object;
 	private status:number;
-	constructor(response){
-		this.response = response;
+	constructor(expressResponse){
+		this.expressResponse = expressResponse;
 		this.content = new Object();
 	}
 	public setStatus(value:number){
@@ -23,10 +23,10 @@ class BaseView{
 		return this.content;
 	}
 	protected getResponse(){
-		return this.response;
+		return this.expressResponse;
 	}
 	public render(){
-		this.response.status(this.status).send(this.content);
+		this.expressResponse.status(this.status).send(this.content);
 	}
 }
 export = BaseView;
