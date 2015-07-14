@@ -1,5 +1,0 @@
-class HandlebarsRender{
-	
-	
-}
-export = HandlebarsRender;

@@ -1,9 +1,12 @@
+/// <reference path="../../../../../../typings/tsd.d.ts" />
+import express = require("express");
 class Request{
 	public paramList:Object;
 	public queryList:Object;
 	public bodyList:Object;
-	
-	constructor(){
+	private expressRequest:express.Request;
+	constructor(expressRequest:express.Request){
+		this.expressRequest = expressRequest;
 		this.paramList = new Object();
 		this.queryList = new Object();
 		this.bodyList = new Object();

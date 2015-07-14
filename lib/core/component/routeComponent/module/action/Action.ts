@@ -98,19 +98,20 @@ class Action extends RouteComponent {
 	public addActionHandler(actionHandler:IActionHandler){
 		this.actionHandler = actionHandler;
 	}
-	protected requestHandler(req:express.Request, res:express.Response){
-		var request = this.createRequest(req);
-		var response = new Response();	
+	protected requestHandler(request:Request, response:Response){
+		
+		//var response = new Response();	
 
 		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
 		this.publish(beforeStartPublisher)
 		.then((resp:Event.Action.BeforeStart.Response)=>{
 			if(resp.isAllow()) {
+				response.setStatus(200);
 				//TODO: validacja formularzy w promise
 				var onReadyPublisher = new Event.Action.OnReady.Publisher();
-				onReadyPublisher.setQuery(req.query);
-				onReadyPublisher.setBody(req.body);
-				onReadyPublisher.setParams(req.params);
+				//onReadyPublisher.setQuery(req.query);
+				//onReadyPublisher.setBody(req.body);
+				//onReadyPublisher.setParams(req.params);
 				this.publish(onReadyPublisher)
 				.then((responseOnReady:Event.Action.OnReady.Response)=> {
 					return new Util.Promise<void>((resolve:()=>void)=> {
@@ -122,16 +123,18 @@ class Action extends RouteComponent {
 					})
 				})
 				.then(()=>{
-						res.status(response.getStatus()).send(response.getContent());
+						response.render();
+						//res.status(response.getStatus()).send(response.getContent());
 				});
 			} else {
+				response.setStatus(400);
 				//TODO: przemyśleć obsługę blokady
-				res.sendStatus(400);
+				response.render();
 			}
 		});
 	}
 	private createRequest(req:express.Request):Request{
-		var request = new Request();
+		var request = new Request(req);
 		for(var index in req.body){
 			request.addBody(index, req.body[index]);
 		}
@@ -143,9 +146,13 @@ class Action extends RouteComponent {
 		}
 		return request;
 	}
+	private createResponse(res:express.Response):Response{
+		var response = new Response(res, this.getViewClass());
+		return response;
+	}
 	public getRequestHandler():express.RequestHandler{
 		return (req:express.Request, res:express.Response)=>{
-			this.requestHandler(req,res);
+			this.requestHandler(this.createRequest(req),this.createResponse(res));
 		}
 	}
 }

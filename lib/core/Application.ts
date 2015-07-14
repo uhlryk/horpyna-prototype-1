@@ -30,6 +30,9 @@ class Application {
 		this.frontController.setDbManager(this.dbManager);
 		this.router = express.Router();
 	}
+	public setViewClass(viewClass){
+		this.componentManager.setViewClass(viewClass);
+	}
 	public addModule(moduleInstance:Module):void{
 		this.componentManager.addModule(moduleInstance);
 	}

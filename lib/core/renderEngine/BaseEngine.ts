@@ -1,4 +1,0 @@
-class BaseEngine{
-	
-}
-export = BaseEngine;

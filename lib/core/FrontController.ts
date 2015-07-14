@@ -1,4 +1,3 @@
-
 import Dispatcher = require("./dispatcher/Dispatcher");
 import ComponentManager = require("./component/ComponentManager");
 import DbManager = require("./dbManager/DbManager");
@@ -57,7 +56,7 @@ class FrontController {
 	public init():Promise<any>{
 		this.setup();
 		this.dbManager.init();
-		this.componentManager.initModules();
+		this.componentManager.init();
 		this.setConnectionToModels();
 		var promise = this.dbManager.build();
 		this.dispatcher.createRoutes(this.componentManager.getModuleList(), this.componentManager.getDefaultModule());

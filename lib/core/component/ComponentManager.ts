@@ -1,6 +1,7 @@
 import Module = require("./routeComponent/module/Module");
 import Component = require("./Component");
 import Util = require("../util/Util");
+import View = require("../view/View");
 class ComponentManager extends Component{
 	private moduleList:Module[];
 	/**
@@ -8,6 +9,7 @@ class ComponentManager extends Component{
 	 * Możemy więc przez jakiś moduł mieć dostęp do "/"
 	 */
 	private defaultModule : Module;
+	private viewClass;
 	constructor() {
 		super("ComponentManager");
 		this.moduleList = [];
@@ -28,13 +30,19 @@ class ComponentManager extends Component{
 	public getDefaultModule():Module{
 		return this.defaultModule;
 	}
-	public initModules(){
+	public init(){
+		if(!this.viewClass){
+			this.viewClass = View.BaseView; 
+		}
 		for(var name in this.moduleList){
 			var module:Module = this.moduleList[name];
+			module.setViewClass(this.viewClass);
 			module.init();
 		};
 	}
-
+	public setViewClass(viewClass){
+		this.viewClass = viewClass;
+	}
 	/**
 	 * Metoda ta odpalana jest przez któryś z modułów zależnych który przesyła w górę event.
 	 * W tym miejscu event przestaje być lokalnym i ta metoda w dół publikuje go do wszystkich

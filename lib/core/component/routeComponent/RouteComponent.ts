@@ -4,8 +4,10 @@
  *
  */
 import Component = require("../Component");
+
 class RouteComponent extends Component{
 	private route:string;
+	private viewClass;
 	constructor(name:string){
 		super(name);
 		this.route =  this.getName();
@@ -17,6 +19,12 @@ class RouteComponent extends Component{
 	}
 	public getRoute():string{
 		return this.route;
+	}
+	public setViewClass(viewClass){
+		this.viewClass = viewClass;
+	}
+	public getViewClass(){
+		return this.viewClass;
 	}
 }
 export = RouteComponent;

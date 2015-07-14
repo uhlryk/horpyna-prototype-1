@@ -10,7 +10,6 @@ class ResourceModule extends  SimpleModule{
 	}
 	public onInit() {
 		super.onInit();
-
 	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.List();
@@ -18,7 +17,7 @@ class ResourceModule extends  SimpleModule{
 		list.run()
 			.then(function(modelList){
 				var responseContent = [];
-				response.setContent(responseContent);
+				response.addContent(responseContent);
 					
 				for(var i=0;i<modelList.length; i++){
 					var model = modelList[i];
@@ -33,7 +32,7 @@ class ResourceModule extends  SimpleModule{
 		find.where("id",request.getParam('id'));
 		find.run()
 			.then(function(model){
-				response.setContent(model.toJSON());	
+				response.addContent(model.toJSON());	
 				done();
 			});
 	}
@@ -43,7 +42,7 @@ class ResourceModule extends  SimpleModule{
 		create.populate(request.getBodyList());
 		create.run()
 			.then(function(model){
-				response.setContent(model.toJSON());
+				response.addContent(model.toJSON());
 				done(model.toJSON());
 			});
 	}

@@ -27,9 +27,7 @@ class Component{
 	public init():void {
 		this.onInit();
 	}
-	protected onInit():void{
-		
-	}
+	protected onInit():void{}
 	/**
 	 * Metoda wywoływana jest gdy dany komponent jest dodawany do struktury innego komponentu.
 	 * Dodaje do komponentu referencje na parent component. Dodatkowo sprawdza czy dany komponent
