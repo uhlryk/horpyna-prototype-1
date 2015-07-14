@@ -3,7 +3,7 @@ import View = require("../../../../view/View");
 import express = require("express");
 class Response{
 	public status:number;
-	public view:View.BaseView;
+	public view:any;
 	private expressResponse:express.Response;
 	constructor(expressResponse:express.Response, viewClass){
 		this.status = 200;
@@ -20,10 +20,7 @@ class Response{
 		this.view.setStatus(this.status);
 		this.view.render();
 	}
-	public setView(view:View.BaseView){
-		this.view = view;
-	}
-	public getView():View.BaseView{
+	public getView():any{
 		return this.view;
 	}
 	public addValue(name:string, value:any){

@@ -20,8 +20,10 @@ class RouteComponent extends Component{
 	public getRoute():string{
 		return this.route;
 	}
-	public setViewClass(viewClass){
-		this.viewClass = viewClass;
+	public setViewClass(viewClass, force?:boolean){
+		if(!this.viewClass || force) {
+			this.viewClass = viewClass;
+		}
 	}
 	public getViewClass(){
 		return this.viewClass;

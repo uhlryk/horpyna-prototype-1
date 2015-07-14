@@ -1,6 +1,7 @@
 export import Application = require("./core/Application");
 export import Module = require("./core/component/routeComponent/module/Module");
 export import View = require("./core/view/View");
+export import Util = require("./core/util/Util");
 export import Event = require("./core/component/event/Event");
 export import Model = require("./core/component/routeComponent/module/model/Model");
 export import Column = require("./core/component/routeComponent/module/model/column/Column");
@@ -11,3 +12,4 @@ export import Param = require("./core/component/routeComponent/module/action/par
 export import Query = require("./core/component/routeComponent/module/query/Query");
 export import SimpleModule = require("./app/module/SimpleModule");
 export import ResourceModule = require("./app/module/ResourceModule");
+export import JadeResourceModule = require("./app/module/JadeResourceModule");
