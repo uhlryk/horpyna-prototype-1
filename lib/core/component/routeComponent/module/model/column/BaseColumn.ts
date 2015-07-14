@@ -42,11 +42,5 @@ class Column extends Component{
 	public build(){
 		return this.attributeOptions;
 	}
-	public init():void{
-		this.onInit();
-	}
-	protected onInit(){
-
-	}
 }
 export = Column;

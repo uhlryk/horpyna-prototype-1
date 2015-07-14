@@ -16,12 +16,9 @@ class Param extends Component {
 		this.param = param || name;
 		this.validatorList = [];
 	}
-	public init():void{
-		this.onInit();
-		this.initValidators();
-	}
 	protected onInit():void{
-
+		super.onInit();
+		this.initValidators();
 	}
 	public initValidators(){
 		for(var index in this.validatorList){

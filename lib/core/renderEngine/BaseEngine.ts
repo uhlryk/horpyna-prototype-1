@@ -1,0 +1,4 @@
+class BaseEngine{
+	
+}
+export = BaseEngine;

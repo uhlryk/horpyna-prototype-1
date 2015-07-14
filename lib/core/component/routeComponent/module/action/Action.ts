@@ -29,12 +29,9 @@ class Action extends RouteComponent {
 		this.queryList = [];
 		this.bodyList = [];
 	}
-	public init():void{
-		this.onInit();
-		this.initParams();
-	}
 	protected onInit():void{
-
+		super.onInit();
+		this.initParams();
 	}
 	public initParams(){
 		for(var index in this.paramList){

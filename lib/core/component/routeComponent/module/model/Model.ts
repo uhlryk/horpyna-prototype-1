@@ -16,8 +16,8 @@ class Model extends Component{
 		this.columnList = [];
 		this.connectionSet = false;
 	}
-	public init():void{
-		this.onInit();
+	protected onInit(){
+		super.onInit();
 		this.initColumns();
 	}
 	public initColumns(){
@@ -25,9 +25,6 @@ class Model extends Component{
 			var column:Column.BaseColumn = this.columnList[index];
 			column.init();
 		};
-	}
-	protected onInit(){
-
 	}
 	public addColumn(column:Column.BaseColumn){
 		this.columnList.push(column);

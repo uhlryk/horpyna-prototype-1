@@ -1,0 +1,5 @@
+class HandlebarsRender{
+	
+	
+}
+export = HandlebarsRender;

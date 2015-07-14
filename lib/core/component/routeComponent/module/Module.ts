@@ -23,8 +23,8 @@ class Module extends RouteComponent{
 	public onConstructor(){
 
 	}
-	public init():void{
-		this.onInit();
+	protected onInit():void{
+		super.onInit();
 		this.initModules();
 		this.initActions();
 		this.initModels();
@@ -46,13 +46,6 @@ class Module extends RouteComponent{
 			var action:Action = this.actionList[index];
 			action.init();
 		};
-	}
-	/**
-	 * Gdy moduł oparty jest na innym i go rozszerzamy to w tym miejscu najlepiej dodać do niego strukturę
-	 * Method is call in init which is called id in ModuleManager.run() method
-	 */
-	protected onInit(){
-
 	}
 	protected addAction(action:Action,isDefault?:boolean){
 		this.actionList.push(action);
