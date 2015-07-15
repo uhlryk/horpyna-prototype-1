@@ -1,16 +1,19 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 import View = require("../../../../view/View");
 import express = require("express");
+import BaseAction = require("./BaseAction");
 class Response{
 	public status:number;
 	public view:any;
 	private data:Object;
 	private expressResponse:express.Response;
-	constructor(expressResponse:express.Response, viewClass){
+	private action:BaseAction;
+	constructor(action:BaseAction,expressResponse:express.Response, viewClass){
 		this.status = 200;
 		this.data = new Object();
 		this.expressResponse = expressResponse;
 		this.view = new viewClass(this.expressResponse);
+		this.action = action;
 	}
 	public setStatus(value:number){
 		this.status = value;
@@ -29,7 +32,7 @@ class Response{
 	public addValue(name:string, value:any){
 		this.data[name] = value;
 	}
-	public addContent(value:any){
+	public setContent(value:any){
 		this.data['content'] = value;
 	}
 	public getData(name?:string):Object{
@@ -37,6 +40,9 @@ class Response{
 			return this.data[name];
 		}
 		return this.data;
+	}
+	public getAction():BaseAction{
+		return this.action;
 	}
 }
 export = Response;

@@ -17,7 +17,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			module1 = new Core.Module("res1");
 			myApp.addModule(module1);
 			myApp.setViewClass(Core.View.JadeView);
-			var action1 = new Core.Action(Core.Action.GET, "action1");
+			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
 			module1.addAction(action1);
 			app.use(myApp.getMiddleware());
 			action1.addActionHandler(function (request, response, done) {
@@ -62,7 +62,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			});
 		});
 		it("kod 200 create", function (done) {
-			request(app).post("/res1/")
+			request(app).post("/res1/create")
 				.send({name: "olek"})
 				.send({pass: "bolek"})
 				.end(function (err, res) {
@@ -71,7 +71,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				});
 		});
 		it("kod 200 list", function (done) {
-			request(app).get("/res1/")
+			request(app).get("/res1/list")
 				.end(function (err, res) {
 					//console.log(res.text);
 					expect(res.status).to.be.equal(200);
@@ -79,7 +79,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				});
 		});
 		it("kod 200 detail", function (done) {
-			request(app).get("/res1/1")
+			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
 					console.log(res.text);
 					expect(res.status).to.be.equal(200);
@@ -88,7 +88,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 		});
 
 		it("kod 200 edit", function (done) {
-			request(app).put("/res1/1")
+			request(app).put("/res1/update/1")
 				.send({name: "ala"})
 				.send({pass: "doda"})
 				.end(function (err, res) {
@@ -98,7 +98,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				});
 		});
 		it("kod 200 delete", function (done) {
-			request(app).delete("/res1/1")
+			request(app).delete("/res1/delete/1")
 				.end(function (err, res) {
 					//console.log(res.text);
 					expect(res.status).to.be.equal(200);

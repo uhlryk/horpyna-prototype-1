@@ -1,15 +1,18 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 import express = require("express");
+import BaseAction = require("./BaseAction");
 class Request{
 	public paramList:Object;
 	public queryList:Object;
 	public bodyList:Object;
 	private expressRequest:express.Request;
-	constructor(expressRequest:express.Request){
+	private action:BaseAction;
+	constructor(action:BaseAction, expressRequest:express.Request){
 		this.expressRequest = expressRequest;
 		this.paramList = new Object();
 		this.queryList = new Object();
 		this.bodyList = new Object();
+		this.action = action;
 	}
 	public addParam(name:string,value:any){this.paramList[name] = value;}
 	public getParam(name:string):any{return this.paramList[name];}
@@ -29,6 +32,8 @@ class Request{
 		delete this.bodyList[name];
 	}
 	public getBodyList():any{return this.bodyList;}
-
+	public getAction():BaseAction{
+		return this.action;
+	}
 }
 export = Request;

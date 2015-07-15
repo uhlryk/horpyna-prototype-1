@@ -4,8 +4,8 @@ import Action = require("./action/Action");
 import Model = require("./model/Model");
 import Util = require("../../../util/Util");
 class Module extends RouteComponent{
-	private actionList:Action[];
-	private defaultActionList:Action[];//może być więcej niż jedna akcja domyślna więc są one jako lista
+	private actionList:Action.BaseAction[];
+	private defaultActionList:Action.BaseAction[];//może być więcej niż jedna akcja domyślna więc są one jako lista
 	private modelList:Model[];
 	private defaultModel:Model;
 	private moduleList:Module[];
@@ -44,30 +44,30 @@ class Module extends RouteComponent{
 	}
 	public initActions(){
 		for(var index in this.actionList){
-			var action:Action = this.actionList[index];
+			var action:Action.BaseAction = this.actionList[index];
 			action.setViewClass(this.getViewClass());
 			action.init();
 		};
 	}
-	protected addAction(action:Action,isDefault?:boolean){
+	protected addAction(action:Action.BaseAction,isDefault?:boolean){
 		this.actionList.push(action);
 		action.setParent(this);
 		if(isDefault === true){
 			this.defaultActionList.push(action);
 		}
 	}
-	public getActionList():Action[]{
+	public getActionList():Action.BaseAction[]{
 		return this.actionList;
 	}
-	public getAction(name:string):Action{
+	public getAction(name:string):Action.BaseAction{
 		for(var index in this.actionList){
-			var action:Action = this.actionList[index];
+			var action:Action.BaseAction = this.actionList[index];
 			if(action.getName() === name){
 				return action;
 			}
 		}
 	}
-	public getDefaultActionList():Action[]{
+	public getDefaultActionList():Action.BaseAction[]{
 		return this.defaultActionList;
 	}
 	protected addModule(module:Module,isDefault?:boolean){

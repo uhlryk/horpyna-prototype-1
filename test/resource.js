@@ -31,8 +31,24 @@ describe("Funkcje Modułu ResourceModule", function() {
 				done();
 			});
 		});
+		it("kod 200 createform,", function (done) {
+			request(app).get("/res1/createform")
+				.end(function (err, res) {
+					console.log(res.body);
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+		it("kod 200 updateform,", function (done) {
+			request(app).get("/res1/updateform")
+				.end(function (err, res) {
+					console.log(res.body);
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
 		it("kod 200 create", function (done) {
-			request(app).post("/res1/")
+			request(app).post("/res1/create")
 				.send({name: "olek"})
 				.send({pass: "bolek"})
 				.end(function (err, res) {
@@ -42,7 +58,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 list", function (done) {
-			request(app).get("/res1/")
+			request(app).get("/res1/list")
 				.end(function (err, res) {
 					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
@@ -50,7 +66,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 detail", function (done) {
-			request(app).get("/res1/1")
+			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
 					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
@@ -59,7 +75,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 		});
 
 		it("kod 200 edit", function (done) {
-			request(app).put("/res1/1")
+			request(app).put("/res1/update/1")
 				.send({name: "ala"})
 				.send({pass: "doda"})
 				.end(function (err, res) {
@@ -69,7 +85,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 delete", function (done) {
-			request(app).delete("/res1/1")
+			request(app).delete("/res1/delete/1")
 				.end(function (err, res) {
 					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
@@ -77,5 +93,4 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 	});
-
 });

@@ -8,7 +8,7 @@ var myApp;
 /**
  * podstawowe testy, czy serwer działa i logowanie
  */
-describe.skip("Funkcje podstawowe", function() {
+describe("Funkcje podstawowe", function() {
 	describe("Application is instantioned, but none modules are added to Application. Basic app has route '/' and fallback 404 error: ", function () {
 		beforeEach(function (done) {
 			app = require('./core/app')();
@@ -137,9 +137,9 @@ describe.skip("Funkcje podstawowe", function() {
 			myApp = new Core.Application();
 			var module = new Core.Module("simple");
 			myApp.addModule(module);
-			var action1 = new Core.Action(Core.Action.GET, "action1");
+			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
 			module.addAction(action1);
-			var action2 = new Core.Action(Core.Action.GET, "action2");
+			var action2 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action2");
 			module.addAction(action2, true);
 			myApp.init();
 			app.use("/test/", myApp.getMiddleware());
@@ -191,7 +191,7 @@ describe.skip("Funkcje podstawowe", function() {
 			myApp = new Core.Application();
 			var myModule = new Core.Module("mod1");
 			myApp.addModule(myModule);
-			var myAction = new Core.Action(Core.Action.GET, "act1");
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
 			var myParam1 = new Core.Param("test");
 			var myParam2 = new Core.Param("par2");
@@ -217,7 +217,7 @@ describe.skip("Funkcje podstawowe", function() {
 			myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
 			var myModule = new Core.Module("module1");
 			myApp.addModule(myModule);
-			var myAction = new Core.Action(Core.Action.GET, "act1");
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
 			var myModel = new Core.Model("model1");
 			myModel.addColumn(new Core.Column.StringColumn("a1"));
@@ -249,7 +249,7 @@ describe.skip("Funkcje podstawowe", function() {
 			myApp.addModule(moduleParent1);
 			moduleChild1 = new Core.Module("child1");
 			moduleParent1.addModule(moduleChild1);
-			var action1 = new Core.Action(Core.Action.GET, "act1");
+			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			moduleChild1.addAction(action1);
 			moduleParent2 = new Core.Module("modu2");
 			myApp.addModule(moduleParent2);

@@ -24,29 +24,29 @@ class Dispatcher{
 			res.sendStatus(404);
 		});
 	}
-	private createMethodRoutes(routeName:string, action:Action){
+	private createMethodRoutes(routeName:string, action:Action.BaseAction){
 		var handler = action.getRequestHandler();
 		switch(action.getMethod()){
-			case Action.ALL:
+			case Action.BaseAction.ALL:
 				this.router.all(routeName,handler);
 				break;
-			case Action.GET:
+			case Action.BaseAction.GET:
 				this.router.get(routeName,handler);
 				break;
-			case Action.POST:
+			case Action.BaseAction.POST:
 				this.router.post(routeName,handler);
 				break;
-			case Action.PUT:
+			case Action.BaseAction.PUT:
 				this.router.put(routeName,handler);
 				break;
-			case Action.DELETE:
+			case Action.BaseAction.DELETE:
 				this.router.delete(routeName,handler);
 				break;
 		}
 	}
-	private createActionRoutes(routeName:string, actionList:Action[], defaultActionList?:Action[]){
+	private createActionRoutes(routeName:string, actionList:Action.BaseAction[], defaultActionList?:Action.BaseAction[]){
 		for(var actionIndex in actionList) {
-			var action:Action = actionList[actionIndex];
+			var action:Action.BaseAction = actionList[actionIndex];
 			var newRouteName;
 			if(!defaultActionList || defaultActionList.indexOf(action) === -1){//nie jest na liście default
 				newRouteName = this.buildRoute(routeName, action.getRoute());

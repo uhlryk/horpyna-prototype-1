@@ -17,7 +17,7 @@ class ResourceModule extends  SimpleModule{
 		list.run()
 			.then(function(modelList){
 				var responseContent = [];
-				response.addContent(responseContent);
+				response.setContent(responseContent);
 				for(var i=0;i<modelList.length; i++){
 					var model = modelList[i];
 					responseContent.push(model.toJSON());
@@ -26,12 +26,13 @@ class ResourceModule extends  SimpleModule{
 			});
 	}
 	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
+		//console.log(request.getAction().getName());
 		var find = new Core.Query.Find();
 		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 		find.where("id",request.getParam('id'));
 		find.run()
 			.then(function(model){
-				response.addContent(model.toJSON());
+				response.setContent(model.toJSON());
 				done();
 			});
 	}
@@ -41,7 +42,7 @@ class ResourceModule extends  SimpleModule{
 		create.populate(request.getBodyList());
 		create.run()
 			.then(function(model){
-				response.addContent(model.toJSON());
+				response.setContent(model.toJSON());
 				done(model.toJSON());
 			});
 	}
