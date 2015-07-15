@@ -98,14 +98,42 @@ class Action extends RouteComponent {
 	public addActionHandler(actionHandler:IActionHandler){
 		this.actionHandler = actionHandler;
 	}
+	protected validateRequest(request:Request){
+		for(var requestParamName in request.getBodyList()){
+			var actionParam:Param = this.getBody(requestParamName);
+			if(actionParam){
+				actionParam.validate();
+			} else{
+				request.removeBody(requestParamName);
+			}
+		}
+		for(var requestParamName in request.getQueryList()){
+			var actionParam:Param = this.getQuery(requestParamName);
+			if(actionParam){
+				actionParam.validate();
+			} else{
+				request.removeQuery(requestParamName);
+			}
+		}
+		for(var requestParamName in request.getParamList()){
+			var actionParam:Param = this.getParam(requestParamName);
+			if(actionParam){
+				actionParam.validate();
+			} else{
+				request.removeParam(requestParamName);
+			}
+		}
+		console.log("-----");
+		console.log(request.getBodyList());
+		console.log(request.getParamList());
+		console.log("-----");
+	}
 	protected requestHandler(request:Request, response:Response){
-
-		//var response = new Response();
-
 		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
 		this.publish(beforeStartPublisher)
 		.then((resp:Event.Action.BeforeStart.Response)=>{
 			if(resp.isAllow()) {
+				this.validateRequest(request);
 				response.setStatus(200);
 				//TODO: validacja formularzy w promise
 				var onReadyPublisher = new Event.Action.OnReady.Publisher();

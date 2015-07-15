@@ -44,5 +44,8 @@ class Param extends Component {
 			}
 		}
 	}
+	public validate(){
+
+	}
 }
 export  = Param;
