@@ -32,7 +32,6 @@ describe("sprawdza działanie widoku wygenerowanego przez jade", function(){
 	it("kod 200 z kodem html", function(done){
 		request(app).get("/res1/action1")
 			.end(function (err, res) {
-				console.log(res.text);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -61,7 +60,6 @@ describe("sprawdza działanie JadeResourceModule", function () {
 			.send({name: "olek"})
 			.send({pass: "bolek"})
 			.end(function (err, res) {
-				console.log(res.body);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -69,7 +67,7 @@ describe("sprawdza działanie JadeResourceModule", function () {
 	it("kod 200 list", function (done) {
 		request(app).get("/res1/")
 			.end(function (err, res) {
-				console.log(res.body);
+				//console.log(res.text);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -77,7 +75,7 @@ describe("sprawdza działanie JadeResourceModule", function () {
 	it("kod 200 detail", function (done) {
 		request(app).get("/res1/1")
 			.end(function (err, res) {
-				console.log(res.body);
+				console.log(res.text);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -88,7 +86,7 @@ describe("sprawdza działanie JadeResourceModule", function () {
 			.send({name: "ala"})
 			.send({pass: "doda"})
 			.end(function (err, res) {
-				console.log(res.body);
+				//console.log(res.text);
 				expect(res.status).to.be.equal(200);
 				done();
 			});
@@ -96,7 +94,7 @@ describe("sprawdza działanie JadeResourceModule", function () {
 	it("kod 200 delete", function (done) {
 		request(app).delete("/res1/1")
 			.end(function (err, res) {
-				console.log(res.body);
+				//console.log(res.text);
 				expect(res.status).to.be.equal(200);
 				done();
 			});

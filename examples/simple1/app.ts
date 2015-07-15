@@ -22,29 +22,23 @@
 import express = require('express');
 import bodyParser = require('body-parser');
 import Core = require('./../../lib/index');
-import MyModule = require('./modules/myModule/module');
-
 var app = express();
 app.use(bodyParser.json());
-//-----begin-------
-//var myApp2 = new Core.Application();
-//myApp2.addModule(new MyModule("test3"));
-//myApp2.init();
-//app.use("/some", myApp2.getMiddleware());
-//
-//var myApp = new Core.Application();
-//myApp.addModule(new MyModule("test"));
-//myApp.addModule(new MyModule("test2"));
-//myApp.init();
-//app.use(myApp.getMiddleware());
-//
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+var myApp = new Core.Application();
+myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
+var moduleResource1 = new Core.JadeResourceModule("res1");
+myApp.addModule(moduleResource1);
+var resModel = moduleResource1.getModel(Core.ResourceModule.RESOURCE_MODEL);
+var nameCol = new Core.Column.StringColumn("name", 50);
+resModel.addColumn(nameCol);
+var passCol = new Core.Column.StringColumn("pass", 50);
+resModel.addColumn(passCol);
+app.use(myApp.getMiddleware());
+myApp.init().then(function () {
+	app.listen(8885, function () {
+		console.log('Example app listening');
 
-//------end--------
-var server = app.listen(3000, function () {
-
-    var host = server.address().address;
-    var port = server.address().port;
-
-    console.log('Example app listening at http://%s:%s', host, port);
-
+	});
 });

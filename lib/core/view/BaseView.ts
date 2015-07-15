@@ -1,10 +1,10 @@
 class BaseView{
 	private expressResponse;
-	private content:Object;
+	private data:Object;
 	private status:number;
 	constructor(expressResponse){
 		this.expressResponse = expressResponse;
-		this.content = new Object();
+		this.data = new Object();
 	}
 	public setStatus(value:number){
 		this.status = value;
@@ -12,21 +12,17 @@ class BaseView{
 	protected getStatus():number{
 		return this.status;
 	}
-	public addValue(name:string, value:any){
-		this.content[name] = value;
+	public setData(value:any){
+		this.data = value;
 	}
-	public addContentValue(value:any){
-		this.content['content'] = value;
-	}
-
-	protected getContent():Object{
-		return this.content;
+	public getData():Object{
+		return this.data;
 	}
 	protected getResponse(){
 		return this.expressResponse;
 	}
 	public render(){
-		this.expressResponse.status(this.status).send(this.content);
+		this.expressResponse.status(this.status).send(this.data);
 	}
 }
 export = BaseView;

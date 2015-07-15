@@ -18,7 +18,6 @@ class ResourceModule extends  SimpleModule{
 			.then(function(modelList){
 				var responseContent = [];
 				response.addContent(responseContent);
-					
 				for(var i=0;i<modelList.length; i++){
 					var model = modelList[i];
 					responseContent.push(model.toJSON());
@@ -32,7 +31,7 @@ class ResourceModule extends  SimpleModule{
 		find.where("id",request.getParam('id'));
 		find.run()
 			.then(function(model){
-				response.addContent(model.toJSON());	
+				response.addContent(model.toJSON());
 				done();
 			});
 	}

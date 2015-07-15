@@ -14,7 +14,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 		.then(()=>{
 			var view:Core.View.JadeView = response.getView();
-			view.setTemplate("index");
+			view.setTemplate("harpax/jadeResource/listAction");
 			done();
 			});
 	}
@@ -24,7 +24,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 			.then(()=>{
 				var view:Core.View.JadeView = response.getView();
-				view.setTemplate("index");
+				view.setTemplate("harpax/jadeResource/detailAction");
 				done();
 			});
 	}

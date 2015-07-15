@@ -8,7 +8,7 @@ var myApp
 /**
  * podstawowe testy, czy serwer działa i logowanie
  */
-describe.skip("Funkcje podstawowe", function() {
+describe("Funkcje podstawowe", function() {
 	describe("Application is instantioned, but none modules are added to Application. Basic app has route '/' and fallback 404 error: ", function () {
 		beforeEach(function (done) {
 			app = require('./core/app')();

@@ -5,7 +5,7 @@ class JadeRender extends BaseView{
 		this.viewTemplate = viewTemplate;
 	}
 	public render(){
-		this.getResponse().render(this.viewTemplate, this.getContent());
+		this.getResponse().render(this.viewTemplate, this.getData());
 	}
 }
 export = JadeRender;

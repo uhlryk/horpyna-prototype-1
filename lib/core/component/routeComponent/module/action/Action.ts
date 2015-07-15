@@ -99,8 +99,8 @@ class Action extends RouteComponent {
 		this.actionHandler = actionHandler;
 	}
 	protected requestHandler(request:Request, response:Response){
-		
-		//var response = new Response();	
+
+		//var response = new Response();
 
 		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
 		this.publish(beforeStartPublisher)
