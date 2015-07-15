@@ -1,10 +1,10 @@
 {
-  "name": "artwave",
+  "name": "horpyna",
   "version": "0.0.0",
   "private": true,
-  "main": "./js/lib/index.js",
+  "main": "./js/index.js",
   "scripts": {
-    "start": "node ./js/lib/index.js"
+    "start": "node ./js/index.js"
   },
   "dependencies": {
     "bluebird": "^2.9.32",
@@ -22,6 +22,9 @@
   "devDependencies": {
     "chai": "^3.0.0",
     "chai-things": "^0.2.0",
+    "gulp": "^3.9.0",
+    "gulp-todo": "^3.1.1",
+    "gulp-typescript": "^2.7.8",
     "mocha": "^2.2.5",
     "superagent": "^1.2.0",
     "supertest": "^1.0.1"

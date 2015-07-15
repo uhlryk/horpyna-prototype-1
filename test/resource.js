@@ -2,7 +2,7 @@ var chai = require("chai");
 chai.use(require('chai-things'));
 var expect = chai.expect;
 var request = require('supertest');
-var Core = require('./../js/lib/index');
+var Core = require('./../js/index');
 var app;
 var myApp;
 

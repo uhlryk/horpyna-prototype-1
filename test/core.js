@@ -2,7 +2,7 @@ var chai = require("chai");
 chai.use(require('chai-things'));
 var expect = chai.expect;
 var request = require('supertest');
-var Core = require('./../js/lib/index');
+var Core = require('./../js/index');
 var app;
 var myApp;
 /**
@@ -176,7 +176,7 @@ describe("Funkcje podstawowe", function() {
 			done();
 		});
 		it("should throw error when child module is added to both moduleParent1 and moduleParent2", function (done) {
-			moduleChild = new Core.SimpleModule("simple3");
+			var moduleChild = new Core.SimpleModule("simple3");
 			moduleParent1.addModule(moduleChild);
 			expect(function () {
 				moduleParent2.addModule(moduleChild);

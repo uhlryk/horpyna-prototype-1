@@ -2,9 +2,9 @@ var chai = require("chai");
 chai.use(require('chai-things'));
 var expect = chai.expect;
 var request = require('supertest');
-var Core = require('./../js/lib/index');
+var Core = require('./../js/index');
 var app;
-var myApp
+var myApp;
 /**
  * test gdy aplikacja jest skonfigurowana z jade view engine
  */
@@ -61,6 +61,23 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				done();
 			});
 		});
+		it("kod 200 createform,", function (done) {
+			request(app).get("/res1/createform")
+				.end(function (err, res) {
+					console.log(res.body);
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+		it("kod 200 updateform,", function (done) {
+			request(app).get("/res1/updateform")
+				.end(function (err, res) {
+					console.log(res.body);
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+
 		it("kod 200 create", function (done) {
 			request(app).post("/res1/create")
 				.send({name: "olek"})

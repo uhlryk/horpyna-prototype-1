@@ -8,13 +8,33 @@ class JadeResourceModule extends  Core.ResourceModule{
 	public onInit() {
 		super.onInit();
 	}
+	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
+		new Core.Util.Promise<void>((resolve:()=>void)=>{
+			super.onFormCreateAction(request,response,resolve);
+		})
+		.then(()=>{
+			var view:Core.View.JadeView = response.getView();
+			view.setTemplate("horpyna/jadeResource/createFormAction");
+			done();
+		});
+	}
+	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
+		new Core.Util.Promise<void>((resolve:()=>void)=>{
+			super.onFormUpdateAction(request,response,resolve);
+		})
+		.then(()=>{
+			var view:Core.View.JadeView = response.getView();
+			view.setTemplate("horpyna/jadeResource/updateFormAction");
+			done();
+		});
+	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		new Core.Util.Promise<void>((resolve:() => void) => {
 			super.onListAction(request,response, resolve);
 		})
 		.then(()=>{
 			var view:Core.View.JadeView = response.getView();
-			view.setTemplate("harpax/jadeResource/listAction");
+			view.setTemplate("horpyna/jadeResource/listAction");
 			done();
 			});
 	}
@@ -24,7 +44,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 			.then(()=>{
 				var view:Core.View.JadeView = response.getView();
-				view.setTemplate("harpax/jadeResource/detailAction");
+				view.setTemplate("horpyna/jadeResource/detailAction");
 				done();
 			});
 	}
