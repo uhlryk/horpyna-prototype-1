@@ -53,30 +53,17 @@ class SimpleModule extends  Core.Module{
 			this.onDeleteAction(request, response, done);
 		});
 	}
-	private formMetaData(action:Core.Action.BaseAction):Object{
-		var responseContent = [];
-		var bodyParams:Core.Param[] = action.getBodyList();
-		for(var i=0;i<bodyParams.length; i++){
-			var param:Core.Param = bodyParams[i];
-			var field:Object = new Object();
-			field["param"] = param.getParam();
-			field["name"] = param.getName();
-			field["type"] = "text";
-			responseContent.push(field);
-		}
-		return responseContent;
-	}
 	public onListAction (request, response, done){
 		done();
 	}
 	public onDetailAction (request, response, done){
 		done();
 	}
-	public onFormCreateAction (request, response, done){
+	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {
 		response.setContent(this.formMetaData(this.getAction(SimpleModule.ACTION_CREATE)));
 		done();
 	}
-	public onFormUpdateAction (request, response, done){
+	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
 		response.setContent(this.formMetaData(this.getAction(SimpleModule.ACTION_UPDATE)));
 		done();
 	}
@@ -88,6 +75,24 @@ class SimpleModule extends  Core.Module{
 	}
 	public onDeleteAction (request, response, done){
 		done();
+	}
+	private formMetaData(action:Core.Action.BaseAction):Object{
+		var responseContent:Object = new Object();
+		responseContent['fields'] = [];
+		responseContent['form'] = new Object();
+		responseContent['form']['action']="/";
+		responseContent['form']['method']="POST";
+		responseContent['form']['buttonName']="send";
+		var bodyParams:Core.Param[] = action.getBodyList();
+		for(var i=0;i<bodyParams.length; i++){
+			var param:Core.Param = bodyParams[i];
+			var field:Object = new Object();
+			field["param"] = param.getParam();
+			field["name"] = param.getName();
+			field["type"] = "text";
+			responseContent['fields'].push(field);
+		}
+		return responseContent;
 	}
 }
 export = SimpleModule;

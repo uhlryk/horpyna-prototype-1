@@ -14,7 +14,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 		.then(()=>{
 			var view:Core.View.JadeView = response.getView();
-			view.setTemplate("horpyna/jadeResource/createFormAction");
+			view.setTemplate("horpyna/jade/createFormAction");
 			done();
 		});
 	}
@@ -24,7 +24,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 		.then(()=>{
 			var view:Core.View.JadeView = response.getView();
-			view.setTemplate("horpyna/jadeResource/updateFormAction");
+			view.setTemplate("horpyna/jade/updateFormAction");
 			done();
 		});
 	}
@@ -34,7 +34,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 		.then(()=>{
 			var view:Core.View.JadeView = response.getView();
-			view.setTemplate("horpyna/jadeResource/listAction");
+			view.setTemplate("horpyna/jade/listAction");
 			done();
 			});
 	}
@@ -44,7 +44,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 			.then(()=>{
 				var view:Core.View.JadeView = response.getView();
-				view.setTemplate("horpyna/jadeResource/detailAction");
+				view.setTemplate("horpyna/jade/detailAction");
 				done();
 			});
 	}
