@@ -1,6 +1,9 @@
 /// <reference path="../../../../typings/tsd.d.ts" />
 
 import Sequelize = require("sequelize");
+import Util = require("./../../util/Util");
+// var debug = require('debug');
+
 class Connection {
 	private dbType:string;
 	private host:string;
@@ -10,11 +13,16 @@ class Connection {
 	private userPassword:string;
 	private sequelize:Sequelize.Sequelize;
 	private connectionName:string;
-	constructor(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string, connectionName:string) {
+	private debuger: Util.Debuger;
+	constructor(dbType: string, host: string, port: number, dbName: string, userName: string, userPassword: string, connectionName: string) {
+		this.debuger = new Util.Debuger("connection:");
 		this.sequelize = new Sequelize(dbName, userName, userPassword, {
 			host : host,
 			dialect : dbType,
-			port : port
+			port : port,
+			logging: (...args: any[]) => {
+				this.log(args);
+			}
 		});
 		this.dbType = dbType;
 		this.host = host;
@@ -30,5 +38,9 @@ class Connection {
 	public getConnectionName():string{
 		return this.connectionName;
 	}
+	public log(...args: any[]) {
+		this.debuger.debug(args);
+	}
+
 }
 export = Connection;
