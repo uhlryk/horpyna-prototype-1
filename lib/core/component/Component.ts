@@ -12,17 +12,17 @@ class Component{
 	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
 	private name:string;
 	private parent:Component;
-	private debuger: Util.Debuger;
+	private debugger: Util.Debugger;
 	public static count = 0;
 	constructor(name:string){
 		this.name = name;
 		this.checkName(name);
 		Component.count++;
-		this.debuger = new Util.Debuger("component:"+this.name+":");
+		this.debugger = new Util.Debugger("component:"+this.name+":");
 		this.debug('constructor %s a', this.name);
 	}
 	public debug(...args: any[]){
-		this.debuger.debug(args);
+		this.debugger.debug(args);
 	}
 	public init():void {
 		this.onInit();

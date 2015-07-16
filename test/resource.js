@@ -34,7 +34,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 		it("kod 200 createform,", function (done) {
 			request(app).get("/res1/createform")
 				.end(function (err, res) {
-					console.log(res.body);
+					// console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -42,7 +42,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 		it("kod 200 updateform,", function (done) {
 			request(app).get("/res1/updateform")
 				.end(function (err, res) {
-					console.log(res.body);
+					// console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});

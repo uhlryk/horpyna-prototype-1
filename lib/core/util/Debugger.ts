@@ -1,5 +1,5 @@
 /// <reference path="../../../typings/tsd.d.ts" />
-var debug = require('debug');
+import debug = require('debug');
 /**
  * Moduł do debugowania, w zmiennych środowiskowych należy ustawić
  * DEBUG=bricker:*
@@ -8,13 +8,13 @@ var debug = require('debug');
  * czyli
  * DEBUG:bricker:component:mycomponent
  */
-class Debuger{
-	private debuger;
+class Debugger{
+	private debugger;
 	constructor(namespace:string){
-		this.debuger = debug("horpyna:"+namespace);
+		this.debugger = debug("horpyna:"+namespace);
 	}
 	public debug(args: any[]){
-		this.debuger.apply(this,args);
+		this.debugger.apply(this,args);
 	}
 }
-export = Debuger;
+export = Debugger;

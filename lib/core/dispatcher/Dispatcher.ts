@@ -6,12 +6,12 @@ import Action = require("./../component/routeComponent/module/action/Action");
 import Param = require("./../component/routeComponent/module/action/param/Param");
 class Dispatcher{
 	private router:express.Router;
-	private debuger: Util.Debuger;
+	private debugger: Util.Debugger;
 	constructor() {
-		this.debuger = new Util.Debuger("dispatcher:");
+		this.debugger = new Util.Debugger("dispatcher:");
 	}
 	public debug(...args: any[]) {
-		this.debuger.debug(args);
+		this.debugger.debug(args);
 	}
 
 	public setRouter(router:express.Router):void{

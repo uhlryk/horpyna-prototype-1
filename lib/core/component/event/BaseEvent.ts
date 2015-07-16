@@ -1,4 +1,4 @@
-import Debuger = require("../../util/Debuger");
+import Util = require("../../util/Util");
 
 /**
  * Jest to bazowy Event który może być przekazywany z wywołania eventa do nasłuchujących obiektów.
@@ -22,16 +22,16 @@ import Debuger = require("../../util/Debuger");
  */
 class BaseEvent{
 	private type:string;
-	private debuger: Debuger;
+	private debugger: Util.Debugger;
 	constructor(type:string){
 		this.type = type;
-		this.debuger = new Debuger("event:"+this.type+":");
+		this.debugger = new Util.Debugger("event:"+this.type+":");
 	}
 	public getType():string{
 		return this.type;
 	}
 	public debug(...args: any[]){
-		this.debuger.debug(args);
+		this.debugger.debug(args);
 	}
 }
 class BaseRawDataEvent extends BaseEvent {

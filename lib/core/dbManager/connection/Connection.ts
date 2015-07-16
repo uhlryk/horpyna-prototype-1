@@ -2,7 +2,6 @@
 
 import Sequelize = require("sequelize");
 import Util = require("./../../util/Util");
-// var debug = require('debug');
 
 class Connection {
 	private dbType:string;
@@ -13,9 +12,9 @@ class Connection {
 	private userPassword:string;
 	private sequelize:Sequelize.Sequelize;
 	private connectionName:string;
-	private debuger: Util.Debuger;
+	private debugger: Util.Debugger;
 	constructor(dbType: string, host: string, port: number, dbName: string, userName: string, userPassword: string, connectionName: string) {
-		this.debuger = new Util.Debuger("connection:");
+		this.debugger = new Util.Debugger("connection:");
 		this.sequelize = new Sequelize(dbName, userName, userPassword, {
 			host : host,
 			dialect : dbType,
@@ -39,7 +38,7 @@ class Connection {
 		return this.connectionName;
 	}
 	public log(...args: any[]) {
-		this.debuger.debug(args);
+		this.debugger.debug(args);
 	}
 
 }
