@@ -11,16 +11,18 @@ import Dispatcher = require("./dispatcher/Dispatcher");
 import DbManager = require("./dbManager/DbManager");
 import Connection = require("./dbManager/connection/Connection");
 import ComponentManager = require("./component/ComponentManager");
+import Util = require("./util/Util");
 import Module = require("./component/routeComponent/module/Module");
 class Application {
 	public static MODULE_PATH_NONE: string = "Need 'module path'";
-
+	private logger:Util.Logger;
 	private frontController:FrontController;
 	private dispatcher:Dispatcher;
 	private componentManager:ComponentManager;
 	private dbManager:DbManager;
 	private router:express.Router;
 	constructor() {
+		this.logger = new Util.Logger();
 		this.frontController = new FrontController();
 		this.dispatcher = new Dispatcher();
 		this.componentManager = new ComponentManager();
@@ -41,12 +43,16 @@ class Application {
 		this.dbManager.addConnection(connection, true);
 	}
 	public init():Promise<any>{
+		this.logger.info("Run Horpyna");
 		this.dispatcher.setRouter(this.router);
 		var promise = this.frontController.init();
 		return promise;
 	}
 	public getMiddleware():express.Router{
 		return this.router;
+	}
+	public getLogger():Util.Logger{
+		return this.logger;
 	}
 }
 export = Application;

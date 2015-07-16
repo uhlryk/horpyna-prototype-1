@@ -49,6 +49,8 @@ describe("Funkcje podstawowe", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application();
+			myApp.getLogger().info("test");
+			app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
 			myApp.init();
 			app.use("/test/", myApp.getMiddleware());
 			app.get('/', function (req, res) {
