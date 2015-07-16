@@ -1,13 +1,19 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
+import Util = require("./../util/Util");
 import Module = require("./../component/routeComponent/module/Module");
 import Action = require("./../component/routeComponent/module/action/Action");
 import Param = require("./../component/routeComponent/module/action/param/Param");
 class Dispatcher{
 	private router:express.Router;
+	private debuger: Util.Debuger;
 	constructor() {
-
+		this.debuger = new Util.Debuger("dispatcher:");
 	}
+	public debug(...args: any[]) {
+		this.debuger.debug(args);
+	}
+
 	public setRouter(router:express.Router):void{
 		this.router = router;
 	}
@@ -15,16 +21,19 @@ class Dispatcher{
 		return this.router;
 	}
 	private baseRoute(){
+		this.debug('base route');
 		this.router.all("/", function (req, res) {
 			res.sendStatus(200);
 		});
 	}
 	private fallbackRoute(){
+		this.debug('fallback route');
 		this.router.use(function (req, res, next) {
 			res.sendStatus(404);
 		});
 	}
 	private createMethodRoutes(routeName:string, action:Action.BaseAction){
+		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.getName());
 		var handler = action.getRequestHandler();
 		switch(action.getMethod()){
 			case Action.BaseAction.ALL:
@@ -75,10 +84,12 @@ class Dispatcher{
 		};
 	}
 	public createRoutes(moduleList:Module[], defaultModule?:Module):void{
+		this.debug('start');
 		this.baseRoute();
 
 		this.createModuleRoutes("", moduleList, defaultModule);
 		this.fallbackRoute();
+		this.debug('end');
 	}
 	private buildRoute(baseRoute:string, partRoute:string):string{
 		if(baseRoute.slice(-1) !== "/"){

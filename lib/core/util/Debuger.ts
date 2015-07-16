@@ -11,7 +11,7 @@ var debug = require('debug');
 class Debuger{
 	private debuger;
 	constructor(namespace:string){
-		this.debuger = debug("bricker:"+namespace);
+		this.debuger = debug("horpyna:"+namespace);
 	}
 	public debug(args: any[]){
 		this.debuger.apply(this,args);
