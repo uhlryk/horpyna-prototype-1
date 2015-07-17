@@ -3,13 +3,65 @@ import winston = require('winston');
 
 class Logger{
 	private logger;
-	constructor(){
-		this.logger = new (winston.Logger)({
-			transports: [
-				new (winston.transports.Console)(),
-				new (winston.transports.File)({ filename: 'log/info.log' })
-			]
+	public static CONSOLE_ALL: string = "all";
+	public static CONSOLE_ERROR: string = "error";
+	public static CONSOLE_MUTE: string = "mute";
+	constructor() {
+		var mode = Logger.CONSOLE_MUTE;
+		if (process && process.env && process.env.HORPYNA_LOG){
+			mode = process.env.HORPYNA_LOG;
+		}
+		this.logger = new (winston.Logger)();//{
+		// transports: [
+		// 	new (winston.transports.Console)(),
+		// 	new (winston.transports.File)({ filename: 'log/info.log' })
+		// ],
+		//na razie to robi memory leaki, zostanie odkomentowane jak moduł będzie miał naprawioną funkcję
+		// exceptionHandlers: [
+		// 	new (winston.transports.Console)(),
+		// 	new winston.transports.File({ filename: 'log/exceptions.log' })
+		// ]
+		// });
+		this.logger.add(winston.transports.File, {
+			name:'log.error',
+			level: 'error',
+			filename: './log/error.log',
+			// handleExceptions: true,
+			json: true,
+			maxsize: 5242880, //5MB
+			maxFiles: 5,
+			colorize: false
 		});
+		this.logger.add(winston.transports.File, {
+			name:'log.info',
+			level: 'info',
+			filename: './log/info.log',
+			// handleExceptions: true,
+			json: true,
+			maxsize: 5242880, //5MB
+			maxFiles: 5,
+			colorize: false
+		});
+		switch (mode) {
+			case Logger.CONSOLE_ALL:
+				this.logger.add(winston.transports.Console, {
+					level: 'debug',
+					handleExceptions: true,
+					json: false,
+					colorize: true
+				});
+				break;
+			case Logger.CONSOLE_ERROR:
+				this.logger.add(winston.transports.Console, {
+					level: 'error',
+					handleExceptions: true,
+					json: false,
+					colorize: true
+				});
+				break;
+			default:
+				//nic nie dodajemy
+		}
 	}
 	public log(level: string, msg: string, meta?: any): winston.LoggerInstance {
 		if(meta){

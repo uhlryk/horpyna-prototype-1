@@ -22,7 +22,9 @@ class Application {
 	private dbManager:DbManager;
 	private router:express.Router;
 	constructor() {
+
 		this.logger = new Util.Logger();
+		this.logger.warn("AHOJ !!!");
 		this.frontController = new FrontController();
 		this.dispatcher = new Dispatcher();
 		this.componentManager = new ComponentManager();
