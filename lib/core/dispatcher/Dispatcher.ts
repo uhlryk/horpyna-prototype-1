@@ -7,8 +7,12 @@ import Param = require("./../component/routeComponent/module/action/param/Param"
 class Dispatcher{
 	private router:express.Router;
 	private debugger: Util.Debugger;
+	private logger: Util.Logger;
 	constructor() {
 		this.debugger = new Util.Debugger("dispatcher:");
+	}
+	public setLogger(logger: Util.Logger) {
+		this.logger = logger;
 	}
 	public debug(...args: any[]) {
 		this.debugger.debug(args);

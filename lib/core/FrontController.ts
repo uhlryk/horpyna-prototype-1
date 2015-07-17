@@ -3,15 +3,19 @@ import ComponentManager = require("./component/ComponentManager");
 import DbManager = require("./dbManager/DbManager");
 import Module = require("./component/routeComponent/module/Module");
 import Model = require("./component/routeComponent/module/model/Model");
+import Util = require("./util/Util");
 class FrontController {
 	public static DISPATCHER_NONE: string = "Need 'dispatcher'";
 	public static COMPONENT_MANAGER_NONE: string = "Need 'ComponentManager'";
 	public static DB_MANAGER_NONE: string = "Need 'dbManager'";
-
+	private logger: Util.Logger;
 	private dispatcher: Dispatcher;
 	private componentManager: ComponentManager;
 	private dbManager: DbManager;
 	constructor() {
+	}
+	public setLogger(logger:Util.Logger){
+		this.logger = logger;
 	}
 	public setDispatcher(dispatcher: Dispatcher):void{
 		this.dispatcher = dispatcher;
@@ -55,7 +59,10 @@ class FrontController {
 	}
 	public init():Promise<any>{
 		this.setup();
+		this.dbManager.setLogger(this.logger);
+		this.dispatcher.setLogger(this.logger);
 		this.dbManager.init();
+		this.componentManager.logger = this.logger;
 		this.componentManager.init();
 		this.setConnectionToModels();
 		var promise = this.dbManager.build();

@@ -10,8 +10,12 @@ class DbManager {
 	public static NO_CONNECTION_NAME: string = "Connection not found";
 	private defaultConnection:Connection;
 	private connectionList:Connection[];
+	private logger: Util.Logger;
 	constructor() {
 		this.connectionList=[];
+	}
+	public setLogger(logger: Util.Logger) {
+		this.logger = logger;
 	}
 	public addConnection(connection:Connection, isDefault?:boolean):void{
 		this.connectionList.push(connection);
@@ -43,7 +47,10 @@ class DbManager {
 	 * Tu jeszcze nie wiem co ma być robione
 	 */
 	public init(){
-
+		for (var index in this.connectionList) {
+			var connection: Connection = this.connectionList[index];
+			connection.setLogger(this.logger);
+		};
 	}
 	public build():Util.Promise<any>{
 		return Util.Promise.map(this.connectionList, function (connection:Connection) {

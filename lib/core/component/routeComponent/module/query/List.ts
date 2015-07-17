@@ -19,6 +19,7 @@ class List extends BaseQuery{
 		return this.whereQuery.getList();
 	}
 	public run():Orm.PromiseT<Orm.Instance<any,any>[]>{
+		super.run();
 		return this.getModel().getModel().findAll({
 			where:this.whereQuery.getList()
 		});

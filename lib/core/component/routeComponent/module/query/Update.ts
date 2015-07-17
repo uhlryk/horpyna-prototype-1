@@ -26,6 +26,7 @@ class Update extends BaseQuery{
 		this.valueQuery.populate(params);
 	}
 	public run():Orm.Promise{
+		super.run();
 		return this.getModel().getModel().update(this.valueQuery.getList(),{where:this.whereQuery.getList()});
 	}
 }

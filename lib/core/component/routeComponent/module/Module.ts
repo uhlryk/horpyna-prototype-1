@@ -33,12 +33,14 @@ class Module extends RouteComponent{
 		for(var index in this.moduleList){
 			var childModule:Module = this.moduleList[index];
 			childModule.setViewClass(this.getViewClass());
+			childModule.logger = this.logger;
 			childModule.init();
 		};
 	}
 	public initModels(){
 		for(var index in this.modelList){
 			var model:Model = this.modelList[index];
+			model.logger = this.logger;
 			model.init();
 		};
 	}
@@ -46,6 +48,7 @@ class Module extends RouteComponent{
 		for(var index in this.actionList){
 			var action:Action.BaseAction = this.actionList[index];
 			action.setViewClass(this.getViewClass());
+			action.logger = this.logger;
 			action.init();
 		};
 	}

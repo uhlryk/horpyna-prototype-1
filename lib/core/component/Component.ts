@@ -14,12 +14,22 @@ class Component{
 	private parent:Component;
 	private debugger: Util.Debugger;
 	public static count = 0;
+	private _logger: Util.Logger;
 	constructor(name:string){
 		this.name = name;
 		this.checkName(name);
 		Component.count++;
 		this.debugger = new Util.Debugger("component:"+this.name+":");
 		this.debug('constructor %s a', this.name);
+	}
+	/**
+	 * wywołuje to parent w fazie init i przekazuje loggera
+	 */
+	public set logger(logger:Util.Logger){
+		this._logger = logger;
+	}
+	public get logger():Util.Logger{
+		return this._logger;
 	}
 	public debug(...args: any[]){
 		this.debugger.debug(args);

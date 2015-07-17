@@ -23,6 +23,7 @@ class Param extends Component {
 	public initValidators(){
 		for(var index in this.validatorList){
 			var validator:Validator = this.validatorList[index];
+			validator.logger = this.logger;
 			validator.init();
 		};
 	}

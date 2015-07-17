@@ -1,18 +1,26 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 import express = require("express");
 import BaseAction = require("./BaseAction");
+import Util = require("./../../../../util/Util");
 class Request{
 	public paramList:Object;
 	public queryList:Object;
 	public bodyList:Object;
 	private expressRequest:express.Request;
 	private action:BaseAction;
+	private _logger: Util.Logger;
 	constructor(action:BaseAction, expressRequest:express.Request){
 		this.expressRequest = expressRequest;
 		this.paramList = new Object();
 		this.queryList = new Object();
 		this.bodyList = new Object();
 		this.action = action;
+	}
+	public set logger(logger:Util.Logger){
+		this._logger = logger;
+	}
+	public get logger():Util.Logger{
+		return this._logger;
 	}
 	public addParam(name:string,value:any){this.paramList[name] = value;}
 	public getParam(name:string):any{return this.paramList[name];}

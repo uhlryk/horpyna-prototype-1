@@ -19,6 +19,7 @@ class Create extends BaseQuery{
 		this.valueQuery.populate(params);
 	}
 	public run():Orm.PromiseT<Orm.Instance<any,any>>{
+		super.run();
 		return this.getModel().getModel().create(this.valueQuery.getList());
 	}
 }

@@ -27,6 +27,7 @@ class Application {
 		this.dispatcher = new Dispatcher();
 		this.componentManager = new ComponentManager();
 		this.dbManager = new DbManager();
+		this.frontController.setLogger(this.logger);
 		this.frontController.setDispatcher(this.dispatcher);
 		this.frontController.setComponentManager(this.componentManager);
 		this.frontController.setDbManager(this.dbManager);

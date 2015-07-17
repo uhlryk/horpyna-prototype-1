@@ -7,5 +7,8 @@ class BaseQuery {
 	public getModel():Model{
 		return this.model;
 	}
+	public run():void{
+
+	}
 }
 export = BaseQuery;

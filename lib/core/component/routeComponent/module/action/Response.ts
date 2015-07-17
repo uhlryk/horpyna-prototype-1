@@ -2,18 +2,26 @@
 import View = require("../../../../view/View");
 import express = require("express");
 import BaseAction = require("./BaseAction");
+import Util = require("./../../../../util/Util");
 class Response{
 	public status:number;
 	public view:any;
 	private data:Object;
 	private expressResponse:express.Response;
 	private action:BaseAction;
+	private _logger: Util.Logger;
 	constructor(action:BaseAction,expressResponse:express.Response, viewClass){
 		this.status = 200;
 		this.data = new Object();
 		this.expressResponse = expressResponse;
 		this.view = new viewClass(this.expressResponse);
 		this.action = action;
+	}
+	public set logger(logger: Util.Logger) {
+		this._logger = logger;
+	}
+	public get logger(): Util.Logger {
+		return this._logger;
 	}
 	public setStatus(value:number){
 		this.status = value;

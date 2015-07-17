@@ -9,6 +9,9 @@ class ComponentManager extends Component{
 	 * Możemy więc przez jakiś moduł mieć dostęp do "/"
 	 */
 	private defaultModule : Module;
+	/**
+	 * Klasa odpowiedzialna za wyświetlanie widoków
+	 */
 	private viewClass;
 	constructor() {
 		super("ComponentManager");
@@ -32,10 +35,11 @@ class ComponentManager extends Component{
 	}
 	public init(){
 		if(!this.viewClass){
-			this.viewClass = View.BaseView; 
+			this.viewClass = View.BaseView;
 		}
 		for(var name in this.moduleList){
 			var module:Module = this.moduleList[name];
+			module.logger = this.logger;
 			module.setViewClass(this.viewClass);
 			module.init();
 		};

@@ -23,6 +23,7 @@ class Model extends Component{
 	public initColumns(){
 		for(var index in this.columnList){
 			var column:Column.BaseColumn = this.columnList[index];
+			column.logger = this.logger;
 			column.init();
 		};
 	}

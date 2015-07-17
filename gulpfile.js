@@ -13,6 +13,7 @@ gulp.task('ts', function () {
 	var tsResult = gulp.src('lib/**/*.ts')
 		.pipe(ts({
 				module:'commonjs',
+				target:'ES5',
 				removeComments:true,
 			}));
 	return tsResult.js.pipe(gulp.dest('js'));

@@ -7,6 +7,7 @@ class Find extends List{
 		super();
 	}
 	public run():Orm.Promise{
+		super.run();
 		return this.getModel().getModel().find({
 			where:this.getWhereList()
 		});

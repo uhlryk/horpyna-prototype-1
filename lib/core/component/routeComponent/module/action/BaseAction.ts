@@ -36,6 +36,7 @@ class BaseAction extends RouteComponent {
 	public initParams(){
 		for(var index in this.paramList){
 			var param:Param = this.paramList[index];
+			param.logger = this.logger;
 			param.init();
 		};
 		for(var index in this.queryList){
