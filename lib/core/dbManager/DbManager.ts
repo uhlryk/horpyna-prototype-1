@@ -11,13 +11,20 @@ class DbManager {
 	private defaultConnection:Connection;
 	private connectionList:Connection[];
 	private logger: Util.Logger;
+	private debugger: Util.Debugger;
 	constructor() {
 		this.connectionList=[];
+		this.debugger = new Util.Debugger("core");
+		this.debug("dbManager:constructor:");
 	}
 	public setLogger(logger: Util.Logger) {
 		this.logger = logger;
 	}
+	public debug(...args: any[]) {
+		this.debugger.debug(args);
+	}
 	public addConnection(connection:Connection, isDefault?:boolean):void{
+		this.debug("dbManager:addConnection:"+connection.getConnectionName());
 		this.connectionList.push(connection);
 		if(isDefault === true){
 			this.defaultConnection = connection;
@@ -47,13 +54,16 @@ class DbManager {
 	 * Tu jeszcze nie wiem co ma być robione
 	 */
 	public init(){
+		this.debug("dbManager:init:");
 		for (var index in this.connectionList) {
 			var connection: Connection = this.connectionList[index];
 			connection.setLogger(this.logger);
 		};
 	}
 	public build():Util.Promise<any>{
-		return Util.Promise.map(this.connectionList, function (connection:Connection) {
+		this.debug("dbManager:build:");
+		return Util.Promise.map(this.connectionList, (connection:Connection)=>{
+			this.debug("dbManager:sync connection:" + connection.getConnectionName());
 			return connection.getDb().sync({force:true});
 		});
 	}

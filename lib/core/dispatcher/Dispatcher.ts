@@ -9,7 +9,7 @@ class Dispatcher{
 	private debugger: Util.Debugger;
 	private logger: Util.Logger;
 	constructor() {
-		this.debugger = new Util.Debugger("dispatcher:");
+		this.debugger = new Util.Debugger("dispatcher");
 	}
 	public setLogger(logger: Util.Logger) {
 		this.logger = logger;

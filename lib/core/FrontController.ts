@@ -12,7 +12,13 @@ class FrontController {
 	private dispatcher: Dispatcher;
 	private componentManager: ComponentManager;
 	private dbManager: DbManager;
+	private debugger: Util.Debugger;
 	constructor() {
+		this.debugger = new Util.Debugger("core");
+		this.debug("front:constructor:");
+	}
+	public debug(...args: any[]) {
+		this.debugger.debug(args);
 	}
 	public setLogger(logger:Util.Logger){
 		this.logger = logger;
@@ -58,14 +64,21 @@ class FrontController {
 		};
 	}
 	public init():Promise<any>{
+		this.debug("front:init:");
+		this.debug("front:setup()");
 		this.setup();
 		this.dbManager.setLogger(this.logger);
 		this.dispatcher.setLogger(this.logger);
+		this.debug("front:dbManager.init()");
 		this.dbManager.init();
 		this.componentManager.logger = this.logger;
+		this.debug("front:componentManager.init()");
 		this.componentManager.init();
+		this.debug("front:setConnectionToModels()");
 		this.setConnectionToModels();
+		this.debug("front:dbManager.build()");
 		var promise = this.dbManager.build();
+		this.debug("front:dispatcher.createRoutes()");
 		this.dispatcher.createRoutes(this.componentManager.getModuleList(), this.componentManager.getDefaultModule());
 		return promise;
 	}
