@@ -34,7 +34,7 @@ describe("Funkcje podstawowe", function() {
 		it("zwraca kod 200 dla '/' z aplikacji jak zainicjowana", function (done) {
 			myApp.init();
 			app.get('/', function (req, res) {
-				res.sendStatus(201);
+				res.sendStatus(500);
 			});
 			app.use(function (req, res, next) {
 				res.sendStatus(404);
@@ -45,12 +45,26 @@ describe("Funkcje podstawowe", function() {
 					done();
 				});
 		});
-		it("zwraca kod 404 gdy wywołamy nieistniejący route '/custom' a aplikacja niezainicjowana", function (done) {
+		it("zwraca kod 403 gdy wywołamy nieistniejący route '/custom' a aplikacja niezainicjowana", function (done) {
 			app.get('/', function (req, res) {
 				res.sendStatus(201);
 			});
 			app.use(function (req, res, next) {
-				res.sendStatus(404);
+				res.sendStatus(403);
+			});
+			request(app).get("/custom")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(403);
+					done();
+				});
+		});
+		it("zwraca kod 404 gdy wywołamy nieistniejący route '/custom' a aplikacja zainicjowana (fallbackaplikacji)", function (done) {
+			myApp.init();
+			app.get('/', function (req, res) {
+				res.sendStatus(201);
+			});
+			app.use(function (req, res, next) {
+				res.sendStatus(500);
 			});
 			request(app).get("/custom")
 				.end(function (err, res) {

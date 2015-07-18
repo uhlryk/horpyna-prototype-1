@@ -2,6 +2,7 @@ import Dispatcher = require("./dispatcher/Dispatcher");
 import ComponentManager = require("./component/ComponentManager");
 import DbManager = require("./dbManager/DbManager");
 import Module = require("./component/routeComponent/module/Module");
+import DefaultModule = require("./component/routeComponent/module/DefaultModule");
 import Model = require("./component/routeComponent/module/model/Model");
 import Util = require("./util/Util");
 class FrontController {
@@ -67,6 +68,8 @@ class FrontController {
 		this.debug("front:init:");
 		this.debug("front:setup()");
 		this.setup();
+		this.debug("front:setDefault()");
+		this.setDefault();
 		this.dbManager.setLogger(this.logger);
 		this.dispatcher.setLogger(this.logger);
 		this.debug("front:dbManager.init()");
@@ -81,6 +84,15 @@ class FrontController {
 		this.debug("front:dbManager.build()");
 		var promise = this.dbManager.build();
 		return promise;
+	}
+	/**
+	 * Ustawia akcję fallback dla dispatchera
+	 */
+	private setDefault():void{
+		var defaultModule: Module = new DefaultModule("default");
+		this.componentManager.addModule(defaultModule);
+		var fallbackAction = defaultModule.getAction(DefaultModule.ACTION_FALLBACK);
+		this.dispatcher.setFallbackAction(fallbackAction);
 	}
 }
 export = FrontController;

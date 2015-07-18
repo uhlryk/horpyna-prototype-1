@@ -5,9 +5,11 @@ import Module = require("./../component/routeComponent/module/Module");
 import Action = require("./../component/routeComponent/module/action/Action");
 import Param = require("./../component/routeComponent/module/action/param/Param");
 class Dispatcher{
+	public static FALLBACK_ACTION_NOT_SET: string = "Fallback action is not set'";
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private logger: Util.Logger;
+	private fallbackAction: Action.BaseAction;
 	constructor() {
 		this.debugger = new Util.Debugger("dispatcher");
 	}
@@ -30,11 +32,15 @@ class Dispatcher{
 			res.sendStatus(200);
 		});
 	}
+	public setFallbackAction(action:Action.BaseAction){
+		this.fallbackAction = action;
+	}
 	private fallbackRoute(){
 		this.debug('fallback route');
-		this.router.use(function (req, res, next) {
-			res.sendStatus(404);
-		});
+		this.router.use(this.fallbackAction.getRequestHandler());
+	}
+	private errorHandler(){
+		this.router.use();
 	}
 	private createMethodRoutes(routeName:string, action:Action.BaseAction){
 		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.getName());
@@ -60,6 +66,9 @@ class Dispatcher{
 	private createActionRoutes(routeName:string, actionList:Action.BaseAction[], defaultActionList?:Action.BaseAction[]){
 		for(var actionIndex in actionList) {
 			var action:Action.BaseAction = actionList[actionIndex];
+			if(action === this.fallbackAction){
+				continue;//nie tworzymy w sposób standardowy route dla fallback action
+			}
 			var newRouteName;
 			if(!defaultActionList || defaultActionList.indexOf(action) === -1){//nie jest na liście default
 				newRouteName = this.buildRoute(routeName, action.getRoute());
@@ -88,6 +97,10 @@ class Dispatcher{
 		};
 	}
 	public createRoutes(moduleList:Module[], defaultModule?:Module):void{
+		if(this.fallbackAction === undefined){
+			this.logger.error(Dispatcher.FALLBACK_ACTION_NOT_SET);
+			throw new Error(Dispatcher.FALLBACK_ACTION_NOT_SET);
+		}
 		this.debug('start');
 		this.baseRoute();
 
