@@ -1,6 +1,13 @@
 Dokumentacja HORPYNA
 ====================
 
+Instalacja
+----------
+1. W katalogu głównym projektu należy utworzyć katalog 'log'
+Ponieważ logger sam sobie nie utworzy katalogu
+2. Do katalogu głównego należy przenieść z biblioteki Horpyna katalog 'views'
+Zawiera wstępnie przygotowane widoki dla JadeResourceModule. Należy je potem zmienić
+
 Zmienne środowiskowe
 --------------------
 ### Ogólnie

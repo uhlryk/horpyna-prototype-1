@@ -19,7 +19,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			myApp.setViewClass(Core.View.JadeView);
 			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
 			module1.addAction(action1);
-			action1.addActionHandler(function (request, response, done) {
+			action1.setActionHandler(function (request, response, done) {
 				response.getView().setTemplate("index");
 				response.addValue("title", "mój tytuł");
 				done();

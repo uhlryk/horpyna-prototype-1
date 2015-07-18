@@ -12,36 +12,36 @@ class SimpleModule extends  Core.Module{
 		super.onConstructor();
 		var formCreateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_FORM_CREATE);
 		this.addAction(formCreateAction);
-		formCreateAction.addActionHandler((request, response, done)=>{
+		formCreateAction.setActionHandler((request, response, done)=>{
 			this.onFormCreateAction(request, response, done);
 		});
 		var formUpdateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_FORM_UPDATE);
 		this.addAction(formUpdateAction);
-		formUpdateAction.addActionHandler((request, response, done)=>{
+		formUpdateAction.setActionHandler((request, response, done)=>{
 			this.onFormUpdateAction(request, response, done);
 		});
 		var listAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_LIST);
 		this.addAction(listAction);
-		listAction.addActionHandler((request, response, done)=>{
+		listAction.setActionHandler((request, response, done)=>{
 			this.onListAction(request, response, done);
 		});
 		var createAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_CREATE);
 		this.addAction(createAction);
-		createAction.addActionHandler((request, response, done)=>{
+		createAction.setActionHandler((request, response, done)=>{
 			this.onCreateAction(request, response, done);
 		});
 		var detailAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(detailAction);
 		var idParam:Core.Param= new Core.Param("id");
 		detailAction.addParam(idParam);
-		detailAction.addActionHandler((request, response, done)=>{
+		detailAction.setActionHandler((request, response, done)=>{
 			this.onDetailAction(request, response, done);
 		});
 		var updateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.PUT, SimpleModule.ACTION_UPDATE);
 		this.addAction(updateAction);
 		var idParam:Core.Param= new Core.Param("id");
 		updateAction.addParam(idParam);
-		updateAction.addActionHandler((request, response, done)=>{
+		updateAction.setActionHandler((request, response, done)=>{
 			this.onUpdateAction(request, response, done);
 		});
 
@@ -49,7 +49,7 @@ class SimpleModule extends  Core.Module{
 		this.addAction(deleteAction);
 		var idParam:Core.Param= new Core.Param("id");
 		deleteAction.addParam(idParam);
-		deleteAction.addActionHandler((request, response, done)=>{
+		deleteAction.setActionHandler((request, response, done)=>{
 			this.onDeleteAction(request, response, done);
 		});
 	}

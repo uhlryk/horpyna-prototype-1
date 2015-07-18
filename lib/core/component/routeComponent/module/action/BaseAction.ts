@@ -96,7 +96,7 @@ class BaseAction extends RouteComponent {
 			}
 		}
 	}
-	public addActionHandler(actionHandler:IActionHandler){
+	public setActionHandler(actionHandler:IActionHandler){
 		this.actionHandler = actionHandler;
 	}
 	protected validateRequest(request:Request){

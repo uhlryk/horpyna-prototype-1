@@ -8,12 +8,12 @@ class DefaultModule extends  Module{
 		super.onConstructor();
 		var fallbackAction:Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_FALLBACK);
 		this.addAction(fallbackAction);
-		fallbackAction.addActionHandler((request, response, done) => {
+		fallbackAction.setActionHandler((request, response, done) => {
 			this.onFallbackAction(request, response, done);
 		});
 		var homeAction:Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_HOME);
 		this.addAction(homeAction);
-		homeAction.addActionHandler((request, response, done) => {
+		homeAction.setActionHandler((request, response, done) => {
 			this.onHomeAction(request, response, done);
 		});
 	}
