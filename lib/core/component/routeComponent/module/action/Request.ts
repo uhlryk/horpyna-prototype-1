@@ -9,11 +9,13 @@ class Request{
 	private expressRequest:express.Request;
 	private action:BaseAction;
 	private _logger: Util.Logger;
-	constructor(action:BaseAction, expressRequest:express.Request){
+	constructor(expressRequest:express.Request){
 		this.expressRequest = expressRequest;
 		this.paramList = new Object();
 		this.queryList = new Object();
 		this.bodyList = new Object();
+	}
+	public setAction(action: BaseAction) {
 		this.action = action;
 	}
 	public set logger(logger:Util.Logger){

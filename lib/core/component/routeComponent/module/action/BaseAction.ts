@@ -167,27 +167,30 @@ class BaseAction extends RouteComponent {
 			}
 		});
 	}
-	private createRequest(req:express.Request):Request{
-		var request = new Request(this, req);
-		for(var index in req.body){
-			request.addBody(index, req.body[index]);
-		}
-		for(var index in req.query){
-			request.addQuery(index, req.query[index]);
-		}
-		for(var index in req.params){
-			request.addParam(index, req.params[index]);
-		}
-		return request;
-	}
-	private createResponse(res:express.Response):Response{
-		var response = new Response(this, res, this.getViewClass());
-		return response;
-	}
-	public getRequestHandler():express.RequestHandler{
-		return (req:express.Request, res:express.Response)=>{
-			this.debug("action:getRequestHandler()");
-			this.requestHandler(this.createRequest(req),this.createResponse(res));
+	// private createRequest(req:express.Request):Request{
+	// 	var request = new Request(this, req);
+	// 	for(var index in req.body){
+	// 		request.addBody(index, req.body[index]);
+	// 	}
+	// 	for(var index in req.query){
+	// 		request.addQuery(index, req.query[index]);
+	// 	}
+	// 	for(var index in req.params){
+	// 		request.addParam(index, req.params[index]);
+	// 	}
+	// 	return request;
+	// }
+	// private createResponse(res:express.Response):Response{
+	// 	var response = new Response(this, res, this.getViewClass());
+	// 	return response;
+	// }
+	public getRequestHandler(){
+		this.debug("action:getRequestHandler()");
+		return (request:Request, response:Response)=>{
+			response.setViewClass(this.getViewClass());
+			response.setAction(this);
+			request.setAction(this);
+			this.requestHandler(request, response);
 		}
 	}
 }

@@ -33,45 +33,99 @@ class Dispatcher{
 	public getRouter(){
 		return this.router;
 	}
-	private homeRoute(){
-		if (this.homeAction) {
-			this.debug('home route');
-			this.router.all("/", this.homeAction.getRequestHandler());
-		} else {
-			this.debug('home route empty');
+
+	private createRequest(req:express.Request):Action.Request{
+		var request = new Action.Request(req);
+		for(var index in req.body){
+			request.addBody(index, req.body[index]);
 		}
+		for(var index in req.query){
+			request.addQuery(index, req.query[index]);
+		}
+		for(var index in req.params){
+			request.addParam(index, req.params[index]);
+		}
+		return request;
 	}
+	private createResponse(res:express.Response):Action.Response{
+		var response = new Action.Response(res);
+		return response;
+	}
+
 	public setHomeAction(action:Action.BaseAction){
 		this.homeAction = action;
 	}
 	public setFallbackAction(action:Action.BaseAction){
 		this.fallbackAction = action;
 	}
+	/**
+	 * Wywołuje się zawsze jako pierwsza akcja przed innymi
+	 * najpierw tworzy obiekty response i request które są wrapperami na req i res expressa
+	 */
+	private beforeRoute(){
+		this.debug('before route');
+		this.router.use((req,res,next)=>{
+			var request = this.createRequest(req);
+			req['horpynaRequest'] = request;
+			var response = this.createResponse(res);
+			res['horpynaResponse'] = response;
+			next();
+		});
+	}
+	private homeRoute(){
+		if (this.homeAction) {
+			this.debug('home route');
+			var handler = this.homeAction.getRequestHandler();
+			this.router.all("/", (req, res) => {
+				handler(req['horpynaRequest'], res['horpynaResponse']);
+			});
+		} else {
+			this.debug('home route empty');
+		}
+	}
 	private fallbackRoute(){
 		this.debug('fallback route');
-		this.router.use(this.fallbackAction.getRequestHandler());
+		var handler = this.fallbackAction.getRequestHandler();
+		this.router.use((req, res) => {
+			handler(req['horpynaRequest'], res['horpynaResponse']);
+		});
 	}
+	//TODO:rebuild
 	private errorHandler(){
-		this.router.use();
+		this.router.use(this.errHandler);
+	}
+	//TODO:rebuild
+	private errHandler(err, req, res, next) {
+		console.error(err.stack);
 	}
 	private createMethodRoutes(routeName:string, action:Action.BaseAction){
 		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.getName());
 		var handler = action.getRequestHandler();
 		switch(action.getMethod()){
 			case Action.BaseAction.ALL:
-				this.router.all(routeName,handler);
+				this.router.all(routeName, (req, res) => {
+					handler(req['horpynaRequest'], res['horpynaResponse']);
+				});
 				break;
 			case Action.BaseAction.GET:
-				this.router.get(routeName,handler);
+				this.router.get(routeName, (req, res) => {
+					handler(req['horpynaRequest'], res['horpynaResponse']);
+				});
 				break;
 			case Action.BaseAction.POST:
-				this.router.post(routeName,handler);
+				this.router.post(routeName, (req, res) => {
+					handler(req['horpynaRequest'], res['horpynaResponse']);
+				});
 				break;
 			case Action.BaseAction.PUT:
-				this.router.put(routeName,handler);
+				this.router.put(routeName, (req, res) => {
+					handler(req['horpynaRequest'], res['horpynaResponse']);
+				});
 				break;
 			case Action.BaseAction.DELETE:
-				this.router.delete(routeName,handler);
+				this.router.delete(routeName, (req, res) => {
+					handler(req['horpynaRequest'], res['horpynaResponse']);
+				});
 				break;
 		}
 	}
@@ -117,10 +171,12 @@ class Dispatcher{
 			throw new Error(Dispatcher.FALLBACK_ACTION_NOT_SET);
 		}
 		this.debug('start');
+		this.beforeRoute();
 		this.homeRoute();
 
 		this.createModuleRoutes("", moduleList, defaultModule);
 		this.fallbackRoute();
+		this.errorHandler();
 		this.debug('end');
 	}
 	private buildRoute(baseRoute:string, partRoute:string):string{

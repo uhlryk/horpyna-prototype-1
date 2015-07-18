@@ -10,12 +10,17 @@ class Response{
 	private expressResponse:express.Response;
 	private action:BaseAction;
 	private _logger: Util.Logger;
-	constructor(action:BaseAction,expressResponse:express.Response, viewClass){
+	constructor(expressResponse:express.Response){
 		this.status = 200;
 		this.data = new Object();
 		this.expressResponse = expressResponse;
-		this.view = new viewClass(this.expressResponse);
+	}
+	public setAction(action: BaseAction) {
 		this.action = action;
+	}
+
+	public setViewClass(viewClass) {
+		this.view = new viewClass(this.expressResponse);
 	}
 	public set logger(logger: Util.Logger) {
 		this._logger = logger;
