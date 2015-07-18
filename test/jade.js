@@ -13,13 +13,12 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 		var module1;
 		before(function (done) {
 			app = require('./jade/app')();
-			myApp = new Core.Application();
+			myApp = new Core.Application(app);
 			module1 = new Core.Module("res1");
 			myApp.addModule(module1);
 			myApp.setViewClass(Core.View.JadeView);
 			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
 			module1.addAction(action1);
-			app.use(myApp.getMiddleware());
 			action1.addActionHandler(function (request, response, done) {
 				response.getView().setTemplate("index");
 				response.addValue("title", "mój tytuł");
@@ -41,7 +40,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 		var moduleResource1;
 		before(function (done) {
 			app = require('./jade/app')();
-			myApp = new Core.Application();
+			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
 			moduleResource1 = new Core.JadeResourceModule("res1");
 			myApp.addModule(moduleResource1);
@@ -56,7 +55,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			var updateAction = moduleResource1.getAction(Core.SimpleModule.ACTION_UPDATE);
 			updateAction.addBody(new Core.Param("name"));
 			updateAction.addBody(new Core.Param("pass"));
-			app.use(myApp.getMiddleware());
+			// app.use(myApp.getMiddleware());
 			myApp.init().then(function () {
 				done();
 			});

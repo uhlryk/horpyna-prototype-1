@@ -46,7 +46,7 @@ class Logger{
 			case Logger.CONSOLE_ALL:
 				this.logger.add(winston.transports.Console, {
 					level: 'debug',
-					handleExceptions: true,
+					// handleExceptions: true,
 					json: false,
 					colorize: true
 				});
@@ -54,7 +54,7 @@ class Logger{
 			case Logger.CONSOLE_ERROR:
 				this.logger.add(winston.transports.Console, {
 					level: 'error',
-					handleExceptions: true,
+					// handleExceptions: true,
 					json: false,
 					colorize: true
 				});

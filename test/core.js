@@ -1,4 +1,6 @@
+var express = require('express');
 var chai = require("chai");
+var morgan = require("morgan");
 chai.use(require('chai-things'));
 var expect = chai.expect;
 var request = require('supertest');
@@ -9,35 +11,47 @@ var myApp;
  * podstawowe testy, czy serwer działa i logowanie
  */
 describe("Funkcje podstawowe", function() {
-	describe("Application is instantioned, but none modules are added to Application. Basic app has route '/' and fallback 404 error: ", function () {
+	describe("Aplikacja nie ma dodanych modułów, domyślnie niezainicjowana, ma route '/' z kodem 201 i fallback z 404 ", function () {
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			myApp = new Core.Application(app);
+
+			done();
+		});
+		it("zwraca kod 201, przy '/'", function (done) {
 			app.get('/', function (req, res) {
-				res.sendStatus(200);
+				res.sendStatus(201);
 			});
 			app.use(function (req, res, next) {
 				res.sendStatus(404);
 			});
-			done();
-		});
-		it("should return status code 200 when accessing '/' and Artwave router is not added to app.use", function (done) {
 			request(app).get("/")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
+					expect(res.status).to.be.equal(201);
 					done();
 				});
 		});
-		it("should return status code 200 when accessing '/' and Artwave router is added to app.use", function (done) {
+		it("zwraca kod 200 dla '/' z aplikacji jak zainicjowana", function (done) {
 			myApp.init();
-			app.use(myApp.getMiddleware());
+			app.get('/', function (req, res) {
+				res.sendStatus(201);
+			});
+			app.use(function (req, res, next) {
+				res.sendStatus(404);
+			});
 			request(app).get("/")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
 				});
 		});
-		it("should return status code 404 when accessing '/custom' and Artwave router is added to app.use", function (done) {
+		it("zwraca kod 404 gdy wywołamy nieistniejący route '/custom' a aplikacja niezainicjowana", function (done) {
+			app.get('/', function (req, res) {
+				res.sendStatus(201);
+			});
+			app.use(function (req, res, next) {
+				res.sendStatus(404);
+			});
 			request(app).get("/custom")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(404);
@@ -48,10 +62,11 @@ describe("Funkcje podstawowe", function() {
 	describe("Application is instantioned, but none modules are added to Artwave. Basic app has route '/' and none 404 fallback. Artwave app has route 'test': ", function () {
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			var router = new express.Router();
+			myApp = new Core.Application(router);
 			app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
 			myApp.init();
-			app.use("/test/", myApp.getMiddleware());
+			app.use("/test/", router);
 			app.get('/', function (req, res) {
 				res.sendStatus(200);
 			});
@@ -84,19 +99,19 @@ describe("Funkcje podstawowe", function() {
 		});
 		it("should throw error when module name contain wrong chars 'ą'", function (done) {
 			expect(function () {
-				new Core.SimpleModule("abcABCą")
+				new Core.SimpleModule("abcABCą");
 			}).to.throw(SyntaxError);
 			done();
 		});
 		it("should throw error when module name contain wrong chars -space", function (done) {
 			expect(function () {
-				new Core.SimpleModule("abcA BC")
+				new Core.SimpleModule("abcA BC");
 			}).to.throw(SyntaxError);
 			done();
 		});
 		it("should NOT throw error when module name contain  chars a-zA-Z-", function (done) {
 			expect(function () {
-				new Core.SimpleModule("abcA-BC")
+				new Core.SimpleModule("abcA-BC");
 			}).to.not.throw(SyntaxError);
 			done();
 		});
@@ -104,11 +119,13 @@ describe("Funkcje podstawowe", function() {
 	describe("Application is instantioned, added instance of SimpleModule with name 'simple'. Basic app has route '/' and none 404 fallback. Artwave app has route 'test'. Actions named std ", function () {
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			var router= new express.Router();
+			myApp = new Core.Application(router);
+			app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
 			var simpleModule = new Core.SimpleModule("simple");
 			myApp.addModule(simpleModule);
 			myApp.init();
-			app.use("/test/", myApp.getMiddleware());
+			app.use("/test/", router);
 			app.get('/', function (req, res) {
 				res.sendStatus(200);
 			});
@@ -132,10 +149,15 @@ describe("Funkcje podstawowe", function() {
 				});
 		});
 	});
-	describe("Check actions set as default (default action not return routeName, use parent module routeName only)", function () {
+	describe("Sprawdzamy zachowanie gdy podane do aplikacji parametry są błędne", function () {
+
+	});
+	describe("Sprawdzamy zachowanie gdy jedna z akcji jest domyślna", function () {
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			var router = new express.Router();
+			myApp = new Core.Application(router);
+			app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
 			var module = new Core.Module("simple");
 			myApp.addModule(module);
 			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
@@ -143,7 +165,7 @@ describe("Funkcje podstawowe", function() {
 			var action2 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action2");
 			module.addAction(action2, true);
 			myApp.init();
-			app.use("/test/", myApp.getMiddleware());
+			app.use("/test", router);
 			app.get('/', function (req, res) {
 				res.sendStatus(200);
 			});
@@ -152,14 +174,14 @@ describe("Funkcje podstawowe", function() {
 			});
 			done();
 		});
-		it("should return status code 200 when accessing '/test/simple/action1' where 'action1' is action routeName ", function (done) {
+		it("zwraca 200 przy wejściu na poprawny adres '/test/simple/action1'", function (done) {
 			request(app).get("/test/simple/action1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
 				});
 		});
-		it("should return status code 200 when accessing '/test/simple/', because action is default", function (done) {
+		it("zwraca 200 przy wejściu na adres modułu '/test/simple/', czyli z akcji domyślnej", function (done) {
 			request(app).get("/test/simple/")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
@@ -171,7 +193,7 @@ describe("Funkcje podstawowe", function() {
 		var moduleParent1, moduleParent2;
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			myApp = new Core.Application(app);
 			moduleParent1 = new Core.SimpleModule("simple1");
 			moduleParent2 = new Core.SimpleModule("simple2");
 			done();
@@ -189,7 +211,7 @@ describe("Funkcje podstawowe", function() {
 
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			myApp = new Core.Application(app);
 			var myModule = new Core.Module("mod1");
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
@@ -199,7 +221,7 @@ describe("Funkcje podstawowe", function() {
 			myAction.addParam(myParam1);
 			myAction.addParam(myParam2);
 			myApp.init();
-			app.use(myApp.getMiddleware());
+			// app.use(myApp.getMiddleware());
 			done();
 		});
 		it("should return status code 200 when accessing '/mod1/act1/999/32' where 999 is param ':test' and 32 is 'par2'", function (done) {
@@ -214,7 +236,7 @@ describe("Funkcje podstawowe", function() {
 
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
 			var myModule = new Core.Module("module1");
 			myApp.addModule(myModule);
@@ -228,7 +250,7 @@ describe("Funkcje podstawowe", function() {
 			col3.setList(["kot", "ala", "ma"]);
 			myModel.addColumn(col3);
 			myModule.addModel(myModel);
-			app.use(myApp.getMiddleware());
+			// app.use(myApp.getMiddleware());
 			myApp.init().then(function () {
 				done();
 			});
@@ -245,7 +267,7 @@ describe("Funkcje podstawowe", function() {
 		var moduleParent1, moduleParent2, moduleChild1;
 		beforeEach(function (done) {
 			app = require('./core/app')();
-			myApp = new Core.Application();
+			myApp = new Core.Application(app);
 			moduleParent1 = new Core.Module("modu1");
 			myApp.addModule(moduleParent1);
 			moduleChild1 = new Core.Module("child1");
@@ -254,7 +276,7 @@ describe("Funkcje podstawowe", function() {
 			moduleChild1.addAction(action1);
 			moduleParent2 = new Core.Module("modu2");
 			myApp.addModule(moduleParent2);
-			app.use(myApp.getMiddleware());
+			// app.use(myApp.getMiddleware());
 			done();
 		});
 		it("kod 400 blokada 'on', nasłuch lokalny", function (done) {

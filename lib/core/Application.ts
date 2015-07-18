@@ -21,7 +21,9 @@ class Application {
 	private componentManager:ComponentManager;
 	private dbManager:DbManager;
 	private router:express.Router;
-	constructor() {
+
+	constructor(router:express.Router) {
+		this.router = router;
 		this.logger = new Util.Logger();
 		this.frontController = new FrontController();
 		this.frontController.debug("application:constructor:");
@@ -32,7 +34,6 @@ class Application {
 		this.frontController.setDispatcher(this.dispatcher);
 		this.frontController.setComponentManager(this.componentManager);
 		this.frontController.setDbManager(this.dbManager);
-		this.router = express.Router();
 	}
 	public setViewClass(viewClass){
 		this.componentManager.setViewClass(viewClass);
@@ -59,9 +60,6 @@ class Application {
 	public getMiddleware():express.Router{
 		this.frontController.debug("application:getMiddleware:");
 		return this.router;
-	}
-	public getErrHandler(){
-		return
 	}
 	public getLogger():Util.Logger{
 		return this.logger;

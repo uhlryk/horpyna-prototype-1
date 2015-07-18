@@ -126,10 +126,13 @@ class BaseAction extends RouteComponent {
 		}
 	}
 	protected requestHandler(request:Request, response:Response){
+		this.debug("action:requestHandler:");
+		this.debug("action:publish():BeforeStart");
 		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
 		this.publish(beforeStartPublisher)
 		.then((resp:Event.Action.BeforeStart.Response)=>{
 			if(resp.isAllow()) {
+				this.debug("action:validateRequest");
 				this.validateRequest(request);
 				response.setStatus(200);
 				//TODO: validacja formularzy w promise
@@ -137,21 +140,27 @@ class BaseAction extends RouteComponent {
 				//onReadyPublisher.setQuery(req.query);
 				//onReadyPublisher.setBody(req.body);
 				//onReadyPublisher.setParams(req.params);
+				this.debug("action:publish():OnReady");
 				this.publish(onReadyPublisher)
 				.then((responseOnReady:Event.Action.OnReady.Response)=> {
 					return new Util.Promise<void>((resolve:()=>void)=> {
+						this.debug("action: check actionHandler if exist");
 						if (this.actionHandler) {
+							this.debug("action: actionHandler exist");
 							this.actionHandler(request, response, resolve);
 						} else {
+							this.debug("action: actionHandler not exist");
 							resolve();
 						}
 					})
 				})
 				.then(()=>{
+					this.debug("action:render()");
 						response.render();
 						//res.status(response.getStatus()).send(response.getContent());
 				});
 			} else {
+				this.debug("action:render()");
 				response.setStatus(400);
 				//TODO: przemyśleć obsługę blokady
 				response.render();
@@ -177,6 +186,7 @@ class BaseAction extends RouteComponent {
 	}
 	public getRequestHandler():express.RequestHandler{
 		return (req:express.Request, res:express.Response)=>{
+			this.debug("action:getRequestHandler()");
 			this.requestHandler(this.createRequest(req),this.createResponse(res));
 		}
 	}

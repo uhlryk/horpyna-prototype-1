@@ -19,7 +19,7 @@ class Component{
 		this.name = name;
 		this.checkName(name);
 		Component.count++;
-		this.debugger = new Util.Debugger("component:"+this.name+":");
+		this.debugger = new Util.Debugger("component:"+this.name);
 		this.debug('constructor %s a', this.name);
 	}
 	/**
