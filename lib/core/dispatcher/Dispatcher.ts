@@ -9,7 +9,14 @@ class Dispatcher{
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private logger: Util.Logger;
+	/**
+	 * Akcja wywoływana gdy brak jakiego kolwiek routera który by ją odebrał
+	 */
 	private fallbackAction: Action.BaseAction;
+	/**
+	 * Akcja do obsługi routera '/'
+	 */
+	private homeAction: Action.BaseAction;
 	constructor() {
 		this.debugger = new Util.Debugger("dispatcher");
 	}
@@ -26,11 +33,16 @@ class Dispatcher{
 	public getRouter(){
 		return this.router;
 	}
-	private baseRoute(){
-		this.debug('base route');
-		this.router.all("/", function (req, res) {
-			res.sendStatus(200);
-		});
+	private homeRoute(){
+		if (this.homeAction) {
+			this.debug('home route');
+			this.router.all("/", this.homeAction.getRequestHandler());
+		} else {
+			this.debug('home route empty');
+		}
+	}
+	public setHomeAction(action:Action.BaseAction){
+		this.homeAction = action;
 	}
 	public setFallbackAction(action:Action.BaseAction){
 		this.fallbackAction = action;
@@ -69,6 +81,9 @@ class Dispatcher{
 			if(action === this.fallbackAction){
 				continue;//nie tworzymy w sposób standardowy route dla fallback action
 			}
+			if(action === this.homeAction){
+				continue;//nie tworzymy w sposób standardowy route dla home action
+			}
 			var newRouteName;
 			if(!defaultActionList || defaultActionList.indexOf(action) === -1){//nie jest na liście default
 				newRouteName = this.buildRoute(routeName, action.getRoute());
@@ -87,7 +102,7 @@ class Dispatcher{
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
 			var newRouteName;
-			if(defaultModule === module){//dany moduł jest defaultowy
+			if(defaultModule === module){//dany moduł jest ustawiony jak defaultowy więc nie dodaje route
 				newRouteName = routeName;
 			} else {
 				newRouteName = this.buildRoute(routeName, module.getRoute());
@@ -102,7 +117,7 @@ class Dispatcher{
 			throw new Error(Dispatcher.FALLBACK_ACTION_NOT_SET);
 		}
 		this.debug('start');
-		this.baseRoute();
+		this.homeRoute();
 
 		this.createModuleRoutes("", moduleList, defaultModule);
 		this.fallbackRoute();

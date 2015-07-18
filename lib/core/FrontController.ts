@@ -86,13 +86,15 @@ class FrontController {
 		return promise;
 	}
 	/**
-	 * Ustawia akcję fallback dla dispatchera
+	 * Ustawia akcję home, fallback dla dispatchera
 	 */
 	private setDefault():void{
 		var defaultModule: Module = new DefaultModule("default");
 		this.componentManager.addModule(defaultModule);
 		var fallbackAction = defaultModule.getAction(DefaultModule.ACTION_FALLBACK);
 		this.dispatcher.setFallbackAction(fallbackAction);
+		var homeAction = defaultModule.getAction(DefaultModule.ACTION_HOME);
+		this.dispatcher.setHomeAction(homeAction);
 	}
 }
 export = FrontController;
