@@ -86,15 +86,15 @@ class FrontController {
 		return promise;
 	}
 	/**
-	 * Ustawia akcję home, fallback dla dispatchera
+	 * Ustawia akcję home, final dla dispatchera
 	 */
 	private setDefault():void{
 		var defaultModule: Module = new DefaultModule("default");
 		this.componentManager.addModule(defaultModule);
 		var beforeAllAction = defaultModule.getAction(DefaultModule.ACTION_BEFORE_ALL);
 		this.dispatcher.setBeforeAllAction(beforeAllAction);
-		var fallbackAction = defaultModule.getAction(DefaultModule.ACTION_FALLBACK);
-		this.dispatcher.setFallbackAction(fallbackAction);
+		var finalAction = defaultModule.getAction(DefaultModule.ACTION_FINAL);
+		this.dispatcher.setFinalAction(finalAction);
 		var homeAction = defaultModule.getAction(DefaultModule.ACTION_HOME);
 		this.dispatcher.setHomeAction(homeAction);
 	}

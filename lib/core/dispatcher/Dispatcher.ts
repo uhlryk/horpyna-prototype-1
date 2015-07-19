@@ -5,15 +5,15 @@ import Module = require("./../component/routeComponent/module/Module");
 import Action = require("./../component/routeComponent/module/action/Action");
 import Param = require("./../component/routeComponent/module/action/param/Param");
 class Dispatcher{
-	public static FALLBACK_ACTION_NOT_SET: string = "Fallback action is not set'";
+	public static FINAL_ACTION_NOT_SET: string = "Final action is not set'";
 	public static BEFORE_ALL_ACTION_NOT_SET: string = "BeforeAll action is not set'";
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private logger: Util.Logger;
 	/**
-	 * Akcja wywoływana gdy brak jakiego kolwiek routera który by ją odebrał
+	 * Akcja wywoływana na końcu
 	 */
-	private fallbackAction: Action.BaseAction;
+	private finalAction: Action.BaseAction;
 	/**
 	 * Akcja do obsługi routera '/'
 	 */
@@ -64,8 +64,8 @@ class Dispatcher{
 	public setHomeAction(action:Action.BaseAction){
 		this.homeAction = action;
 	}
-	public setFallbackAction(action:Action.BaseAction){
-		this.fallbackAction = action;
+	public setFinalAction(action:Action.BaseAction){
+		this.finalAction = action;
 	}
 	/**
 	 * Wywołuje się zawsze jako pierwsza akcja przed innymi
@@ -73,12 +73,12 @@ class Dispatcher{
 	 */
 	private beforeRoute(){
 		this.debug('before route');
+		var handler = this.beforeAllAction.getRequestHandler();
 		this.router.use((req,res,next)=>{
 			var request = this.createRequest(req);
 			req['horpynaRequest'] = request;
 			var response = this.createResponse(res);
 			res['horpynaResponse'] = response;
-			var handler = this.beforeAllAction.getRequestHandler();
 			handler(request, response, next);
 		});
 	}
@@ -86,18 +86,28 @@ class Dispatcher{
 		if (this.homeAction) {
 			this.debug('home route');
 			var handler = this.homeAction.getRequestHandler();
-			this.router.all("/", (req, res) => {
-				handler(req['horpynaRequest'], res['horpynaResponse']);
+			this.router.all("/", (req, res, next) => {
+				var request: Action.Request = req['horpynaRequest'];
+				var response: Action.Response = res['horpynaResponse'];
+				response.setAction(this.homeAction);
+				request.setAction(this.homeAction);
+				handler(request, response, next);
 			});
 		} else {
 			this.debug('home route empty');
 		}
 	}
-	private fallbackRoute(){
-		this.debug('fallback route');
-		var handler = this.fallbackAction.getRequestHandler();
+	private finalRoute(){
+		this.debug('final route');
+		var handler = this.finalAction.getRequestHandler();
+		this.router.use((req, res, next) => {
+			this.debug('final action');
+			handler(req['horpynaRequest'], res['horpynaResponse'], next);
+		});
 		this.router.use((req, res) => {
-			handler(req['horpynaRequest'], res['horpynaResponse']);
+			this.debug('final render');
+			var response: Action.Response = res['horpynaResponse'];
+			response.render();
 		});
 	}
 	//TODO:rebuild
@@ -108,33 +118,66 @@ class Dispatcher{
 	private errHandler(err, req, res, next) {
 		console.error(err.stack);
 	}
+	/**
+	 * w tej metodzie dodatkowo jest określany sposób renderowania widoku
+	 */
 	private createMethodRoutes(routeName:string, action:Action.BaseAction){
 		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.getName());
 		var handler = action.getRequestHandler();
 		switch(action.getMethod()){
 			case Action.BaseAction.ALL:
-				this.router.all(routeName, (req, res) => {
-					handler(req['horpynaRequest'], res['horpynaResponse']);
+				this.router.all(routeName, (req, res, next) => {
+					var request: Action.Request = req['horpynaRequest'];
+					var response: Action.Response = res['horpynaResponse'];
+					this.debug("view class: " + action.getViewClass());
+					response.setViewClass(action.getViewClass());
+					response.setAction(action);
+					request.setAction(action);
+					handler(request, response, next);
 				});
 				break;
 			case Action.BaseAction.GET:
-				this.router.get(routeName, (req, res) => {
-					handler(req['horpynaRequest'], res['horpynaResponse']);
+				this.router.get(routeName, (req, res, next) => {
+					var request: Action.Request = req['horpynaRequest'];
+					var response: Action.Response = res['horpynaResponse'];
+					this.debug("view class: " + action.getViewClass());
+					response.setViewClass(action.getViewClass());
+					response.setAction(action);
+					request.setAction(action);
+					handler(request, response, next);
 				});
 				break;
 			case Action.BaseAction.POST:
-				this.router.post(routeName, (req, res) => {
-					handler(req['horpynaRequest'], res['horpynaResponse']);
+				this.router.post(routeName, (req, res, next) => {
+					var request: Action.Request = req['horpynaRequest'];
+					var response: Action.Response = res['horpynaResponse'];
+					this.debug("view class: " + action.getViewClass());
+					response.setViewClass(action.getViewClass());
+					response.setAction(action);
+					request.setAction(action);
+					handler(request, response, next);
 				});
 				break;
 			case Action.BaseAction.PUT:
-				this.router.put(routeName, (req, res) => {
-					handler(req['horpynaRequest'], res['horpynaResponse']);
+				this.router.put(routeName, (req, res, next) => {
+					var request: Action.Request = req['horpynaRequest'];
+					var response: Action.Response = res['horpynaResponse'];
+					this.debug("view class: " + action.getViewClass());
+					response.setViewClass(action.getViewClass());
+					response.setAction(action);
+					request.setAction(action);
+					handler(request, response, next);
 				});
 				break;
 			case Action.BaseAction.DELETE:
-				this.router.delete(routeName, (req, res) => {
-					handler(req['horpynaRequest'], res['horpynaResponse']);
+				this.router.delete(routeName, (req, res, next) => {
+					var request: Action.Request = req['horpynaRequest'];
+					var response: Action.Response = res['horpynaResponse'];
+					this.debug("view class: " + action.getViewClass());
+					response.setViewClass(action.getViewClass());
+					response.setAction(action);
+					request.setAction(action);
+					handler(request, response, next);
 				});
 				break;
 		}
@@ -142,10 +185,13 @@ class Dispatcher{
 	private createActionRoutes(routeName:string, actionList:Action.BaseAction[], defaultActionList?:Action.BaseAction[]){
 		for(var actionIndex in actionList) {
 			var action:Action.BaseAction = actionList[actionIndex];
-			if(action === this.fallbackAction){
+			if(action === this.finalAction){
 				continue;//nie tworzymy w sposób standardowy route dla fallback action
 			}
 			if(action === this.homeAction){
+				continue;//nie tworzymy w sposób standardowy route dla home action
+			}
+			if (action === this.beforeAllAction) {
 				continue;//nie tworzymy w sposób standardowy route dla home action
 			}
 			var newRouteName;
@@ -180,16 +226,16 @@ class Dispatcher{
 			this.logger.error(Dispatcher.BEFORE_ALL_ACTION_NOT_SET);
 			throw new Error(Dispatcher.BEFORE_ALL_ACTION_NOT_SET);
 		}
-		if(this.fallbackAction === undefined){
-			this.logger.error(Dispatcher.FALLBACK_ACTION_NOT_SET);
-			throw new Error(Dispatcher.FALLBACK_ACTION_NOT_SET);
+		if(this.finalAction === undefined){
+			this.logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
+			throw new Error(Dispatcher.FINAL_ACTION_NOT_SET);
 		}
 		this.debug('start');
 		this.beforeRoute();
 		this.homeRoute();
 
 		this.createModuleRoutes("", moduleList, defaultModule);
-		this.fallbackRoute();
+		this.finalRoute();
 		this.errorHandler();
 		this.debug('end');
 	}

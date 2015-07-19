@@ -3,7 +3,7 @@ import Action = require("./action/Action");
 
 class DefaultModule extends  Module{
 	public static ACTION_HOME = "home";
-	public static ACTION_FALLBACK = "fallback";
+	public static ACTION_FINAL = "final";
 	public static ACTION_BEFORE_ALL = "before-all";
 	public onConstructor(){
 		super.onConstructor();
@@ -12,10 +12,10 @@ class DefaultModule extends  Module{
 		beforeAllAction.setActionHandler((request, response, done) => {
 			this.onBeforeAllAction(request, response, done);
 		});
-		var fallbackAction:Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_FALLBACK);
-		this.addAction(fallbackAction);
-		fallbackAction.setActionHandler((request, response, done) => {
-			this.onFallbackAction(request, response, done);
+		var finalAction:Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_FINAL);
+		this.addAction(finalAction);
+		finalAction.setActionHandler((request, response, done) => {
+			this.onFinalAction(request, response, done);
 		});
 		var homeAction:Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_HOME);
 		this.addAction(homeAction);
@@ -24,11 +24,14 @@ class DefaultModule extends  Module{
 		});
 	}
 	public onBeforeAllAction(request: Action.Request, response: Action.Response, done) {
-		response.setStatus(200);
 		done();
 	}
-	public onFallbackAction(request: Action.Request, response: Action.Response, done) {
-		response.setStatus(404);
+	public onFinalAction(request: Action.Request, response: Action.Response, done) {
+		if (response){
+			if(response.getAction() === undefined){
+				response.setStatus(404);
+			}
+		}
 		done();
 	}
 	public onHomeAction(request: Action.Request, response: Action.Response, done) {

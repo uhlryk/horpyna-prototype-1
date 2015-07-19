@@ -32,18 +32,19 @@ describe("Funkcje podstawowe", function() {
 				});
 		});
 		it("zwraca kod 200 dla '/' z aplikacji jak zainicjowana", function (done) {
-			myApp.init();
-			app.get('/', function (req, res) {
-				res.sendStatus(500);
-			});
-			app.use(function (req, res, next) {
-				res.sendStatus(404);
-			});
-			request(app).get("/")
+			myApp.init().then(function () {
+				app.get('/', function (req, res) {
+					res.sendStatus(500);
+				});
+				app.use(function (req, res, next) {
+					res.sendStatus(404);
+				});
+				request(app).get("/")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
 				});
+			});
 		});
 		it("zwraca kod 403 gdy wywołamy nieistniejący route '/custom' a aplikacja niezainicjowana", function (done) {
 			app.get('/', function (req, res) {

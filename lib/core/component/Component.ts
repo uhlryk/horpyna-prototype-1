@@ -12,7 +12,7 @@ class Component{
 	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
 	private name:string;
 	private parent:Component;
-	private debugger: Util.Debugger;
+	protected debugger: Util.Debugger;
 	public static count = 0;
 	private _logger: Util.Logger;
 	constructor(name:string){

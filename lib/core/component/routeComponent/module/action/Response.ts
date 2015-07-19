@@ -35,9 +35,13 @@ class Response{
 		return this.status;
 	}
 	public render(){
-		this.view.setStatus(this.status);
-		this.view.setData(this.data);
-		this.view.render();
+		if (this.view) {
+			this.view.setStatus(this.status);
+			this.view.setData(this.data);
+			this.view.render();
+		} else{
+			this.expressResponse.status(this.status).send(this.data);
+		}
 	}
 	public getView():any{
 		return this.view;

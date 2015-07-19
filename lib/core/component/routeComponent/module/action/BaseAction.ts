@@ -24,6 +24,7 @@ class BaseAction extends RouteComponent {
 
 	constructor(method:string, name:string){
 		super(name);
+		this.debugger = new Util.Debugger("action:" + this.getName());
 		this.method = method;
 		this.paramList = [];
 		this.queryList = [];
@@ -134,7 +135,7 @@ class BaseAction extends RouteComponent {
 	 * @param {Response} response   [description]
 	 * @param {[type]}   doneAction [description]
 	 */
-	protected requestHandler(request: Request, response: Response, doneAction?) {
+	protected requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
 		this.debug("action:publish():BeforeStart");
 		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
@@ -143,7 +144,7 @@ class BaseAction extends RouteComponent {
 			if(resp.isAllow()) {
 				this.debug("action:validateRequest");
 				this.validateRequest(request);
-				response.setStatus(200);
+				// response.setStatus(200);
 				//TODO: validacja formularzy w promise
 				var onReadyPublisher = new Event.Action.OnReady.Publisher();
 				//onReadyPublisher.setQuery(req.query);
@@ -164,36 +165,21 @@ class BaseAction extends RouteComponent {
 					})
 				})
 				.then(()=>{
-					this.debug("action:render()");
-					if (doneAction){
-						doneAction();
-					} else{
-						response.render();
-					}
+					this.debug("action:allow");
+					doneAction();
 				});
 			} else {
-				this.debug("action:render()");
+				this.debug("action:disallow");
 				response.setStatus(400);
 				//TODO: przemyśleć obsługę blokady
-				if (doneAction) {
-					doneAction();
-				} else {
-					response.render();
-				}
+				doneAction();
 			}
 		});
 	}
 	public getRequestHandler(){
 		this.debug("action:getRequestHandler()");
-		return (request:Request, response:Response, next?)=>{
-			response.setViewClass(this.getViewClass());
-			response.setAction(this);
-			request.setAction(this);
-			if (next) {
-				this.requestHandler(request, response, next);
-			} else {
-				this.requestHandler(request, response);
-			}
+		return (request:Request, response:Response, next)=>{
+			this.requestHandler(request, response, next);
 		}
 	}
 }
