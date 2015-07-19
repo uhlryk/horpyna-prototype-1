@@ -125,7 +125,16 @@ class BaseAction extends RouteComponent {
 			}
 		}
 	}
-	protected requestHandler(request:Request, response:Response){
+	/**
+	 * Dispatcher może do requestHandlera przekazać trzeci parametr doneAction (jest to express next)
+	 * Przekazuje go jeśli akcja traktowana jest jako akcja przejściowa
+	 * Wtedy akcja się nie renderuje a na końcu odpala doneAction()
+	 * Akcja jest akcją przejściową gdy jest odpalana przed inną akcją.
+	 * @param {Request}  request    [description]
+	 * @param {Response} response   [description]
+	 * @param {[type]}   doneAction [description]
+	 */
+	protected requestHandler(request: Request, response: Response, doneAction?) {
 		this.debug("action:requestHandler:");
 		this.debug("action:publish():BeforeStart");
 		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
@@ -156,41 +165,35 @@ class BaseAction extends RouteComponent {
 				})
 				.then(()=>{
 					this.debug("action:render()");
+					if (doneAction){
+						doneAction();
+					} else{
 						response.render();
-						//res.status(response.getStatus()).send(response.getContent());
+					}
 				});
 			} else {
 				this.debug("action:render()");
 				response.setStatus(400);
 				//TODO: przemyśleć obsługę blokady
-				response.render();
+				if (doneAction) {
+					doneAction();
+				} else {
+					response.render();
+				}
 			}
 		});
 	}
-	// private createRequest(req:express.Request):Request{
-	// 	var request = new Request(this, req);
-	// 	for(var index in req.body){
-	// 		request.addBody(index, req.body[index]);
-	// 	}
-	// 	for(var index in req.query){
-	// 		request.addQuery(index, req.query[index]);
-	// 	}
-	// 	for(var index in req.params){
-	// 		request.addParam(index, req.params[index]);
-	// 	}
-	// 	return request;
-	// }
-	// private createResponse(res:express.Response):Response{
-	// 	var response = new Response(this, res, this.getViewClass());
-	// 	return response;
-	// }
 	public getRequestHandler(){
 		this.debug("action:getRequestHandler()");
-		return (request:Request, response:Response)=>{
+		return (request:Request, response:Response, next?)=>{
 			response.setViewClass(this.getViewClass());
 			response.setAction(this);
 			request.setAction(this);
-			this.requestHandler(request, response);
+			if (next) {
+				this.requestHandler(request, response, next);
+			} else {
+				this.requestHandler(request, response);
+			}
 		}
 	}
 }

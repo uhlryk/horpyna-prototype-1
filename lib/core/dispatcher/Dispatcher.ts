@@ -6,6 +6,7 @@ import Action = require("./../component/routeComponent/module/action/Action");
 import Param = require("./../component/routeComponent/module/action/param/Param");
 class Dispatcher{
 	public static FALLBACK_ACTION_NOT_SET: string = "Fallback action is not set'";
+	public static BEFORE_ALL_ACTION_NOT_SET: string = "BeforeAll action is not set'";
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private logger: Util.Logger;
@@ -17,6 +18,12 @@ class Dispatcher{
 	 * Akcja do obsługi routera '/'
 	 */
 	private homeAction: Action.BaseAction;
+	/**
+	 * Określa akcję wywoływaną przed wszystkimi. Możliwe że ta akcja będzie miała trochę inną
+	 * strukturę niż pozostałe. Obecnie jest taka sama
+	 * @type {Action.BaseAction}
+	 */
+	private beforeAllAction: Action.BaseAction;
 	constructor() {
 		this.debugger = new Util.Debugger("dispatcher");
 	}
@@ -51,7 +58,9 @@ class Dispatcher{
 		var response = new Action.Response(res);
 		return response;
 	}
-
+	public setBeforeAllAction(action: Action.BaseAction) {
+		this.beforeAllAction = action;
+	}
 	public setHomeAction(action:Action.BaseAction){
 		this.homeAction = action;
 	}
@@ -69,7 +78,8 @@ class Dispatcher{
 			req['horpynaRequest'] = request;
 			var response = this.createResponse(res);
 			res['horpynaResponse'] = response;
-			next();
+			var handler = this.beforeAllAction.getRequestHandler();
+			handler(request, response, next);
 		});
 	}
 	private homeRoute(){
@@ -166,6 +176,10 @@ class Dispatcher{
 		};
 	}
 	public createRoutes(moduleList:Module[], defaultModule?:Module):void{
+		if(this.beforeAllAction === undefined){
+			this.logger.error(Dispatcher.BEFORE_ALL_ACTION_NOT_SET);
+			throw new Error(Dispatcher.BEFORE_ALL_ACTION_NOT_SET);
+		}
 		if(this.fallbackAction === undefined){
 			this.logger.error(Dispatcher.FALLBACK_ACTION_NOT_SET);
 			throw new Error(Dispatcher.FALLBACK_ACTION_NOT_SET);

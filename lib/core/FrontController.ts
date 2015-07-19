@@ -91,6 +91,8 @@ class FrontController {
 	private setDefault():void{
 		var defaultModule: Module = new DefaultModule("default");
 		this.componentManager.addModule(defaultModule);
+		var beforeAllAction = defaultModule.getAction(DefaultModule.ACTION_BEFORE_ALL);
+		this.dispatcher.setBeforeAllAction(beforeAllAction);
 		var fallbackAction = defaultModule.getAction(DefaultModule.ACTION_FALLBACK);
 		this.dispatcher.setFallbackAction(fallbackAction);
 		var homeAction = defaultModule.getAction(DefaultModule.ACTION_HOME);
