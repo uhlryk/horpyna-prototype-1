@@ -6,7 +6,7 @@ import Action = require("./../component/routeComponent/module/action/Action");
 import Param = require("./../component/routeComponent/module/action/param/Param");
 class Dispatcher{
 	public static FINAL_ACTION_NOT_SET: string = "Final action is not set'";
-	public static BEFORE_ALL_ACTION_NOT_SET: string = "BeforeAll action is not set'";
+	public static BEGIN_ACTION_NOT_SET: string = "Begin action is not set'";
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private logger: Util.Logger;
@@ -20,10 +20,8 @@ class Dispatcher{
 	private homeAction: Action.BaseAction;
 	/**
 	 * Określa akcję wywoływaną przed wszystkimi. Możliwe że ta akcja będzie miała trochę inną
-	 * strukturę niż pozostałe. Obecnie jest taka sama
-	 * @type {Action.BaseAction}
 	 */
-	private beforeAllAction: Action.BaseAction;
+	private beginAction: Action.BaseAction;
 	constructor() {
 		this.debugger = new Util.Debugger("dispatcher");
 	}
@@ -58,8 +56,8 @@ class Dispatcher{
 		var response = new Action.Response(res);
 		return response;
 	}
-	public setBeforeAllAction(action: Action.BaseAction) {
-		this.beforeAllAction = action;
+	public setBeginAction(action: Action.BaseAction) {
+		this.beginAction = action;
 	}
 	public setHomeAction(action:Action.BaseAction){
 		this.homeAction = action;
@@ -71,9 +69,9 @@ class Dispatcher{
 	 * Wywołuje się zawsze jako pierwsza akcja przed innymi
 	 * najpierw tworzy obiekty response i request które są wrapperami na req i res expressa
 	 */
-	private beforeRoute(){
+	private beginRoute(){
 		this.debug('before route');
-		var handler = this.beforeAllAction.getRequestHandler();
+		var handler = this.beginAction.getRequestHandler();
 		this.router.use((req,res,next)=>{
 			var request = this.createRequest(req);
 			req['horpynaRequest'] = request;
@@ -191,7 +189,7 @@ class Dispatcher{
 			if(action === this.homeAction){
 				continue;//nie tworzymy w sposób standardowy route dla home action
 			}
-			if (action === this.beforeAllAction) {
+			if (action === this.beginAction) {
 				continue;//nie tworzymy w sposób standardowy route dla home action
 			}
 			var newRouteName;
@@ -222,16 +220,16 @@ class Dispatcher{
 		};
 	}
 	public createRoutes(moduleList:Module[], defaultModule?:Module):void{
-		if(this.beforeAllAction === undefined){
-			this.logger.error(Dispatcher.BEFORE_ALL_ACTION_NOT_SET);
-			throw new Error(Dispatcher.BEFORE_ALL_ACTION_NOT_SET);
+		if(this.beginAction === undefined){
+			this.logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
+			throw new Error(Dispatcher.BEGIN_ACTION_NOT_SET);
 		}
 		if(this.finalAction === undefined){
 			this.logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
 			throw new Error(Dispatcher.FINAL_ACTION_NOT_SET);
 		}
 		this.debug('start');
-		this.beforeRoute();
+		this.beginRoute();
 		this.homeRoute();
 
 		this.createModuleRoutes("", moduleList, defaultModule);

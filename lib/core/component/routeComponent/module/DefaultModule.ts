@@ -4,13 +4,13 @@ import Action = require("./action/Action");
 class DefaultModule extends  Module{
 	public static ACTION_HOME = "home";
 	public static ACTION_FINAL = "final";
-	public static ACTION_BEFORE_ALL = "before-all";
+	public static ACTION_BEGIN = "gegin";
 	public onConstructor(){
 		super.onConstructor();
-		var beforeAllAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_BEFORE_ALL);
-		this.addAction(beforeAllAction);
-		beforeAllAction.setActionHandler((request, response, done) => {
-			this.onBeforeAllAction(request, response, done);
+		var beginAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_BEGIN);
+		this.addAction(beginAction);
+		beginAction.setActionHandler((request, response, done) => {
+			this.onBeginAction(request, response, done);
 		});
 		var finalAction:Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, DefaultModule.ACTION_FINAL);
 		this.addAction(finalAction);
@@ -23,7 +23,7 @@ class DefaultModule extends  Module{
 			this.onHomeAction(request, response, done);
 		});
 	}
-	public onBeforeAllAction(request: Action.Request, response: Action.Response, done) {
+	public onBeginAction(request: Action.Request, response: Action.Response, done) {
 		done();
 	}
 	public onFinalAction(request: Action.Request, response: Action.Response, done) {
