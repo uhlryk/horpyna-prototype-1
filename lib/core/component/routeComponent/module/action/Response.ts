@@ -3,9 +3,24 @@ import View = require("../../../../view/View");
 import express = require("express");
 import BaseAction = require("./BaseAction");
 import Util = require("./../../../../util/Util");
+/**
+ * Obiekt z odpowiedzią na requesta. Jest to wrapper na express.Response
+ */
 class Response{
 	public status:number;
+	/**
+	 * Obiekt widoku. Widok odpowiada za render do przeglądarki. Może to być JadeView, JsonView
+	 */
 	public view:any;
+	/**
+	 * DOdatkowe parametry widoku. Np template
+	 * @type {Object}
+	 */
+	private viewParam: Object;
+	/**
+	 * dane do widoku do zrenderowania, w przypadku json jest to output
+	 * @type {Object}
+	 */
 	private data:Object;
 	private expressResponse:express.Response;
 	private action:BaseAction;
@@ -14,6 +29,7 @@ class Response{
 	constructor(expressResponse:express.Response){
 		this.status = 200;
 		this.data = new Object();
+		this.viewParam = new Object();
 		this.expressResponse = expressResponse;
 	}
 	public setAction(action: BaseAction) {
@@ -43,8 +59,9 @@ class Response{
 	}
 	public render(){
 		if (this.view) {
-			this.view.setStatus(this.status);
-			this.view.setData(this.data);
+			this.view.status = this.status;
+			this.view.data = this.data;
+			this.view.param = this.viewParam;
 			this.view.render();
 		} else{
 			this.expressResponse.status(this.status).send(this.data);
@@ -52,6 +69,9 @@ class Response{
 	}
 	public getView():any{
 		return this.view;
+	}
+	public addViewParam(name:string, value:any){
+		this.viewParam[name] = value;
 	}
 	public addValue(name:string, value:any){
 		this.data[name] = value;
