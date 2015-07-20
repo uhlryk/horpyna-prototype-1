@@ -116,66 +116,45 @@ class Dispatcher{
 	private errHandler(err, req, res, next) {
 		console.error(err.stack);
 	}
+	private standardActionHandler(action, req, res, next){
+		var handler = action.getRequestHandler();
+		var request: Action.Request = req['horpynaRequest'];
+		var response: Action.Response = res['horpynaResponse'];
+		this.debug("view class: " + action.getViewClass());
+		response.setViewClass(action.getViewClass());
+		response.setAction(action);
+		request.setAction(action);
+		handler(request, response, next);
+	}
 	/**
 	 * w tej metodzie dodatkowo jest określany sposób renderowania widoku
 	 */
 	private createMethodRoutes(routeName:string, action:Action.BaseAction){
 		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.getName());
-		var handler = action.getRequestHandler();
 		switch(action.getMethod()){
 			case Action.BaseAction.ALL:
 				this.router.all(routeName, (req, res, next) => {
-					var request: Action.Request = req['horpynaRequest'];
-					var response: Action.Response = res['horpynaResponse'];
-					this.debug("view class: " + action.getViewClass());
-					response.setViewClass(action.getViewClass());
-					response.setAction(action);
-					request.setAction(action);
-					handler(request, response, next);
+					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.GET:
 				this.router.get(routeName, (req, res, next) => {
-					var request: Action.Request = req['horpynaRequest'];
-					var response: Action.Response = res['horpynaResponse'];
-					this.debug("view class: " + action.getViewClass());
-					response.setViewClass(action.getViewClass());
-					response.setAction(action);
-					request.setAction(action);
-					handler(request, response, next);
+					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.POST:
 				this.router.post(routeName, (req, res, next) => {
-					var request: Action.Request = req['horpynaRequest'];
-					var response: Action.Response = res['horpynaResponse'];
-					this.debug("view class: " + action.getViewClass());
-					response.setViewClass(action.getViewClass());
-					response.setAction(action);
-					request.setAction(action);
-					handler(request, response, next);
+					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.PUT:
 				this.router.put(routeName, (req, res, next) => {
-					var request: Action.Request = req['horpynaRequest'];
-					var response: Action.Response = res['horpynaResponse'];
-					this.debug("view class: " + action.getViewClass());
-					response.setViewClass(action.getViewClass());
-					response.setAction(action);
-					request.setAction(action);
-					handler(request, response, next);
+					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.DELETE:
 				this.router.delete(routeName, (req, res, next) => {
-					var request: Action.Request = req['horpynaRequest'];
-					var response: Action.Response = res['horpynaResponse'];
-					this.debug("view class: " + action.getViewClass());
-					response.setViewClass(action.getViewClass());
-					response.setAction(action);
-					request.setAction(action);
-					handler(request, response, next);
+					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 		}
