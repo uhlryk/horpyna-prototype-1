@@ -7,9 +7,14 @@ import Param = require("./../component/routeComponent/module/action/param/Param"
 class Dispatcher{
 	public static FINAL_ACTION_NOT_SET: string = "Final action is not set'";
 	public static BEGIN_ACTION_NOT_SET: string = "Begin action is not set'";
+	public static LAST_ERROR_NOT_SET: string = "Last error is not set'";
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private logger: Util.Logger;
+	/**
+	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
+	 */
+	private lastError: Action.ErrorAction;
 	/**
 	 * Akcja wywoływana na końcu
 	 */
@@ -65,6 +70,9 @@ class Dispatcher{
 	public setFinalAction(action:Action.BaseAction){
 		this.finalAction = action;
 	}
+	public setLastError(error:Action.ErrorAction){
+		this.lastError = error;
+	}
 	/**
 	 * Wywołuje się zawsze jako pierwsza akcja przed innymi
 	 * najpierw tworzy obiekty response i request które są wrapperami na req i res expressa
@@ -108,13 +116,9 @@ class Dispatcher{
 			response.render();
 		});
 	}
-	//TODO:rebuild
-	private errorHandler(){
-		this.router.use(this.errHandler);
-	}
-	//TODO:rebuild
-	private errHandler(err, req, res, next) {
-		console.error(err.stack);
+	private lastErrorRoute(){
+		this.debug('last error route');
+		this.router.use(this.lastError.getErrorHandler());
 	}
 	private standardActionHandler(action, req, res, next){
 		var handler = action.getRequestHandler();
@@ -207,13 +211,17 @@ class Dispatcher{
 			this.logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
 			throw new Error(Dispatcher.FINAL_ACTION_NOT_SET);
 		}
+		if(this.lastError === undefined){
+			this.logger.error(Dispatcher.LAST_ERROR_NOT_SET);
+			throw new Error(Dispatcher.LAST_ERROR_NOT_SET);
+		}
 		this.debug('start');
 		this.beginRoute();
 		this.homeRoute();
 
 		this.createModuleRoutes("", moduleList, defaultModule);
 		this.finalRoute();
-		this.errorHandler();
+		this.lastErrorRoute();
 		this.debug('end');
 	}
 	private buildRoute(baseRoute:string, partRoute:string):string{

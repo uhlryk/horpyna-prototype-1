@@ -167,6 +167,12 @@ class BaseAction extends RouteComponent {
 				.then(()=>{
 					this.debug("action:allow");
 					doneAction();
+				})
+				.catch((err)=>{
+					this.logger.error(err);
+					this.debug("error");
+					response.setStatus(500);
+					doneAction();
 				});
 			} else {
 				this.debug("action:disallow");

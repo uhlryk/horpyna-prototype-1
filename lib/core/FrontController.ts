@@ -89,7 +89,7 @@ class FrontController {
 	 * Ustawia akcję home, final dla dispatchera
 	 */
 	private setDefault():void{
-		var defaultModule: Module = new DefaultModule("default");
+		var defaultModule: DefaultModule = new DefaultModule("default");
 		this.componentManager.addModule(defaultModule);
 		var beginAction = defaultModule.getAction(DefaultModule.ACTION_BEGIN);
 		this.dispatcher.setBeginAction(beginAction);
@@ -97,6 +97,7 @@ class FrontController {
 		this.dispatcher.setFinalAction(finalAction);
 		var homeAction = defaultModule.getAction(DefaultModule.ACTION_HOME);
 		this.dispatcher.setHomeAction(homeAction);
+		this.dispatcher.setLastError(defaultModule.errorAction);
 	}
 }
 export = FrontController;
