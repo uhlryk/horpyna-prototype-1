@@ -79,22 +79,24 @@ class Dispatcher{
 	 */
 	private beginRoute(){
 		this.debug('before route');
-		var handler = this.beginAction.getRequestHandler();
 		this.router.use((req,res,next)=>{
+			var handler = this.beginAction.getRequestHandler();
 			var request = this.createRequest(req);
 			req['horpynaRequest'] = request;
 			var response = this.createResponse(res);
 			res['horpynaResponse'] = response;
+			response.allow = true;
 			handler(request, response, next);
 		});
 	}
 	private homeRoute(){
 		if (this.homeAction) {
 			this.debug('home route');
-			var handler = this.homeAction.getRequestHandler();
 			this.router.all("/", (req, res, next) => {
+				var handler = this.homeAction.getRequestHandler();
 				var request: Action.Request = req['horpynaRequest'];
 				var response: Action.Response = res['horpynaResponse'];
+				response.allow = true;
 				response.setAction(this.homeAction);
 				request.setAction(this.homeAction);
 				handler(request, response, next);
@@ -105,10 +107,13 @@ class Dispatcher{
 	}
 	private finalRoute(){
 		this.debug('final route');
-		var handler = this.finalAction.getRequestHandler();
 		this.router.use((req, res, next) => {
+			var handler = this.finalAction.getRequestHandler();
+			var request: Action.Request = req['horpynaRequest'];
+			var response: Action.Response = res['horpynaResponse'];
+			response.allow = true;
 			this.debug('final action');
-			handler(req['horpynaRequest'], res['horpynaResponse'], next);
+			handler(request, response, next);
 		});
 		this.router.use((req, res) => {
 			this.debug('final render');
@@ -124,6 +129,7 @@ class Dispatcher{
 		var handler = action.getRequestHandler();
 		var request: Action.Request = req['horpynaRequest'];
 		var response: Action.Response = res['horpynaResponse'];
+		response.allow = true;
 		this.debug("view class: " + action.getViewClass());
 		response.setViewClass(action.getViewClass());
 		response.setAction(action);

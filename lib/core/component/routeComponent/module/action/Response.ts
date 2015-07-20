@@ -10,6 +10,7 @@ class Response{
 	private expressResponse:express.Response;
 	private action:BaseAction;
 	private _logger: Util.Logger;
+	private _allow: boolean;
 	constructor(expressResponse:express.Response){
 		this.status = 200;
 		this.data = new Object();
@@ -33,6 +34,12 @@ class Response{
 	}
 	public getStatus():number{
 		return this.status;
+	}
+	public set allow(isAllow:boolean){
+		this._allow = isAllow;
+	}
+	public get allow():boolean{
+		return this._allow;
 	}
 	public render(){
 		if (this.view) {

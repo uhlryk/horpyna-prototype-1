@@ -1,89 +1,20 @@
 import Util = require("../../util/Util");
-
-/**
- * Jest to bazowy Event który może być przekazywany z wywołania eventa do nasłuchujących obiektów.
- * Obiekt który chce wywołać event, używa określonego dziedziczącego eventa lub bazwego, podając jego typ.
- * Tworzy instancję Publisher następnie dodaje go do komponentu do metody publish
- * Obiekty które chcą dostać informacje o konkretnym evencie Tworzy instancję Subscriber klasy określonego
- * eventu lub bazowego podając jego typ.
- * Eventy mogą mieć dodatkowe metody. Event nie uczestniczy w przekazywaniu informacji!!
- * To jest tylko wrapper na obie końcówki(publikacji i nasłuchu),
- * pomiędzy modułami idzie to jako prosty tekst i obiekt any
- * Gdy obiekt opublikował zdarzenie jest ono wysyłane do najbliższego modułu który publikuje go do lokalnych nasłuchów
- * Następnie wysyła go do modułu rodzica, ten podobnie publikuje go lokalnie i wysyła wyżej.
- * Az trafi na samą górę i idzie w dół do nasłuchów publicznych.
- * Każdy moduł sam przechowuje listę nasłuchujących obiektów. Tylko on posiada metodę subscribe
- *
- *
- */
+import Action = require("../routeComponent/module/action/Action");
 
 /**
  * Wewnętrzna klasa zawierająca typ eventu i robiąca wspólne zachowania
  */
-class BaseEvent{
-	private type:string;
-	private debugger: Util.Debugger;
-	constructor(type:string){
-		this.type = type;
-		this.debugger = new Util.Debugger("event:"+this.type+":");
-	}
-	public getType():string{
-		return this.type;
-	}
-	public debug(...args: any[]){
-		this.debugger.debug(args);
-	}
-}
-class BaseRawDataEvent extends BaseEvent {
-	private rawData:Object;
-	constructor(type:string){
-		super(type);
-		this.rawData = new Object();
-	}
-	public setRawData(rawData:Object){
-		this.rawData = rawData;
-	}
-	public getRawData():Object{
-		return this.rawData;
-	}
-}
-/**
- * Wywoływany by opublikować event
-  */
-export class Publisher extends BaseRawDataEvent {
-	public responseObject:any;
-	private subtype:string;
-	constructor(type:string){
-		super(type);
-		this.responseObject = Response;
-	}
-	public setSubtype(subtype:string){
-		this.subtype =subtype;
-	}
-	public getSubtype():string{
-		return this.subtype;
-	}
-	public getCloneData():Object{
-		var cloneData = new Object();
-		var rawData =  this.getRawData();
-		for (var key in rawData) {
-			if(Object.prototype.hasOwnProperty.call(rawData, key)) {
-				cloneData[key] = rawData[key];
-			}
-		}
-		return cloneData;
-	}
-}
-export interface ISubscriberCallback<T extends Data>{
-	(data:T, done):void;
+interface ISubscriberCallback {
+	(request:Action.Request, response:Action.Response, done): void;
 }
 /**
  * Wywoływany by odebrać event
  */
-export class Subscriber extends BaseEvent{
-	public dataObject:any;
+class BaseEvent {
+	private type: string;
+	private debugger: Util.Debugger;
 	private subtype:string;
-	private callback:ISubscriberCallback<Data>;
+	private callback: ISubscriberCallback;
 	public publicEvent:boolean;
 	/**
 	 * warunek określający czy subscirber ma nasłuchiwać na dany event
@@ -91,20 +22,23 @@ export class Subscriber extends BaseEvent{
 	 * /mod2/mod1/akcja1
 	 */
 	private emiterRegExp:RegExp;
-	constructor(type:string){
-		super(type);
-		this.dataObject = Data;
-		this.publicEvent = false;
+	constructor(type: string, publicEvent?: boolean) {
+		this.type = type;
+		this.debugger = new Util.Debugger("event:" + this.type + ":");
+		if (publicEvent === undefined) publicEvent = false;
+		this.publicEvent = publicEvent;
 	}
-	public addCallback(callback:ISubscriberCallback<Data>){
+		public getType(): string {
+		return this.type;
+	}
+	public debug(...args: any[]) {
+		this.debugger.debug(args);
+	}
+	public addCallback(callback: ISubscriberCallback) {
 		this.callback = callback;
 	}
-	public getCallback():ISubscriberCallback<Data>{
+	public getCallback():ISubscriberCallback{
 		return this.callback;
-	}
-	public setPublic(publicEvent?:boolean){
-		if(publicEvent === undefined ) publicEvent = true;
-		this.publicEvent= publicEvent;
 	}
 	public isPublic():boolean{
 		return this.publicEvent;
@@ -122,19 +56,4 @@ export class Subscriber extends BaseEvent{
 		return this.emiterRegExp;
 	}
 }
-/**
- * Argument callbacka Subscirbera
- */
-export class Data extends BaseRawDataEvent{
-	constructor(type:string){
-		super(type);
-	}
-}
-/**
- * Zwracane dane do obiektu publish
- */
-export class Response extends BaseRawDataEvent{
-	constructor(type:string){
-		super(type);
-	}
-}
+export = BaseEvent;

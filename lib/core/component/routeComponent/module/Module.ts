@@ -10,7 +10,7 @@ class Module extends RouteComponent{
 	private defaultModel:Model;
 	private moduleList:Module[];
 	private defaultModule : Module;
-	private subscriberList:Event.BaseEvent.Subscriber[];
+	private subscriberList:Event.BaseEvent[];
 	constructor(name:string){
 		this.actionList = [];
 		this.defaultActionList = [];
@@ -115,11 +115,11 @@ class Module extends RouteComponent{
 			}
 		}
 	}
-	public subscribe(subscriber:Event.BaseEvent.Subscriber){
+	public subscribe(subscriber:Event.BaseEvent){
 		this.subscriberList.push(subscriber);
 	}
-	protected callSubscribers(type:string, subtype:string, emiterPath:string, isPublic:boolean, data:Object, done):void{
-		Util.Promise.map(this.subscriberList, (subscriber:Event.BaseEvent.Subscriber)=> {
+	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
+		Util.Promise.map(this.subscriberList, (subscriber: Event.BaseEvent) => {
 			if(subscriber.isPublic() !== isPublic) {
 				return;
 			}
@@ -135,23 +135,23 @@ class Module extends RouteComponent{
 				return;
 			}
 			var callback = subscriber.getCallback();
-			var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType());
-			dataResponse.setRawData(data);
+			// var dataResponse:Event.BaseEvent.Data = new subscriber.dataObject(subscriber.getType());
+			// dataResponse.setRawData(data);
 			return new Util.Promise<void>((resolve:() => void) => {
-				callback(dataResponse, resolve);
+				callback(request, response, resolve);
 			});
 		})
 		.then(()=>{
 				done();
 		});
 	}
-	public broadcastPublisher(type:string, subtype:string, emiterPath:string, data:Object):Util.Promise<void>{
+	public broadcastPublisher(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string): Util.Promise<void> {
 		return new Util.Promise<void>((resolve:() => void) => {
-			this.callSubscribers(type, subtype, emiterPath, true, data, resolve);
+			this.callSubscribers(request, response, type, subtype, emiterPath, true, resolve);
 		})
 		.then(()=> {
 			Util.Promise.map(this.moduleList, (module:Module)=> {
-				return module.broadcastPublisher(type, subtype, emiterPath, data);
+				return module.broadcastPublisher(request, response, type, subtype, emiterPath);
 			})
 		});
 	}

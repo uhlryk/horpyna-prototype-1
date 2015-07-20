@@ -1,5 +1,6 @@
 import Event = require("./event/Event");
 import Util = require("../util/Util");
+import Action = require("./routeComponent/module/action/Action");
 /**
  * Klasa bazowa do wszystkich obiektów które są kompoentami. Nazwa jest obowiązkowa
  * ponieważ jest to wskaźnik na obiekt.
@@ -72,54 +73,29 @@ class Component{
 	/**
 	 * Metoda wywoływana w każdym komponencie. Pozwala odpalić event o którym powiadomione będą inne komponenty
 	 * Publikowany event dziedziczy po Event. Dla każdego typu eventa powinna być klasa dziedzicząca po event
-	 * Dla każdego eventa mamy kilka klas funkcyjnych Publisher (do publikowania), Subscriber do określenia na jaki typ czekamy,
-	 * Response z danymy od Publishera.
-	 * Dane przy przesyłaniu dalej idą w najprostrszej postaci type:string, data:any a nie w formie obiektu Publisher
-	 * Celem jest by odbiór danych mógł być w dowolnej formie, np przez prostrze klasy nasłuchujące a nie tylko
-	 * przez ten sam wyspecjalizowany event
-	 * @param publisher obiekt publishera
-	 * @returns {K}
 	 */
-	public publish(publisher:Event.BaseEvent.Publisher):Util.Promise<any>{
-		return new Util.Promise<any>((resolve) => {
-			var rawDataCopy = publisher.getCloneData();
-			var emiterPath: string = "";
-			return this.emitPublisher(publisher.getType(), publisher.getSubtype(), emiterPath, rawDataCopy)
-			.then(()=>{
-				var response = new publisher.responseObject(publisher.getType());
-				response.setRawData(rawDataCopy);
-				resolve(response);
-			});
-		});
+	public publish(request: Action.Request, response: Action.Response, type: string, subtype?: string): Util.Promise<void> {
+		var emiterPath: string = "";
+		return this.emitPublisher(request, response, type, subtype, emiterPath);
 	}
-
-	/**
+		/**
 	 * Metoda wysyła do kolejnych wyżej postawionych komponentów informacje o publikacji
-	 * @param publisher
-	 * @param eventList każdy kolejny wyżej komponent dodaje referencje na samego siebie do tej listy.
-	 * Ponieważ chcemy wiedzieć np jakiego modułu akcja została wywołana, a nie tylko wywołanie akcji.
-	 * Jest to więc lista modułów przez które przechodził moduł. Jest bez sensu bo w sumie przejdzie przez wszystkie
-	 * moduły.
-	 * @returns {K}
 	 */
-	private emitPublisher(type:string, subtype:string, emiterPath:string, data:Object):Util.Promise<void>{
+	private emitPublisher(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string): Util.Promise<void> {
 		emiterPath = "/" + this.getName() + emiterPath;
-		return new Util.Promise<void>((resolve:() => void) => {
-			this.callSubscribers(type, subtype, emiterPath, false, data, resolve);
+		return new Util.Promise<void>((resolve: () => void) => {
+			this.callSubscribers(request, response, type, subtype, emiterPath, false, resolve);
 		})
-		.then(()=>{
+		.then(() => {
 			if (this.parent) {
-				return this.parent.emitPublisher(type, subtype, emiterPath, data);
+				return this.parent.emitPublisher(request, response, type, subtype, emiterPath);
 			}
 		});
 	}
-
 	/**
 	 * Nadpisywane przez moduł, bo w tym miejscu będziemy sprawdzać subskrpycje
-	 * @param data
-	 * @returns {any}
 	 */
-	protected callSubscribers(type:string, subtype:string, emiterPath:string, isPublic:boolean, data:Object, done):void{
+	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
 		done();
 	}
 }

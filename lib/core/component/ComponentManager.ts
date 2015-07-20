@@ -1,3 +1,4 @@
+import Action = require("./routeComponent/module/action/Action");
 import Module = require("./routeComponent/module/Module");
 import Component = require("./Component");
 import Util = require("../util/Util");
@@ -52,16 +53,15 @@ class ComponentManager extends Component{
 	 * W tym miejscu event przestaje być lokalnym i ta metoda w dół publikuje go do wszystkich
 	 * zależnych modułów, a te do swoich zależnych. Każdy moduł sprawdza listę subskrybentów czy
 	 * pasują do wzorca i jeśli tak odpalają callbacki.
-	 * @param data dane wysłane od publishera i do niego muszą wrócić - mogą być zmienione
-	 * @returns {any}
 	 */
-	protected callSubscribers(type:string, subtype:string, emiterPath:string, isPublic:boolean, data:Object, done):void{
-		Util.Promise.map(this.moduleList, (module:Module)=>{
-			return module.broadcastPublisher(type, subtype, emiterPath, data);
+	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
+		Util.Promise.map(this.moduleList, (module: Module) => {
+			return module.broadcastPublisher(request, response, type, subtype, emiterPath);
 		})
-		.then(()=>{
+		.then(() => {
 			done();
 		});
 	}
+
 }
 export = ComponentManager;

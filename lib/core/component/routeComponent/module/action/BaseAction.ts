@@ -126,60 +126,46 @@ class BaseAction extends RouteComponent {
 			}
 		}
 	}
-	/**
-	 * Dispatcher może do requestHandlera przekazać trzeci parametr doneAction (jest to express next)
-	 * Przekazuje go jeśli akcja traktowana jest jako akcja przejściowa
-	 * Wtedy akcja się nie renderuje a na końcu odpala doneAction()
-	 * Akcja jest akcją przejściową gdy jest odpalana przed inną akcją.
-	 * @param {Request}  request    [description]
-	 * @param {Response} response   [description]
-	 * @param {[type]}   doneAction [description]
-	 */
 	protected requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
-		this.debug("action:publish():BeforeStart");
-		var beforeStartPublisher = new Event.Action.BeforeStart.Publisher();
-		this.publish(beforeStartPublisher)
-		.then((resp:Event.Action.BeforeStart.Response)=>{
-			if(resp.isAllow()) {
-				this.debug("action:validateRequest");
-				this.validateRequest(request);
-				// response.setStatus(200);
-				//TODO: validacja formularzy w promise
-				var onReadyPublisher = new Event.Action.OnReady.Publisher();
-				//onReadyPublisher.setQuery(req.query);
-				//onReadyPublisher.setBody(req.body);
-				//onReadyPublisher.setParams(req.params);
-				this.debug("action:publish():OnReady");
-				this.publish(onReadyPublisher)
-				.then((responseOnReady:Event.Action.OnReady.Response)=> {
-					return new Util.Promise<void>((resolve:()=>void)=> {
-						this.debug("action: check actionHandler if exist");
-						if (this.actionHandler) {
-							this.debug("action: actionHandler exist");
-							this.actionHandler(request, response, resolve);
-						} else {
-							this.debug("action: actionHandler not exist");
-							resolve();
-						}
-					})
-				})
-				.then(()=>{
-					this.debug("action:allow");
-					doneAction();
-				})
-				.catch((err)=>{
-					this.logger.error(err);
-					this.debug("error");
-					response.setStatus(500);
-					doneAction();
-				});
-			} else {
-				this.debug("action:disallow");
-				response.setStatus(400);
-				//TODO: przemyśleć obsługę blokady
-				doneAction();
-			}
+		this.debug("action:publish():OnBegin");
+		Util.Promise.resolve()
+		.then(() => {
+			if (response.allow === false) return;
+			return this.publish(request, response, Event.Action.OnBegin.EVENT_NAME)
+		})
+		.then(() => {
+			if (response.allow === false) return;
+			this.debug("action:validateRequest");
+			return this.validateRequest(request);
+		})
+		.then(() => {
+			if (response.allow === false) return;
+			this.debug("action:publish():OnReady");
+			return this.publish(request, response, Event.Action.OnReady.EVENT_NAME);
+		})
+		.then(() => {
+			if (response.allow === false) return;
+			return new Util.Promise<void>((resolve:()=>void)=> {
+				this.debug("action: check actionHandler if exist");
+				if (this.actionHandler) {
+					this.debug("action: actionHandler exist");
+					this.actionHandler(request, response, resolve);
+				} else {
+					this.debug("action: actionHandler not exist");
+					resolve();
+				}
+			})
+		})
+		.then(() => {
+			this.debug("action:finish");
+			doneAction();
+		})
+		.catch((err)=>{
+			this.logger.error(err);
+			this.debug("error");
+			response.setStatus(500);
+			doneAction();
 		});
 	}
 	public getRequestHandler(){
