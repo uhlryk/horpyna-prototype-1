@@ -158,6 +158,11 @@ class BaseAction extends RouteComponent {
 			})
 		})
 		.then(() => {
+			if (response.allow === false) return;
+			this.debug("action:publish():OnFinish");
+			return this.publish(request, response, Event.Action.OnFinish.EVENT_NAME);
+		})
+		.then(() => {
 			this.debug("action:finish");
 			doneAction();
 		})
