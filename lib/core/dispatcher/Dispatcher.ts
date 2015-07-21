@@ -46,15 +46,15 @@ class Dispatcher{
 
 	private createRequest(req:express.Request):Action.Request{
 		var request = new Action.Request(req);
-		for(var index in req.body){
-			request.addBody(index, req.body[index]);
-		}
-		for(var index in req.query){
-			request.addQuery(index, req.query[index]);
-		}
-		for(var index in req.params){
-			request.addParam(index, req.params[index]);
-		}
+		// for(var index in req.body){
+		// 	request.addBody(index, req.body[index]);
+		// }
+		// for(var index in req.query){
+		// 	request.addQuery(index, req.query[index]);
+		// }
+		// for(var index in req.params){
+		// 	request.addParam(index, req.params[index]);
+		// }
 		return request;
 	}
 	private createResponse(res:express.Response):Action.Response{
@@ -187,7 +187,7 @@ class Dispatcher{
 			} else{//jest default
 				newRouteName = routeName;
 			}
-			var paramList = action.getParamList();
+			var paramList = action.getParamListByType(Action.ParamType.PARAM_URL);
 			for(var paramIndex in paramList){
 				var param:Param = paramList[paramIndex];
 				newRouteName = this.buildRoute(newRouteName, ":" + param.getParam());

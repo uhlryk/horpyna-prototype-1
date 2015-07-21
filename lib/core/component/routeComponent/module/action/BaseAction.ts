@@ -6,15 +6,14 @@ import Param = require("./param/Param");
 import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
+import Validation = require("./Validation");
+import ParamType = require("./param/ParamType");
 interface IActionHandler{
 	(request:Request, response:Response, done:()=>void):void;
 }
-
 class BaseAction extends RouteComponent {
 	private actionHandler:IActionHandler;
 	private paramList:Param[];
-	private queryList:Param[];
-	private bodyList:Param[];
 	private method:string;
 	public static ALL:string = "all";
 	public static POST:string = "post";
@@ -27,8 +26,6 @@ class BaseAction extends RouteComponent {
 		this.debugger = new Util.Debugger("action:" + this.getName());
 		this.method = method;
 		this.paramList = [];
-		this.queryList = [];
-		this.bodyList = [];
 	}
 	protected onInit():void{
 		super.onInit();
@@ -40,91 +37,38 @@ class BaseAction extends RouteComponent {
 			param.logger = this.logger;
 			param.init();
 		};
-		for(var index in this.queryList){
-			var param:Param = this.queryList[index];
-			param.init();
-		};
-		for(var index in this.bodyList){
-			var param:Param = this.bodyList[index];
-			param.init();
-		};
 	}
-	public addQuery(param:Param){
-		this.queryList.push(param);
+	public addParam(param: Param) {
 		param.setParent(this);
-	}
-	public getQueryList():Param[]{
-		return this.queryList;
-	}
-	public addParam(param:Param){
 		this.paramList.push(param);
-		param.setParent(this);
 	}
-	public getParamList():Param[]{
+	public getParamList(): Param[] {
 		return this.paramList;
 	}
-	public addBody(param:Param){
-		this.bodyList.push(param);
-		param.setParent(this);
+	public getParamListByType(type:string): Param[] {
+		var typeParamList = [];
+		for (var index in this.paramList) {
+			var param: Param = this.paramList[index];
+			if(param.getType() === type){
+				typeParamList.push(param);
+			}
+		};
+		return typeParamList;
 	}
-	public getBodyList():Param[]{
-		return this.bodyList;
+	public getParam(type: string, name: string): Param {
+		for (var index in this.paramList) {
+			var param: Param = this.paramList[index];
+			if (param.getName() === name && param.getType() === type) {
+				return param;
+			}
+		}
+		return null;
 	}
 	public getMethod():string {
 		return this.method;
 	}
-	public getParam(name:string):Param{
-		for(var index in this.paramList){
-			var param:Param = this.paramList[index];
-			if(param.getName() === name){
-				return param;
-			}
-		}
-	}
-	public getBody(name:string):Param{
-		for(var index in this.bodyList){
-			var param:Param = this.bodyList[index];
-			if(param.getName() === name){
-				return param;
-			}
-		}
-	}
-	public getQuery(name:string):Param{
-		for(var index in this.queryList){
-			var param:Param = this.queryList[index];
-			if(param.getName() === name){
-				return param;
-			}
-		}
-	}
 	public setActionHandler(actionHandler:IActionHandler){
 		this.actionHandler = actionHandler;
-	}
-	protected validateRequest(request:Request){
-		for(var requestParamName in request.getBodyList()){
-			var actionParam:Param = this.getBody(requestParamName);
-			if(actionParam){
-				actionParam.validate();
-			} else{
-				request.removeBody(requestParamName);
-			}
-		}
-		for(var requestParamName in request.getQueryList()){
-			var actionParam:Param = this.getQuery(requestParamName);
-			if(actionParam){
-				actionParam.validate();
-			} else{
-				request.removeQuery(requestParamName);
-			}
-		}
-		for(var requestParamName in request.getParamList()){
-			var actionParam:Param = this.getParam(requestParamName);
-			if(actionParam){
-				actionParam.validate();
-			} else{
-				request.removeParam(requestParamName);
-			}
-		}
 	}
 	protected requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
@@ -137,7 +81,9 @@ class BaseAction extends RouteComponent {
 		.then(() => {
 			if (response.allow === false) return;
 			this.debug("action:validateRequest");
-			return this.validateRequest(request);
+			var validation = new Validation(this, request);
+			validation.validate();
+			// tu testy czy walidacja poprawna
 		})
 		.then(() => {
 			if (response.allow === false) return;

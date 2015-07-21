@@ -6,15 +6,17 @@ import Validator = require("./validator/Validator");
  */
 class Param extends Component {
 	private validatorList:Validator[];
-	private param:string;
+	private type:string;
+	public optional: boolean;
 	/**
-	 * @param name określa nazwę będącą identyfikatorem komponentu
-	 * @param param nazwa parametru otrzymanego z requesta, jeśli nie zostanie podana to będzie taka jak name
+	 * @param name określa nazwę będącą identyfikatorem komponentu | nazwa parametru otrzymanego z requesta
+	 * @param type url, query, body app
 	 */
-	constructor(name:string, param?:string){
+	constructor(name:string, type:string){
 		super(name);
-		this.param = param || name;
+		this.type = type;
 		this.validatorList = [];
+		this.optional = false;
 	}
 	protected onInit():void{
 		super.onInit();
@@ -35,7 +37,10 @@ class Param extends Component {
 		return this.validatorList;
 	}
 	public getParam():string{
-		return this.param;
+		return this.getName();
+	}
+	public getType():string{
+		return this.type;
 	}
 	public getValidator(name:string):Validator{
 		for(var index in this.validatorList){

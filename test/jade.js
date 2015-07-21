@@ -50,11 +50,11 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			var passCol = new Core.Column.StringColumn("pass", 50);
 			resModel.addColumn(passCol);
 			var createAction = moduleResource1.getAction(Core.SimpleModule.ACTION_CREATE);
-			createAction.addBody(new Core.Param("name"));
-			createAction.addBody(new Core.Param("pass"));
+			createAction.addParam(new Core.Param("name", Core.Action.ParamType.PARAM_BODY));
+			createAction.addParam(new Core.Param("pass", Core.Action.ParamType.PARAM_BODY));
 			var updateAction = moduleResource1.getAction(Core.SimpleModule.ACTION_UPDATE);
-			updateAction.addBody(new Core.Param("name"));
-			updateAction.addBody(new Core.Param("pass"));
+			updateAction.addParam(new Core.Param("name", Core.Action.ParamType.PARAM_BODY));
+			updateAction.addParam(new Core.Param("pass", Core.Action.ParamType.PARAM_BODY));
 			// app.use(myApp.getMiddleware());
 			myApp.init().then(function () {
 				done();

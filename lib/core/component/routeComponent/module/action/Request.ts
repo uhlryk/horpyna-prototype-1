@@ -2,18 +2,19 @@
 import express = require("express");
 import BaseAction = require("./BaseAction");
 import Util = require("./../../../../util/Util");
+import ParamType = require("./param/ParamType");
 class Request{
-	public paramList:Object;
-	public queryList:Object;
-	public bodyList:Object;
+	public allParamList:Object;
 	private expressRequest:express.Request;
 	private action:BaseAction;
 	private _logger: Util.Logger;
 	constructor(expressRequest:express.Request){
 		this.expressRequest = expressRequest;
-		this.paramList = new Object();
-		this.queryList = new Object();
-		this.bodyList = new Object();
+		this.allParamList = new Object();
+		this.allParamList[ParamType.PARAM_URL] = new Object();
+		this.allParamList[ParamType.PARAM_QUERY] = new Object();
+		this.allParamList[ParamType.PARAM_BODY] = new Object();
+		this.allParamList[ParamType.PARAM_APP] = new Object();
 	}
 	public setAction(action: BaseAction) {
 		this.action = action;
@@ -24,26 +25,20 @@ class Request{
 	public get logger():Util.Logger{
 		return this._logger;
 	}
-	public addParam(name:string,value:any){this.paramList[name] = value;}
-	public getParam(name:string):any{return this.paramList[name];}
-	public removeParam(name:string){
-		delete this.paramList[name];
+	public getExpressRequest():express.Request{
+		return this.expressRequest;
 	}
-	public getParamList():any{return this.paramList;}
-	public addQuery(name:string,value:any){this.queryList[name] = value;}
-	public getQuery(name:string):any{return this.queryList[name];}
-	public removeQuery(name:string){
-		delete this.queryList[name];
+	public addParam(type: string, name: string, value: any) {
+		if (!this.allParamList[type]){
+			this.allParamList[type] = new Object();
+		}
+		this.allParamList[type][name] = value;
 	}
-	public getQueryList():any{return this.queryList;}
-	public addBody(name:string,value:any){this.bodyList[name] = value;}
-	public getBody(name:string):any{return this.bodyList[name];}
-	public removeBody(name:string){
-		delete this.bodyList[name];
+	public getParam(type: string, name: string): any {
+		return this.allParamList[type][name];
 	}
-	public getBodyList():any{return this.bodyList;}
-	public getAction():BaseAction{
-		return this.action;
+	public getParamList(type: string): any {
+		return this.allParamList[type];
 	}
 }
 export = Request;

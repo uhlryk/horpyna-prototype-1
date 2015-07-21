@@ -32,14 +32,14 @@ class SimpleModule extends  Core.Module{
 		});
 		var detailAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(detailAction);
-		var idParam:Core.Param= new Core.Param("id");
+		var idParam: Core.Param = new Core.Param("id", Core.Action.ParamType.PARAM_URL);
 		detailAction.addParam(idParam);
 		detailAction.setActionHandler((request, response, done)=>{
 			this.onDetailAction(request, response, done);
 		});
 		var updateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.PUT, SimpleModule.ACTION_UPDATE);
 		this.addAction(updateAction);
-		var idParam:Core.Param= new Core.Param("id");
+		var idParam: Core.Param = new Core.Param("id", Core.Action.ParamType.PARAM_URL);
 		updateAction.addParam(idParam);
 		updateAction.setActionHandler((request, response, done)=>{
 			this.onUpdateAction(request, response, done);
@@ -47,7 +47,7 @@ class SimpleModule extends  Core.Module{
 
 		var deleteAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.DELETE, SimpleModule.ACTION_DELETE);
 		this.addAction(deleteAction);
-		var idParam:Core.Param= new Core.Param("id");
+		var idParam: Core.Param = new Core.Param("id", Core.Action.ParamType.PARAM_URL);
 		deleteAction.addParam(idParam);
 		deleteAction.setActionHandler((request, response, done)=>{
 			this.onDeleteAction(request, response, done);
@@ -83,7 +83,7 @@ class SimpleModule extends  Core.Module{
 		responseContent['form']['action']="/";
 		responseContent['form']['method']="POST";
 		responseContent['form']['buttonName']="send";
-		var bodyParams:Core.Param[] = action.getBodyList();
+		var bodyParams: Core.Param[] = action.getParamListByType(Core.Action.ParamType.PARAM_BODY);
 		for(var i=0;i<bodyParams.length; i++){
 			var param:Core.Param = bodyParams[i];
 			var field:Object = new Object();

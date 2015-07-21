@@ -231,8 +231,8 @@ describe("Funkcje podstawowe", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			var myParam1 = new Core.Param("test");
-			var myParam2 = new Core.Param("par2");
+			var myParam1 = new Core.Param("test", Core.Action.ParamType.PARAM_URL);
+			var myParam2 = new Core.Param("par2", Core.Action.ParamType.PARAM_URL);
 			myAction.addParam(myParam1);
 			myAction.addParam(myParam2);
 			myApp.init();

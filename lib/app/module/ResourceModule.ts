@@ -15,21 +15,20 @@ class ResourceModule extends  SimpleModule{
 		var list = new Core.Query.List();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 		list.run()
-			.then(function(modelList){
-				var responseContent = [];
-				response.setContent(responseContent);
-				for(var i=0;i<modelList.length; i++){
-					var model = modelList[i];
-					responseContent.push(model.toJSON());
-				}
-				done();
-			});
+		.then(function(modelList){
+			var responseContent = [];
+			response.setContent(responseContent);
+			for(var i = 0; i < modelList.length; i++) {
+				var model = modelList[i];
+				responseContent.push(model.toJSON());
+			}
+			done();
+		});
 	}
 	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
-		//console.log(request.getAction().getName());
 		var find = new Core.Query.Find();
 		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		find.where("id",request.getParam('id'));
+		find.where("id", request.getParam(Core.ParamType.PARAM_URL, 'id'));
 		find.run()
 			.then(function(model){
 				response.setContent(model.toJSON());
@@ -39,7 +38,7 @@ class ResourceModule extends  SimpleModule{
 	public onCreateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var create = new Core.Query.Create();
 		create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		create.populate(request.getBodyList());
+		create.populate(request.getParamList(Core.ParamType.PARAM_BODY));
 		create.run()
 			.then(function(model){
 				response.setContent(model.toJSON());
@@ -49,8 +48,8 @@ class ResourceModule extends  SimpleModule{
 	public onUpdateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var update = new Core.Query.Update();
 		update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		update.where("id",request.getParam('id'));
-		update.populate(request.getBodyList());
+		update.where("id", request.getParam(Core.ParamType.PARAM_URL, 'id'));
+		update.populate(request.getParamList(Core.ParamType.PARAM_BODY));
 		update.run()
 			.then(function(){
 				done();
@@ -59,7 +58,7 @@ class ResourceModule extends  SimpleModule{
 	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.Delete();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		list.where("id",request.getBodyList());
+		list.where("id", request.getParam(Core.ParamType.PARAM_URL, 'id'));
 		list.run()
 			.then(function(){
 				done();
