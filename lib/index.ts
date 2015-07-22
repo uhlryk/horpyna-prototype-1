@@ -9,6 +9,7 @@ export import Action = require("./core/component/routeComponent/module/action/Ac
 export import ActionRequest = require("./core/component/routeComponent/module/action/Request");
 export import ActionResponse = require("./core/component/routeComponent/module/action/Response");
 export import Param = require("./core/component/routeComponent/module/action/param/Param");
+export import Validator = require("./core/component/routeComponent/module/action/param/validator/Validator");
 export import ParamType = require("./core/component/routeComponent/module/action/param/ParamType");
 export import Query = require("./core/component/routeComponent/module/query/Query");
 export import SimpleModule = require("./app/module/SimpleModule");

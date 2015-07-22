@@ -6,7 +6,7 @@ import Param = require("./param/Param");
 import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
-import Validation = require("./Validation");
+import Validation = require("./param/validator/Validation");
 import ParamType = require("./param/ParamType");
 interface IActionHandler{
 	(request:Request, response:Response, done:()=>void):void;
