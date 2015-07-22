@@ -1,6 +1,6 @@
 import Component = require("../../../../../Component");
 import ValidatorResponse = require("./ValidatorResponse");
-import Param = require("./../Param");
+import Field = require("./../Field");
 /**
  * Definiuje walidator dla pojedyńczego parametru
  */
@@ -15,9 +15,12 @@ class BaseValidator extends Component {
 			value : value,
 			validator: this.getName()
 		};
+		/**
+		 * Rodzicem pola może być Field, sprawdzamy czy jest rodzic, rzutujemy go na field i pobieramy nazwę pola
+		 */
 		if(this.getParent()){
-			var parent: Param = <Param>this.getParent();
-			response.field = parent.getParam();
+			var parent: Field = <Field>this.getParent();
+			response.field = parent.getFieldName();
 		}
 		return response;
 	}

@@ -28,41 +28,41 @@ class ResourceModule extends  SimpleModule{
 	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var find = new Core.Query.Find();
 		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		find.where("id", request.getParam(Core.ParamType.PARAM_URL, 'id'));
+		find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		find.run()
-			.then(function(model){
-				response.setContent(model.toJSON());
-				done();
-			});
+		.then(function(model){
+			response.setContent(model.toJSON());
+			done();
+		});
 	}
 	public onCreateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var create = new Core.Query.Create();
 		create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		create.populate(request.getParamList(Core.ParamType.PARAM_BODY));
+		create.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
 		create.run()
-			.then(function(model){
-				response.setContent(model.toJSON());
-				done(model.toJSON());
-			});
+		.then(function(model){
+			response.setContent(model.toJSON());
+			done(model.toJSON());
+		});
 	}
 	public onUpdateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var update = new Core.Query.Update();
 		update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		update.where("id", request.getParam(Core.ParamType.PARAM_URL, 'id'));
-		update.populate(request.getParamList(Core.ParamType.PARAM_BODY));
+		update.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+		update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
 		update.run()
-			.then(function(){
-				done();
-			});
+		.then(function(){
+			done();
+		});
 	}
 	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.Delete();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		list.where("id", request.getParam(Core.ParamType.PARAM_URL, 'id'));
+		list.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		list.run()
-			.then(function(){
-				done();
-			});
+		.then(function(){
+			done();
+		});
 	}
 }
 export = ResourceModule;

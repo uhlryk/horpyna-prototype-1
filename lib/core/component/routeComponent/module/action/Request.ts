@@ -2,19 +2,19 @@
 import express = require("express");
 import BaseAction = require("./BaseAction");
 import Util = require("./../../../../util/Util");
-import ParamType = require("./param/ParamType");
+import FieldType = require("./field/FieldType");
 class Request{
-	public allParamList:Object;
+	public allFieldList:Object;
 	private expressRequest:express.Request;
 	private action:BaseAction;
 	private _logger: Util.Logger;
 	constructor(expressRequest:express.Request){
 		this.expressRequest = expressRequest;
-		this.allParamList = new Object();
-		this.allParamList[ParamType.PARAM_URL] = new Object();
-		this.allParamList[ParamType.PARAM_QUERY] = new Object();
-		this.allParamList[ParamType.PARAM_BODY] = new Object();
-		this.allParamList[ParamType.PARAM_APP] = new Object();
+		this.allFieldList = new Object();
+		this.allFieldList[FieldType.PARAM_FIELD] = new Object();
+		this.allFieldList[FieldType.QUERY_FIELD] = new Object();
+		this.allFieldList[FieldType.BODY_FIELD] = new Object();
+		this.allFieldList[FieldType.APP_FIELD] = new Object();
 	}
 	public setAction(action: BaseAction) {
 		this.action = action;
@@ -28,17 +28,17 @@ class Request{
 	public getExpressRequest():express.Request{
 		return this.expressRequest;
 	}
-	public addParam(type: string, name: string, value: any) {
-		if (!this.allParamList[type]){
-			this.allParamList[type] = new Object();
+	public addField(type: string, name: string, value: any) {
+		if (!this.allFieldList[type]){
+			this.allFieldList[type] = new Object();
 		}
-		this.allParamList[type][name] = value;
+		this.allFieldList[type][name] = value;
 	}
-	public getParam(type: string, name: string): any {
-		return this.allParamList[type][name];
+	public getField(type: string, name: string): any {
+		return this.allFieldList[type][name];
 	}
-	public getParamList(type: string): any {
-		return this.allParamList[type];
+	public getFieldList(type: string): any {
+		return this.allFieldList[type];
 	}
 }
 export = Request;

@@ -32,23 +32,23 @@ class SimpleModule extends  Core.Module{
 		});
 		var detailAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(detailAction);
-		var idParam: Core.Param = new Core.Param("id", Core.Action.ParamType.PARAM_URL);
-		detailAction.addParam(idParam);
+		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		detailAction.addField(idField);
 		detailAction.setActionHandler((request, response, done)=>{
 			this.onDetailAction(request, response, done);
 		});
 		var updateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.PUT, SimpleModule.ACTION_UPDATE);
 		this.addAction(updateAction);
-		var idParam: Core.Param = new Core.Param("id", Core.Action.ParamType.PARAM_URL);
-		updateAction.addParam(idParam);
+		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		updateAction.addField(idField);
 		updateAction.setActionHandler((request, response, done)=>{
 			this.onUpdateAction(request, response, done);
 		});
 
 		var deleteAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.DELETE, SimpleModule.ACTION_DELETE);
 		this.addAction(deleteAction);
-		var idParam: Core.Param = new Core.Param("id", Core.Action.ParamType.PARAM_URL);
-		deleteAction.addParam(idParam);
+		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		deleteAction.addField(idField);
 		deleteAction.setActionHandler((request, response, done)=>{
 			this.onDeleteAction(request, response, done);
 		});
@@ -83,11 +83,11 @@ class SimpleModule extends  Core.Module{
 		responseContent['form']['action']="/";
 		responseContent['form']['method']="POST";
 		responseContent['form']['buttonName']="send";
-		var bodyParams: Core.Param[] = action.getParamListByType(Core.Action.ParamType.PARAM_BODY);
-		for(var i=0;i<bodyParams.length; i++){
-			var param:Core.Param = bodyParams[i];
+		var bodyFields: Core.Field[] = action.getFieldListByType(Core.Action.FieldType.BODY_FIELD);
+		for(var i=0;i<bodyFields.length; i++){
+			var param:Core.Field = bodyFields[i];
 			var field:Object = new Object();
-			field["param"] = param.getParam();
+			field["param"] = param.getFieldName();
 			field["name"] = param.getName();
 			field["type"] = "text";
 			responseContent['fields'].push(field);

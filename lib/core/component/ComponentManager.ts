@@ -36,7 +36,7 @@ class ComponentManager extends Component{
 	}
 	public init(){
 		if(!this.viewClass){
-			this.viewClass = View.BaseView;
+			this.viewClass = View.JsonView;
 		}
 		for(var name in this.moduleList){
 			var module:Module = this.moduleList[name];

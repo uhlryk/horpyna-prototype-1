@@ -1,10 +1,9 @@
 import Action = require("./../../Action");
-import Param = require("../Param");
+import Field = require("../Field");
 import BaseValidator = require("./BaseValidator");
 import ValidationResponse = require("./ValidationResponse");
 import ValidatorResponse = require("./ValidatorResponse");
-// import ParamList = require("./param/ParamList");
-import ParamType = require("../ParamType");
+import FieldType = require("../FieldType");
 
 /**
  * Odpowiada za przeprowadzenie procesu walidacji
@@ -22,33 +21,33 @@ class Validation{
 		this.validationResponse.valid = true;
 		this.validationResponse.errorValidatorList = [];
 	}
-	private checkParams() {
-		this.checkTypeParams(ParamType.PARAM_URL, this.request.getExpressRequest().params);
-		this.checkTypeParams(ParamType.PARAM_QUERY, this.request.getExpressRequest().query);
-		this.checkTypeParams(ParamType.PARAM_BODY, this.request.getExpressRequest().body);
-		this.checkTypeParams(ParamType.PARAM_APP, null);
+	private checkFields() {
+		this.checkTypeFields(FieldType.PARAM_FIELD, this.request.getExpressRequest().params);
+		this.checkTypeFields(FieldType.QUERY_FIELD, this.request.getExpressRequest().query);
+		this.checkTypeFields(FieldType.BODY_FIELD, this.request.getExpressRequest().body);
+		this.checkTypeFields(FieldType.APP_FIELD, null);
 	}
-	private checkTypeParams(type: string, expressParamList: Object) {
-		var paramList: Param[] = this.action.getParamListByType(type);
-		var requestParamList: Object = this.request.getParamList(type);
-		for (var indexParam in paramList) {
-			var param: Param = paramList[indexParam];
+	private checkTypeFields(type: string, expressFieldList: Object) {
+		var fieldList: Field[] = this.action.getFieldListByType(type);
+		var requestFieldList: Object = this.request.getFieldList(type);
+		for (var indexField in fieldList) {
+			var field: Field = fieldList[indexField];
 			/**
 			 * dany parametr może znajdować się już w requescie, dodany przez poprzednie akcje czy eventy. Używamy wtedy tego
 			 */
-			var value: any = requestParamList[param.getParam()];
-			if (value === undefined) {//znaczy że dany parametr nie był jeszcze dodany więc sprawdzamy czy jest w requestach expressa
-				if (expressParamList !== null) {
-					value = expressParamList[param.getParam()];
+			var value: any = requestFieldList[field.getFieldName()];
+			if (value === undefined) {//znaczy że dany fieldetr nie był jeszcze dodany więc sprawdzamy czy jest w requestach expressa
+				if (expressFieldList !== null) {
+					value = expressFieldList[field.getFieldName()];
 				}
 			}
-			if (value === undefined && param.optional === false) {// jeśłi parametr opcjonalny to ok, jeśli nie to rzucamy błąd
+			if (value === undefined && field.optional === false) {// jeśłi fieldetr opcjonalny to ok, jeśli nie to rzucamy błąd
 				this.validationResponse.valid = false;
 				this.validationResponse.errorValidatorList.push({
 					valid:false,
 					validator:"NotEmptyValidator",
 					value : null,
-					field: param.getParam(),
+					field: field.getFieldName(),
 					errorList: [{
 						formatter: "Value is required and can't be empty"
 					}]
@@ -56,19 +55,19 @@ class Validation{
 			} else {
 				if (value === undefined) value = null;
 				if (!this.data[type]) this.data[type] = new Object();
-				this.data[type][param.getParam()] = value;
+				this.data[type][field.getFieldName()] = value;
 			}
 		}
 	}
 	private validateValidators(){
-		var paramList: Param[] = this.action.getParamList();
-		for (var i = 0; i < paramList.length; i++) {
-			var param: Param = paramList[i];
-			var value = this.data[param.getType()][param.getParam()];
-			var validatorList: BaseValidator[] = param.getValidatorList();
+		var fieldList: Field[] = this.action.getFieldList();
+		for (var i = 0; i < fieldList.length; i++) {
+			var field: Field = fieldList[i];
+			var value = this.data[field.getType()][field.getFieldName()];
+			var validatorList: BaseValidator[] = field.getValidatorList();
 			/**
 			 * Jeśli wartość byłaby równa null to znaczy że albo już jest błąd walidatora NotEmpty
-			 * albo parametr jest opcjonalny więc dla null nie sprawdzamy pozostałych walidatorów
+			 * albo fieldetr jest opcjonalny więc dla null nie sprawdzamy pozostałych walidatorów
 			 */
 			if (value !== null) {
 				for (var j = 0; j < validatorList.length; j++) {
@@ -83,15 +82,15 @@ class Validation{
 		}
 	}
 	private populateRequest(){
-		var paramList: Param[] = this.action.getParamList();
-		for (var i = 0; i < paramList.length; i++) {
-			var param: Param = paramList[i];
-			var value = this.data[param.getType()][param.getParam()];
-			this.request.addParam(param.getType(), param.getParam(), value);
+		var fieldList: Field[] = this.action.getFieldList();
+		for (var i = 0; i < fieldList.length; i++) {
+			var field: Field = fieldList[i];
+			var value = this.data[field.getType()][field.getFieldName()];
+			this.request.addField(field.getType(), field.getFieldName(), value);
 		}
 	}
 	public validate(){
-		this.checkParams();
+		this.checkFields();
 		this.validateValidators();
 		if (this.validationResponse.valid === true) {
 			this.populateRequest();

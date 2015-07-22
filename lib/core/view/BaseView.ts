@@ -30,7 +30,7 @@ class BaseView{
 		return this.expressResponse;
 	}
 	public render(){
-		this.expressResponse.status(this.status).send(this.data);
+
 	}
 }
 export = BaseView;

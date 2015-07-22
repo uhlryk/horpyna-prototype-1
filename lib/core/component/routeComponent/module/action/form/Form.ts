@@ -1,4 +1,0 @@
-class Form{
-
-}
-export = Form;

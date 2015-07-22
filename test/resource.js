@@ -21,12 +21,11 @@ describe("Funkcje Modułu ResourceModule", function() {
 			var passCol = new Core.Column.StringColumn("pass", 50);
 			resModel.addColumn(passCol);
 			var createAction = moduleResource1.getAction(Core.SimpleModule.ACTION_CREATE);
-			createAction.addParam(new Core.Param("name", Core.Action.ParamType.PARAM_BODY));
-			createAction.addParam(new Core.Param("pass", Core.Action.ParamType.PARAM_BODY));
+			createAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
+			createAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
 			var updateAction = moduleResource1.getAction(Core.SimpleModule.ACTION_UPDATE);
-			updateAction.addParam(new Core.Param("name", Core.Action.ParamType.PARAM_BODY));
-			updateAction.addParam(new Core.Param("pass", Core.Action.ParamType.PARAM_BODY));
-			// app.use(myApp.getMiddleware());
+			updateAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
+			updateAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
 			myApp.init().then(function () {
 				done();
 			});
@@ -34,7 +33,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 		it("kod 200 createform,", function (done) {
 			request(app).get("/res1/createform")
 				.end(function (err, res) {
-					// console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -42,7 +40,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 		it("kod 200 updateform,", function (done) {
 			request(app).get("/res1/updateform")
 				.end(function (err, res) {
-					// console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -52,7 +49,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 				.send({name: "olek"})
 				.send({pass: "bolek"})
 				.end(function (err, res) {
-					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -60,7 +56,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 		it("kod 200 list", function (done) {
 			request(app).get("/res1/list")
 				.end(function (err, res) {
-					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -68,7 +63,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 		it("kod 200 detail", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -79,7 +73,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 				.send({name: "ala"})
 				.send({pass: "doda"})
 				.end(function (err, res) {
-					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -87,7 +80,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 		it("kod 200 delete", function (done) {
 			request(app).delete("/res1/delete/1")
 				.end(function (err, res) {
-					//console.log(res.body);
 					expect(res.status).to.be.equal(200);
 					done();
 				});

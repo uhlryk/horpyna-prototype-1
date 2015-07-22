@@ -2,18 +2,18 @@
 import express = require("express");
 import RouteComponent = require("../../RouteComponent");
 import Event = require("../../../event/Event");
-import Param = require("./param/Param");
+import Field = require("./field/Field");
 import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
-import Validation = require("./param/validator/Validation");
-import ParamType = require("./param/ParamType");
+import Validation = require("./field/validator/Validation");
+import FieldType = require("./field/FieldType");
 interface IActionHandler{
 	(request:Request, response:Response, done:()=>void):void;
 }
 class BaseAction extends RouteComponent {
 	private actionHandler:IActionHandler;
-	private paramList:Param[];
+	private fieldList:Field[];
 	private method:string;
 	public static ALL:string = "all";
 	public static POST:string = "post";
@@ -25,41 +25,41 @@ class BaseAction extends RouteComponent {
 		super(name);
 		this.debugger = new Util.Debugger("action:" + this.getName());
 		this.method = method;
-		this.paramList = [];
+		this.fieldList = [];
 	}
 	protected onInit():void{
 		super.onInit();
-		this.initParams();
+		this.initFields();
 	}
-	public initParams(){
-		for(var index in this.paramList){
-			var param:Param = this.paramList[index];
-			param.logger = this.logger;
-			param.init();
+	public initFields(){
+		for(var index in this.fieldList){
+			var field:Field = this.fieldList[index];
+			field.logger = this.logger;
+			field.init();
 		};
 	}
-	public addParam(param: Param) {
-		param.setParent(this);
-		this.paramList.push(param);
+	public addField(field: Field) {
+		field.setParent(this);
+		this.fieldList.push(field);
 	}
-	public getParamList(): Param[] {
-		return this.paramList;
+	public getFieldList(): Field[] {
+		return this.fieldList;
 	}
-	public getParamListByType(type:string): Param[] {
-		var typeParamList = [];
-		for (var index in this.paramList) {
-			var param: Param = this.paramList[index];
-			if(param.getType() === type){
-				typeParamList.push(param);
+	public getFieldListByType(type:string): Field[] {
+		var typeFieldList = [];
+		for (var index in this.fieldList) {
+			var field: Field = this.fieldList[index];
+			if(field.getType() === type){
+				typeFieldList.push(field);
 			}
 		};
-		return typeParamList;
+		return typeFieldList;
 	}
-	public getParam(type: string, name: string): Param {
-		for (var index in this.paramList) {
-			var param: Param = this.paramList[index];
-			if (param.getName() === name && param.getType() === type) {
-				return param;
+	public getField(type: string, name: string): Field {
+		for (var index in this.fieldList) {
+			var field: Field = this.fieldList[index];
+			if (field.getName() === name && field.getType() === type) {
+				return field;
 			}
 		}
 		return null;
