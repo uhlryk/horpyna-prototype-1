@@ -23,6 +23,34 @@ mute		nie wyświetla nic
 #### Przykład
 HORPYNA_LOG=all node app.js
 
+Zmienne DEBUG
+-------------
+### Ogólnie
+Debug jest to moduł do debugowania kodu. Wyświetla w console.log te rzeczy których przestrzenie nazw się zgadzają z wpisanym w konsoli
+np
+DEBUG=dummy:cos node app.js
+możemy mieć wiele przestrzeni nazw, wtedy podajemy je po przecinku
+DEBUG=foo,bar
+System wprawadza kilka przydatnych przestrzeni nazw do debugowania aplikacji
+### horpyna*
+wszystkie komunikaty z całej aplikacji
+### horpyna:dispatcher
+WYświetla przebieg procesów w module dispatcher
+### horpyna:component*
+przebieg procesów we wszystkich komponentach
+### horpyna:component:<nazwa komponentu>
+przebieg procesów w danym komponencie
+### horpyna:action*
+przebieg procesów we wszystkich komponentach action
+### horpyna:action:<nazwa akcji>
+przebieg procesów w danej akcji
+### horpyna:view
+odpowiedzi jakie generuje view (w testach normalnie ich nie widać)
+### horpyna:event*
+przebieg procesów we wszystkich eventach
+### horpyna:event:<typ eventu>
+przebieg procesów dla danego eventu
+
 Eventy
 ------
 ### Nasłuch

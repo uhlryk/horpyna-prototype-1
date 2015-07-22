@@ -1,12 +1,18 @@
+import Util = require("../util/Util");
 class BaseView{
 	private expressResponse;
 	private _data:Object;
 	private _param:Object;
 	private _status:number;
+	protected debugger: Util.Debugger;
 	constructor(expressResponse){
 		this.expressResponse = expressResponse;
 		this._data = new Object();
 		this._param = new Object();
+		this.debugger = new Util.Debugger("view");
+	}
+	public debug(...args: any[]){
+		this.debugger.debug(args);
 	}
 	public set status(value:number){
 		this._status = value;
@@ -30,7 +36,8 @@ class BaseView{
 		return this.expressResponse;
 	}
 	public render(){
-
+		this.debug("status: " + this.status);
+		this.debug(this.data);
 	}
 }
 export = BaseView;

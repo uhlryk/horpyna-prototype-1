@@ -24,7 +24,7 @@ class BaseEvent {
 	private emiterRegExp:RegExp;
 	constructor(type: string, publicEvent?: boolean) {
 		this.type = type;
-		this.debugger = new Util.Debugger("event:" + this.type + ":");
+		this.debugger = new Util.Debugger("event:" + this.type);
 		if (publicEvent === undefined) publicEvent = false;
 		this.publicEvent = publicEvent;
 	}
