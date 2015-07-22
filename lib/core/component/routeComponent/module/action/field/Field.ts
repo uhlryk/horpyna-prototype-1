@@ -8,7 +8,7 @@ class Field extends Component {
 	private validatorList:Validator.BaseValidator[];
 	private fieldName:string;//nazaw pola
 	private type:string;
-	public optional: boolean;
+	public _optional: boolean;
 	/**
 	 * @param name określa nazwę będącą identyfikatorem komponentu | nazwa parametru otrzymanego z requesta
 	 * @param type url, query, body app
@@ -17,8 +17,14 @@ class Field extends Component {
 		super(name);
 		this.type = type;
 		this.validatorList = [];
-		this.optional = false;
+		this._optional = false;
 		this.fieldName = fieldName || name;
+	}
+	public set optional(val:boolean){
+		this._optional = val;
+	}
+	public get optional():boolean{
+		return this._optional;
 	}
 	protected onInit():void{
 		super.onInit();

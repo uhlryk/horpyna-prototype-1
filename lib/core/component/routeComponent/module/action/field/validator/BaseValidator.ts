@@ -9,7 +9,7 @@ class BaseValidator extends Component {
 		super(name);
 	}
 
-	public validate(value: any, data?: Object): ValidatorResponse {
+	public validate(value: any, data: Object, done):void {
 		var response = <ValidatorResponse>{
 			valid:true,
 			value : value,
@@ -22,7 +22,7 @@ class BaseValidator extends Component {
 			var parent: Field = <Field>this.getParent();
 			response.field = parent.getFieldName();
 		}
-		return response;
+		done(response);
 	}
 }
 export = BaseValidator;

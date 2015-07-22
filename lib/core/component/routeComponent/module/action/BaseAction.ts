@@ -7,6 +7,7 @@ import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
 import Validation = require("./field/validator/Validation");
+import ValidationResponse = require("./field/validator/ValidationResponse");
 import FieldType = require("./field/FieldType");
 interface IActionHandler{
 	(request:Request, response:Response, done:()=>void):void;
@@ -82,8 +83,14 @@ class BaseAction extends RouteComponent {
 			if (response.allow === false) return;
 			this.debug("action:validateRequest");
 			var validation = new Validation(this, request);
-			validation.validate();
-			// tu testy czy walidacja poprawna
+			return validation.validate();
+		})
+		.then((validationResponse:ValidationResponse)=>{
+			if (response.allow === false) return;
+			if (validationResponse.valid === false){
+				response.addValue("error",validationResponse.errorValidatorList);
+				response.setStatus(422);
+			}
 		})
 		.then(() => {
 			if (response.allow === false) return;

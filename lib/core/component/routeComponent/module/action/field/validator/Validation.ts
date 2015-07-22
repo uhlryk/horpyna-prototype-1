@@ -4,6 +4,7 @@ import BaseValidator = require("./BaseValidator");
 import ValidationResponse = require("./ValidationResponse");
 import ValidatorResponse = require("./ValidatorResponse");
 import FieldType = require("../FieldType");
+import Util = require("../../../../../../util/Util");
 
 /**
  * Odpowiada za przeprowadzenie procesu walidacji
@@ -42,11 +43,12 @@ class Validation{
 				}
 			}
 			if (value === undefined && field.optional === false) {// jeśłi fieldetr opcjonalny to ok, jeśli nie to rzucamy błąd
+				value = null;
 				this.validationResponse.valid = false;
 				this.validationResponse.errorValidatorList.push({
 					valid:false,
 					validator:"NotEmptyValidator",
-					value : null,
+					value: value,
 					field: field.getFieldName(),
 					errorList: [{
 						formatter: "Value is required and can't be empty"
@@ -54,15 +56,14 @@ class Validation{
 				});
 			} else {
 				if (value === undefined) value = null;
-				if (!this.data[type]) this.data[type] = new Object();
-				this.data[type][field.getFieldName()] = value;
 			}
+			if (!this.data[type]) this.data[type] = new Object();
+			this.data[type][field.getFieldName()] = value;
 		}
 	}
-	private validateValidators(){
+	private validateValidators(): Util.Promise<any> {
 		var fieldList: Field[] = this.action.getFieldList();
-		for (var i = 0; i < fieldList.length; i++) {
-			var field: Field = fieldList[i];
+		return Util.Promise.map(fieldList, (field: Field) => {
 			var value = this.data[field.getType()][field.getFieldName()];
 			var validatorList: BaseValidator[] = field.getValidatorList();
 			/**
@@ -70,16 +71,19 @@ class Validation{
 			 * albo fieldetr jest opcjonalny więc dla null nie sprawdzamy pozostałych walidatorów
 			 */
 			if (value !== null) {
-				for (var j = 0; j < validatorList.length; j++) {
-					var validator: BaseValidator = validatorList[j];
-					var response = validator.validate(value, this.data);
-					if (response.valid === false) {
-						this.validationResponse.valid = false;
-						this.validationResponse.errorValidatorList.push(response);
-					}
-				}
+				return Util.Promise.map(validatorList, (validator: BaseValidator) => {
+					return new Util.Promise<ValidatorResponse>((resolve: (ValidatorResponse) => void) => {
+						validator.validate(value, this.data, resolve);
+					})
+					.then((response:ValidatorResponse)=>{
+						if (response.valid === false) {
+							this.validationResponse.valid = false;
+							this.validationResponse.errorValidatorList.push(response);
+						}
+					});
+				});
 			}
-		}
+		});
 	}
 	private populateRequest(){
 		var fieldList: Field[] = this.action.getFieldList();
@@ -89,12 +93,17 @@ class Validation{
 			this.request.addField(field.getType(), field.getFieldName(), value);
 		}
 	}
-	public validate(){
-		this.checkFields();
-		this.validateValidators();
-		if (this.validationResponse.valid === true) {
-			this.populateRequest();
-		}
+	public validate(): Util.Promise<ValidationResponse> {
+		return new Util.Promise<ValidationResponse>((resolve: (ValidationResponse) => void) => {
+			this.checkFields();
+			this.validateValidators()
+			.then(()=>{
+				if (this.validationResponse.valid === true) {
+					this.populateRequest();
+				}
+				resolve(this.validationResponse);
+			});
+		});
 	}
 }
 export = Validation;
