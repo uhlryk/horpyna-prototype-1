@@ -145,7 +145,7 @@ describe("Walidacja", function() {
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.IsAlphaValidator("valtest", "dummy"));
+			myField1.addValidator(new Core.Validator.IsAlphaValidator("valtest"));
 			myAction.addField(myField1);
 
 			myApp.init().then(function () {
@@ -179,7 +179,7 @@ describe("Walidacja", function() {
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.IsAlnumValidator("valtest", "dummy"));
+			myField1.addValidator(new Core.Validator.IsAlnumValidator("valtest"));
 			myAction.addField(myField1);
 
 			myApp.init().then(function () {
@@ -195,6 +195,40 @@ describe("Walidacja", function() {
 				});
 		});
 		it("zwraca 422 gdy parametr ma też inne znaki niż a-zA-Z", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: "ol^e"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+	});
+	describe("Sprawdzenie akcji z walidacją IsBooleanValidator", function () {
+		var myField1;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			myModule.addAction(myAction);
+			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Validator.IsBooleanValidator("valtest"));
+			myAction.addField(myField1);
+
+			myApp.init().then(function () {
+				done();
+			});
+		});
+		it("zwraca 200 gdy parametr ma string typu bool", function (done) {
+			request(app).get("/mod1/act1/")
+			.send({param1: "true"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr ma inny niż bool string", function (done) {
 			request(app).get("/mod1/act1/")
 				.send({param1: "ol^e"})
 				.end(function (err, res) {

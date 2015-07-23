@@ -2,7 +2,7 @@ import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./ValidatorResponse");
 import BaseValidator = require("./BaseValidator");
 /**
- * sprawdza czy parametr string jest równy innej wartości (jeśli nie jest stringiem to zostanie zamieniona)
+ * sprawdza czy parametr string ma znaki a-zA-Z
  */
 class IsAlphaValidator extends BaseValidator {
 	public VALIDATOR_NAME = "IsAlphaValidator";
