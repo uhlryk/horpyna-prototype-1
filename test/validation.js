@@ -381,4 +381,38 @@ describe("Walidacja", function() {
 				});
 		});
 	});
+	describe("Sprawdzenie akcji z walidacją IsIntValidator", function () {
+		var myField1;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			myModule.addAction(myAction);
+			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Validator.IsIntValidator("valtest"));
+			myAction.addField(myField1);
+
+			myApp.init().then(function () {
+				done();
+			});
+		});
+		it("zwraca 200 gdy parametr jest Intem", function (done) {
+			request(app).get("/mod1/act1/")
+			.send({param1: "22"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr nie jest poprawnym Intem", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: "33.2"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+	});
 });

@@ -2,18 +2,18 @@ import ValidatorResponse = require("./ValidatorResponse");
 import BaseValidator = require("./BaseValidator");
 import Util = require("../../../../../../util/Util");
 /**
- * sprawdza czy parametr jest liczbą zmiennoprzecinkową
+ * sprawdza czy parametr który jest liczbą całkowitą
  */
-class IsFloatValidator extends BaseValidator {
-	public VALIDATOR_NAME = "IsFloatValidator";
+class IsIntValidator extends BaseValidator {
+	public VALIDATOR_NAME = "IsIntValidator";
 	private min: number;
 	private max: number;
-	public message = "The input must be float";
+	public message = "The input must be int";
 	constructor(name:string){
 		super(name);
 	}
 	protected setIsValid(value: any, data: Object, response: ValidatorResponse): boolean {
-		if (Util.ValidatorList.isFloat(value)) {
+		if (Util.ValidatorList.isInt(value)) {
 			return true;
 		}
 		response.errorList = [{
@@ -22,4 +22,4 @@ class IsFloatValidator extends BaseValidator {
 		return false;
 	}
 }
-export = IsFloatValidator;
+export = IsIntValidator;
