@@ -7,3 +7,4 @@ export import IsBooleanValidator = require("./IsBooleanValidator");
 export import IsStringLengthValidator = require("./IsStringLengthValidator");
 export import IsDateValidator = require("./IsDateValidator");
 export import IsEmailValidator = require("./IsEmailValidator");
+export import IsFloatValidator = require("./IsFloatValidator");
