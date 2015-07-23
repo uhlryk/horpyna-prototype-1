@@ -4,23 +4,22 @@ import BaseValidator = require("./BaseValidator");
 /**
  * sprawdza czy parametr który jest stringiem ma dany fragment
  */
-class ContainsValidator extends BaseValidator {
-	public VALIDATOR_NAME = "ContainsValidator";
-	private seed: string;
-	public message = "The input not contain '%s'";
-	constructor(name:string, seed:string){
+class IsInValidator extends BaseValidator {
+	public VALIDATOR_NAME = "IsInValidator";
+	private values: any[];
+	public message = "The input was not found in the haystack";
+	constructor(name:string, values:any[]){
 		super(name);
-		this.seed = seed;
+		this.values = values;
 	}
 	protected setIsValid(value: any, data: Object, response: ValidatorResponse): boolean {
-		if (Util.ValidatorList.contains(value, this.seed)){
+		if (Util.ValidatorList.isIn(value, this.values)){
 			return true;
 		}
 		response.errorList = [{
 			formatter: this.getErrorMessage(),
-			args: [this.seed]
 		}];
 		return false;
 	}
 }
-export = ContainsValidator;
+export = IsInValidator;

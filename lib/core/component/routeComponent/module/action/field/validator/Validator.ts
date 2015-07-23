@@ -9,3 +9,4 @@ export import IsDateValidator = require("./IsDateValidator");
 export import IsEmailValidator = require("./IsEmailValidator");
 export import IsFloatValidator = require("./IsFloatValidator");
 export import IsIntValidator = require("./IsIntValidator");
+export import IsInValidator = require("./IsInValidator");
