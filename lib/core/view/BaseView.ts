@@ -37,7 +37,7 @@ class BaseView{
 	}
 	public render(){
 		this.debug("status: " + this.status);
-		this.debug(this.data);
+		this.debug(JSON.stringify(this.data));
 	}
 }
 export = BaseView;

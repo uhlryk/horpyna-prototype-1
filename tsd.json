@@ -34,6 +34,9 @@
     },
     "winston/winston.d.ts": {
       "commit": "69303fd9e52d8e0e97a92d096966aea5fb7630c5"
+    },
+    "validator/validator.d.ts": {
+      "commit": "581563c4684d405afec14260ba79a89a52666c09"
     }
   }
 }
