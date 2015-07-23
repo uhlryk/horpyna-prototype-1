@@ -1,25 +1,53 @@
+import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./ValidatorResponse");
 import BaseValidator = require("./BaseValidator");
-import Util = require("../../../../../../util/Util");
 /**
- * sprawdza czy parametr jest liczbą zmiennoprzecinkową
+ * sprawdza czy parametr który jest liczbą w danym przedziale
  */
 class IsFloatValidator extends BaseValidator {
 	public VALIDATOR_NAME = "IsFloatValidator";
 	private min: number;
 	private max: number;
-	public message = "The input must be float";
-	constructor(name:string){
+	public message = "The input is not float"
+	public messageMin  = "The  input is lower than %d"
+	public messageMinMax = "The input should be float between %d and %d";
+	constructor(name: string, min?: number, max?: number) {
 		super(name);
+		this.min = min;
+		this.max = max;
 	}
 	protected setIsValid(value: any, data: Object, response: ValidatorResponse): boolean {
-		if (Util.ValidatorList.isFloat(value)) {
-			return true;
+		var method = "isFloat";//jest to hack ponieważ definicja tej metody nie pozwala dodawać min i max, a implementacja to ma
+		if (this.max && this.min) {
+			if (Util.ValidatorList[method](value, { min:this.min, max:this.max })) {
+				return true
+			} else {
+				response.errorList = [{
+					formatter: this.getErrorMessage(this.messageMinMax),
+					args: [this.min, this.max]
+				}];
+				return false;
+			}
+		} else if (this.min) {
+			if (Util.ValidatorList[method](value, { min: this.min })) {
+				return true
+			} else {
+				response.errorList = [{
+					formatter: this.getErrorMessage(this.messageMin),
+					args: [this.min]
+				}];
+				return false;
+			}
+		} else {
+			if (Util.ValidatorList[method](value)) {
+				return true
+			} else {
+				response.errorList = [{
+					formatter: this.getErrorMessage(),
+				}];
+				return false;
+			}
 		}
-		response.errorList = [{
-			formatter: this.getErrorMessage(),
-		}];
-		return false;
 	}
 }
 export = IsFloatValidator;

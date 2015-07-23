@@ -3,6 +3,7 @@ export import ContainsValidator = require("./ContainsValidator");
 export import EqualsValidator = require("./EqualsValidator");
 export import IsAlphaValidator = require("./IsAlphaValidator");
 export import IsAlnumValidator = require("./IsAlnumValidator");
+export import IsNumericValidator = require("./IsNumericValidator");
 export import IsBooleanValidator = require("./IsBooleanValidator");
 export import IsStringLengthValidator = require("./IsStringLengthValidator");
 export import IsDateValidator = require("./IsDateValidator");

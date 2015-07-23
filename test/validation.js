@@ -203,6 +203,40 @@ describe("Walidacja", function() {
 				});
 		});
 	});
+	describe("Sprawdzenie akcji z walidacją IsNumericValidator", function () {
+		var myField1;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			myModule.addAction(myAction);
+			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Validator.IsNumericValidator("valtest"));
+			myAction.addField(myField1);
+
+			myApp.init().then(function () {
+				done();
+			});
+		});
+		it("zwraca 200 gdy parametr ma tylko znaki 0-9", function (done) {
+			request(app).get("/mod1/act1/")
+			.send({param1: "52323"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr ma też inne znaki niż 0-9", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: "o324"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+	});
 	describe("Sprawdzenie akcji z walidacją IsBooleanValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
@@ -270,7 +304,7 @@ describe("Walidacja", function() {
 					done();
 				});
 		});
-		it("zwraca 422 gdy parametr ma string mniejszy większy niż 10", function (done) {
+		it("zwraca 422 gdy parametr ma string większy niż 10", function (done) {
 			request(app).get("/mod1/act1/")
 				.send({param1: "alama kota i mruga na płocie"})
 				.end(function (err, res) {
@@ -357,7 +391,7 @@ describe("Walidacja", function() {
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.IsFloatValidator("valtest"));
+			myField1.addValidator(new Core.Validator.IsFloatValidator("valtest",5,10));
 			myAction.addField(myField1);
 
 			myApp.init().then(function () {
@@ -366,7 +400,7 @@ describe("Walidacja", function() {
 		});
 		it("zwraca 200 gdy parametr jest Floatem", function (done) {
 			request(app).get("/mod1/act1/")
-			.send({param1: "22.32"})
+			.send({param1: "7.32"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
@@ -375,6 +409,22 @@ describe("Walidacja", function() {
 		it("zwraca 422 gdy parametr nie jest poprawnym floatem", function (done) {
 			request(app).get("/mod1/act1/")
 				.send({param1: "33.2s"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr jest floatem poniżej przedziału", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: 3.99})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr jest floatem powyżej przedziału", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: 13.11})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(422);
 					done();
@@ -391,16 +441,16 @@ describe("Walidacja", function() {
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.IsIntValidator("valtest"));
+			myField1.addValidator(new Core.Validator.IsIntValidator("valtest",5 , 10));
 			myAction.addField(myField1);
 
 			myApp.init().then(function () {
 				done();
 			});
 		});
-		it("zwraca 200 gdy parametr jest Intem", function (done) {
+		it("zwraca 200 gdy parametr jest Intem w poprawnym przedziale 5-10", function (done) {
 			request(app).get("/mod1/act1/")
-			.send({param1: "22"})
+			.send({param1: 7})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
@@ -409,6 +459,22 @@ describe("Walidacja", function() {
 		it("zwraca 422 gdy parametr nie jest poprawnym Intem", function (done) {
 			request(app).get("/mod1/act1/")
 				.send({param1: "33.2"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr jest Intem poniżej przedziału", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: 3})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr jest Intem powyżej przedziału", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: 13})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(422);
 					done();
