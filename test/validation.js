@@ -237,4 +237,46 @@ describe("Walidacja", function() {
 				});
 		});
 	});
+	describe("Sprawdzenie akcji z walidacją IsStringLengthValidator", function () {
+		var myField1;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			myModule.addAction(myAction);
+			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Validator.IsStringLengthValidator("valtest",5,10));
+			myAction.addField(myField1);
+
+			myApp.init().then(function () {
+				done();
+			});
+		});
+		it("zwraca 200 gdy parametr ma string w przedziale 5-10", function (done) {
+			request(app).get("/mod1/act1/")
+			.send({param1: "alamakota"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr ma string mniejszy niż 5", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: "ala"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr ma string mniejszy większy niż 10", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: "alama kota i mruga na płocie"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+	});
 });

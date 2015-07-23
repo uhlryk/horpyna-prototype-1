@@ -11,8 +11,12 @@ class BaseValidator extends Component {
 	constructor(name:string){
 		super(name);
 	}
-	protected getErrorMessage():string{
-		return this.message;
+	/**
+	 * Zwraca wiadomość w błędzie. W tym miejscu będzie w razie potrzeby ją tłumaczył.
+	 * Możemy domyślną wiadomość podmienić inną (template)
+	 */
+	protected getErrorMessage(template?:string):string{
+		return template || this.message;
 	}
 	/**
 	 * Sam validator nie posiada informacji o nazwie parametru który waliduje, ale jako komponent ma powiązanie do Field
