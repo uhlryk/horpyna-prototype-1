@@ -15,6 +15,7 @@ class Request{
 		this.allFieldList[FieldType.QUERY_FIELD] = new Object();
 		this.allFieldList[FieldType.BODY_FIELD] = new Object();
 		this.allFieldList[FieldType.APP_FIELD] = new Object();
+		this.allFieldList[FieldType.HEADER_FIELD] = new Object();
 	}
 	public setAction(action: BaseAction) {
 		this.action = action;

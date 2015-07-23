@@ -64,3 +64,18 @@ Przykładowe użycie
 `});`
 `this.subscribe(onDetailAction);`
 
+Pola (Field)
+------------
+### Ogólnie
+Wyróżniamy 5 typów pól : param, body, query, app, head. Wszystkie podlegają walidacji
+1. param - są to parametry przekazane w adresie np id. Parametry muszą być zamapowane w routerze by były parametrami
+np mydomain.com/:id/
+Parametry w zasobach automatycznie dodawane są to 'where' przy zapytaniach. Mają niższy priorytet niż pola app które je mogą nadpisać
+2. app - są to parametry tworzone przez eventy i inne moduły. Parametr ten nie może być przekazany przez adres. Przykładowo jest to id usera który jest zalogowany.
+Parametry w zasobach automatycznie dodawane są do 'where' przy zapytaniach. Nadpisują pola 'param' jeśli oba mają tą samą wartość.
+Jest to ważne ze względu bezpieczeństwa. By w adresie nie przekazać 'param' którym jest id usera co da większe uprawnienia. Jest to raczej nie możliwe, Bo celowo trzeba by utworzyć taki sam param - a to oznacza że programista chciał coś takiego
+3. body - są to parametry przekazywane w post formularzach. Są one automaycznie dodawane do wartości w update i create
+4. query - są to parametry z url w parach klucz i wartość np mydomain.com?k1=v1&k2=v2. Pełnią rolę dodatkowych parametrów np do sortowania czy paginacji
+5. header - specjalny parametr, zastosowanie przez konkretne moduły. Nie jest używany automatycznie. pole 'token' służy np do autoryzacji
+
+

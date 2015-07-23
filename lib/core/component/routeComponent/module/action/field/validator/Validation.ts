@@ -26,6 +26,7 @@ class Validation{
 		this.checkTypeFields(FieldType.PARAM_FIELD, this.request.getExpressRequest().params);
 		this.checkTypeFields(FieldType.QUERY_FIELD, this.request.getExpressRequest().query);
 		this.checkTypeFields(FieldType.BODY_FIELD, this.request.getExpressRequest().body);
+		this.checkTypeFields(FieldType.HEADER_FIELD, this.request.getExpressRequest().headers);
 		this.checkTypeFields(FieldType.APP_FIELD, null);
 	}
 	private checkTypeFields(type: string, expressFieldList: Object) {
