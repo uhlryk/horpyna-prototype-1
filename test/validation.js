@@ -101,7 +101,7 @@ describe("Walidacja", function() {
 				});
 		});
 	});
-	describe("Sprawdzenie akcji z walidacją EqualsValidation", function () {
+	describe("Sprawdzenie akcji z walidacją EqualsValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
 			app = require('./core/app')();
@@ -129,6 +129,40 @@ describe("Walidacja", function() {
 		it("zwraca 422 gdy parametr nie jest równy 'dummy'", function (done) {
 			request(app).get("/mod1/act1/")
 				.send({param1: "olekolek"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+		});
+	});
+	describe("Sprawdzenie akcji z walidacją IsAlphaValidator", function () {
+		var myField1;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			myModule.addAction(myAction);
+			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Validator.IsAlphaValidator("valtest", "dummy"));
+			myAction.addField(myField1);
+
+			myApp.init().then(function () {
+				done();
+			});
+		});
+		it("zwraca 200 gdy parametr ma tylko znaki a-zA-Z", function (done) {
+			request(app).get("/mod1/act1/")
+			.send({param1: "dummy"})
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+		it("zwraca 422 gdy parametr ma też inne znaki niż a-zA-Z", function (done) {
+			request(app).get("/mod1/act1/")
+				.send({param1: "ol3e"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(422);
 					done();
