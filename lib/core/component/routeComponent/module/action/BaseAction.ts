@@ -9,9 +9,8 @@ import Request = require("./Request");
 import Validation = require("./field/validator/Validation");
 import ValidationResponse = require("./field/validator/ValidationResponse");
 import FieldType = require("./field/FieldType");
-interface IActionHandler{
-	(request:Request, response:Response, done:()=>void):void;
-}
+import IActionHandler = require("./IActionHandler");
+
 class BaseAction extends RouteComponent {
 	private actionHandler:IActionHandler;
 	private fieldList:Field[];

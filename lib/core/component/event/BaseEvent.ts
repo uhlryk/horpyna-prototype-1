@@ -1,12 +1,7 @@
 import Util = require("../../util/Util");
 import Action = require("../routeComponent/module/action/Action");
+import ISubscriberCallback = require("./ISubscriberCallback");
 
-/**
- * Wewnętrzna klasa zawierająca typ eventu i robiąca wspólne zachowania
- */
-interface ISubscriberCallback {
-	(request:Action.Request, response:Action.Response, done): void;
-}
 /**
  * Wywoływany by odebrać event
  */
