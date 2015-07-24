@@ -26,6 +26,7 @@ class Response{
 	private action:BaseAction;
 	private _logger: Util.Logger;
 	private _allow: boolean;
+	private _redirect: string;
 	constructor(expressResponse:express.Response){
 		this.status = 200;
 		this.data = new Object();
@@ -44,6 +45,26 @@ class Response{
 	}
 	public get logger(): Util.Logger {
 		return this._logger;
+	}
+	public setRedirect(url: string, status?: number){
+		this._redirect = url;
+		if(status) {
+			this.setStatus(status);
+		} else {
+			this.setStatus(302);
+		}
+	}
+	public isRedirect():boolean{
+		if (this._redirect) {
+			return true;
+		}
+		return false;
+	}
+	// public getRedirect():string{
+	// 	return this._redirect;
+	// }
+	public redirect() {
+		this.expressResponse.redirect(this.status, this._redirect);
 	}
 	public setStatus(value:number){
 		this.status = value;

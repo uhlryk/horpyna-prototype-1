@@ -109,7 +109,11 @@ class Dispatcher{
 		this.router.use((req, res) => {
 			this.debug('final render');
 			var response: Action.Response = res['horpynaResponse'];
-			response.render();
+			if (response.isRedirect()) {
+				response.redirect();
+			} else {
+				response.render();
+			}
 		});
 	}
 	private lastErrorRoute(){

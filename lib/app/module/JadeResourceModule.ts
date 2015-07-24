@@ -49,7 +49,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 			super.onCreateAction(request,response, resolve);
 		})
 		.then(()=>{
-			response.addViewParam("view", "index");
+			response.setRedirect("./list");
 			done();
 		});
 	}
@@ -58,7 +58,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 			super.onUpdateAction(request,response, resolve);
 		})
 		.then(()=>{
-			response.addViewParam("view", "index");
+			response.setRedirect("./list");
 			done();
 		});
 	}

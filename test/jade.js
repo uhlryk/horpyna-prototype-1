@@ -82,7 +82,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				.send({name: "olek"})
 				.send({pass: "bolek"})
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
+					expect(res.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -109,7 +109,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				.send({pass: "doda"})
 				.end(function (err, res) {
 					//console.log(res.text);
-					expect(res.status).to.be.equal(200);
+					expect(res.status).to.be.equal(302);
 					done();
 				});
 		});
