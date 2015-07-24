@@ -38,7 +38,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 updateform,", function (done) {
-			request(app).get("/res1/updateform")
+			request(app).get("/res1/updateform/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();

@@ -17,6 +17,8 @@ class SimpleModule extends  Core.Module{
 		});
 		var formUpdateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_FORM_UPDATE);
 		this.addAction(formUpdateAction);
+		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		formUpdateAction.addField(idField);
 		formUpdateAction.setActionHandler((request, response, done)=>{
 			this.onFormUpdateAction(request, response, done);
 		});
@@ -94,6 +96,7 @@ class SimpleModule extends  Core.Module{
 			fieldForm["name"] = field.getName();
 			fieldForm["fieldForm"] = field.fieldForm;
 			fieldForm["labelForm"] = field.labelForm;
+			fieldForm["value"] = "";
 			responseContent['fields'].push(fieldForm);
 		}
 		return responseContent;

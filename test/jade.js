@@ -69,7 +69,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				});
 		});
 		it("kod 200 updateform,", function (done) {
-			request(app).get("/res1/updateform")
+			request(app).get("/res1/updateform/1")
 				.end(function (err, res) {
 					// console.log(res.text);
 					expect(res.status).to.be.equal(200);
