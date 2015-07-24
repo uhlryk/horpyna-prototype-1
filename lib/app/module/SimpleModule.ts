@@ -60,11 +60,15 @@ class SimpleModule extends  Core.Module{
 		done();
 	}
 	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {
-		response.setContent(this.formMetaData(this.getAction(SimpleModule.ACTION_CREATE)));
+		var dateResponse = this.formMetaData(this.getAction(SimpleModule.ACTION_CREATE));
+		dateResponse['form']['action'] = "./create";
+		response.setContent(dateResponse);
 		done();
 	}
 	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
-		response.setContent(this.formMetaData(this.getAction(SimpleModule.ACTION_UPDATE)));
+		var dateResponse = this.formMetaData(this.getAction(SimpleModule.ACTION_UPDATE));
+		dateResponse['form']['action'] = "./update";
+		response.setContent(dateResponse);
 		done();
 	}
  	public onCreateAction (request, response, done){
@@ -80,17 +84,17 @@ class SimpleModule extends  Core.Module{
 		var responseContent:Object = new Object();
 		responseContent['fields'] = [];
 		responseContent['form'] = new Object();
-		responseContent['form']['action']="/";
 		responseContent['form']['method']="POST";
 		responseContent['form']['buttonName']="send";
 		var bodyFields: Core.Field[] = action.getFieldListByType(Core.Action.FieldType.BODY_FIELD);
 		for(var i=0;i<bodyFields.length; i++){
-			var param:Core.Field = bodyFields[i];
-			var field:Object = new Object();
-			field["param"] = param.getFieldName();
-			field["name"] = param.getName();
-			field["type"] = "text";
-			responseContent['fields'].push(field);
+			var field:Core.Field = bodyFields[i];
+			var fieldForm:Object = new Object();
+			fieldForm["fieldName"] = field.getFieldName();
+			fieldForm["name"] = field.getName();
+			fieldForm["fieldForm"] = field.fieldForm;
+			fieldForm["labelForm"] = field.labelForm;
+			responseContent['fields'].push(fieldForm);
 		}
 		return responseContent;
 	}
