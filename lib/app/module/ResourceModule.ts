@@ -11,6 +11,35 @@ class ResourceModule extends  SimpleModule{
 	public onInit() {
 		super.onInit();
 	}
+	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
+		new Core.Util.Promise<void>((resolve: () => void) => {
+			super.onFormUpdateAction(request, response, resolve);
+		})
+		.then(() => {
+			var find = new Core.Query.Find();
+			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+			find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+			return find.run();
+		})
+		.then((model) => {
+			model = model.toJSON();
+			var content = response.getData("content");
+			content['form']['action'] = "../update/"+model.id;
+			var fieldsNumber = content["fields"].length;
+			if (fieldsNumber) {
+				for (var i = 0; i < fieldsNumber; i++){
+					var field = content["fields"][i];
+					var fieldName = field["fieldName"];
+					// console.log("fieldName:"+fieldName);
+					var value = model[fieldName];
+					// console.log("value:" + value);
+					field["value"] = value;
+				}
+			}
+			console.log(response.getData("content"));
+			done();
+		});
+	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.List();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));

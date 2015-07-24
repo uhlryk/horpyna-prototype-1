@@ -39,7 +39,7 @@ class SimpleModule extends  Core.Module{
 		detailAction.setActionHandler((request, response, done)=>{
 			this.onDetailAction(request, response, done);
 		});
-		var updateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.PUT, SimpleModule.ACTION_UPDATE);
+		var updateAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_UPDATE);
 		this.addAction(updateAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
 		updateAction.addField(idField);
@@ -47,7 +47,7 @@ class SimpleModule extends  Core.Module{
 			this.onUpdateAction(request, response, done);
 		});
 
-		var deleteAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.DELETE, SimpleModule.ACTION_DELETE);
+		var deleteAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_DELETE);
 		this.addAction(deleteAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
 		deleteAction.addField(idField);
@@ -62,14 +62,18 @@ class SimpleModule extends  Core.Module{
 		done();
 	}
 	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {
-		var dateResponse = this.formMetaData(this.getAction(SimpleModule.ACTION_CREATE));
+		var targetAction = this.getAction(SimpleModule.ACTION_CREATE);
+		var dateResponse = this.formMetaData(targetAction);
 		dateResponse['form']['action'] = "./create";
+		dateResponse['form']['method'] = targetAction.getMethod();
 		response.setContent(dateResponse);
 		done();
 	}
 	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
-		var dateResponse = this.formMetaData(this.getAction(SimpleModule.ACTION_UPDATE));
-		dateResponse['form']['action'] = "./update";
+		var targetAction = this.getAction(SimpleModule.ACTION_UPDATE);
+		var dateResponse = this.formMetaData(targetAction);
+		dateResponse['form']['action'] = "../update";
+		dateResponse['form']['method'] = targetAction.getMethod();
 		response.setContent(dateResponse);
 		done();
 	}
@@ -86,7 +90,6 @@ class SimpleModule extends  Core.Module{
 		var responseContent:Object = new Object();
 		responseContent['fields'] = [];
 		responseContent['form'] = new Object();
-		responseContent['form']['method']="POST";
 		responseContent['form']['buttonName']="send";
 		var bodyFields: Core.Field[] = action.getFieldListByType(Core.Action.FieldType.BODY_FIELD);
 		for(var i=0;i<bodyFields.length; i++){

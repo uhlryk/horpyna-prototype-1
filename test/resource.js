@@ -37,13 +37,6 @@ describe("Funkcje Modułu ResourceModule", function() {
 					done();
 				});
 		});
-		it("kod 200 updateform,", function (done) {
-			request(app).get("/res1/updateform/1")
-				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
-					done();
-				});
-		});
 		it("kod 200 create", function (done) {
 			request(app).post("/res1/create")
 				.send({name: "olek"})
@@ -67,9 +60,16 @@ describe("Funkcje Modułu ResourceModule", function() {
 					done();
 				});
 		});
+		it("kod 200 updateform,", function (done) {
+			request(app).get("/res1/updateform/1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
 
 		it("kod 200 edit", function (done) {
-			request(app).put("/res1/update/1")
+			request(app).post("/res1/update/1")
 				.send({name: "ala"})
 				.send({pass: "doda"})
 				.end(function (err, res) {
@@ -78,7 +78,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 delete", function (done) {
-			request(app).delete("/res1/delete/1")
+			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();

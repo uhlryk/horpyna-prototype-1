@@ -3,5 +3,5 @@ block content
 	form(method=content.form.method action=content.form.action)
 		each field in content.fields
 			label(for=field.fieldName) #{field.labelForm}
-			input(type=field.fieldForm name=field.fieldName)
+			input(type=field.fieldForm name=field.fieldName value=field.value)
 		button(type="submit") #{content.form.buttonName}

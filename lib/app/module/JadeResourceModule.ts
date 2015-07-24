@@ -58,7 +58,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 			super.onUpdateAction(request,response, resolve);
 		})
 		.then(()=>{
-			response.setRedirect("./list");
+			response.setRedirect("../list");
 			done();
 		});
 	}
