@@ -2,6 +2,6 @@ extend layout
 block content
 	form(method=content.form.method action=content.form.action)
 		each field in content.fields
-			label(for=field.param) #{field.name}
-			input(type=field.type name=field.param)
+			label(for=field.fieldName) #{field.formLabel}
+			input(type=field.fieldForm name=field.fieldName)
 		button(type="submit") #{content.form.buttonName}

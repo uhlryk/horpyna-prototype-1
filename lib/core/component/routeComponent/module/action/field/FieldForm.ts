@@ -1,0 +1,24 @@
+enum FieldForm {
+	TEXT,
+	HIDDEN,
+	PASSWORD,
+	COLOR,
+	DATE,
+	DATETIME,
+	DATETIME_LOCAL,
+	EMAIL,
+	MONTH,
+	NUMBER,
+	RANGE,
+	SEARCH,
+	TEL,
+	TIME,
+	URL,
+	WEEK,
+	//temat etapu 2
+	// RADIO,
+	// CHECKBOX,
+	// SELECT,
+	// MULTISELECT
+}
+export = FieldForm;
