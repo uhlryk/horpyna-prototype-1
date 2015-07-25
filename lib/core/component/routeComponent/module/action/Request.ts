@@ -6,7 +6,7 @@ import FieldType = require("./field/FieldType");
 class Request{
 	public allFieldList:Object;
 	private expressRequest:express.Request;
-	private action:BaseAction;
+	private _action:BaseAction;
 	private _logger: Util.Logger;
 	constructor(expressRequest:express.Request){
 		this.expressRequest = expressRequest;
@@ -17,8 +17,11 @@ class Request{
 		this.allFieldList[FieldType.APP_FIELD] = new Object();
 		this.allFieldList[FieldType.HEADER_FIELD] = new Object();
 	}
-	public setAction(action: BaseAction) {
-		this.action = action;
+	public set action(v: BaseAction) {
+		this._action = v;
+	}
+	public get action():BaseAction {
+		return this._action;
 	}
 	public set logger(logger:Util.Logger){
 		this._logger = logger;

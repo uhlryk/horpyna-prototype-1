@@ -89,8 +89,8 @@ class Dispatcher{
 				var request: Action.Request = req['horpynaRequest'];
 				var response: Action.Response = res['horpynaResponse'];
 				response.allow = true;
-				response.setAction(this.homeAction);
-				request.setAction(this.homeAction);
+				response.action = this.homeAction;
+				request.action = this.homeAction;
 				handler(request, response, next);
 			});
 		} else {
@@ -128,8 +128,8 @@ class Dispatcher{
 		response.allow = true;
 		this.debug("view class: " + action.getViewClass());
 		response.setViewClass(action.getViewClass());
-		response.setAction(action);
-		request.setAction(action);
+		response.action  = action;
+		request.action = action;
 		handler(request, response, next);
 	}
 	/**

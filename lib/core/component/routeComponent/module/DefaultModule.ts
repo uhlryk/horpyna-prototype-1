@@ -37,7 +37,7 @@ class DefaultModule extends  Module{
 	}
 	private onFinalAction(request: Action.Request, response: Action.Response, done) {
 		if (response){
-			if(response.getAction() === undefined){
+			if(response.action === undefined){
 				response.setStatus(404);
 			}
 		}

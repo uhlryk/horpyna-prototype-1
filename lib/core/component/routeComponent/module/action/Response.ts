@@ -23,7 +23,7 @@ class Response{
 	 */
 	private data:Object;
 	private expressResponse:express.Response;
-	private action:BaseAction;
+	private _action:BaseAction;
 	private _logger: Util.Logger;
 	private _allow: boolean;
 	private _redirect: string;
@@ -32,9 +32,6 @@ class Response{
 		this.data = new Object();
 		this.viewParam = new Object();
 		this.expressResponse = expressResponse;
-	}
-	public setAction(action: BaseAction) {
-		this.action = action;
 	}
 
 	public setViewClass(viewClass) {
@@ -106,8 +103,12 @@ class Response{
 		}
 		return this.data;
 	}
-	public getAction():BaseAction{
-		return this.action;
+	public set action(v: BaseAction) {
+		this._action = v;
+	}
+
+	public get action():BaseAction{
+		return this._action;
 	}
 }
 export = Response;

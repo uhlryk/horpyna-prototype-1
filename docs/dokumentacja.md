@@ -54,15 +54,35 @@ przebieg procesów dla danego eventu
 Eventy
 ------
 ### Nasłuch
-Moduły mogą zarejestrować dowolną liczbę obiektów które będą nasłuchiwały na eventy w aplikacji.
-Przykładowe użycie
+Components mają możliwość publikacji eventu
+służy do tego metoda:
+publish(request: Action.Request, response: Action.Response, type: string, subtype?: string): Util.Promise<void>
 
-`var onDetailAction = new Core.Event.Action.OnReady.Subscriber();`
-`onDetailAction.setEmiterRegexp(/\/detail$/);`
-`onDetailAction.addCallback((data:Core.Event.Action.OnReady.Data, done)=>{`
-`this.onDetailAction(data, done);`
-`});`
-`this.subscribe(onDetailAction);`
+Metoda wykonuje się w promise
+
+Publikacja wemituje się w kierunku ComponentManager i odpali po drodze wszystkie subskrypcje których warunki nasłuchu
+odpowiadają opubblikowanemu eventowi. Wszystkie te subskrypcje które się odpalą przed dojściem do ComponentManagera
+muszą być ustawione jako lokalne (inaczej się nie odpalą).
+Gdy dojdzie do Componenent Managera ten robi broadcasta z tym eventem w dół do wszystkich Modułów. Wtedy susbskrypcje
+muszą być ustawione jako publiczne.
+
+Subskrypcje rejestrować może tylko Module.
+Rejestracja wygląda:
+public subscribe(subscriber:Event.BaseEvent)
+Gdzie Event to obiekt opisujący jakie warunki mają być spełnione by nastąpiło odpalenie callbacka tego eventu
+
+var event = new Core.Event.Action.OnFinish();
+event.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
+	//tu obsługa
+	done();
+});
+this.subscribe(event);
+
+event może mieć  określony podtyp (subtype)
+event może mieć określone czy jest publiczny czy lokalny
+event domyślnie na podstawie konstruktora ma określony typ
+event może określić EmiterRegexp czyli sprawdza aktualną scieżkę route i określa czy jest zgodna z warunkiem
+
 
 Pola (Field)
 ------------

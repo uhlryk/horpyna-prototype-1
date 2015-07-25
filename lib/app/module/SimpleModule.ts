@@ -54,6 +54,12 @@ class SimpleModule extends  Core.Module{
 		deleteAction.setActionHandler((request, response, done)=>{
 			this.onDeleteAction(request, response, done);
 		});
+
+		var navigationEvent = new Core.Event.Action.OnFinish();
+		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
+			this.onBuildNavigation(request, response, done);
+		});
+		this.subscribe(navigationEvent);
 	}
 	public onListAction (request, response, done){
 		done();
@@ -93,7 +99,7 @@ class SimpleModule extends  Core.Module{
 		responseContent['form'] = new Object();
 		responseContent['form']['buttonName']="send";
 		var bodyFields: Core.Field[] = action.getFieldListByType(Core.Action.FieldType.BODY_FIELD);
-		for(var i=0;i<bodyFields.length; i++){
+		for(var i=0;i < bodyFields.length; i++){
 			var field:Core.Field = bodyFields[i];
 			var fieldForm:Object = new Object();
 			fieldForm["fieldName"] = field.getFieldName();
@@ -104,6 +110,44 @@ class SimpleModule extends  Core.Module{
 			responseContent['fields'].push(fieldForm);
 		}
 		return responseContent;
+	}
+	/**
+	 * Callback na event navigationEvent
+	 * Odpala się dla wszystkich akcji tego modułu.
+	 * Dodaje blok nawigacyjny po akcjach tego modułu
+	 */
+	private onBuildNavigation(request: Core.Action.Request, response: Core.Action.Response, done) {
+		var responseContent: Object = new Object();
+		responseContent['links'] = [];
+		var actionList = this.getActionList();
+		var actionListLength = actionList.length;
+		for (var i = 0; i < actionListLength; i++) {
+			var action: Core.Action.BaseAction = actionList[i];
+			/**
+			 * Prezentujemy akcje które są dostępne przez GET
+			 */
+			if(action.getMethod() !== Core.Action.BaseAction.GET){
+				continue;
+			}
+			/**
+			 * Jeśli są akcje które mają PARAM_FIELD to nie są tu prezentowane (bo wymagają i tak id)
+			 */
+			var paramFieldList = action.getFieldListByType(Core.FieldType.PARAM_FIELD);
+			if (paramFieldList.length > 0 ){
+				continue;
+			}
+			var linkObject = {
+				link: action.fullRoute,
+				name: action.getName(),
+				active: false
+			};
+			if(action === request.action){
+				linkObject.active = true;
+			}
+			responseContent['links'].push(linkObject);
+		}
+		response.addValue("localnavigation", responseContent);
+		done();
 	}
 }
 export = SimpleModule;
