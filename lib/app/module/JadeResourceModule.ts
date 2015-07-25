@@ -49,7 +49,8 @@ class JadeResourceModule extends  Core.ResourceModule{
 			super.onCreateAction(request,response, resolve);
 		})
 		.then(()=>{
-			response.setRedirect("./list");
+			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
+			response.setRedirect(listAction.routePath + listAction.getRoute());
 			done();
 		});
 	}
@@ -58,7 +59,8 @@ class JadeResourceModule extends  Core.ResourceModule{
 			super.onUpdateAction(request,response, resolve);
 		})
 		.then(()=>{
-			response.setRedirect("../list");
+			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
+			response.setRedirect(listAction.routePath + listAction.getRoute());
 			done();
 		});
 	}

@@ -176,6 +176,7 @@ class Dispatcher{
 			if (action === this.beginAction) {
 				continue;//nie tworzymy w sposób standardowy route dla home action
 			}
+			action.routePath = routeName;
 			var newRouteName;
 			if(!defaultActionList || defaultActionList.indexOf(action) === -1){//nie jest na liście default
 				newRouteName = this.buildRoute(routeName, action.getRoute());
@@ -193,6 +194,7 @@ class Dispatcher{
 	private createModuleRoutes(routeName:string, moduleList:Module[], defaultModule?:Module){
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
+			module.routePath = routeName;
 			var newRouteName;
 			if(defaultModule === module){//dany moduł jest ustawiony jak defaultowy więc nie dodaje route
 				newRouteName = routeName;

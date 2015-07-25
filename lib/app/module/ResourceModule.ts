@@ -23,11 +23,13 @@ class ResourceModule extends  SimpleModule{
 		})
 		.then((model) => {
 			if (!model) {
-				response.setRedirect("../list");
+				var listAction = this.getAction(SimpleModule.ACTION_LIST);
+				response.setRedirect(listAction.routePath+listAction.getRoute());
 			} else {
 				model = model.toJSON();
 				var content = response.getData("content");
-				content['form']['action'] = "../update/" + model.id;
+				var updateAction = this.getAction(SimpleModule.ACTION_UPDATE);
+				// content['form']['action'] = updateAction.routePath + updateAction.getRoute() + model.id;
 				var fieldsNumber = content["fields"].length;
 				if (fieldsNumber) {
 					for (var i = 0; i < fieldsNumber; i++) {
@@ -45,7 +47,7 @@ class ResourceModule extends  SimpleModule{
 		var list = new Core.Query.List();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 		list.run()
-		.then(function(modelList){
+		.then((modelList)=>{
 			var responseContent = [];
 			response.setContent(responseContent);
 			for(var i = 0; i < modelList.length; i++) {
@@ -60,9 +62,10 @@ class ResourceModule extends  SimpleModule{
 		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 		find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		find.run()
-		.then(function(model){
+		.then((model)=>{
 			if (!model) {
-				response.setRedirect("../list");
+				var listAction = this.getAction(SimpleModule.ACTION_LIST);
+				response.setRedirect(listAction.routePath+listAction.getRoute());
 			} else {
 				response.setContent(model.toJSON());
 			}
@@ -74,7 +77,7 @@ class ResourceModule extends  SimpleModule{
 		create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 		create.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
 		create.run()
-		.then(function(model){
+		.then((model)=>{
 			response.setContent(model.toJSON());
 			done(model.toJSON());
 		});
@@ -85,7 +88,7 @@ class ResourceModule extends  SimpleModule{
 		update.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
 		update.run()
-		.then(function(){
+		.then(()=>{
 			done();
 		});
 	}
@@ -94,7 +97,7 @@ class ResourceModule extends  SimpleModule{
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 		list.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		list.run()
-		.then(function(){
+		.then(()=>{
 			done();
 		});
 	}
