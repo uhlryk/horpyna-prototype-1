@@ -22,21 +22,22 @@ class ResourceModule extends  SimpleModule{
 			return find.run();
 		})
 		.then((model) => {
-			model = model.toJSON();
-			var content = response.getData("content");
-			content['form']['action'] = "../update/"+model.id;
-			var fieldsNumber = content["fields"].length;
-			if (fieldsNumber) {
-				for (var i = 0; i < fieldsNumber; i++){
-					var field = content["fields"][i];
-					var fieldName = field["fieldName"];
-					// console.log("fieldName:"+fieldName);
-					var value = model[fieldName];
-					// console.log("value:" + value);
-					field["value"] = value;
+			if (!model) {
+				response.setRedirect("../list");
+			} else {
+				model = model.toJSON();
+				var content = response.getData("content");
+				content['form']['action'] = "../update/" + model.id;
+				var fieldsNumber = content["fields"].length;
+				if (fieldsNumber) {
+					for (var i = 0; i < fieldsNumber; i++) {
+						var field = content["fields"][i];
+						var fieldName = field["fieldName"];
+						var value = model[fieldName];
+						field["value"] = value;
+					}
 				}
 			}
-			console.log(response.getData("content"));
 			done();
 		});
 	}
@@ -60,7 +61,11 @@ class ResourceModule extends  SimpleModule{
 		find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		find.run()
 		.then(function(model){
-			response.setContent(model.toJSON());
+			if (!model) {
+				response.setRedirect("../list");
+			} else {
+				response.setContent(model.toJSON());
+			}
 			done();
 		});
 	}

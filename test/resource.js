@@ -30,6 +30,20 @@ describe("Funkcje Modułu ResourceModule", function() {
 				done();
 			});
 		});
+		it("kod 302 updateform gdy brak elementu,", function (done) {
+			request(app).get("/res1/updateform/1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(302);
+					done();
+				});
+		});
+		it("kod 302 detail gdy brak elementu", function (done) {
+			request(app).get("/res1/detail/1")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(302);
+					done();
+				});
+		});
 		it("kod 200 createform,", function (done) {
 			request(app).get("/res1/createform")
 				.end(function (err, res) {
