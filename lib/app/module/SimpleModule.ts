@@ -64,7 +64,7 @@ class SimpleModule extends  Core.Module{
 	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {
 		var targetAction = this.getAction(SimpleModule.ACTION_CREATE);
 		var dateResponse = this.formMetaData(targetAction);
-		dateResponse['form']['action'] = targetAction.routePath+targetAction.getRoute();
+		dateResponse['form']['action'] = targetAction.fullRoute;
 		dateResponse['form']['method'] = targetAction.getMethod();
 		response.setContent(dateResponse);
 		done();
@@ -72,7 +72,8 @@ class SimpleModule extends  Core.Module{
 	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
 		var targetAction = this.getAction(SimpleModule.ACTION_UPDATE);
 		var dateResponse = this.formMetaData(targetAction);
-		dateResponse['form']['action'] = targetAction.routePath + targetAction.getRoute() + "/" + request.getField(Core.FieldType.PARAM_FIELD, 'id');
+		var id = request.getField(Core.FieldType.PARAM_FIELD, 'id');
+		dateResponse['form']['action'] = Core.RouteComponent.buildRoute(targetAction.fullRoute, id);
 		dateResponse['form']['method'] = targetAction.getMethod();
 		response.setContent(dateResponse);
 		done();

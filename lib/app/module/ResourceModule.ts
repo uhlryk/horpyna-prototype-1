@@ -24,7 +24,7 @@ class ResourceModule extends  SimpleModule{
 		.then((model) => {
 			if (!model) {
 				var listAction = this.getAction(SimpleModule.ACTION_LIST);
-				response.setRedirect(listAction.routePath+listAction.getRoute());
+				response.setRedirect(listAction.fullRoute);
 			} else {
 				model = model.toJSON();
 				var content = response.getData("content");
@@ -65,7 +65,7 @@ class ResourceModule extends  SimpleModule{
 		.then((model)=>{
 			if (!model) {
 				var listAction = this.getAction(SimpleModule.ACTION_LIST);
-				response.setRedirect(listAction.routePath+listAction.getRoute());
+				response.setRedirect(listAction.fullRoute);
 			} else {
 				response.setContent(model.toJSON());
 			}

@@ -2,6 +2,7 @@
 import express = require("express");
 import Util = require("./../util/Util");
 import Module = require("./../component/routeComponent/module/Module");
+import RouteComponent = require("./../component/routeComponent/RouteComponent");
 import Action = require("./../component/routeComponent/module/action/Action");
 import Field = require("./../component/routeComponent/module/action/field/Field");
 class Dispatcher{
@@ -176,17 +177,17 @@ class Dispatcher{
 			if (action === this.beginAction) {
 				continue;//nie tworzymy w sposób standardowy route dla home action
 			}
-			action.routePath = routeName;
+			action.baseRoute = routeName;
 			var newRouteName;
 			if(!defaultActionList || defaultActionList.indexOf(action) === -1){//nie jest na liście default
-				newRouteName = this.buildRoute(routeName, action.getRoute());
+				newRouteName = RouteComponent.buildRoute(routeName, action.partialRoute);
 			} else{//jest default
 				newRouteName = routeName;
 			}
 			var fieldList = action.getFieldListByType(Action.FieldType.PARAM_FIELD);
 			for(var fieldIndex in fieldList){
 				var field:Field = fieldList[fieldIndex];
-				newRouteName = this.buildRoute(newRouteName, ":" + field.getFieldName());
+				newRouteName = RouteComponent.buildRoute(newRouteName, ":" + field.getFieldName());
 			}
 			this.createMethodRoutes(newRouteName, action);
 		}
@@ -194,12 +195,12 @@ class Dispatcher{
 	private createModuleRoutes(routeName:string, moduleList:Module[], defaultModule?:Module){
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
-			module.routePath = routeName;
+			module.baseRoute = routeName;
 			var newRouteName;
 			if(defaultModule === module){//dany moduł jest ustawiony jak defaultowy więc nie dodaje route
 				newRouteName = routeName;
 			} else {
-				newRouteName = this.buildRoute(routeName, module.getRoute());
+				newRouteName = RouteComponent.buildRoute(routeName, module.partialRoute);
 			}
 			this.createModuleRoutes(newRouteName, module.getModuleList(), module.getDefaultModule());
 			this.createActionRoutes(newRouteName, module.getActionList(), module.getDefaultActionList());
@@ -226,16 +227,6 @@ class Dispatcher{
 		this.finalRoute();
 		this.lastErrorRoute();
 		this.debug('end');
-	}
-	private buildRoute(baseRoute:string, partRoute:string):string{
-		if(baseRoute.slice(-1) !== "/"){
-			baseRoute = baseRoute + "/";
-		}
-		if(partRoute) {
-			return baseRoute + partRoute + "/";
-		} else {
-			return baseRoute;
-		}
 	}
 }
 export = Dispatcher;
