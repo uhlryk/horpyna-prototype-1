@@ -3,6 +3,9 @@ block content
 	table
 		each row in content
 			tr
-				each val in row
+				each val in row.element
 					td= val
+				each val in row.navigation
+					td
+						a(href=val.link) #{val.name}
 

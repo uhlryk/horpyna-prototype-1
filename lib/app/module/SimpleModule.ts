@@ -70,8 +70,7 @@ class SimpleModule extends  Core.Module{
 	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {
 		var targetAction = this.getAction(SimpleModule.ACTION_CREATE);
 		var dateResponse = this.formMetaData(targetAction);
-		dateResponse['form']['action'] = targetAction.fullRoute;
-		dateResponse['form']['method'] = targetAction.getMethod();
+
 		response.setContent(dateResponse);
 		done();
 	}
@@ -80,7 +79,6 @@ class SimpleModule extends  Core.Module{
 		var dateResponse = this.formMetaData(targetAction);
 		var id = request.getField(Core.FieldType.PARAM_FIELD, 'id');
 		dateResponse['form']['action'] = Core.RouteComponent.buildRoute(targetAction.fullRoute, id);
-		dateResponse['form']['method'] = targetAction.getMethod();
 		response.setContent(dateResponse);
 		done();
 	}
@@ -93,12 +91,14 @@ class SimpleModule extends  Core.Module{
 	public onDeleteAction (request, response, done){
 		done();
 	}
-	private formMetaData(action:Core.Action.BaseAction):Object{
+	private formMetaData(targetAction:Core.Action.BaseAction):Object{
 		var responseContent:Object = new Object();
 		responseContent['fields'] = [];
 		responseContent['form'] = new Object();
+		responseContent['form']['action'] = targetAction.fullRoute;
+		responseContent['form']['method'] = targetAction.getMethod();
 		responseContent['form']['buttonName']="send";
-		var bodyFields: Core.Field[] = action.getFieldListByType(Core.Action.FieldType.BODY_FIELD);
+		var bodyFields: Core.Field[] = targetAction.getFieldListByType(Core.Action.FieldType.BODY_FIELD);
 		for(var i=0;i < bodyFields.length; i++){
 			var field:Core.Field = bodyFields[i];
 			var fieldForm:Object = new Object();

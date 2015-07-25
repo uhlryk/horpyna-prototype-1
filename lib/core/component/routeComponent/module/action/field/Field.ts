@@ -38,9 +38,15 @@ class Field extends Component {
 	public get labelForm() : string {
 		return this._labelForm;
 	}
+	/**
+	 * Jakiego typu jest pole na formularzu FieldForm typ
+	 */
 	public set fieldForm(v : FieldForm) {
 		this._fieldForm = v;
 	}
+	/**
+	 * Jakiego typu jest pole na formularzu FieldForm typ
+	 */
 	public get fieldForm() : FieldForm {
 		return this._fieldForm;
 	}
@@ -65,6 +71,9 @@ class Field extends Component {
 	public getValidatorList(): Validator.BaseValidator[] {
 		return this.validatorList;
 	}
+	/**
+	 * Po tym identyfikujemy pole. Domyślnie może być takie samo jak name pola
+	 */
 	public getFieldName(): string {
 		return this.fieldName;
 	}

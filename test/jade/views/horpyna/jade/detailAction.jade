@@ -1,8 +1,13 @@
 extend layout
 block content
 	table
-		each val, name in content
+		each val, name in content.element
 			tr
 				td= name
 				td= val
+		each val in content.navigation
+			tr
+				td
+				td
+					a(href=val.link) #{val.name}
 
