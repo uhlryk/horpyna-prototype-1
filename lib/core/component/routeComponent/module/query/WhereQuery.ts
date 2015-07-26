@@ -8,7 +8,7 @@ class WhereQuery extends BaseQuery{
 		this.list = new Object();
 	}
 	public add(columnName:string, value:any){
-		if(this.getModel() && this.getModel().getColumn(columnName)) {
+		if (this.getModel() && (columnName === 'id' || this.getModel().getColumn(columnName))) {
 			this.list[columnName] = value;
 		}
 	}

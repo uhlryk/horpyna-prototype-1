@@ -26,6 +26,15 @@ class JadeResourceModule extends  Core.ResourceModule{
 			done();
 		});
 	}
+	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, done) {
+		new Core.Util.Promise<void>((resolve: () => void) => {
+			super.onFormDeleteAction(request, response, resolve);
+		})
+			.then(() => {
+				response.addViewParam("view", "horpyna/jade/deleteFormAction");
+				done();
+			});
+	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		new Core.Util.Promise<void>((resolve:() => void) => {
 			super.onListAction(request,response, resolve);
@@ -69,7 +78,8 @@ class JadeResourceModule extends  Core.ResourceModule{
 			super.onDeleteAction(request,response, resolve);
 		})
 		.then(()=>{
-			response.addViewParam("view", "index");
+			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
+			response.setRedirect(listAction.fullRoute);
 			done();
 		});
 	}

@@ -102,7 +102,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				});
 		});
 
-		it("kod 200 edit", function (done) {
+		it("kod 302 edit", function (done) {
 			request(app).post("/res1/update/1")
 				.send({name: "ala"})
 				.send({pass: "doda"})
@@ -112,11 +112,11 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 					done();
 				});
 		});
-		it("kod 200 delete", function (done) {
+		it("kod 302 delete", function (done) {
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					//console.log(res.text);
-					expect(res.status).to.be.equal(200);
+					expect(res.status).to.be.equal(302);
 					done();
 				});
 		});

@@ -16,7 +16,7 @@ class Delete extends BaseQuery{
 		this.whereQuery.add(columnName, value);
 	}
 	public run():Orm.Promise{
-		super.run();
+		// super.run();
 		return this.getModel().getModel().destroy({
 			where:this.whereQuery.getList()
 		});

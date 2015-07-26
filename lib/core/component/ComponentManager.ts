@@ -34,6 +34,12 @@ class ComponentManager extends Component{
 	public getDefaultModule():Module{
 		return this.defaultModule;
 	}
+	/**
+	 * odpala proces inicjacji wszystkich komponentów.
+	 * Co polega na tym że wywołuje w swoich podrzędnych komponentach init
+	 * A one wywołują to w swoich. Proces idzie do samego dołu. Na tym etapie nie jest zbudowana
+	 * jeszcze cała struktura aplikacji. Niektóre komponenty mogą się rozbudowywać
+	 */
 	public init(){
 		if(!this.viewClass){
 			this.viewClass = View.JsonView;
