@@ -13,12 +13,12 @@ import IActionHandler = require("./IActionHandler");
 class FormAction extends BaseAction {
 	private targetAction: BaseAction;
 	constructor(targetAction:BaseAction, name?:string){
-		super(BaseAction.GET, name || FormAction.formActionName(targetAction.getName()));
+		super(BaseAction.GET, name || FormAction.formActionName(targetAction.name));
 		this.targetAction = targetAction;
 		var paramFields: Field[] = this.targetAction.getFieldListByType(FieldType.PARAM_FIELD);
 		for (var i = 0; i < paramFields.length; i++) {
 			var field: Field = paramFields[i];
-			this.addField(new Field(field.getName(), field.getType(), field.getFieldName()));
+			this.addField(new Field(field.name, field.getType(), field.getFieldName()));
 		}
 	}
 	/**
@@ -42,7 +42,7 @@ class FormAction extends BaseAction {
 			var field: Field = bodyFields[i];
 			var fieldForm: Object = new Object();
 			fieldForm["fieldName"] = field.getFieldName();
-			fieldForm["name"] = field.getName();
+			fieldForm["name"] = field.name;
 			fieldForm["fieldForm"] = field.fieldForm;
 			fieldForm["labelForm"] = field.labelForm;
 			fieldForm["value"] = "";

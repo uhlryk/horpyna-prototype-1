@@ -8,9 +8,6 @@ class ResourceModule extends  SimpleModule{
 		var resourceModel = new Core.Model(ResourceModule.RESOURCE_MODEL);
 		this.addModel(resourceModel);
 	}
-	public onInit() {
-		super.onInit();
-	}
 	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
 		new Core.Util.Promise<void>((resolve: () => void) => {
 			super.onFormUpdateAction(request, response, resolve);
@@ -151,7 +148,7 @@ class ResourceModule extends  SimpleModule{
 
 			var linkObject = {
 				link: actionRoute,
-				name: action.getName(),
+				name: action.name,
 			};
 			links.push(linkObject);
 		}

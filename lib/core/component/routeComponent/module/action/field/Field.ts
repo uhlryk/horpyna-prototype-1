@@ -50,8 +50,8 @@ class Field extends Component {
 	public get fieldForm() : FieldForm {
 		return this._fieldForm;
 	}
-	protected onInit():void{
-		super.onInit();
+	public init():void{
+		super.init();
 		this.initValidators();
 	}
 	public setFieldName(fieldName: string) {
@@ -60,13 +60,13 @@ class Field extends Component {
 	public initValidators(){
 		for(var index in this.validatorList){
 			var validator: Validator.BaseValidator = this.validatorList[index];
-			validator.logger = this.logger;
+			// validator.logger = this.logger;
 			validator.init();
 		};
 	}
 	protected addValidator(validator: Validator.BaseValidator) {
 		this.validatorList.push(validator);
-		validator.setParent(this);
+		validator.parent = this;
 	}
 	public getValidatorList(): Validator.BaseValidator[] {
 		return this.validatorList;
@@ -83,7 +83,7 @@ class Field extends Component {
 	public getValidator(name: string): Validator.BaseValidator {
 		for(var index in this.validatorList){
 			var validator: Validator.BaseValidator = this.validatorList[index];
-			if(validator.getName() === name){
+			if(validator.name === name){
 				return validator;
 			}
 		}

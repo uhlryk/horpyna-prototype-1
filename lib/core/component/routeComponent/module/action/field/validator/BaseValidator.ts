@@ -24,8 +24,8 @@ class BaseValidator extends Component {
 	 * Możliwe że lepiej jak instancja walidatora również sama przechowuje wiedzę o nazwie pola
 	 */
 	public getFieldName():string{
-		if(this.getParent()){
-			var parent: Field = <Field>this.getParent();
+		if(this.parent){
+			var parent: Field = <Field>this.parent;
 			return parent.getFieldName();
 		}
 		return null;

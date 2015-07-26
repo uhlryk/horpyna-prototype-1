@@ -20,14 +20,14 @@ class RouteComponent extends Component{
 	private viewClass;
 	constructor(name:string){
 		super(name);
-		this._partialRoute = this.getName();
+		this._partialRoute = this.name;
 		this.checkName(this._partialRoute);
 	}
 	/**
 	 * Zwraca nazwę danego członu route
 	 */
 	public set partialRoute(v : string){
-		this._partialRoute = this.getName();
+		this._partialRoute = this.name;
 		this.checkName(this._partialRoute);
 	}
 	public get partialRoute():string{

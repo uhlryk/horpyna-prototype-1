@@ -5,9 +5,6 @@ class JadeResourceModule extends  Core.ResourceModule{
 		super.onConstructor();
 		this.setViewClass(Core.View.JadeView);
 	}
-	public onInit() {
-		super.onInit();
-	}
 	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
 		new Core.Util.Promise<void>((resolve:()=>void)=>{
 			super.onFormCreateAction(request,response,resolve);

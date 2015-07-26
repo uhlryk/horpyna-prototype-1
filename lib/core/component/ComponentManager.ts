@@ -3,11 +3,19 @@ import Module = require("./routeComponent/module/Module");
 import Component = require("./Component");
 import Util = require("../util/Util");
 import View = require("../view/View");
+import Dispatcher = require("../dispatcher/Dispatcher");
+import DbManager = require("../dbManager/DbManager");
 class ComponentManager extends Component{
+	public static DISPATCHER_NONE: string = "Need 'dispatcher'";
+	public static DB_MANAGER_NONE: string = "Need 'dbManager'";
+
+	private _dispatcher: Dispatcher;
+	private _dbManager: DbManager;
 	private moduleList:Module[];
 	/**
 	 * Ustawiamy moduł który będzie defaultowy dla route i nie będzie dodawał się do path
 	 * Możemy więc przez jakiś moduł mieć dostęp do "/"
+	 * @deprecated będziemy rezygnować z defaultowych modułów do skrócenia ścieżki. To ma być robione jawnie
 	 */
 	private defaultModule : Module;
 	/**
@@ -17,10 +25,11 @@ class ComponentManager extends Component{
 	constructor() {
 		super("ComponentManager");
 		this.moduleList = [];
+		this.componentManager = this;
 	}
 	public addModule(module:Module,isDefault?:boolean) : void{
 		this.moduleList.push(module);
-		module.setParent(this);
+		module.parent = this;
 		if(isDefault === true){
 			this.defaultModule = module;
 		}
@@ -28,11 +37,29 @@ class ComponentManager extends Component{
 	public getModule(name:string){
 		return this.moduleList[name];
 	}
+	/**
+	 * lista modułów bezpośrednio podpiętych pod ComponentManager
+	 */
 	public getModuleList() : Module[]{
 		return this.moduleList;
 	}
+	/**
+	 * @deprecated będziemy rezygnować z defaultowych modułów do skrócenia ścieżki. To ma być robione jawnie
+	 */
 	public getDefaultModule():Module{
 		return this.defaultModule;
+	}
+	public set dispatcher(v: Dispatcher){
+		this._dispatcher = v;
+	}
+	public set dbManager(v:DbManager){
+		this._dbManager = v;
+	}
+	public get dispatcher(): Dispatcher{
+		return this._dispatcher;
+	}
+	public get dbManager(): DbManager {
+		return this._dbManager;
 	}
 	/**
 	 * odpala proces inicjacji wszystkich komponentów.
@@ -41,9 +68,16 @@ class ComponentManager extends Component{
 	 * jeszcze cała struktura aplikacji. Niektóre komponenty mogą się rozbudowywać
 	 */
 	public init(){
+		if (this._dispatcher == undefined) {
+			throw new Error(ComponentManager.DISPATCHER_NONE);
+		}
+		if (this._dbManager == undefined) {
+			throw new Error(ComponentManager.DB_MANAGER_NONE);
+		}
 		if(!this.viewClass){
 			this.viewClass = View.JsonView;
 		}
+		this.isInit = true;
 		for(var name in this.moduleList){
 			var module:Module = this.moduleList[name];
 			module.logger = this.logger;

@@ -136,7 +136,7 @@ class Dispatcher{
 	 * w tej metodzie dodatkowo jest określany sposób renderowania widoku
 	 */
 	private createMethodRoutes(routeName:string, action:Action.BaseAction){
-		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.getName());
+		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.name);
 		switch(action.getMethod()){
 			case Action.BaseAction.ALL:
 				this.router.all(routeName, (req, res, next) => {

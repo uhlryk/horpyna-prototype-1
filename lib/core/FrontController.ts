@@ -76,11 +76,13 @@ class FrontController {
 		this.dbManager.init();
 		this.componentManager.logger = this.logger;
 		this.debug("front:componentManager.init()");
+		this.componentManager.dispatcher = this.dispatcher;
+		this.componentManager.dbManager = this.dbManager;
 		this.componentManager.init();
-		this.debug("front:setConnectionToModels()");
-		this.setConnectionToModels();
+		// this.debug("front:setConnectionToModels()");
+		/* X */this.setConnectionToModels();
 		this.debug("front:dispatcher.createRoutes()");
-		this.dispatcher.createRoutes(this.componentManager.getModuleList(), this.componentManager.getDefaultModule());
+		/* X */this.dispatcher.createRoutes(this.componentManager.getModuleList(), this.componentManager.getDefaultModule());
 		this.debug("front:dbManager.build()");
 		var promise = this.dbManager.build();
 		return promise;

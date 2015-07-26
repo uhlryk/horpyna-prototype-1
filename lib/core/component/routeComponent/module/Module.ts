@@ -18,13 +18,10 @@ class Module extends RouteComponent{
 		this.modelList = [];
 		this.subscriberList = [];
 		super(name);
-		this.onConstructor();
 	}
-	public onConstructor(){
 
-	}
-	protected onInit():void{
-		super.onInit();
+	public init(): void {
+		super.init();
 		this.initModules();
 		this.initActions();
 		this.initModels();
@@ -33,14 +30,14 @@ class Module extends RouteComponent{
 		for(var index in this.moduleList){
 			var childModule:Module = this.moduleList[index];
 			childModule.setViewClass(this.getViewClass());
-			childModule.logger = this.logger;
+			// childModule.logger = this.logger;
 			childModule.init();
 		};
 	}
 	public initModels(){
 		for(var index in this.modelList){
 			var model:Model = this.modelList[index];
-			model.logger = this.logger;
+			// model.logger = this.logger;
 			model.init();
 		};
 	}
@@ -48,13 +45,13 @@ class Module extends RouteComponent{
 		for(var index in this.actionList){
 			var action:Action.BaseAction = this.actionList[index];
 			action.setViewClass(this.getViewClass());
-			action.logger = this.logger;
+			// action.logger = this.logger;
 			action.init();
 		};
 	}
 	protected addAction(action:Action.BaseAction,isDefault?:boolean){
 		this.actionList.push(action);
-		action.setParent(this);
+		action.parent = this;
 		if(isDefault === true){
 			this.defaultActionList.push(action);
 		}
@@ -65,7 +62,7 @@ class Module extends RouteComponent{
 	public getAction(name:string):Action.BaseAction{
 		for(var index in this.actionList){
 			var action:Action.BaseAction = this.actionList[index];
-			if(action.getName() === name){
+			if(action.name === name){
 				return action;
 			}
 		}
@@ -75,7 +72,7 @@ class Module extends RouteComponent{
 	}
 	protected addModule(module:Module,isDefault?:boolean){
 		this.moduleList.push(module);
-		module.setParent(this);
+		module.parent = this;
 		if(isDefault === true){
 			this.defaultModule = module;
 		}
@@ -86,7 +83,7 @@ class Module extends RouteComponent{
 	public getModule(name:string):Module{
 		for(var index in this.moduleList){
 			var module:Module = this.moduleList[index];
-			if(module.getName() === name){
+			if(module.name === name){
 				return module;
 			}
 		}
@@ -96,7 +93,7 @@ class Module extends RouteComponent{
 	}
 	protected addModel(model:Model,isDefault?:boolean){
 		this.modelList.push(model);
-		model.setParent(this);
+		model.parent = this;
 		if(isDefault === true){
 			this.defaultModel = model;
 		}
@@ -110,7 +107,7 @@ class Module extends RouteComponent{
 	public getModel(name:string):Model{
 		for(var index in this.modelList){
 			var model:Model = this.modelList[index];
-			if(model.getName() === name){
+			if(model.name === name){
 				return model;
 			}
 		}

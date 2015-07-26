@@ -23,23 +23,23 @@ class BaseAction extends RouteComponent {
 
 	constructor(method:string, name:string){
 		super(name);
-		this.debugger = new Util.Debugger("action:" + this.getName());
+		this.debugger = new Util.Debugger("action:" + this.name);
 		this.method = method;
 		this.fieldList = [];
 	}
-	protected onInit():void{
-		super.onInit();
+	public init():void{
+		super.init();
 		this.initFields();
 	}
 	public initFields(){
 		for(var index in this.fieldList){
 			var field:Field = this.fieldList[index];
-			field.logger = this.logger;
+			// field.logger = this.logger;
 			field.init();
 		};
 	}
 	public addField(field: Field) {
-		field.setParent(this);
+		field.parent = this;
 		this.fieldList.push(field);
 	}
 	public getFieldList(): Field[] {
@@ -58,7 +58,7 @@ class BaseAction extends RouteComponent {
 	public getField(type: string, name: string): Field {
 		for (var index in this.fieldList) {
 			var field: Field = this.fieldList[index];
-			if (field.getName() === name && field.getType() === type) {
+			if (field.name === name && field.getType() === type) {
 				return field;
 			}
 		}

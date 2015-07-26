@@ -16,20 +16,20 @@ class Model extends Component{
 		this.columnList = [];
 		this.connectionSet = false;
 	}
-	protected onInit(){
-		super.onInit();
+	public init(){
+		super.init();
 		this.initColumns();
 	}
 	public initColumns(){
 		for(var index in this.columnList){
 			var column:Column.BaseColumn = this.columnList[index];
-			column.logger = this.logger;
+			// column.logger = this.logger;
 			column.init();
 		};
 	}
 	public addColumn(column:Column.BaseColumn){
 		this.columnList.push(column);
-		column.setParent(this);
+		column.parent = this;
 	}
 	public getColumnList():Column.BaseColumn[]{
 		return this.columnList;
@@ -37,7 +37,7 @@ class Model extends Component{
 	public getColumn(name:string):Column.BaseColumn{
 		for(var index in this.columnList){
 			var column:Column.BaseColumn = this.columnList[index];
-			if(column.getName() === name){
+			if(column.name === name){
 				return column;
 			}
 		}
@@ -64,11 +64,11 @@ class Model extends Component{
 	}
 	public prepare(){
 		//tu musi być nazwa zawierająca całą ścieżkę modułów i nazwę modelu
-		var tableName = this.getParent().getName() + "_" + this.getName();
+		var tableName = this.parent.name + "_" + this.name;
 		var tableStructure = {};
 		for(var index in this.columnList){
 			var column:Column.BaseColumn = this.columnList[index];
-			tableStructure[column.getName()] = column.build();
+			tableStructure[column.name] = column.build();
 		}
 		this.model = this.connection.getDb().define(tableName, tableStructure);
 	}
