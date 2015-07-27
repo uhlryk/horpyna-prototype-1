@@ -12,6 +12,7 @@ class Dispatcher{
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private _logger: Util.Logger;
+
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
 	 */
@@ -47,7 +48,6 @@ class Dispatcher{
 	public getRouter(){
 		return this.router;
 	}
-
 	private createRequest(req:express.Request):Action.Request{
 		var request = new Action.Request(req);
 		return request;
@@ -138,37 +138,37 @@ class Dispatcher{
 	/**
 	 * w tej metodzie dodatkowo jest określany sposób renderowania widoku
 	 */
-	private createMethodRoutes(routeName:string, action:Action.BaseAction){
-		this.debug('create route %s:%s for action: %s', action.getMethod(), routeName, action.name);
+	private createMethodRoutes(routePath:string, action:Action.BaseAction){
+		this.debug('create route %s:%s for action: %s', action.getMethod(), routePath, action.name);
 		switch(action.getMethod()){
 			case Action.BaseAction.ALL:
-				this.router.all(routeName, (req, res, next) => {
+				this.router.all(routePath, (req, res, next) => {
 					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.GET:
-				this.router.get(routeName, (req, res, next) => {
+				this.router.get(routePath, (req, res, next) => {
 					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.POST:
-				this.router.post(routeName, (req, res, next) => {
+				this.router.post(routePath, (req, res, next) => {
 					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.PUT:
-				this.router.put(routeName, (req, res, next) => {
+				this.router.put(routePath, (req, res, next) => {
 					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 			case Action.BaseAction.DELETE:
-				this.router.delete(routeName, (req, res, next) => {
+				this.router.delete(routePath, (req, res, next) => {
 					this.standardActionHandler(action, req, res, next);
 				});
 				break;
 		}
 	}
-	private createActionRoutes(routeName:string, actionList:Action.BaseAction[], defaultActionList?:Action.BaseAction[]){
+	private createActionRoutes(actionList:Action.BaseAction[]){
 		for(var actionIndex in actionList) {
 			var action:Action.BaseAction = actionList[actionIndex];
 			if(action === this.finalAction){
@@ -180,36 +180,24 @@ class Dispatcher{
 			if (action === this.beginAction) {
 				continue;//nie tworzymy w sposób standardowy route dla home action
 			}
-			action.baseRoute = routeName;
-			var newRouteName;
-			if(!defaultActionList || defaultActionList.indexOf(action) === -1){//nie jest na liście default
-				newRouteName = RouteComponent.buildRoute(routeName, action.partialRoute);
-			} else{//jest default
-				newRouteName = routeName;
-			}
-			var fieldList = action.getFieldListByType(Action.FieldType.PARAM_FIELD);
-			for(var fieldIndex in fieldList){
-				var field:Field = fieldList[fieldIndex];
-				newRouteName = RouteComponent.buildRoute(newRouteName, ":" + field.getFieldName());
-			}
-			this.createMethodRoutes(newRouteName, action);
+			// action.baseRoute = routeName;
+			var routePath = action.getRoutePath(true);
+			// var fieldList = action.getFieldListByType(Action.FieldType.PARAM_FIELD);
+			// for(var fieldIndex in fieldList){
+			// 	var field:Field = fieldList[fieldIndex];
+			// 	newRouteName = newRouteName + ":" + field.getFieldName() + "/";
+			// }
+			this.createMethodRoutes(routePath, action);
 		}
 	}
-	private createModuleRoutes(routeName:string, moduleList:Module[], defaultModule?:Module){
+	private createModuleRoutes(moduleList:Module[]){
 		for(var moduleIndex in moduleList){
 			var module:Module = moduleList[moduleIndex];
-			module.baseRoute = routeName;
-			var newRouteName;
-			if(defaultModule === module){//dany moduł jest ustawiony jak defaultowy więc nie dodaje route
-				newRouteName = routeName;
-			} else {
-				newRouteName = RouteComponent.buildRoute(routeName, module.partialRoute);
-			}
-			this.createModuleRoutes(newRouteName, module.getModuleList(), module.getDefaultModule());
-			this.createActionRoutes(newRouteName, module.getActionList(), module.getDefaultActionList());
+			this.createModuleRoutes(module.getModuleList());
+			this.createActionRoutes(module.getActionList());
 		};
 	}
-	public createRoutes(moduleList:Module[], defaultModule?:Module):void{
+	public createRoutes(moduleList:Module[]):void{
 		if(this.beginAction === undefined){
 			this._logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
 			throw new Error(Dispatcher.BEGIN_ACTION_NOT_SET);
@@ -226,7 +214,7 @@ class Dispatcher{
 		this.beginRoute();
 		this.homeRoute();
 
-		this.createModuleRoutes("", moduleList, defaultModule);
+		this.createModuleRoutes(moduleList);
 		this.finalRoute();
 		this.lastErrorRoute();
 		this.debug('end');

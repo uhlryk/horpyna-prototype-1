@@ -4,6 +4,7 @@
  *
  */
 import Component = require("../Component");
+import ComponentManager = require("../ComponentManager");
 
 class RouteComponent extends Component{
 	/**
@@ -12,35 +13,62 @@ class RouteComponent extends Component{
 	 * _partialRoute = 'list'
 	 * _baseRoute = '/car/'
 	 */
-	private _partialRoute:string;
+	private _routeName:string;
 	/**
 	 * Cała ścieżka route do danego komponentu RouteComponent. Nie zawiera danego elementu
 	 */
-	private _baseRoute: string;
+	// private _baseRoute: string;
 	private viewClass;
 	constructor(name:string){
 		super(name);
-		this._partialRoute = this.name;
-		this.checkName(this._partialRoute);
+		this.routeName = this.name;
+	}
+	/**
+	 * Nadpisuje init Component i dodaje w nim pobranie baseRoute od parent
+	 */
+	public init(): void {
+		super.init();
+		// if (this.parent instanceof RouteComponent) {
+		// 	this.baseRoute = (<RouteComponent>this.parent).fullRoute;
+		// }
 	}
 	/**
 	 * Zwraca nazwę danego członu route
 	 */
-	public set partialRoute(v : string){
-		this._partialRoute = this.name;
-		this.checkName(this._partialRoute);
+	public set routeName(v: string) {
+		this._routeName = this.name;
+		this.checkName(this._routeName);
 	}
-	public get partialRoute():string{
-		return this._partialRoute;
+	public get routeName(): string {
+		return this._routeName;
 	}
-	public set baseRoute(v : string) {
-		this._baseRoute = v;
-	}
-	public get baseRoute(): string {
-		return this._baseRoute;
-	}
-	public get fullRoute():string{
-		return RouteComponent.buildRoute(this.baseRoute, this.partialRoute);
+	/**
+	 * Człony elementów do których należy dany RouteComponent
+	 * @param {string} v [description]
+	 */
+	// public set baseRoute(v : string) {
+	// 	this._baseRoute = v;
+	// }
+	// public get baseRoute(): string {
+	// 	return this._baseRoute;
+	// }
+	// public get fullRoute():string{
+	// 	return RouteComponent.buildRoute(this.baseRoute, this.partialRoute);
+	// }
+	/**
+	 * Buduje pełną ścieżkę od danego elementu do najwyższego elementu (z pominięciem ComponentManager) ale używa routeName zamiast name
+	 * @return {string}           zwraca ścieżkę np grandparentcomponent/parentcomponent/thiscomponent
+	 */
+	public getRoutePath():string{
+		var separator = "/";
+		if (this.isInit === false) {
+			throw SyntaxError(Component.COMPONENT_INIT_NEED);
+		}
+		if (this.parent instanceof RouteComponent === false) {
+			return separator + this.routeName;
+		} else {
+			return (<RouteComponent>this.parent).getRoutePath() + separator + this.routeName;
+		}
 	}
 	public setViewClass(viewClass, force?:boolean){
 		if(!this.viewClass || force) {
@@ -57,15 +85,15 @@ class RouteComponent extends Component{
 	 * to system zbuduje 'car/user/dummy/list'
 	 * Metoda dba o wstawianie '/'
 	 */
-	public static buildRoute(baseRoute: string, partRoute: string): string {
-		if (baseRoute.slice(-1) !== "/") {
-			baseRoute = baseRoute + "/";
-		}
-		if (partRoute) {
-			return baseRoute + partRoute + "/";
-		} else {
-			return baseRoute;
-		}
-	}
+	// public static buildRoute(baseRoute: string, partRoute: string): string {
+	// 	if (baseRoute.slice(-1) !== "/") {
+	// 		baseRoute = baseRoute + "/";
+	// 	}
+	// 	if (partRoute) {
+	// 		return baseRoute + partRoute + "/";
+	// 	} else {
+	// 		return baseRoute;
+	// 	}
+	// }
 }
 export = RouteComponent;

@@ -171,7 +171,7 @@ class SimpleModule extends  Core.Module{
 				continue;
 			}
 			var linkObject = {
-				link: action.fullRoute,
+				link: action.getRoutePath(),
 				name: action.name,
 				active: false
 			};

@@ -14,6 +14,7 @@ class Component{
 	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
 	public static INIT_NULL_PARENT: string = "Component can init only when parent Component is set";
 	public static INIT_ALREADY: string = "Component is initialized already";
+	public static COMPONENT_INIT_NEED: string = "Component must be initialized before this method";
 	private _name:string;
 	private _parent:Component;
 	protected debugger: Util.Debugger;
@@ -85,7 +86,7 @@ class Component{
 		}
 		this.isInit = true;
 		this.logger = this.parent.logger;
-		this.componentManager = this.parent.componentManager;
+		// this.componentManager = this.parent.componentManager;
 		// this.onInit();
 	}
 	// protected onInit():void{}
@@ -125,7 +126,21 @@ class Component{
 	public get name():string{
 		return this._name;
 	}
-
+	/**
+	 * Buduje pełną ścieżkę od danego elementu do najwyższego elementu (z pominięciem ComponentManager)
+	 * @param  {string} separator separator między elementami np "/" lub "_"
+	 * @return {string}           zwraca ścieżkę na grandparentcomponent/parentcomponent/thiscomponent
+	 */
+	public getPathName(separator:string):string{
+		if (this.isInit === false) {
+			throw SyntaxError(Component.COMPONENT_INIT_NEED);
+		}
+		if (this.parent === this.componentManager) {
+			return this.name;
+		} else {
+			return this.parent.getPathName(separator) + separator + this.name;
+		}
+	}
 	/**
 	 * Metoda wywoływana w każdym komponencie. Pozwala odpalić event o którym powiadomione będą inne komponenty
 	 * Publikowany event dziedziczy po Event. Dla każdego typu eventa powinna być klasa dziedzicząca po event

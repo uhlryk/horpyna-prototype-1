@@ -64,6 +64,42 @@ class BaseAction extends RouteComponent {
 		}
 		return null;
 	}
+	/**
+	 * Nadpisuje RouteComponent.getRoutePath tak by uwzględniał parametry (biorą one udział w określaniu route w routerze)
+	 * Jeśli dodamy dataObject zawierający key=paramname/value=paramvalue to zmiast /:paramname zostaną podstawione wartości
+	 * @return {string} zwraca ścieżkę np grandparentcomponent/parentcomponent/thiscomponent/:par1/:par2/:par3
+	 */
+	public getRoutePath(paramInPath?:boolean): string {
+		var routePath = super.getRoutePath();
+		if (paramInPath === true) {
+			for (var index in this.fieldList) {
+				var field: Field = this.fieldList[index];
+				if (field.getType() === FieldType.PARAM_FIELD) {
+					routePath = routePath + "/:" + field.getFieldName();
+				}
+			};
+		}
+		return routePath;
+	}
+	/**
+	 * Wraca routePath ale z parametrami które są zastąpione wartościami znajdującymi się w obiekcie 'data'
+	 * @param  {Object} data obiekt zawierający pary paramname:paramvalue
+	 * @return {string}      grandparentcomponent/parentcomponent/thiscomponent/val1/val2/val3
+	 */
+	public populateRoutePath(data:Object):string{
+		var routePath = this.getRoutePath();
+		for (var index in this.fieldList) {
+			var field: Field = this.fieldList[index];
+			if (field.getType() === FieldType.PARAM_FIELD) {
+				var value = data[field.getFieldName()];
+				if(value === undefined){
+					value = "0";
+				}
+				routePath = routePath + "/" + value;
+			}
+		};
+		return routePath;
+	}
 	public getMethod():string {
 		return this.method;
 	}

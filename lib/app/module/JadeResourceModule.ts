@@ -56,7 +56,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 		.then(()=>{
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
-			response.setRedirect(listAction.fullRoute);
+			response.setRedirect(listAction.getRoutePath());
 			done();
 		});
 	}
@@ -66,7 +66,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 		.then(()=>{
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
-			response.setRedirect(listAction.fullRoute);
+			response.setRedirect(listAction.getRoutePath());
 			done();
 		});
 	}
@@ -76,7 +76,7 @@ class JadeResourceModule extends  Core.ResourceModule{
 		})
 		.then(()=>{
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
-			response.setRedirect(listAction.fullRoute);
+			response.setRedirect(listAction.getRoutePath());
 			done();
 		});
 	}

@@ -5,15 +5,15 @@ import Model = require("./model/Model");
 import Util = require("../../../util/Util");
 class Module extends RouteComponent{
 	private actionList:Action.BaseAction[];
-	private defaultActionList:Action.BaseAction[];//może być więcej niż jedna akcja domyślna więc są one jako lista
+	// private defaultActionList:Action.BaseAction[];//może być więcej niż jedna akcja domyślna więc są one jako lista
 	private modelList:Model[];
 	private defaultModel:Model;
 	private moduleList:Module[];
-	private defaultModule : Module;
+	// private defaultModule : Module;
 	private subscriberList:Event.BaseEvent[];
 	constructor(name:string){
 		this.actionList = [];
-		this.defaultActionList = [];
+		// this.defaultActionList = [];
 		this.moduleList = [];
 		this.modelList = [];
 		this.subscriberList = [];
@@ -49,12 +49,12 @@ class Module extends RouteComponent{
 			action.init();
 		};
 	}
-	protected addAction(action:Action.BaseAction,isDefault?:boolean){
+	protected addAction(action:Action.BaseAction){
 		this.actionList.push(action);
 		action.parent = this;
-		if(isDefault === true){
-			this.defaultActionList.push(action);
-		}
+		// if(isDefault === true){
+			// this.defaultActionList.push(action);
+		// }
 	}
 	public getActionList():Action.BaseAction[]{
 		return this.actionList;
@@ -67,15 +67,15 @@ class Module extends RouteComponent{
 			}
 		}
 	}
-	public getDefaultActionList():Action.BaseAction[]{
-		return this.defaultActionList;
-	}
-	protected addModule(module:Module,isDefault?:boolean){
+	// public getDefaultActionList():Action.BaseAction[]{
+		// return this.defaultActionList;
+	// }
+	protected addModule(module:Module){
 		this.moduleList.push(module);
 		module.parent = this;
-		if(isDefault === true){
-			this.defaultModule = module;
-		}
+		// if(isDefault === true){
+			// this.defaultModule = module;
+		// }
 	}
 	public getModuleList():Module[]{
 		return this.moduleList;
@@ -88,9 +88,9 @@ class Module extends RouteComponent{
 			}
 		}
 	}
-	public getDefaultModule():Module{
-		return this.defaultModule;
-	}
+	// public getDefaultModule():Module{
+	// 	return this.defaultModule;
+	// }
 	protected addModel(model:Model,isDefault?:boolean){
 		this.modelList.push(model);
 		model.parent = this;

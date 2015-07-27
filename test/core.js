@@ -167,43 +167,43 @@ describe("Funkcje podstawowe", function() {
 	describe("Sprawdzamy zachowanie gdy podane do aplikacji parametry są błędne", function () {
 
 	});
-	describe("Sprawdzamy zachowanie gdy jedna z akcji jest domyślna", function () {
-		beforeEach(function (done) {
-			app = require('./core/app')();
-			var router = new express.Router();
-			myApp = new Core.Application(router);
-			app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
-			var module = new Core.Module("simple");
-			myApp.addModule(module);
-			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
-			module.addAction(action1);
-			var action2 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action2");
-			module.addAction(action2, true);
-			myApp.init();
-			app.use("/test", router);
-			app.get('/', function (req, res) {
-				res.sendStatus(200);
-			});
-			app.use(function (req, res, next) {
-				res.sendStatus(500);
-			});
-			done();
-		});
-		it("zwraca 200 przy wejściu na poprawny adres '/test/simple/action1'", function (done) {
-			request(app).get("/test/simple/action1")
-				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
-					done();
-				});
-		});
-		it("zwraca 200 przy wejściu na adres modułu '/test/simple/', czyli z akcji domyślnej", function (done) {
-			request(app).get("/test/simple/")
-				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
-					done();
-				});
-		});
-	});
+	// describe("Sprawdzamy zachowanie gdy jedna z akcji jest domyślna", function () {
+	// 	beforeEach(function (done) {
+	// 		app = require('./core/app')();
+	// 		var router = new express.Router();
+	// 		myApp = new Core.Application(router);
+	// 		app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
+	// 		var module = new Core.Module("simple");
+	// 		myApp.addModule(module);
+	// 		var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
+	// 		module.addAction(action1);
+	// 		var action2 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action2");
+	// 		module.addAction(action2, true);
+	// 		myApp.init();
+	// 		app.use("/test", router);
+	// 		app.get('/', function (req, res) {
+	// 			res.sendStatus(200);
+	// 		});
+	// 		app.use(function (req, res, next) {
+	// 			res.sendStatus(500);
+	// 		});
+	// 		done();
+	// 	});
+	// 	it("zwraca 200 przy wejściu na poprawny adres '/test/simple/action1'", function (done) {
+	// 		request(app).get("/test/simple/action1")
+	// 			.end(function (err, res) {
+	// 				expect(res.status).to.be.equal(200);
+	// 				done();
+	// 			});
+	// 	});
+	// 	it("zwraca 200 przy wejściu na adres modułu '/test/simple/', czyli z akcji domyślnej", function (done) {
+	// 		request(app).get("/test/simple/")
+	// 			.end(function (err, res) {
+	// 				expect(res.status).to.be.equal(200);
+	// 				done();
+	// 			});
+	// 	});
+	// });
 	describe("Check if application protect from multiple use of Component single instance", function () {
 		var moduleParent1, moduleParent2;
 		beforeEach(function (done) {

@@ -21,7 +21,7 @@ class ResourceModule extends  SimpleModule{
 		.then((model) => {
 			if (!model) {
 				var listAction = this.getAction(SimpleModule.ACTION_LIST);
-				response.setRedirect(listAction.fullRoute);
+				response.setRedirect(listAction.getRoutePath());
 			} else {
 				model = model.toJSON();
 				var content = response.getData("content");
@@ -69,7 +69,7 @@ class ResourceModule extends  SimpleModule{
 		.then((model)=>{
 			if (!model) {
 				var listAction = this.getAction(SimpleModule.ACTION_LIST);
-				response.setRedirect(listAction.fullRoute);
+				response.setRedirect(listAction.getRoutePath());
 			} else {
 				var modelData = model.toJSON();
 
@@ -114,9 +114,9 @@ class ResourceModule extends  SimpleModule{
 	/**
 	 * zwraca listę linków wygenerowanych z akcji które mają GET i parametry
 	 * Zastosowanie gdy chcemy do wyświetlonych szczegółów danego pola dodać dodatkowe
-	 * akcje typu updateform. Nie obsłuży to akcji delete bo nie ma ona formularza
+	 * akcje typu updateform.
 	 */
-	private fieldActionLink(model:Core.Model):Object[]{
+	private fieldActionLink(data:Object):Object[]{
 		var actionList = this.getActionList();
 		var actionListLength = actionList.length;
 		var links:Object[] = [];
@@ -128,7 +128,7 @@ class ResourceModule extends  SimpleModule{
 			if (action.getMethod() !== Core.Action.BaseAction.GET) {
 				continue;
 			}
-			var actionRoute = action.fullRoute;
+			var actionRoute = action.populateRoutePath(data);
 			/**
 			 * Jeśli są akcje które nie mają PARAM_FIELD to nie są tu prezentowane
 			 * ta nawigacja dotyczy danego elementu i jego parametrów
@@ -138,13 +138,13 @@ class ResourceModule extends  SimpleModule{
 			if (paramFieldListLength === 0 ){
 				continue;
 			}
-			for (var j = 0; j < paramFieldListLength; j++){
-				var field:Core.Field = paramFieldList[j];
-				var modelFieldValue = model[field.getFieldName()];
-				if (modelFieldValue) {
-					actionRoute = Core.RouteComponent.buildRoute(actionRoute, modelFieldValue);
-				}
-			}
+			// for (var j = 0; j < paramFieldListLength; j++){
+			// 	var field:Core.Field = paramFieldList[j];
+			// 	var modelFieldValue = data[field.getFieldName()];
+			// 	if (modelFieldValue) {
+			// 		actionRoute = actionRoute + "/" + modelFieldValue;
+			// 	}
+			// }
 
 			var linkObject = {
 				link: actionRoute,

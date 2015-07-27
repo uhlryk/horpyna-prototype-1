@@ -17,22 +17,24 @@ class ComponentManager extends Component{
 	 * Możemy więc przez jakiś moduł mieć dostęp do "/"
 	 * @deprecated będziemy rezygnować z defaultowych modułów do skrócenia ścieżki. To ma być robione jawnie
 	 */
-	private defaultModule : Module;
+	// private defaultModule : Module;
 	/**
 	 * Klasa odpowiedzialna za wyświetlanie widoków
 	 */
 	private viewClass;
 	constructor() {
+		console.log("a1");
 		super("ComponentManager");
+		console.log("a2");
 		this.moduleList = [];
 		this.componentManager = this;
 	}
-	public addModule(module:Module,isDefault?:boolean) : void{
+	public addModule(module:Module) : void{
 		this.moduleList.push(module);
 		module.parent = this;
-		if(isDefault === true){
-			this.defaultModule = module;
-		}
+		// if(isDefault === true){
+		// 	this.defaultModule = module;
+		// }
 	}
 	public getModule(name:string){
 		return this.moduleList[name];
@@ -46,9 +48,9 @@ class ComponentManager extends Component{
 	/**
 	 * @deprecated będziemy rezygnować z defaultowych modułów do skrócenia ścieżki. To ma być robione jawnie
 	 */
-	public getDefaultModule():Module{
-		return this.defaultModule;
-	}
+	// public getDefaultModule():Module{
+	// 	return this.defaultModule;
+	// }
 	public set dispatcher(v: Dispatcher){
 		this._dispatcher = v;
 	}
@@ -68,10 +70,10 @@ class ComponentManager extends Component{
 	 * jeszcze cała struktura aplikacji. Niektóre komponenty mogą się rozbudowywać
 	 */
 	public init(){
-		if (this._dispatcher == undefined) {
+		if (this._dispatcher === undefined) {
 			throw new Error(ComponentManager.DISPATCHER_NONE);
 		}
-		if (this._dbManager == undefined) {
+		if (this._dbManager === undefined) {
 			throw new Error(ComponentManager.DB_MANAGER_NONE);
 		}
 		if(!this.viewClass){

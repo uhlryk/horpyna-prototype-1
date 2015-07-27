@@ -50,11 +50,11 @@ class FormAction extends BaseAction {
 		}
 		var paramList = request.getFieldList(FieldType.PARAM_FIELD);
 		// var paramFields: Field[] = this.targetAction.getFieldListByType(FieldType.PARAM_FIELD);
-		var route = this.targetAction.fullRoute;
-		for (var paramName in paramList) {
-			var val = paramList[paramName];
-			route = RouteComponent.buildRoute(route, val);
-		}
+		var route = this.targetAction.populateRoutePath(paramList);
+		// for (var paramName in paramList) {
+		// 	var val = paramList[paramName];
+		// 	route = RouteComponent.buildRoute(route, val);
+		// }
 		formContent['form']['action'] = route;
 		return formContent;
 	}
