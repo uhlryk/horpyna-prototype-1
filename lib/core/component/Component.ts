@@ -86,7 +86,7 @@ class Component{
 		}
 		this.isInit = true;
 		this.logger = this.parent.logger;
-		// this.componentManager = this.parent.componentManager;
+		this.componentManager = this.parent.componentManager;
 		// this.onInit();
 	}
 	// protected onInit():void{}

@@ -29,6 +29,7 @@ class BaseAction extends RouteComponent {
 	}
 	public init():void{
 		super.init();
+		this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler(), this.getViewClass());
 		this.initFields();
 	}
 	public initFields(){
@@ -65,8 +66,8 @@ class BaseAction extends RouteComponent {
 		return null;
 	}
 	/**
-	 * Nadpisuje RouteComponent.getRoutePath tak by uwzględniał parametry (biorą one udział w określaniu route w routerze)
-	 * Jeśli dodamy dataObject zawierający key=paramname/value=paramvalue to zmiast /:paramname zostaną podstawione wartości
+	 * Nadpisuje RouteComponent.getRoutePath tak by uwzględniał parametry jeśli paramInPath = true(biorą one udział w określaniu route w routerze)
+	 *
 	 * @return {string} zwraca ścieżkę np grandparentcomponent/parentcomponent/thiscomponent/:par1/:par2/:par3
 	 */
 	public getRoutePath(paramInPath?:boolean): string {
@@ -164,6 +165,7 @@ class BaseAction extends RouteComponent {
 	public getRequestHandler(){
 		this.debug("action:getRequestHandler()");
 		return (request:Request, response:Response, next)=>{
+
 			this.requestHandler(request, response, next);
 		}
 	}

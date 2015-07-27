@@ -29,8 +29,12 @@ class Dispatcher{
 	 * Określa akcję wywoływaną przed wszystkimi. Możliwe że ta akcja będzie miała trochę inną
 	 */
 	private beginAction: Action.BaseAction;
-	constructor() {
+
+	private subRouter: express.Router;
+	constructor(router: express.Router) {
 		this.debugger = new Util.Debugger("dispatcher");
+		this.router = router;
+		this.subRouter = express.Router();
 	}
 	public set logger(logger: Util.Logger) {
 		this._logger = logger;
@@ -42,12 +46,12 @@ class Dispatcher{
 		this.debugger.debug(args);
 	}
 
-	public setRouter(router:express.Router):void{
-		this.router = router;
-	}
-	public getRouter(){
-		return this.router;
-	}
+	// public setRouter(router:express.Router):void{
+	// 	this.router = router;
+	// }
+	// public getRouter(){
+	// 	return this.router;
+	// }
 	private createRequest(req:express.Request):Action.Request{
 		var request = new Action.Request(req);
 		return request;
@@ -92,8 +96,8 @@ class Dispatcher{
 				var request: Action.Request = req['horpynaRequest'];
 				var response: Action.Response = res['horpynaResponse'];
 				response.allow = true;
-				response.action = this.homeAction;
-				request.action = this.homeAction;
+				response.routePath = "/";
+				// request.action = this.homeAction;
 				handler(request, response, next);
 			});
 		} else {
@@ -124,80 +128,98 @@ class Dispatcher{
 		this.debug('last error route');
 		this.router.use(this.lastError.getErrorHandler());
 	}
-	private standardActionHandler(action, req, res, next){
-		var handler = action.getRequestHandler();
-		var request: Action.Request = req['horpynaRequest'];
-		var response: Action.Response = res['horpynaResponse'];
-		response.allow = true;
-		this.debug("view class: " + action.getViewClass());
-		response.setViewClass(action.getViewClass());
-		response.action  = action;
-		request.action = action;
-		handler(request, response, next);
+	/**
+	 * konfiguruje routy dla akcji
+	 */
+	private normalRoute(){
+		this.router.use(this.subRouter);
 	}
+	// private standardActionHandler(action, req, res, next){
+	// 	var handler = action.getRequestHandler();
+	// 	var request: Action.Request = req['horpynaRequest'];
+	// 	var response: Action.Response = res['horpynaResponse'];
+	// 	response.allow = true;
+	// 	this.debug("view class: " + action.getViewClass());
+	// 	response.setViewClass(action.getViewClass());
+	// 	response.action  = action;
+	// 	request.action = action;
+	// 	handler(request, response, next);
+	// }
 	/**
 	 * w tej metodzie dodatkowo jest określany sposób renderowania widoku
 	 */
-	private createMethodRoutes(routePath:string, action:Action.BaseAction){
-		this.debug('create route %s:%s for action: %s', action.getMethod(), routePath, action.name);
-		switch(action.getMethod()){
-			case Action.BaseAction.ALL:
-				this.router.all(routePath, (req, res, next) => {
-					this.standardActionHandler(action, req, res, next);
-				});
-				break;
-			case Action.BaseAction.GET:
-				this.router.get(routePath, (req, res, next) => {
-					this.standardActionHandler(action, req, res, next);
-				});
-				break;
-			case Action.BaseAction.POST:
-				this.router.post(routePath, (req, res, next) => {
-					this.standardActionHandler(action, req, res, next);
-				});
-				break;
-			case Action.BaseAction.PUT:
-				this.router.put(routePath, (req, res, next) => {
-					this.standardActionHandler(action, req, res, next);
-				});
-				break;
-			case Action.BaseAction.DELETE:
-				this.router.delete(routePath, (req, res, next) => {
-					this.standardActionHandler(action, req, res, next);
-				});
-				break;
-		}
+	// private createMethodRoutes(routePath:string, action:Action.BaseAction){
+	// 	this.debug('create route %s:%s for action: %s', action.getMethod(), routePath, action.name);
+	// 	switch(action.getMethod()){
+	// 		case Action.BaseAction.ALL:
+	// 			this.router.all(routePath, (req, res, next) => {
+	// 				this.standardActionHandler(action, req, res, next);
+	// 			});
+	// 			break;
+	// 		case Action.BaseAction.GET:
+	// 			this.router.get(routePath, (req, res, next) => {
+	// 				this.standardActionHandler(action, req, res, next);
+	// 			});
+	// 			break;
+	// 		case Action.BaseAction.POST:
+	// 			this.router.post(routePath, (req, res, next) => {
+	// 				this.standardActionHandler(action, req, res, next);
+	// 			});
+	// 			break;
+	// 		case Action.BaseAction.PUT:
+	// 			this.router.put(routePath, (req, res, next) => {
+	// 				this.standardActionHandler(action, req, res, next);
+	// 			});
+	// 			break;
+	// 		case Action.BaseAction.DELETE:
+	// 			this.router.delete(routePath, (req, res, next) => {
+	// 				this.standardActionHandler(action, req, res, next);
+	// 			});
+	// 			break;
+	// 	}
+	// }
+	// private createActionRoutes(actionList:Action.BaseAction[]){
+	// 	for(var actionIndex in actionList) {
+	// 		var action:Action.BaseAction = actionList[actionIndex];
+	// 		if(action === this.finalAction){
+	// 			continue;//nie tworzymy w sposób standardowy route dla fallback action
+	// 		}
+	// 		if(action === this.homeAction){
+	// 			continue;//nie tworzymy w sposób standardowy route dla home action
+	// 		}
+	// 		if (action === this.beginAction) {
+	// 			continue;//nie tworzymy w sposób standardowy route dla home action
+	// 		}
+	// 		// action.baseRoute = routeName;
+	// 		var routePath = action.getRoutePath(true);
+	// 		// var fieldList = action.getFieldListByType(Action.FieldType.PARAM_FIELD);
+	// 		// for(var fieldIndex in fieldList){
+	// 		// 	var field:Field = fieldList[fieldIndex];
+	// 		// 	newRouteName = newRouteName + ":" + field.getFieldName() + "/";
+	// 		// }
+	// 		this.createMethodRoutes(routePath, action);
+	// 	}
+	// }
+	// private createModuleRoutes(moduleList:Module[]){
+	// 	for(var moduleIndex in moduleList){
+	// 		var module:Module = moduleList[moduleIndex];
+	// 		this.createModuleRoutes(module.getModuleList());
+	// 		this.createActionRoutes(module.getActionList());
+	// 	};
+	// }
+	public addRoute(method:string, routePath:string, handler:Function, view){
+		this.subRouter[method](routePath, (req, res, next) => {
+			var request: Action.Request = req['horpynaRequest'];
+			var response: Action.Response = res['horpynaResponse'];
+			response.allow = true;
+			response.setViewClass(view);
+			// response.action = action;
+			// request.action = action;
+			response.routePath = routePath;
+			handler(request, response, next);
+		});
 	}
-	private createActionRoutes(actionList:Action.BaseAction[]){
-		for(var actionIndex in actionList) {
-			var action:Action.BaseAction = actionList[actionIndex];
-			if(action === this.finalAction){
-				continue;//nie tworzymy w sposób standardowy route dla fallback action
-			}
-			if(action === this.homeAction){
-				continue;//nie tworzymy w sposób standardowy route dla home action
-			}
-			if (action === this.beginAction) {
-				continue;//nie tworzymy w sposób standardowy route dla home action
-			}
-			// action.baseRoute = routeName;
-			var routePath = action.getRoutePath(true);
-			// var fieldList = action.getFieldListByType(Action.FieldType.PARAM_FIELD);
-			// for(var fieldIndex in fieldList){
-			// 	var field:Field = fieldList[fieldIndex];
-			// 	newRouteName = newRouteName + ":" + field.getFieldName() + "/";
-			// }
-			this.createMethodRoutes(routePath, action);
-		}
-	}
-	private createModuleRoutes(moduleList:Module[]){
-		for(var moduleIndex in moduleList){
-			var module:Module = moduleList[moduleIndex];
-			this.createModuleRoutes(module.getModuleList());
-			this.createActionRoutes(module.getActionList());
-		};
-	}
-	public createRoutes(moduleList:Module[]):void{
+	public init():void{
 		if(this.beginAction === undefined){
 			this._logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
 			throw new Error(Dispatcher.BEGIN_ACTION_NOT_SET);
@@ -214,10 +236,14 @@ class Dispatcher{
 		this.beginRoute();
 		this.homeRoute();
 
-		this.createModuleRoutes(moduleList);
+		// this.createModuleRoutes(moduleList);
+		this.normalRoute();
+
+
 		this.finalRoute();
 		this.lastErrorRoute();
 		this.debug('end');
+
 	}
 }
 export = Dispatcher;

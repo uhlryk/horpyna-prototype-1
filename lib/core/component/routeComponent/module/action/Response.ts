@@ -23,17 +23,24 @@ class Response{
 	 */
 	private data:Object;
 	private expressResponse:express.Response;
-	private _action:BaseAction;
+	// private _action:BaseAction;
 	private _logger: Util.Logger;
 	private _allow: boolean;
 	private _redirect: string;
+	private _routePath: string;
 	constructor(expressResponse:express.Response){
 		this.status = 200;
 		this.data = new Object();
 		this.viewParam = new Object();
 		this.expressResponse = expressResponse;
+		this._routePath = null;
 	}
-
+	public set routePath(v : string) {
+		this._routePath = v;
+	}
+	public get routePath() : string {
+		return this._routePath;
+	}
 	public setViewClass(viewClass) {
 		this.view = new viewClass(this.expressResponse);
 	}
@@ -103,12 +110,12 @@ class Response{
 		}
 		return this.data;
 	}
-	public set action(v: BaseAction) {
-		this._action = v;
-	}
+	// public set action(v: BaseAction) {
+	// 	this._action = v;
+	// }
 
-	public get action():BaseAction{
-		return this._action;
-	}
+	// public get action():BaseAction{
+	// 	return this._action;
+	// }
 }
 export = Response;

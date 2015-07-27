@@ -175,7 +175,7 @@ class SimpleModule extends  Core.Module{
 				name: action.name,
 				active: false
 			};
-			if(action === request.action){
+			if(action.getRoutePath() === response.routePath){
 				linkObject.active = true;
 			}
 			responseContent['links'].push(linkObject);

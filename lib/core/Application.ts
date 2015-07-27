@@ -20,14 +20,14 @@ class Application {
 	private dispatcher:Dispatcher;
 	private componentManager:ComponentManager;
 	private dbManager:DbManager;
-	private router:express.Router;
+	// private router:express.Router;
 
 	constructor(router:express.Router) {
-		this.router = router;
+		// this.router = router;
 		this.logger = new Util.Logger();
 		this.frontController = new FrontController();
 		this.frontController.debug("application:constructor:");
-		this.dispatcher = new Dispatcher();
+		this.dispatcher = new Dispatcher(router);
 		this.componentManager = new ComponentManager();
 		this.dbManager = new DbManager();
 		this.frontController.setLogger(this.logger);
@@ -49,7 +49,7 @@ class Application {
 		this.logger.info("Run Horpyna");
 		this.frontController.debug("application:init:");
 		this.frontController.debug("application:dispatcher.setRouter()");
-		this.dispatcher.setRouter(this.router);
+		// this.dispatcher.setRouter(this.router);
 		this.frontController.debug("application:frontController.init()");
 		var promise = this.frontController.init();
 		return promise;
@@ -57,10 +57,10 @@ class Application {
 	/**
 	 * podpinamy pod app.use
 	 */
-	public getMiddleware():express.Router{
-		this.frontController.debug("application:getMiddleware:");
-		return this.router;
-	}
+	// public getMiddleware():express.Router{
+	// 	this.frontController.debug("application:getMiddleware:");
+	// 	return this.router;
+	// }
 	public getLogger():Util.Logger{
 		return this.logger;
 	}

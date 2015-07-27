@@ -23,9 +23,7 @@ class ComponentManager extends Component{
 	 */
 	private viewClass;
 	constructor() {
-		console.log("a1");
 		super("ComponentManager");
-		console.log("a2");
 		this.moduleList = [];
 		this.componentManager = this;
 	}
@@ -54,11 +52,11 @@ class ComponentManager extends Component{
 	public set dispatcher(v: Dispatcher){
 		this._dispatcher = v;
 	}
-	public set dbManager(v:DbManager){
-		this._dbManager = v;
-	}
 	public get dispatcher(): Dispatcher{
 		return this._dispatcher;
+	}
+	public set dbManager(v:DbManager){
+		this._dbManager = v;
 	}
 	public get dbManager(): DbManager {
 		return this._dbManager;
