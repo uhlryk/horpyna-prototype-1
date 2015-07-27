@@ -10,15 +10,18 @@ class DbManager {
 	public static NO_CONNECTION_NAME: string = "Connection not found";
 	private defaultConnection:Connection;
 	private connectionList:Connection[];
-	private logger: Util.Logger;
+	private _logger: Util.Logger;
 	private debugger: Util.Debugger;
 	constructor() {
 		this.connectionList=[];
 		this.debugger = new Util.Debugger("core");
 		this.debug("dbManager:constructor:");
 	}
-	public setLogger(logger: Util.Logger) {
-		this.logger = logger;
+	public set logger(logger: Util.Logger) {
+		this._logger = logger;
+	}
+	public get logger(): Util.Logger {
+		return this._logger;
 	}
 	public debug(...args: any[]) {
 		this.debugger.debug(args);
@@ -57,7 +60,7 @@ class DbManager {
 		this.debug("dbManager:init:");
 		for (var index in this.connectionList) {
 			var connection: Connection = this.connectionList[index];
-			connection.setLogger(this.logger);
+			connection.logger = this._logger;
 		};
 	}
 	public build():Util.Promise<any>{

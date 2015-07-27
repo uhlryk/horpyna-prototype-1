@@ -11,7 +11,7 @@ class Dispatcher{
 	public static LAST_ERROR_NOT_SET: string = "Last error is not set'";
 	private router:express.Router;
 	private debugger: Util.Debugger;
-	private logger: Util.Logger;
+	private _logger: Util.Logger;
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
 	 */
@@ -31,8 +31,11 @@ class Dispatcher{
 	constructor() {
 		this.debugger = new Util.Debugger("dispatcher");
 	}
-	public setLogger(logger: Util.Logger) {
-		this.logger = logger;
+	public set logger(logger: Util.Logger) {
+		this._logger = logger;
+	}
+	public get logger(): Util.Logger {
+		return this._logger;
 	}
 	public debug(...args: any[]) {
 		this.debugger.debug(args);
@@ -208,15 +211,15 @@ class Dispatcher{
 	}
 	public createRoutes(moduleList:Module[], defaultModule?:Module):void{
 		if(this.beginAction === undefined){
-			this.logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
+			this._logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
 			throw new Error(Dispatcher.BEGIN_ACTION_NOT_SET);
 		}
 		if(this.finalAction === undefined){
-			this.logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
+			this._logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
 			throw new Error(Dispatcher.FINAL_ACTION_NOT_SET);
 		}
 		if(this.lastError === undefined){
-			this.logger.error(Dispatcher.LAST_ERROR_NOT_SET);
+			this._logger.error(Dispatcher.LAST_ERROR_NOT_SET);
 			throw new Error(Dispatcher.LAST_ERROR_NOT_SET);
 		}
 		this.debug('start');

@@ -70,8 +70,8 @@ class FrontController {
 		this.setup();
 		this.debug("front:setDefault()");
 		this.setDefault();
-		this.dbManager.setLogger(this.logger);
-		this.dispatcher.setLogger(this.logger);
+		this.dbManager.logger = this.logger;
+		this.dispatcher.logger = this.logger;
 		this.debug("front:dbManager.init()");
 		this.dbManager.init();
 		this.componentManager.logger = this.logger;

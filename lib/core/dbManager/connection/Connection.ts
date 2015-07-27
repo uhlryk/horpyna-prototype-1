@@ -13,7 +13,7 @@ class Connection {
 	private sequelize:Sequelize.Sequelize;
 	private connectionName:string;
 	private debugger: Util.Debugger;
-	private logger: Util.Logger;
+	private _logger: Util.Logger;
 	constructor(dbType: string, host: string, port: number, dbName: string, userName: string, userPassword: string, connectionName: string) {
 		this.debugger = new Util.Debugger("connection:");
 		this.sequelize = new Sequelize(dbName, userName, userPassword, {
@@ -32,8 +32,11 @@ class Connection {
 		this.userPassword = userPassword;
 		this.connectionName = connectionName;
 	}
-	public setLogger(logger: Util.Logger) {
-		this.logger = logger;
+	public set logger(logger: Util.Logger) {
+		this._logger = logger;
+	}
+	public get logger(): Util.Logger {
+		return this._logger;
 	}
 	public getDb():Sequelize.Sequelize{
 		return this.sequelize;
@@ -43,7 +46,7 @@ class Connection {
 	}
 	public log(...args: any[]) {
 		this.debugger.debug(args);
-		this.logger.info(args[0]);
+		this._logger.info(args[0]);
 	}
 
 }
