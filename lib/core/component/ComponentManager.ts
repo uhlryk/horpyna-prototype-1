@@ -67,7 +67,7 @@ class ComponentManager extends Component{
 	 * A one wywołują to w swoich. Proces idzie do samego dołu. Na tym etapie nie jest zbudowana
 	 * jeszcze cała struktura aplikacji. Niektóre komponenty mogą się rozbudowywać
 	 */
-	public init(){
+	public init(): Util.Promise<void> {
 		if (this._dispatcher === undefined) {
 			throw new Error(ComponentManager.DISPATCHER_NONE);
 		}
@@ -78,12 +78,23 @@ class ComponentManager extends Component{
 			this.viewClass = View.JsonView;
 		}
 		this.isInit = true;
-		for(var name in this.moduleList){
-			var module:Module = this.moduleList[name];
-			module.logger = this.logger;
-			module.setViewClass(this.viewClass);
-			module.init();
-		};
+		return Util.Promise.resolve()
+		.then(()=>{
+			return this.initModules();
+		});
+
+		// for(var name in this.moduleList){
+		// 	var module:Module = this.moduleList[name];
+		// 	module.logger = this.logger;
+		// 	module.setViewClass(this.viewClass);
+		// 	module.init();
+		// };
+	}
+	public initModules(): Util.Promise<any> {
+		return Util.Promise.map(this.moduleList, (childModule: Module) => {
+			childModule.setViewClass(this.viewClass);
+			return childModule.init();
+		});
 	}
 	public setViewClass(viewClass){
 		this.viewClass = viewClass;

@@ -4,7 +4,7 @@
  *
  */
 import Component = require("../Component");
-import ComponentManager = require("../ComponentManager");
+import Util = require("../../util/Util");
 
 class RouteComponent extends Component{
 	/**
@@ -26,11 +26,8 @@ class RouteComponent extends Component{
 	/**
 	 * Nadpisuje init Component i dodaje w nim pobranie baseRoute od parent
 	 */
-	public init(): void {
-		super.init();
-		// if (this.parent instanceof RouteComponent) {
-		// 	this.baseRoute = (<RouteComponent>this.parent).fullRoute;
-		// }
+	public init(): Util.Promise<void> {
+		return super.init();
 	}
 	/**
 	 * Zwraca nazwę danego członu route
@@ -56,7 +53,7 @@ class RouteComponent extends Component{
 	// 	return RouteComponent.buildRoute(this.baseRoute, this.partialRoute);
 	// }
 	/**
-	 * Buduje pełną ścieżkę od danego elementu do najwyższego elementu (z pominięciem ComponentManager) ale używa routeName zamiast name
+	 * Buduje pełną ścieżkę od danego elementu do najwyższego elementu ale używa routeName zamiast name
 	 * @return {string}           zwraca ścieżkę np grandparentcomponent/parentcomponent/thiscomponent
 	 */
 	public getRoutePath():string{

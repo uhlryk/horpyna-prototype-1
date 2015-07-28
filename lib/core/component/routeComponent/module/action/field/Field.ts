@@ -1,6 +1,7 @@
 import Component = require("../../../../Component");
 import Validator = require("./validator/Validator");
 import FieldForm = require("./FieldForm");
+import Util = require("./../../../../../util/Util");
 /**
  * Definiuje pojedyńczy parametr jaki otrzymuje akcja w request.
  * Parametr może być dodany do post body, url param, url query
@@ -50,19 +51,19 @@ class Field extends Component {
 	public get fieldForm() : FieldForm {
 		return this._fieldForm;
 	}
-	public init():void{
-		super.init();
-		this.initValidators();
-	}
 	public setFieldName(fieldName: string) {
 		this.fieldName = fieldName;
 	}
-	public initValidators(){
-		for(var index in this.validatorList){
-			var validator: Validator.BaseValidator = this.validatorList[index];
-			// validator.logger = this.logger;
+	public init(): Util.Promise<void> {
+		return super.init()
+		.then(()=>{
+			return this.initValidators();
+		});
+	}
+	public initValidators(): Util.Promise<any> {
+		return Util.Promise.map(this.validatorList, (validator: Validator.BaseValidator) => {
 			validator.init();
-		};
+		});
 	}
 	protected addValidator(validator: Validator.BaseValidator) {
 		this.validatorList.push(validator);

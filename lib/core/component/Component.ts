@@ -1,4 +1,3 @@
-import Event = require("./event/Event");
 import Util = require("../util/Util");
 import ComponentManager = require("./ComponentManager");
 import Action = require("./routeComponent/module/action/Action");
@@ -76,7 +75,7 @@ class Component{
 	 * Komponent jest inicjowany przez rodzica gdy tamten ma swoją inicjację
 	 * Komponent w init się inicjuje i inicjuje swoje podrzędne komponenty
 	 */
-	public init():void {
+	public init(): Util.Promise<void> {
 		/**
 		 * Brak rodzica przy inicjacji to błąd. komponent może być inicjowany tylko względem rodzica
 		 * A wiec zainicjowany komponent zawsze ma rodzica
@@ -87,7 +86,7 @@ class Component{
 		this.isInit = true;
 		this.logger = this.parent.logger;
 		this.componentManager = this.parent.componentManager;
-		// this.onInit();
+		return Util.Promise.resolve();
 	}
 	// protected onInit():void{}
 	/**
@@ -143,7 +142,6 @@ class Component{
 	}
 	/**
 	 * Metoda wywoływana w każdym komponencie. Pozwala odpalić event o którym powiadomione będą inne komponenty
-	 * Publikowany event dziedziczy po Event. Dla każdego typu eventa powinna być klasa dziedzicząca po event
 	 */
 	public publish(request: Action.Request, response: Action.Response, type: string, subtype?: string): Util.Promise<void> {
 		var emiterPath: string = "";

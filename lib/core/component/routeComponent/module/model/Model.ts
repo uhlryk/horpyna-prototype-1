@@ -1,6 +1,7 @@
 import Component = require("../../../Component");
 import Column = require("./column/Column");
 import Orm = require("../../../../util/Orm");
+import Util = require("../../../../util/Util");
 import Connection = require("../../../../dbManager/connection/Connection");
 class Model extends Component{
 	private columnList:Column.BaseColumn[];
@@ -16,16 +17,16 @@ class Model extends Component{
 		this.columnList = [];
 		this.connectionSet = false;
 	}
-	public init(){
-		super.init();
-		this.initColumns();
+	public init(): Util.Promise<void> {
+		return super.init()
+		.then(()=>{
+			return this.initColumns();
+		});
 	}
-	public initColumns(){
-		for(var index in this.columnList){
-			var column:Column.BaseColumn = this.columnList[index];
-			// column.logger = this.logger;
-			column.init();
-		};
+	public initColumns(): Util.Promise<any> {
+		return Util.Promise.map(this.columnList, (column: Column.BaseColumn) => {
+			return column.init();
+		});
 	}
 	public addColumn(column:Column.BaseColumn){
 		this.columnList.push(column);

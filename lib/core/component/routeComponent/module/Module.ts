@@ -20,34 +20,34 @@ class Module extends RouteComponent{
 		super(name);
 	}
 
-	public init(): void {
-		super.init();
-		this.initModules();
-		this.initActions();
-		this.initModels();
+	public init(): Util.Promise<void> {
+		return super.init()
+		.then(() => {
+			return this.initModules();
+		})
+		.then(() => {
+			return this.initActions();
+		})
+		.then(() => {
+			return this.initModels();
+		});
 	}
-	public initModules(){
-		for(var index in this.moduleList){
-			var childModule:Module = this.moduleList[index];
+	public initModules(): Util.Promise<any> {
+		return Util.Promise.map(this.moduleList, (childModule: Module) => {
 			childModule.setViewClass(this.getViewClass());
-			// childModule.logger = this.logger;
-			childModule.init();
-		};
+			return childModule.init();
+		});
 	}
-	public initModels(){
-		for(var index in this.modelList){
-			var model:Model = this.modelList[index];
-			// model.logger = this.logger;
-			model.init();
-		};
+	public initModels(): Util.Promise<any> {
+		return Util.Promise.map(this.modelList, (model: Model) => {
+			return model.init();
+		});
 	}
-	public initActions(){
-		for(var index in this.actionList){
-			var action:Action.BaseAction = this.actionList[index];
+	public initActions(): Util.Promise<any> {
+		return Util.Promise.map(this.actionList, (action: Action.BaseAction) => {
 			action.setViewClass(this.getViewClass());
-			// action.logger = this.logger;
-			action.init();
-		};
+			return action.init();
+		});
 	}
 	protected addAction(action:Action.BaseAction){
 		this.actionList.push(action);

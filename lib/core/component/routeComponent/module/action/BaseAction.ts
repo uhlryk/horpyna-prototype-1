@@ -27,17 +27,18 @@ class BaseAction extends RouteComponent {
 		this.method = method;
 		this.fieldList = [];
 	}
-	public init():void{
-		super.init();
-		this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler(), this.getViewClass());
-		this.initFields();
+	public init(): Util.Promise<void> {
+		return super.init()
+		.then(()=>{
+			this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler(), this.getViewClass());
+			return this.initFields();
+		});
 	}
-	public initFields(){
-		for(var index in this.fieldList){
-			var field:Field = this.fieldList[index];
+	public initFields(): Util.Promise<any> {
+		return Util.Promise.map(this.fieldList, (field: Field) => {
 			// field.logger = this.logger;
-			field.init();
-		};
+			return field.init();
+		});
 	}
 	public addField(field: Field) {
 		field.parent = this;

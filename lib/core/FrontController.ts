@@ -80,12 +80,14 @@ class FrontController {
 		this.dbManager.init();
 		this.componentManager.logger = this.logger;
 		this.debug("front:componentManager.init()");
-		this.componentManager.init();
-		// this.debug("front:setConnectionToModels()");
-		/* X */this.setConnectionToModels();
-		this.debug("front:dbManager.build()");
-		var promise = this.dbManager.build();
-		return promise;
+		return this.componentManager.init()
+		.then(()=>{
+			this.debug("front:setConnectionToModels()");
+			/* X */this.setConnectionToModels();
+			this.debug("front:dbManager.build()");
+			return this.dbManager.build();
+
+		});
 	}
 	/**
 	 * Ustawia akcję home, final dla dispatchera
