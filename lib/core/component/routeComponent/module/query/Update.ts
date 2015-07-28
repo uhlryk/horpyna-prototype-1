@@ -27,7 +27,7 @@ class Update extends BaseQuery{
 	}
 	public run():Orm.Promise{
 		// super.run();
-		return this.getModel().getModel().update(this.valueQuery.getList(),{where:this.whereQuery.getList()});
+		return this.getModel().model.update(this.valueQuery.getList(),{where:this.whereQuery.getList()});
 	}
 }
 export = Update;

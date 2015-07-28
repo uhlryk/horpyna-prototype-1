@@ -20,7 +20,7 @@ class Create extends BaseQuery{
 	}
 	public run():Orm.PromiseT<Orm.Instance<any,any>>{
 		// super.run();
-		return this.getModel().getModel().create(this.valueQuery.getList());
+		return this.getModel().model.create(this.valueQuery.getList());
 	}
 }
 export = Create;

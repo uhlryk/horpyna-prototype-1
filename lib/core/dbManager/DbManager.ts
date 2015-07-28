@@ -63,12 +63,12 @@ class DbManager {
 			connection.logger = this._logger;
 		};
 	}
-	public build():Util.Promise<any>{
-		this.debug("dbManager:build:");
-		return Util.Promise.map(this.connectionList, (connection:Connection)=>{
-			this.debug("dbManager:sync connection:" + connection.getConnectionName());
-			return connection.getDb().sync({force:true});
-		});
-	}
+	// public sync():Util.Promise<any>{
+	// 	this.debug("dbManager:build:");
+	// 	return Util.Promise.map(this.connectionList, (connection:Connection)=>{
+	// 		this.debug("dbManager:sync connection:" + connection.getConnectionName());
+	// 		return connection.getDb().sync({force:true});
+	// 	});
+	// }
 }
 export = DbManager;

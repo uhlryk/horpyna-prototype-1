@@ -44,26 +44,26 @@ class FrontController {
 			throw new Error(FrontController.DB_MANAGER_NONE);
 		}
 	}
-	private setConnectionToModels(){
-		var moduleList:Module[] =this.componentManager.getModuleList();
-		for(var moduleIndex in moduleList){
-			var module:Module = moduleList[moduleIndex];
-			var modelList:Model[] = module.getModelList();
-			for(var modelIndex in modelList){
-				var model:Model = modelList[modelIndex];
-				if(model.isConnection() === false) {
-					var modelConnectionName = model.getConnectionName();
-					if(modelConnectionName){
-						model.setConnection(this.dbManager.getConnection("modelConnectionName"));
-					} else {
-						model.setConnection(this.dbManager.getConnection());//zwraca domyślne bo nie podaliśmy nazwy
-					}
-				}
-				model.prepare();
+	// private setConnectionToModels(){
+	// 	var moduleList:Module[] =this.componentManager.getModuleList();
+	// 	for(var moduleIndex in moduleList){
+	// 		var module:Module = moduleList[moduleIndex];
+	// 		var modelList:Model[] = module.getModelList();
+	// 		for(var modelIndex in modelList){
+	// 			var model:Model = modelList[modelIndex];
+	// 			if(model.isConnection() === false) {
+	// 				var modelConnectionName = model.getConnectionName();
+	// 				if(modelConnectionName){
+	// 					model.setConnection(this.dbManager.getConnection("modelConnectionName"));
+	// 				} else {
+	// 					model.setConnection(this.dbManager.getConnection());//zwraca domyślne bo nie podaliśmy nazwy
+	// 				}
+	// 			}
+	// 			model.prepare();
 
-			};
-		};
-	}
+	// 		};
+	// 	};
+	// }
 	public init():Promise<any>{
 		this.debug("front:init:");
 		this.debug("front:setup()");
@@ -80,14 +80,14 @@ class FrontController {
 		this.dbManager.init();
 		this.componentManager.logger = this.logger;
 		this.debug("front:componentManager.init()");
-		return this.componentManager.init()
-		.then(()=>{
-			this.debug("front:setConnectionToModels()");
-			/* X */this.setConnectionToModels();
-			this.debug("front:dbManager.build()");
-			return this.dbManager.build();
+		return this.componentManager.init();
+		// .then(()=>{
+		// 	this.debug("front:setConnectionToModels()");
+		// 	/* X */this.setConnectionToModels();
+			// this.debug("front:dbManager.build()");
+			// return this.dbManager.build();
 
-		});
+		// });
 	}
 	/**
 	 * Ustawia akcję home, final dla dispatchera
