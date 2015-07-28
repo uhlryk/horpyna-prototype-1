@@ -131,14 +131,14 @@ class Component{
 	 * @param  {string} separator separator między elementami np "/" lub "_"
 	 * @return {string}           zwraca ścieżkę na grandparentcomponent/parentcomponent/thiscomponent
 	 */
-	public getPathName(separator:string):string{
+	public getNamePath(separator: string): string {
 		if (this.isInit === false) {
 			throw SyntaxError(Component.COMPONENT_INIT_NEED);
 		}
 		if (this.parent === this.componentManager) {
 			return this.name;
 		} else {
-			return this.parent.getPathName(separator) + separator + this.name;
+			return this.parent.getNamePath(separator) + separator + this.name;
 		}
 	}
 	/**
