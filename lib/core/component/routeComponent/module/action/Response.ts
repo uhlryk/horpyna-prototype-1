@@ -11,7 +11,7 @@ class Response{
 	/**
 	 * Obiekt widoku. Widok odpowiada za render do przeglądarki. Może to być JadeView, JsonView
 	 */
-	public view:any;
+	// public view:any;
 	/**
 	 * DOdatkowe parametry widoku. Np template
 	 * @type {Object}
@@ -41,9 +41,9 @@ class Response{
 	public get routePath() : string {
 		return this._routePath;
 	}
-	public setViewClass(viewClass) {
-		this.view = new viewClass(this.expressResponse);
-	}
+	// public setViewClass(viewClass) {
+	// 	this.view = new viewClass(this.expressResponse);
+	// }
 	public set logger(logger: Util.Logger) {
 		this._logger = logger;
 	}
@@ -82,21 +82,24 @@ class Response{
 	public get allow():boolean{
 		return this._allow;
 	}
-	public render(){
-		if (this.view) {
-			this.view.status = this.status;
-			this.view.data = this.data;
-			this.view.param = this.viewParam;
-			this.view.render();
-		} else{
-			this.expressResponse.status(this.status).send(this.data);
-		}
-	}
-	public getView():any{
-		return this.view;
-	}
+	// public render(){
+	// 	if (this.view) {
+	// 		this.view.status = this.status;
+	// 		this.view.data = this.data;
+	// 		this.view.param = this.viewParam;
+	// 		this.view.render();
+	// 	} else{
+	// 		this.expressResponse.status(this.status).send(this.data);
+	// 	}
+	// }
+	// public getView():any{
+	// 	return this.view;
+	// }
 	public addViewParam(name:string, value:any){
 		this.viewParam[name] = value;
+	}
+	public getParam(name: string):any {
+		return this.viewParam[name];
 	}
 	public addValue(name:string, value:any){
 		this.data[name] = value;

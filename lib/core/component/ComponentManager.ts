@@ -21,15 +21,15 @@ class ComponentManager extends Component{
 	/**
 	 * Klasa odpowiedzialna za wyświetlanie widoków
 	 */
-	private viewClass;
+	// private viewClass;
 	constructor() {
 		super("ComponentManager");
 		this.moduleList = [];
 		this.componentManager = this;
 	}
-	public addModule(module:Module) : void{
+	public addModule(module: Module): Util.Promise<void> {
 		this.moduleList.push(module);
-		module.parent = this;
+		return module.prepare(this);
 		// if(isDefault === true){
 		// 	this.defaultModule = module;
 		// }
@@ -74,9 +74,9 @@ class ComponentManager extends Component{
 		if (this._dbManager === undefined) {
 			throw new Error(ComponentManager.DB_MANAGER_NONE);
 		}
-		if(!this.viewClass){
-			this.viewClass = View.JsonView;
-		}
+		// if(!this.viewClass){
+		// 	this.viewClass = View.JsonView;
+		// }
 		this.isInit = true;
 		return Util.Promise.resolve()
 		.then(()=>{
@@ -92,13 +92,13 @@ class ComponentManager extends Component{
 	}
 	public initModules(): Util.Promise<any> {
 		return Util.Promise.map(this.moduleList, (childModule: Module) => {
-			childModule.setViewClass(this.viewClass);
+			// childModule.setViewClass(this.viewClass);
 			return childModule.init();
 		});
 	}
-	public setViewClass(viewClass){
-		this.viewClass = viewClass;
-	}
+	// public setViewClass(viewClass){
+	// 	this.viewClass = viewClass;
+	// }
 	/**
 	 * Metoda ta odpalana jest przez któryś z modułów zależnych który przesyła w górę event.
 	 * W tym miejscu event przestaje być lokalnym i ta metoda w dół publikuje go do wszystkich

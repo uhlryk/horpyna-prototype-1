@@ -35,11 +35,11 @@ class Application {
 		this.frontController.setComponentManager(this.componentManager);
 		this.frontController.setDbManager(this.dbManager);
 	}
-	public setViewClass(viewClass){
-		this.componentManager.setViewClass(viewClass);
-	}
-	public addModule(moduleInstance:Module):void{
-		this.componentManager.addModule(moduleInstance);
+	// public setViewClass(viewClass){
+	// 	this.componentManager.setViewClass(viewClass);
+	// }
+	public addModule(moduleInstance: Module): Util.Promise<void> {
+		return this.componentManager.addModule(moduleInstance);
 	}
 	public setDbDefaultConnection(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string){
 		var connection = new Connection(dbType, host, port, dbName, userName, userPassword,"default");

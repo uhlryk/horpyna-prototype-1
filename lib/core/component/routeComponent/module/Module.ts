@@ -34,7 +34,7 @@ class Module extends RouteComponent{
 	}
 	public initModules(): Util.Promise<any> {
 		return Util.Promise.map(this.moduleList, (childModule: Module) => {
-			childModule.setViewClass(this.getViewClass());
+			// childModule.setViewClass(this.getViewClass());
 			return childModule.init();
 		});
 	}
@@ -45,13 +45,13 @@ class Module extends RouteComponent{
 	}
 	public initActions(): Util.Promise<any> {
 		return Util.Promise.map(this.actionList, (action: Action.BaseAction) => {
-			action.setViewClass(this.getViewClass());
+			// action.setViewClass(this.getViewClass());
 			return action.init();
 		});
 	}
-	protected addAction(action:Action.BaseAction){
+	protected addAction(action: Action.BaseAction): Util.Promise<void> {
 		this.actionList.push(action);
-		action.parent = this;
+		return action.prepare(this);
 		// if(isDefault === true){
 			// this.defaultActionList.push(action);
 		// }
@@ -70,9 +70,9 @@ class Module extends RouteComponent{
 	// public getDefaultActionList():Action.BaseAction[]{
 		// return this.defaultActionList;
 	// }
-	protected addModule(module:Module){
+	protected addModule(module: Module): Util.Promise<void> {
 		this.moduleList.push(module);
-		module.parent = this;
+		return module.prepare(this);
 		// if(isDefault === true){
 			// this.defaultModule = module;
 		// }
@@ -91,12 +91,12 @@ class Module extends RouteComponent{
 	// public getDefaultModule():Module{
 	// 	return this.defaultModule;
 	// }
-	protected addModel(model:Model,isDefault?:boolean){
+	protected addModel(model: Model, isDefault?: boolean): Util.Promise<void> {
 		this.modelList.push(model);
-		model.parent = this;
 		if(isDefault === true){
 			this.defaultModel = model;
 		}
+		return model.prepare(this);
 	}
 	public getModelList():Model[]{
 		return this.modelList;

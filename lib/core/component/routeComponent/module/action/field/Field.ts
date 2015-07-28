@@ -65,9 +65,9 @@ class Field extends Component {
 			validator.init();
 		});
 	}
-	protected addValidator(validator: Validator.BaseValidator) {
+	protected addValidator(validator: Validator.BaseValidator): Util.Promise<void> {
 		this.validatorList.push(validator);
-		validator.parent = this;
+		return validator.prepare(this);
 	}
 	public getValidatorList(): Validator.BaseValidator[] {
 		return this.validatorList;

@@ -16,7 +16,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			myApp = new Core.Application(app);
 			module1 = new Core.Module("res1");
 			myApp.addModule(module1);
-			myApp.setViewClass(Core.View.JadeView);
+			// myApp.setViewClass(Core.View.JadeView);
 			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
 			module1.addAction(action1);
 			action1.setActionHandler(function (request, response, done) {

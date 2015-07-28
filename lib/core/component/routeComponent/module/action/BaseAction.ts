@@ -30,7 +30,7 @@ class BaseAction extends RouteComponent {
 	public init(): Util.Promise<void> {
 		return super.init()
 		.then(()=>{
-			this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler(), this.getViewClass());
+			this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler());
 			return this.initFields();
 		});
 	}
@@ -40,9 +40,9 @@ class BaseAction extends RouteComponent {
 			return field.init();
 		});
 	}
-	public addField(field: Field) {
-		field.parent = this;
+	public addField(field: Field): Util.Promise<void> {
 		this.fieldList.push(field);
+		return field.prepare(this);
 	}
 	public getFieldList(): Field[] {
 		return this.fieldList;

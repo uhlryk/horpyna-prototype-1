@@ -35,9 +35,9 @@ class Model extends Component{
 			return column.init();
 		});
 	}
-	public addColumn(column:Column.BaseColumn){
+	public addColumn(column: Column.BaseColumn): Util.Promise<void> {
 		this.columnList.push(column);
-		column.parent = this;
+		return column.prepare(this);
 	}
 	public getColumnList():Column.BaseColumn[]{
 		return this.columnList;

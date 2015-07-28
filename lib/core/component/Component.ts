@@ -90,12 +90,12 @@ class Component{
 	}
 	// protected onInit():void{}
 	/**
-	 * Metoda wywoływana jest gdy dany komponent jest dodawany do struktury innego komponentu.
+	 * Metoda wywoływana jest przez rodzica gdy dany komponent jest dodawany do struktury innego komponentu.
 	 * Dodaje do komponentu referencje na parent component. Dodatkowo sprawdza czy dany komponent
 	 * nie ma już parenta. Dana instancja komponentu może mieć tylko jeden parent.
 	 * @param parent
 	 */
-	public set parent(v:Component){
+	public prepare(v: Component): Util.Promise<void> {
 		if(this._parent){
 			throw SyntaxError(Component.MULTIPLE_PARENT);
 		}
@@ -104,8 +104,9 @@ class Component{
 		 * znaczy że rodzic jest już zainicjowany, więc może się ten moduł sam zainicjować
 		 */
 		if(this.parent.isInit === true){
-			this.init();
+			return this.init();
 		}
+		return Util.Promise.resolve();
 	}
 	public get parent():Component{
 		return this._parent;

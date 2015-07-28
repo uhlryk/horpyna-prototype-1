@@ -18,7 +18,7 @@ class RouteComponent extends Component{
 	 * Cała ścieżka route do danego komponentu RouteComponent. Nie zawiera danego elementu
 	 */
 	// private _baseRoute: string;
-	private viewClass;
+	// private viewClass;
 	constructor(name:string){
 		super(name);
 		this.routeName = this.name;
@@ -67,14 +67,14 @@ class RouteComponent extends Component{
 			return (<RouteComponent>this.parent).getRoutePath() + separator + this.routeName;
 		}
 	}
-	public setViewClass(viewClass, force?:boolean){
-		if(!this.viewClass || force) {
-			this.viewClass = viewClass;
-		}
-	}
-	public getViewClass(){
-		return this.viewClass;
-	}
+	// public setViewClass(viewClass, force?:boolean){
+	// 	if(!this.viewClass || force) {
+	// 		this.viewClass = viewClass;
+	// 	}
+	// }
+	// public getViewClass(){
+	// 	return this.viewClass;
+	// }
 	/**
 	 * Na podstawie bazowego członu i nowego partiala buduje route path
 	 * np mamy baseRoute = 'car/user/dummy/'

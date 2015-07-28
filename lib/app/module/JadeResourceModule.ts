@@ -3,7 +3,7 @@ import Core = require("../../index");
 class JadeResourceModule extends  Core.ResourceModule{
 	public onConstructor(){
 		super.onConstructor();
-		this.setViewClass(Core.View.JadeView);
+		// this.setViewClass(Core.View.JadeView);
 	}
 	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
 		new Core.Util.Promise<void>((resolve:()=>void)=>{

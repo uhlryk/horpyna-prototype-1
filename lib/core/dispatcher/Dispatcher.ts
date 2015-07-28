@@ -12,7 +12,8 @@ class Dispatcher{
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private _logger: Util.Logger;
-
+	// private _renderView: any;
+	// private _dataVIew: any;
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
 	 */
@@ -83,6 +84,7 @@ class Dispatcher{
 			var request = this.createRequest(req);
 			req['horpynaRequest'] = request;
 			var response = this.createResponse(res);
+			// response.setView(view);
 			res['horpynaResponse'] = response;
 			response.allow = true;
 			handler(request, response, next);
@@ -120,7 +122,16 @@ class Dispatcher{
 			if (response.isRedirect()) {
 				response.redirect();
 			} else {
-				response.render();
+				if (req.query['view'] !== "json" && req['app']['get']("view engine")) {
+				// response.render();
+					// if (this.view) {
+						// this.view.status = this.status;
+						// this.view.data = this.data;
+						// this.view.param = this.viewParam;
+					res.render(response.getParam('view'), response.getData());
+				} else{
+					res.status(response.status).send(response.getData());
+				}
 			}
 		});
 	}
@@ -207,12 +218,12 @@ class Dispatcher{
 	// 		this.createActionRoutes(module.getActionList());
 	// 	};
 	// }
-	public addRoute(method:string, routePath:string, handler:Function, view){
+	public addRoute(method:string, routePath:string, handler:Function){
 		this.subRouter[method](routePath, (req, res, next) => {
 			var request: Action.Request = req['horpynaRequest'];
 			var response: Action.Response = res['horpynaResponse'];
 			response.allow = true;
-			response.setViewClass(view);
+
 			// response.action = action;
 			// request.action = action;
 			response.routePath = routePath;
