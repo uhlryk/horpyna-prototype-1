@@ -1,5 +1,5 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
-import View = require("../../../../view/View");
+// import View = require("../../../../view/View");
 import express = require("express");
 import BaseAction = require("./BaseAction");
 import Util = require("./../../../../util/Util");

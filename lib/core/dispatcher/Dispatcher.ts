@@ -1,6 +1,7 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
 import Util = require("./../util/Util");
+import ViewManager = require("./../view/ViewManager");
 import Module = require("./../component/routeComponent/module/Module");
 import RouteComponent = require("./../component/routeComponent/RouteComponent");
 import Action = require("./../component/routeComponent/module/action/Action");
@@ -12,7 +13,8 @@ class Dispatcher{
 	private router:express.Router;
 	private debugger: Util.Debugger;
 	private _logger: Util.Logger;
-	// private _renderView: any;
+	private _viewManager: ViewManager;
+		// private _renderView: any;
 	// private _dataVIew: any;
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
@@ -46,7 +48,9 @@ class Dispatcher{
 	public debug(...args: any[]) {
 		this.debugger.debug(args);
 	}
-
+	public set viewManager(v : ViewManager) {
+		this._viewManager = v;
+	}
 	// public setRouter(router:express.Router):void{
 	// 	this.router = router;
 	// }
@@ -122,16 +126,8 @@ class Dispatcher{
 			if (response.isRedirect()) {
 				response.redirect();
 			} else {
-				if (req.query['view'] !== "json" && req['app']['get']("view engine")) {
-				// response.render();
-					// if (this.view) {
-						// this.view.status = this.status;
-						// this.view.data = this.data;
-						// this.view.param = this.viewParam;
-					res.render(response.getParam('view'), response.getData());
-				} else{
-					res.status(response.status).send(response.getData());
-				}
+				this._viewManager.render(req, res);
+
 			}
 		});
 	}

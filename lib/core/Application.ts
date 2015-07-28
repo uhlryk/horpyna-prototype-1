@@ -13,6 +13,7 @@ import Connection = require("./dbManager/connection/Connection");
 import ComponentManager = require("./component/ComponentManager");
 import Util = require("./util/Util");
 import Module = require("./component/routeComponent/module/Module");
+import ViewManager = require("./view/ViewManager");
 class Application {
 	public static MODULE_PATH_NONE: string = "Need 'module path'";
 	private logger:Util.Logger;
@@ -34,6 +35,7 @@ class Application {
 		this.frontController.setDispatcher(this.dispatcher);
 		this.frontController.setComponentManager(this.componentManager);
 		this.frontController.setDbManager(this.dbManager);
+		this.frontController.setViewManager(new ViewManager());
 	}
 	// public setViewClass(viewClass){
 	// 	this.componentManager.setViewClass(viewClass);

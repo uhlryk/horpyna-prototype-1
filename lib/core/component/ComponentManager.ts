@@ -2,7 +2,7 @@ import Action = require("./routeComponent/module/action/Action");
 import Module = require("./routeComponent/module/Module");
 import Component = require("./Component");
 import Util = require("../util/Util");
-import View = require("../view/View");
+// import View = require("../view/View");
 import Dispatcher = require("../dispatcher/Dispatcher");
 import DbManager = require("../dbManager/DbManager");
 class ComponentManager extends Component{

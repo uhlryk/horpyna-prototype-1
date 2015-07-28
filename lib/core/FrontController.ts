@@ -5,6 +5,7 @@ import Module = require("./component/routeComponent/module/Module");
 import DefaultModule = require("./component/routeComponent/module/DefaultModule");
 import Model = require("./component/routeComponent/module/model/Model");
 import Util = require("./util/Util");
+import ViewManager = require("./view/ViewManager");
 class FrontController {
 	public static DISPATCHER_NONE: string = "Need 'dispatcher'";
 	public static COMPONENT_MANAGER_NONE: string = "Need 'ComponentManager'";
@@ -14,6 +15,7 @@ class FrontController {
 	private componentManager: ComponentManager;
 	private dbManager: DbManager;
 	private debugger: Util.Debugger;
+	private viewManager: ViewManager;
 	constructor() {
 		this.debugger = new Util.Debugger("core");
 		this.debug("front:constructor:");
@@ -32,6 +34,9 @@ class FrontController {
 	}
 	public setDbManager(dbManager:DbManager):void{
 		this.dbManager = dbManager;
+	}
+	public setViewManager(viewManager:ViewManager){
+		this.viewManager = viewManager;
 	}
 	private setup():void{
 		if(this.dispatcher == undefined){
@@ -75,6 +80,7 @@ class FrontController {
 		this.dbManager.logger = this.logger;
 		this.dispatcher.logger = this.logger;
 		this.debug("front:dispatcher.createRoutes()");
+		this.dispatcher.viewManager = this.viewManager;
 		this.dispatcher.init();
 		this.debug("front:dbManager.init()");
 		this.dbManager.init();
