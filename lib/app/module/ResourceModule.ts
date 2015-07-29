@@ -8,6 +8,15 @@ class ResourceModule extends  SimpleModule{
 		var resourceModel = new Core.Model(ResourceModule.RESOURCE_MODEL);
 		this.addModel(resourceModel);
 	}
+	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
+		new Core.Util.Promise<void>((resolve:()=>void)=>{
+			super.onFormCreateAction(request,response,resolve);
+		})
+		.then(()=>{
+			response.addViewParam("view","horpyna/jade/createFormAction");
+			done();
+		});
+	}
 	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
 		new Core.Util.Promise<void>((resolve: () => void) => {
 			super.onFormUpdateAction(request, response, resolve);
@@ -37,8 +46,18 @@ class ResourceModule extends  SimpleModule{
 					}
 				}
 			}
+			response.addViewParam("view", "horpyna/jade/updateFormAction");
 			done();
 		});
+	}
+	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, done) {
+		new Core.Util.Promise<void>((resolve: () => void) => {
+			super.onFormDeleteAction(request, response, resolve);
+		})
+			.then(() => {
+				response.addViewParam("view", "horpyna/jade/deleteFormAction");
+				done();
+			});
 	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.List();
@@ -58,6 +77,7 @@ class ResourceModule extends  SimpleModule{
 
 				responseContent.push(data);
 			}
+			response.addViewParam("view", "horpyna/jade/listAction");
 			done();
 		});
 	}
@@ -79,6 +99,7 @@ class ResourceModule extends  SimpleModule{
 				};
 				response.setContent(data);
 			}
+			response.addViewParam("view", "horpyna/jade/detailAction");
 			done();
 		});
 	}
@@ -89,6 +110,8 @@ class ResourceModule extends  SimpleModule{
 		create.run()
 		.then((model)=>{
 			response.setContent(model.toJSON());
+			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
+			response.setRedirect(listAction.getRoutePath());
 			done(model.toJSON());
 		});
 	}
@@ -99,6 +122,8 @@ class ResourceModule extends  SimpleModule{
 		update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
 		update.run()
 		.then(()=>{
+			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
+			response.setRedirect(listAction.getRoutePath());
 			done();
 		});
 	}
@@ -108,6 +133,8 @@ class ResourceModule extends  SimpleModule{
 		list.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		list.run()
 		.then(()=>{
+			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
+			response.setRedirect(listAction.getRoutePath());
 			done();
 		});
 	}

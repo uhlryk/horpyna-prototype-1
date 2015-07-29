@@ -13,8 +13,18 @@ class ViewManager{
 	public render(req:express.Request, res:express.Response){
 		var response: Action.Response = res['horpynaResponse'];
 		if (req.query['view'] !== "json" && req['app']['get']("view engine")) {
-			res.render(response.getParam('view'), response.getData());
+			if (response.isRedirect()) {
+				res.redirect(response.getRedirectStatus(), response.getRedirectUrl());
+			} else {
+				res.render(response.getParam('view'), response.getData());
+			}
 		} else{
+			if (response.isRedirect()) {
+				response.addValue("redirect", {
+					url: response.getRedirectUrl(),
+					status: response.getRedirectStatus()
+				});
+			}
 			res.status(response.status).send(response.getData());
 		}
 	}

@@ -8,6 +8,7 @@ import Util = require("./../../../../util/Util");
  */
 class Response{
 	public status:number;
+	private _redirectStatus:number;
 	/**
 	 * Obiekt widoku. Widok odpowiada za render do przeglądarki. Może to być JadeView, JsonView
 	 */
@@ -53,9 +54,9 @@ class Response{
 	public setRedirect(url: string, status?: number){
 		this._redirect = url;
 		if(status) {
-			this.setStatus(status);
+			this._redirectStatus = status;
 		} else {
-			this.setStatus(302);
+			this._redirectStatus = 302;
 		}
 	}
 	public isRedirect():boolean{
@@ -69,6 +70,14 @@ class Response{
 	// }
 	public getRedirectUrl():string {
 		return this._redirect;
+	}
+	/**
+	 * zwraca status jaki ma mieć redirect. Ponieważ status zwracanej wiadomości nie musi być równy statusowi redirecta
+	 * Jeśli zwracamy json, to nie robimy redirecta tylko normalny status, a redirect jest informacją w treści
+	 * @return {number} [description]
+	 */
+	public getRedirectStatus(): number {
+		return this._redirectStatus;
 	}
 	public setStatus(value:number){
 		this.status = value;

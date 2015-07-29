@@ -42,7 +42,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			app = require('./jade/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
-			moduleResource1 = new Core.JadeResourceModule("res1");
+			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.addModule(moduleResource1);
 			var resModel = moduleResource1.getModel(Core.ResourceModule.RESOURCE_MODEL);
 			var nameCol = new Core.Column.StringColumn("name", 50);

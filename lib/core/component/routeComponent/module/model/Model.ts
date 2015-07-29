@@ -17,6 +17,7 @@ class Model extends Component{
 		super(name);
 		this.columnList = [];
 		this.columntNameList = [];
+		this.columntNameList.push('id');
 		this.connectionSet = false;
 	}
 	public init(): Util.Promise<void> {

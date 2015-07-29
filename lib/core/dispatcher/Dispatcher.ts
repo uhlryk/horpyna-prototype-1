@@ -123,13 +123,13 @@ class Dispatcher{
 		this.router.use((req, res) => {
 			this.debug('final render');
 			var response: Action.Response = res['horpynaResponse'];
-			if (response.isRedirect()) {
-				this.debug('redurect');
-				res.redirect(response.getStatus(), response.getRedirectUrl());
-			} else {
-				this._viewManager.render(req, res);
+			// if (response.isRedirect()) {
+				// this.debug('redurect');
 
-			}
+			// } else {
+			this._viewManager.render(req, res);
+
+			// }
 		});
 	}
 	private lastErrorRoute(){

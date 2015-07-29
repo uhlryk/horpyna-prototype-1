@@ -30,17 +30,19 @@ describe("Funkcje Modułu ResourceModule", function() {
 				done();
 			});
 		});
-		it("kod 302 updateform gdy brak elementu,", function (done) {
+		it("kod 200 updateform gdy brak elementu,", function (done) {
 			request(app).get("/res1/updateform/1")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(302);
+					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
-		it("kod 302 detail gdy brak elementu", function (done) {
+		it("kod 200 detail gdy brak elementu", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(302);
+					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -56,7 +58,9 @@ describe("Funkcje Modułu ResourceModule", function() {
 				.send({name: "olek"})
 				.send({pass: "bolek"})
 				.end(function (err, res) {
+					console.log(res.body);
 					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -88,6 +92,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				.send({pass: "doda"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -95,6 +100,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -124,17 +130,19 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 			});
 		});
-		it("kod 302 updateform gdy brak elementu,", function (done) {
+		it("kod 200 updateform gdy brak elementu,", function (done) {
 			request(app).get("/res1/updateform/1")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(302);
+					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
-		it("kod 302 detail gdy brak elementu", function (done) {
+		it("kod 200 detail gdy brak elementu", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(302);
+					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -151,6 +159,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				.send({pass: "bolek"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -182,6 +191,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				.send({pass: "doda"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -189,6 +199,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
+					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
