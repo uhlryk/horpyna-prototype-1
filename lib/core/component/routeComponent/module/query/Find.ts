@@ -9,6 +9,7 @@ class Find extends List{
 	public run():Orm.Promise{
 		// super.run();//dziedzicząc po list wywoła jego query
 		return this.getModel().model.find({
+			attributes: this.getModel().getColumnNameList(),
 			where:this.getWhereList()
 		});
 	}

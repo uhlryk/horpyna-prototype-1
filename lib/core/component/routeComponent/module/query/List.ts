@@ -21,6 +21,7 @@ class List extends BaseQuery{
 	public run():Orm.PromiseT<Orm.Instance<any,any>[]>{
 		// super.run();
 		return this.getModel().model.findAll({
+			attributes: this.getModel().getColumnNameList(),
 			where:this.whereQuery.getList()
 		});
 	}

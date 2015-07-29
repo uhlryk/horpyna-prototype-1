@@ -67,8 +67,8 @@ class Response{
 	// public getRedirect():string{
 	// 	return this._redirect;
 	// }
-	public redirect() {
-		this.expressResponse.redirect(this.status, this._redirect);
+	public getRedirectUrl():string {
+		return this._redirect;
 	}
 	public setStatus(value:number){
 		this.status = value;

@@ -124,7 +124,8 @@ class Dispatcher{
 			this.debug('final render');
 			var response: Action.Response = res['horpynaResponse'];
 			if (response.isRedirect()) {
-				response.redirect();
+				this.debug('redurect');
+				res.redirect(response.getStatus(), response.getRedirectUrl());
 			} else {
 				this._viewManager.render(req, res);
 
