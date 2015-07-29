@@ -4,8 +4,8 @@ import BaseQuery = require("./BaseQuery");
 import Orm = require("../../../../util/Orm");
 class List extends BaseQuery{
 	public static MAX_DATA: number = 500;
-	public static MAX_PAGES: number = 10;
-	public static DEFAULT_PAGE_SIZE: number = 10;
+	public static MAX_PAGES: number = 5;
+	public static DEFAULT_PAGE_SIZE: number = 3;
 	private whereQuery:WhereQuery;
 	private _pageSize: number;
 	private _page: number;

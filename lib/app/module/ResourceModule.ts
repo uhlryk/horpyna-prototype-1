@@ -127,7 +127,7 @@ class ResourceModule extends  SimpleModule{
 				pageSize = Core.Query.List.MAX_DATA;
 			}
 			if(pageSize < 1) {
-				pageSize = 10;
+				pageSize = Core.Query.List.DEFAULT_PAGE_SIZE;
 			}
 			var maxPages = Math.ceil(dataLength / pageSize);// liczba rzeczywista stron(widok zdecyduje ile maksymalnie wyświetli)
 			if (maxPages > Core.Query.List.MAX_PAGES){
@@ -138,7 +138,7 @@ class ResourceModule extends  SimpleModule{
 				pagination['pages'].push({
 					link: Core.Util.Uri.updateQuery(baseUri, "page", String(i+1)),
 					name: i + 1,
-					active: (i === page) ? true:false
+					active: (i === page - 1) ? true:false
 				});
 			}
 			var maxLoop = page * pageSize;
