@@ -26,7 +26,6 @@ class ResourceModule extends  SimpleModule{
 			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 			var paramAppList = request.getParamAppFieldList();
 			find.populateWhere(paramAppList);
-			// find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 			return find.run();
 		})
 		.then((model) => {
@@ -36,8 +35,6 @@ class ResourceModule extends  SimpleModule{
 			} else {
 				model = model.toJSON();
 				var content = response.getData("content");
-				var updateAction = this.getAction(SimpleModule.ACTION_UPDATE);
-				// content['form']['action'] = updateAction.routePath + updateAction.getRoute() + model.id;
 				var fieldsNumber = content["fields"].length;
 				if (fieldsNumber) {
 					for (var i = 0; i < fieldsNumber; i++) {
@@ -57,6 +54,29 @@ class ResourceModule extends  SimpleModule{
 			super.onFormDeleteAction(request, response, resolve);
 		})
 			.then(() => {
+				var find = new Core.Query.Find();
+				find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+				var paramAppList = request.getParamAppFieldList();
+				find.populateWhere(paramAppList);
+				return find.run();
+			})
+			.then((model) => {
+				if (!model) {
+					var listAction = this.getAction(SimpleModule.ACTION_LIST);
+					response.setRedirect(listAction.getRoutePath());
+				} else {
+					model = model.toJSON();
+					var content = response.getData("content");
+					var fieldsNumber = content["fields"].length;
+					if (fieldsNumber) {
+						for (var i = 0; i < fieldsNumber; i++) {
+							var field = content["fields"][i];
+							var fieldName = field["fieldName"];
+							var value = model[fieldName];
+							field["value"] = value;
+						}
+					}
+				}
 				response.addViewParam("view", "horpyna/jade/deleteFormAction");
 				done();
 			});

@@ -38,6 +38,8 @@ class FormAction extends BaseAction {
 		formContent['form']['method'] = this.targetAction.getMethod();
 		formContent['form']['buttonName'] = "send";
 		var bodyFields: Field[] = this.targetAction.getFieldListByType(FieldType.BODY_FIELD);
+		var ownBodyFields: Field[] = this.getFieldListByType(FieldType.BODY_FIELD);
+		bodyFields.push.apply(bodyFields, ownBodyFields);
 		for (var i = 0; i < bodyFields.length; i++) {
 			var field: Field = bodyFields[i];
 			var fieldForm: Object = new Object();
