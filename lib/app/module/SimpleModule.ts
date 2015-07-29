@@ -11,20 +11,22 @@ class SimpleModule extends  Core.Module{
 	public static ACTION_DELETE = "delete";
 	public onConstructor(){
 		super.onConstructor();
-		// var formCreateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_FORM_CREATE);
-		// this.addAction(formCreateAction);
-		// formCreateAction.setActionHandler((request, response, done)=>{
-		// 	this.onFormCreateAction(request, response, done);
-		// });
-		// var formUpdateAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_FORM_UPDATE);
-		// this.addAction(formUpdateAction);
-		// var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
-		// formUpdateAction.addField(idField);
-		// formUpdateAction.setActionHandler((request, response, done)=>{
-		// 	this.onFormUpdateAction(request, response, done);
-		// });
 		var listAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_LIST);
 		this.addAction(listAction);
+		/**
+		 * order czyli po jakiej kolumnie sortujemy, ma po '-' kierunek sortowania ASC, DESC
+		 * a potem po przecinku więcej kolumn czyli
+		 * order=col1-desc,col2-asc,col3-desc
+		 */
+		var orderField: Core.Field = new Core.Field("order", Core.Action.FieldType.QUERY_FIELD);
+		orderField.optional = true;
+		listAction.addField(orderField);
+		var pageField: Core.Field = new Core.Field("page", Core.Action.FieldType.QUERY_FIELD);
+		pageField.optional = true;
+		listAction.addField(pageField);
+		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
+		sizeField.optional = true;
+		listAction.addField(sizeField);
 		listAction.setActionHandler((request, response, done)=>{
 			this.onListAction(request, response, done);
 		});
@@ -33,14 +35,11 @@ class SimpleModule extends  Core.Module{
 		createAction.setActionHandler((request, response, done)=>{
 			this.onCreateAction(request, response, done);
 		});
-
 		var formCreateAction = new Core.Action.FormAction(createAction, SimpleModule.ACTION_FORM_CREATE);
 		this.addAction(formCreateAction);
 		formCreateAction.setActionHandler((request, response, done)=>{
 			this.onFormCreateAction(request, response, done);
 		});
-		// formCreateAction.build();
-
 		var detailAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(detailAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
@@ -60,8 +59,6 @@ class SimpleModule extends  Core.Module{
 		formUpdateAction.setActionHandler((request, response, done) => {
 			this.onFormUpdateAction(request, response, done);
 		});
-		// formUpdateAction.build();
-
 		var deleteAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_DELETE);
 		this.addAction(deleteAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
@@ -74,8 +71,6 @@ class SimpleModule extends  Core.Module{
 		formDeleteAction.setActionHandler((request, response, done) => {
 			this.onFormDeleteAction(request, response, done);
 		});
-		// formDeleteAction.build();
-
 		var navigationEvent = new Core.Event.Action.OnFinish();
 		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
 			this.onBuildNavigation(request, response, done);
@@ -90,26 +85,12 @@ class SimpleModule extends  Core.Module{
 		done();
 	}
 	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {
-		// var targetAction = this.getAction(SimpleModule.ACTION_CREATE);
-		// var dateResponse = this.formMetaData(targetAction);
-
-		// response.setContent(dateResponse);
 		done();
 	}
 	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
-		// var targetAction = this.getAction(SimpleModule.ACTION_UPDATE);
-		// var dateResponse = this.formMetaData(targetAction);
-		// var id = request.getField(Core.FieldType.PARAM_FIELD, 'id');
-		// dateResponse['form']['action'] = Core.RouteComponent.buildRoute(targetAction.fullRoute, id);
-		// response.setContent(dateResponse);
 		done();
 	}
 	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, done) {
-		// var targetAction = this.getAction(SimpleModule.ACTION_UPDATE);
-		// var dateResponse = this.formMetaData(targetAction);
-		// var id = request.getField(Core.FieldType.PARAM_FIELD, 'id');
-		// dateResponse['form']['action'] = Core.RouteComponent.buildRoute(targetAction.fullRoute, id);
-		// response.setContent(dateResponse);
 		done();
 	}
  	public onCreateAction (request, response, done){
@@ -121,30 +102,6 @@ class SimpleModule extends  Core.Module{
 	public onDeleteAction (request, response, done){
 		done();
 	}
-	/**
-	 * Zwraca obiekt zawierający pola formularz. Zastosowanie
-	 * gdy buduje się meta akcja.
-	 */
-	// private formMetaData(targetAction:Core.Action.BaseAction):Object{
-	// 	var responseContent:Object = new Object();
-	// 	responseContent['fields'] = [];
-	// 	responseContent['form'] = new Object();
-	// 	responseContent['form']['action'] = targetAction.fullRoute;
-	// 	responseContent['form']['method'] = targetAction.getMethod();
-	// 	responseContent['form']['buttonName']="send";
-	// 	var bodyFields: Core.Field[] = targetAction.getFieldListByType(Core.Action.FieldType.BODY_FIELD);
-	// 	for(var i=0;i < bodyFields.length; i++){
-	// 		var field:Core.Field = bodyFields[i];
-	// 		var fieldForm:Object = new Object();
-	// 		fieldForm["fieldName"] = field.getFieldName();
-	// 		fieldForm["name"] = field.getName();
-	// 		fieldForm["fieldForm"] = field.fieldForm;
-	// 		fieldForm["labelForm"] = field.labelForm;
-	// 		fieldForm["value"] = "";
-	// 		responseContent['fields'].push(fieldForm);
-	// 	}
-	// 	return responseContent;
-	// }
 	/**
 	 * Callback na event navigationEvent
 	 * Odpala się dla wszystkich akcji tego modułu.

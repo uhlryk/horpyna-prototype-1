@@ -1,6 +1,11 @@
 extend layout
 block content
 	table
+		tr
+			each column in orderLink
+				th
+					a(href=column.link) #{column.name}
+
 		each row in content
 			tr
 				each val in row.element
@@ -8,3 +13,7 @@ block content
 				each val in row.navigation
 					td
 						a(href=val.link) #{val.name}
+	ul
+		each page in pagination.pages
+			li
+				a(href=page.link class=page.active?"active":"") #{page.name}

@@ -6,7 +6,7 @@ class ResourceModule extends  SimpleModule{
 	public onConstructor(){
 		super.onConstructor();
 		var resourceModel = new Core.Model(ResourceModule.RESOURCE_MODEL);
-		this.addModel(resourceModel);
+		this.addModel(resourceModel, true);
 	}
 	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
 		new Core.Util.Promise<void>((resolve:()=>void)=>{
@@ -62,23 +62,98 @@ class ResourceModule extends  SimpleModule{
 			});
 	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
+		var rawOrder = request.getField(Core.FieldType.QUERY_FIELD, 'order');
+		var page = request.getField(Core.FieldType.QUERY_FIELD, 'page');
+		var pageSize = request.getField(Core.FieldType.QUERY_FIELD, 'size');
+		var listAction = this.getAction(SimpleModule.ACTION_LIST);
+		var baseUri = Core.Util.Uri.updateQuery(listAction.getRoutePath(true), "order", rawOrder);
+		baseUri = Core.Util.Uri.updateQuery(baseUri, "page", page);
+		baseUri = Core.Util.Uri.updateQuery(baseUri, "size", pageSize);
+
 		var list = new Core.Query.List();
-		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+		var model = this.getDefaultModel();
+		var columnNameList = model.getColumnNameList();
+		var order = [];
+		if (rawOrder) {
+			var orderList = rawOrder.split(",");
+			var length = orderList.length;
+			if (length > 0) {
+				order = [];
+				for (var i = 0; i < length; i++) {
+					var elem = orderList[i].split("-");
+					order.push(elem);
+					elem[1] = elem[1].toUpperCase();
+				}
+			}
+		}
+		var orderLength = order.length;
+		var columnLink = [];
+		response.addValue("orderLink", columnLink);
+		for (var i =0; i < columnNameList.length; i++){
+			var columnName = columnNameList[i];
+			var direction = "DESC";
+			for (var j = 0; j < orderLength; j++){
+				var orderElement = order[j];
+				if(orderElement[0] === columnName){
+					if (orderElement[1] === "DESC") {
+						direction = "ASC";
+					}
+				}
+			}
+			columnLink.push({
+				link: Core.Util.Uri.updateQuery(baseUri, "order", columnName + "-" + direction),
+				name:columnName,
+			});
+		}
+		list.setModel(model);
 		var paramAppList = request.getParamAppFieldList();
 		list.populateWhere(paramAppList);
+		list.setOrder(order);
 		list.run()
 		.then((modelList)=>{
+			var pagination = {};
+			response.addValue("pagination", pagination);
+			var dataLength = modelList.length;
+			if (dataLength > Core.Query.List.MAX_DATA){
+				pagination['maxHit'] = Core.Query.List.MAX_DATA;//oznacza że mamy więcej rekordów niż - Core.Query.List.MAX_DATA
+			}
+			if (page < 1) {
+				page = 1;
+			}
+			if (page >= Core.Query.List.MAX_DATA){
+				page = Core.Query.List.MAX_DATA;
+			}
+			if (pageSize > Core.Query.List.MAX_DATA){
+				pageSize = Core.Query.List.MAX_DATA;
+			}
+			if(pageSize < 1) {
+				pageSize = 10;
+			}
+			var maxPages = Math.ceil(dataLength / pageSize);// liczba rzeczywista stron(widok zdecyduje ile maksymalnie wyświetli)
+			if (maxPages > Core.Query.List.MAX_PAGES){
+				maxPages = Core.Query.List.MAX_PAGES;
+			}
+			pagination['pages'] = [];
+			for (var i = 0; i < maxPages; i++){
+				pagination['pages'].push({
+					link: Core.Util.Uri.updateQuery(baseUri, "page", String(i+1)),
+					name: i + 1,
+					active: (i === page) ? true:false
+				});
+			}
+			var maxLoop = page * pageSize;
+			if (maxLoop > dataLength){
+				maxLoop = dataLength;
+			}
 			var responseContent = [];
 			response.setContent(responseContent);
-			for(var i = 0; i < modelList.length; i++) {
+			for (var i = (page - 1) * pageSize; i < maxLoop; i++) {
 				var model = modelList[i];
 				var modelData = model.toJSON();
-
 				var data = {
 					element: modelData,
 					navigation: this.fieldActionLink(modelData)
 				};
-
 				responseContent.push(data);
 			}
 			response.addViewParam("view", "horpyna/jade/listAction");
