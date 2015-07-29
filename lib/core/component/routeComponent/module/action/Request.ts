@@ -44,5 +44,23 @@ class Request{
 	public getFieldList(type: string): any {
 		return this.allFieldList[type];
 	}
+	/**
+	 * Zwraca listę pól parametrów (PARAM_FIELD) nadpisaną przez pola aplikacji(APP_FIELD)
+	 * @return {any} mapa klucz:wartość
+	 */
+	public getParamAppFieldList():any{
+		var appList = this.getFieldList(FieldType.APP_FIELD);
+		var paramList = this.getFieldList(FieldType.PARAM_FIELD);
+		/**
+		 * APP_FIELD ma priorytet nad paramList. Może go nadpisać
+		 */
+		for (var key in paramList) {
+			var val = appList[key];
+			if (val === undefined) {
+				appList[key] = paramList[key];
+			}
+		}
+		return appList;
+	}
 }
 export = Request;

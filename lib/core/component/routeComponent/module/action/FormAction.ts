@@ -48,13 +48,8 @@ class FormAction extends BaseAction {
 			fieldForm["value"] = "";
 			formContent['fields'].push(fieldForm);
 		}
-		var paramList = request.getFieldList(FieldType.PARAM_FIELD);
-		// var paramFields: Field[] = this.targetAction.getFieldListByType(FieldType.PARAM_FIELD);
-		var route = this.targetAction.populateRoutePath(paramList);
-		// for (var paramName in paramList) {
-		// 	var val = paramList[paramName];
-		// 	route = RouteComponent.buildRoute(route, val);
-		// }
+		var paramAppList = request.getParamAppFieldList();
+		var route = this.targetAction.populateRoutePath(paramAppList);
 		formContent['form']['action'] = route;
 		return formContent;
 	}
@@ -64,7 +59,6 @@ class FormAction extends BaseAction {
 	public setActionHandler(actionHandler:IActionHandler){
 		super.setActionHandler((request, response, done) => {
 			response.setContent(this.build(request));
-			// var content = response.getData("content");
 			actionHandler(request, response, done);
 		});
 	}

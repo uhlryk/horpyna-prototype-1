@@ -1,3 +1,6 @@
+/**
+ * Warunki jakie mogą się pojawić w WHERE Query. Dodajemy to jako wartość w Where
+ */
 class Condition{
 	public static GT(value:any){
 		return {$gt:value};

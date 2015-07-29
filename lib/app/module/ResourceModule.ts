@@ -24,7 +24,9 @@ class ResourceModule extends  SimpleModule{
 		.then(() => {
 			var find = new Core.Query.Find();
 			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-			find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+			var paramAppList = request.getParamAppFieldList();
+			find.populateWhere(paramAppList);
+			// find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 			return find.run();
 		})
 		.then((model) => {
@@ -62,6 +64,8 @@ class ResourceModule extends  SimpleModule{
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var list = new Core.Query.List();
 		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+		var paramAppList = request.getParamAppFieldList();
+		list.populateWhere(paramAppList);
 		list.run()
 		.then((modelList)=>{
 			var responseContent = [];
@@ -84,7 +88,9 @@ class ResourceModule extends  SimpleModule{
 	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var find = new Core.Query.Find();
 		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+		// find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+		var paramAppList = request.getParamAppFieldList();
+		find.populateWhere(paramAppList);
 		find.run()
 		.then((model)=>{
 			if (!model) {
@@ -118,7 +124,9 @@ class ResourceModule extends  SimpleModule{
 	public onUpdateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var update = new Core.Query.Update();
 		update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		update.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+		// update.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+		var paramAppList = request.getParamAppFieldList();
+		update.populateWhere(paramAppList);
 		update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
 		update.run()
 		.then(()=>{
@@ -128,10 +136,12 @@ class ResourceModule extends  SimpleModule{
 		});
 	}
 	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
-		var list = new Core.Query.Delete();
-		list.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		list.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
-		list.run()
+		var deleteQuery = new Core.Query.Delete();
+		deleteQuery.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+		//deleteQuery.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+		var paramAppList = request.getParamAppFieldList();
+		deleteQuery.populateWhere(paramAppList);
+		deleteQuery.run()
 		.then(()=>{
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
 			response.setRedirect(listAction.getRoutePath());
@@ -142,6 +152,8 @@ class ResourceModule extends  SimpleModule{
 	 * zwraca listę linków wygenerowanych z akcji które mają GET i parametry
 	 * Zastosowanie gdy chcemy do wyświetlonych szczegółów danego pola dodać dodatkowe
 	 * akcje typu updateform.
+	 * @param  {Object}   data jest to model danego wiersza który jest w toJSON()
+	 * @return {Object[]}      lista linków w strukturze [{link, name}]
 	 */
 	private fieldActionLink(data:Object):Object[]{
 		var actionList = this.getActionList();
@@ -165,14 +177,6 @@ class ResourceModule extends  SimpleModule{
 			if (paramFieldListLength === 0 ){
 				continue;
 			}
-			// for (var j = 0; j < paramFieldListLength; j++){
-			// 	var field:Core.Field = paramFieldList[j];
-			// 	var modelFieldValue = data[field.getFieldName()];
-			// 	if (modelFieldValue) {
-			// 		actionRoute = actionRoute + "/" + modelFieldValue;
-			// 	}
-			// }
-
 			var linkObject = {
 				link: actionRoute,
 				name: action.name,

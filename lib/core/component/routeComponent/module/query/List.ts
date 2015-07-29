@@ -15,6 +15,9 @@ class List extends BaseQuery{
 	public where(columnName:string, value:any){
 		this.whereQuery.add(columnName, value);
 	}
+	public populateWhere(fields:Object){
+		this.whereQuery.populate(fields);
+	}
 	public getWhereList():Object{
 		return this.whereQuery.getList();
 	}

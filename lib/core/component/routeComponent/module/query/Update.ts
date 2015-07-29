@@ -22,8 +22,11 @@ class Update extends BaseQuery{
 	public where(columnName:string, value:any){
 		this.whereQuery.add(columnName, value);
 	}
-	public populate(params:Object){
-		this.valueQuery.populate(params);
+	public populate(fields:Object){
+		this.valueQuery.populate(fields);
+	}
+	public populateWhere(fields:Object){
+		this.whereQuery.populate(fields);
 	}
 	public run():Orm.Promise{
 		// super.run();
