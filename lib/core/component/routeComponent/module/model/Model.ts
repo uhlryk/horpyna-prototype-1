@@ -41,6 +41,9 @@ class Model extends Component{
 	public addColumn(column: Column.BaseColumn): Util.Promise<void> {
 		this.columnList.push(column);
 		this.columntNameList.push(column.name);
+		if (this.isInit === true) {
+			throw SyntaxError(Component.ADD_INIT_CANT);
+		}
 		return column.prepare(this);
 	}
 	public getColumnList():Column.BaseColumn[]{

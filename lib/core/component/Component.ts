@@ -14,6 +14,7 @@ class Component{
 	public static INIT_NULL_PARENT: string = "Component can init only when parent Component is set";
 	public static INIT_ALREADY: string = "Component is initialized already";
 	public static COMPONENT_INIT_NEED: string = "Component must be initialized before this method";
+	public static ADD_INIT_CANT: string = "Cant add element if object is initialized";
 	private _name:string;
 	private _parent:Component;
 	protected debugger: Util.Debugger;

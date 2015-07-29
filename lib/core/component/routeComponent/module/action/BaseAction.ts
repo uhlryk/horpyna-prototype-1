@@ -1,6 +1,7 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 import express = require("express");
 import RouteComponent = require("../../RouteComponent");
+import Component = require("../../../Component");
 import Event = require("../../../event/Event");
 import Field = require("./field/Field");
 import Util = require("./../../../../util/Util");
@@ -42,6 +43,9 @@ class BaseAction extends RouteComponent {
 	}
 	public addField(field: Field): Util.Promise<void> {
 		this.fieldList.push(field);
+		if (this.isInit === true) {
+			throw SyntaxError(Component.ADD_INIT_CANT);
+		}
 		return field.prepare(this);
 	}
 	public getFieldList(): Field[] {
