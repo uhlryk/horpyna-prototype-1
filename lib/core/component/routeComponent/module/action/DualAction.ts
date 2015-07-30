@@ -36,13 +36,17 @@ class DualAction extends BaseAction {
 	public getRequestHandler(){
 		this.debug("action:getRequestHandler()");
 		return (request:Request, response:Response, next)=>{
+			this.debug("DualAction.getRequestHandler:");
 			return new Promise<void>((resolve:()=>void)=>{
 				this.requestHandler(request, response, resolve);
 			})
 			.then(()=>{
 				if(response.valid === true){
+					this.debug("DualAction.getRequestHandler: after requestHandler finish");
 					next();
 				} else{
+					this.debug("DualAction.getRequestHandler: after requestHandler run formAction requestHandler");
+					response.allow = true;
 					this._formAction.requestHandler(request, response, next);
 				}
 			});

@@ -1,7 +1,7 @@
 import ValidatorResponse = require("./ValidatorResponse");
 import BaseValidator = require("./BaseValidator");
 /**
- * sprawdza czy parametr który jest stringiem ma dany fragment
+ * sprawdza czy parametr który jest stringiem ma dany rozmiar
  */
 class IsStringLengthValidator extends BaseValidator {
 	public VALIDATOR_NAME = "IsStringLengthValidator";

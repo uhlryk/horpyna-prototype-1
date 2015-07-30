@@ -21,7 +21,7 @@ class Validation{
 		this.data = new Object();
 		this.validationResponse = <ValidationResponse>{};
 		this.validationResponse.valid = true;
-		this.validationResponse.errorValidatorList = [];
+		this.validationResponse.responseValidatorList = [];
 		this.debugger = new Util.Debugger("validation");
 	}
 	public debug(...args: any[]){
@@ -53,7 +53,7 @@ class Validation{
 			if (value === undefined && field.optional === false) {// jeśłi fieldetr opcjonalny to ok, jeśli nie to rzucamy błąd
 				value = null;
 				this.validationResponse.valid = false;
-				this.validationResponse.errorValidatorList.push({
+				this.validationResponse.responseValidatorList.push({
 					valid:false,
 					validator:"NotEmptyValidator",
 					value: value,
@@ -91,8 +91,10 @@ class Validation{
 						if (response.valid === false) {
 							this.debug(response.valid);
 							this.validationResponse.valid = false;
-							this.validationResponse.errorValidatorList.push(response);
+							this.validationResponse.responseValidatorList.push(response);
 						}
+						//nie ma błędów ale przechowujemy co było walidowane i przez jaki walidator <- przy wyświetlaniu formularza będzie potrzebne
+						this.validationResponse.responseValidatorList.push(response);
 					});
 				});
 			}

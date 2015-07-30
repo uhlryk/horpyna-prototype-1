@@ -2,9 +2,6 @@ import Core = require("../../index");
 
 class SimpleModule extends  Core.Module{
 	public static ACTION_LIST = "list";
-	public static ACTION_FORM_CREATE = "createform";
-	public static ACTION_FORM_UPDATE = "updateform";
-	public static ACTION_FORM_DELETE = "deleteform";
 	public static ACTION_DETAIL = "detail";
 	public static ACTION_CREATE = "create";
 	public static ACTION_UPDATE = "update";
@@ -28,16 +25,6 @@ class SimpleModule extends  Core.Module{
 		sizeField.optional = true;
 		listAction.addField(sizeField);
 		listAction.setActionHandler((request, response, done)=>{this.onListAction(request, response, done);});
-		// var createAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_CREATE);
-		// this.addAction(createAction);
-		// createAction.setActionHandler((request, response, done)=>{
-		// 	this.onCreateAction(request, response, done);
-		// });
-		// var formCreateAction = new Core.Action.FormAction(createAction, SimpleModule.ACTION_FORM_CREATE);
-		// this.addAction(formCreateAction);
-		// formCreateAction.setActionHandler((request, response, done)=>{
-		// 	this.onFormCreateAction(request, response, done);
-		// });
 
 		var createAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_CREATE);
 		this.addAction(createAction);
@@ -50,37 +37,11 @@ class SimpleModule extends  Core.Module{
 		detailAction.addField(idField);
 		detailAction.setActionHandler((request, response, done)=>{this.onDetailAction(request, response, done);});
 
-		// var updateAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_UPDATE);
-		// this.addAction(updateAction);
-		// var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
-		// updateAction.addField(idField);
-		// updateAction.setActionHandler((request, response, done)=>{
-		// 	this.onUpdateAction(request, response, done);
-		// });
-		// var formUpdateAction = new Core.Action.FormAction(updateAction, SimpleModule.ACTION_FORM_UPDATE);
-		// this.addAction(formUpdateAction);
-		// formUpdateAction.setActionHandler((request, response, done) => {
-		// 	this.onFormUpdateAction(request, response, done);
-		// });
-
 		var updateAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_UPDATE);
 		updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(updateAction);
 		updateAction.setActionHandler((request, response, done) => { this.onUpdateAction(request, response, done); });
 		updateAction.setFormActionHandler((request, response, done) => { this.onFormUpdateAction(request, response, done); });
-
-		// var deleteAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_DELETE);
-		// this.addAction(deleteAction);
-		// var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
-		// deleteAction.addField(idField);
-		// deleteAction.setActionHandler((request, response, done)=>{
-		// 	this.onDeleteAction(request, response, done);
-		// });
-		// var formDeleteAction = new Core.Action.FormAction(deleteAction, SimpleModule.ACTION_FORM_DELETE);
-		// this.addAction(formDeleteAction);
-		// formDeleteAction.setActionHandler((request, response, done) => {
-		// 	this.onFormDeleteAction(request, response, done);
-		// });
 
 		var deleteAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_DELETE);
 		deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
@@ -117,6 +78,19 @@ class SimpleModule extends  Core.Module{
 		deleteField.formType = type;
 		var deleteFormAction = (<Core.Action.DualAction>this.getAction(Core.SimpleModule.ACTION_DELETE)).formAction;
 		deleteFormAction.addField(deleteField);
+
+		for(var validationName in validationNameList){
+			var data = validationNameList[validationName];
+			if(data.class){
+				data.params.unshift(data.name);
+				var createValidator = Object.create(data.class.prototype);
+				createValidator.constructor.apply(createValidator, data.params);
+				createField.addValidator(createValidator);
+				var updateValidator = Object.create(data.class.prototype);
+				updateValidator.constructor.apply(updateValidator, data.params);
+				updateField.addValidator(updateValidator);
+			}
+		}
 	}
 	public onListAction (request, response, done){done();}
 	public onDetailAction (request, response, done){done();}

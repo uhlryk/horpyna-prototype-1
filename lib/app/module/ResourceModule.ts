@@ -13,6 +13,39 @@ class ResourceModule extends  SimpleModule{
 			super.onFormCreateAction(request,response,resolve);
 		})
 		.then(()=>{
+			var content = response.getData("content");
+			var validationResponse: Core.Validator.ValidationResponse = <Core.Validator.ValidationResponse>response.getData("validationError");
+			if (content && content['fields'] && validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
+				content["form"]["valid"] = false;
+				var fieldList: Object[] = content['fields'];
+				var fieldsNumber = fieldList.length;
+				/**
+				 * zwrócony formularz część danych ma poprawnych więc wypełniamy go danymi wysłanymi
+				 */
+				// for (var j = 0; j < fieldsNumber; j++) {
+				// 	var field = fieldList[j];
+				// 	field["value"] = request.getField(Core.FieldType.BODY_FIELD, field["fieldName"]);
+				// }
+				/**
+				 * wypełniamy błędy - można to dodać do ciała wcześniejszej pętli
+				 */
+				for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
+					var validatorResponse: Core.Validator.ValidatorResponse = validationResponse.responseValidatorList[i];
+					// if (validatorResponse.valid === false){
+						for (var j = 0; j < fieldsNumber; j++) {
+							var field = fieldList[j];
+							if (field["fieldName"] === validatorResponse.field){
+								field["value"] = validatorResponse.value;
+								field["valid"] = validatorResponse.valid;
+								if (validatorResponse.valid === false) {
+									field["errorList"] = field["errorList"].concat(validatorResponse.errorList);
+									content["form"]["errorList"] = content["form"]["errorList"].concat(validatorResponse.errorList);
+								}
+							}
+						}
+					// }
+				}
+			}
 			response.addView("horpyna/jade/createFormAction");
 			done();
 		});

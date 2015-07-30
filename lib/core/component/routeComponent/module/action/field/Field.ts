@@ -65,7 +65,7 @@ class Field extends Component {
 			validator.init();
 		});
 	}
-	protected addValidator(validator: Validator.BaseValidator): Util.Promise<void> {
+	public addValidator(validator: Validator.BaseValidator): Util.Promise<void> {
 		this.validatorList.push(validator);
 		if (this.isInit === true) {
 			throw SyntaxError(Component.ADD_INIT_CANT);

@@ -41,7 +41,8 @@ class FormAction extends BaseAction {
 		formContent['form'] = new Object();
 		formContent['form']['method'] = this.targetAction.getMethod();
 		formContent['form']['buttonName'] = "send";
-		formContent['form']["error-message"] = [];
+		formContent['form']["errorList"] = [];
+		formContent['form']["valid"] = true;
 		var bodyFields: Field[] = this.targetAction.getFieldListByType(FieldType.BODY_FIELD);
 		var ownBodyFields: Field[] = this.getFieldListByType(FieldType.BODY_FIELD);
 		bodyFields.push.apply(bodyFields, ownBodyFields);
@@ -53,7 +54,8 @@ class FormAction extends BaseAction {
 			inputForm["formType"] = field.formType;
 			inputForm["labelForm"] = field.labelForm;
 			inputForm["value"] = "";
-			inputForm["error-message"] = null;
+			inputForm["valid"] = true;
+			inputForm["errorList"] = [];
 			formContent['fields'].push(inputForm);
 		}
 		var paramAppList = request.getParamAppFieldList();
