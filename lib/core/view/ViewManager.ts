@@ -7,8 +7,13 @@ import Action = require("./../component/routeComponent/module/action/Action");
 class ViewManager{
 	private _renderView;
 	private _dataView;
+
+	private _defaultView;
 	constructor(){
 
+	}
+	public setDefaultView(view:string){
+		this._defaultView = view;
 	}
 	public render(req:express.Request, res:express.Response){
 		var response: Action.Response = res['horpynaResponse'];
@@ -16,7 +21,8 @@ class ViewManager{
 			if (response.isRedirect()) {
 				res.redirect(response.getRedirectStatus(), response.getRedirectUrl());
 			} else {
-				res.render(response.getParam('view'), response.getData());
+				var view = response.getView();
+				res.render(view || this._defaultView, response.getData());
 			}
 		} else{
 			if (response.isRedirect()) {

@@ -104,11 +104,17 @@ class Response{
 	// public getView():any{
 	// 	return this.view;
 	// }
-	public addViewParam(name:string, value:any){
-		this.viewParam[name] = value;
+	// public addViewParam(name:string, value:any){
+	// 	this.viewParam[name] = value;
+	// }
+	// public getParam(name: string):any {
+	// 	return this.viewParam[name];
+	// }
+	public addView(name:string){
+		this.viewParam['view'] = name;
 	}
-	public getParam(name: string):any {
-		return this.viewParam[name];
+	public getView():string{
+		return this.viewParam['view'];
 	}
 	public addValue(name:string, value:any){
 		this.data[name] = value;

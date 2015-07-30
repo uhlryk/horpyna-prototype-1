@@ -20,7 +20,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
 			module1.addAction(action1);
 			action1.setActionHandler(function (request, response, done) {
-				response.addViewParam("view","index");
+				response.addView("index");
 				response.addValue("title", "mój tytuł");
 				done();
 			});

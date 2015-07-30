@@ -35,7 +35,9 @@ class Application {
 		this.frontController.setDispatcher(this.dispatcher);
 		this.frontController.setComponentManager(this.componentManager);
 		this.frontController.setDbManager(this.dbManager);
-		this.frontController.setViewManager(new ViewManager());
+		var viewManager = new ViewManager();
+		viewManager.setDefaultView("horpyna/jade/default");
+		this.frontController.setViewManager(viewManager);
 	}
 	// public setViewClass(viewClass){
 	// 	this.componentManager.setViewClass(viewClass);

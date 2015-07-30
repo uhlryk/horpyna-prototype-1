@@ -31,3 +31,7 @@ gulp.task('ts-example', function () {
 			}));
 	return tsResult.js.pipe(gulp.dest('examples-js'));
 });
+gulp.task('jade', function (){
+	gulp.src('./views/**/*.jade')
+	.pipe(gulp.dest('./test/jade/views'));
+});

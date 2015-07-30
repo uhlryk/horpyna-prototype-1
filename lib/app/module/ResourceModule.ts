@@ -13,7 +13,7 @@ class ResourceModule extends  SimpleModule{
 			super.onFormCreateAction(request,response,resolve);
 		})
 		.then(()=>{
-			response.addViewParam("view","horpyna/jade/createFormAction");
+			response.addView("horpyna/jade/createFormAction");
 			done();
 		});
 	}
@@ -45,7 +45,7 @@ class ResourceModule extends  SimpleModule{
 					}
 				}
 			}
-			response.addViewParam("view", "horpyna/jade/updateFormAction");
+			response.addView("horpyna/jade/updateFormAction");
 			done();
 		});
 	}
@@ -77,7 +77,7 @@ class ResourceModule extends  SimpleModule{
 						}
 					}
 				}
-				response.addViewParam("view", "horpyna/jade/deleteFormAction");
+				response.addView("horpyna/jade/deleteFormAction");
 				done();
 			});
 	}
@@ -176,7 +176,7 @@ class ResourceModule extends  SimpleModule{
 				};
 				responseContent.push(data);
 			}
-			response.addViewParam("view", "horpyna/jade/listAction");
+			response.addView("horpyna/jade/listAction");
 			done();
 		});
 	}
@@ -200,7 +200,7 @@ class ResourceModule extends  SimpleModule{
 				};
 				response.setContent(data);
 			}
-			response.addViewParam("view", "horpyna/jade/detailAction");
+			response.addView("horpyna/jade/detailAction");
 			done();
 		});
 	}

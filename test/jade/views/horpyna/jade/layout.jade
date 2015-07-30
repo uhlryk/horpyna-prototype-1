@@ -8,11 +8,12 @@ html
 		.container
 			.main-content
 				block content
-			.sidebar
+			if localnavigation
+				.sidebar
 					div Navigation
 					ul
 					each link in localnavigation.links
 						li(class=link.active?"active":"")
 							a(href=link.link) #{link.name}
 		footer
-			p Running Horpyna
+			p Running on node with Express, Jade and Stylus
