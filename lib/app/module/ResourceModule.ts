@@ -233,8 +233,8 @@ class ResourceModule extends  SimpleModule{
 	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
 		var deleteQuery = new Core.Query.Delete();
 		deleteQuery.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		//deleteQuery.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 		var paramAppList = request.getParamAppFieldList();
+		console.log(paramAppList);
 		deleteQuery.populateWhere(paramAppList);
 		deleteQuery.run()
 		.then(()=>{
@@ -279,6 +279,16 @@ class ResourceModule extends  SimpleModule{
 			links.push(linkObject);
 		}
 		return links;
+	}
+	/**
+ * rozszerza metodę simpleModule o dodawanie kolumn do defaultowego modelu
+ */
+	public addField(name: string, type: Core.Action.FormType, validationNameList: Object, isOptional: boolean, options?: Object) {
+		options = options || {};
+		super.addField(name, type, validationNameList, isOptional, options);
+		var model = this.getDefaultModel();
+		//na razie nie rozbudowujemy tego tak że system ma zamapowane typ forma a typy kolumn
+		model.addColumn(new Core.Column.StringColumn(name, options['length'] || 50));
 	}
 }
 export = ResourceModule;

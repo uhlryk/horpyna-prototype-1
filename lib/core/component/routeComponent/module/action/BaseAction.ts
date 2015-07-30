@@ -131,6 +131,8 @@ class BaseAction extends RouteComponent {
 			if (validationResponse.valid === false){
 				response.addValue("error",validationResponse.errorValidatorList);
 				response.setStatus(422);
+				//tu powinniśmy chyba zrobić przekierowanie do miejsca które wywołało formularz
+				// response.allow = false;
 			}
 		})
 		.then(() => {

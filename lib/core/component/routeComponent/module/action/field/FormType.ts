@@ -1,4 +1,4 @@
-enum FieldForm {
+enum FormType {
 	TEXT,
 	HIDDEN,
 	PASSWORD,
@@ -21,4 +21,4 @@ enum FieldForm {
 	// SELECT,
 	// MULTISELECT
 }
-export = FieldForm;
+export = FormType;

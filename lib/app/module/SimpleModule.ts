@@ -77,7 +77,30 @@ class SimpleModule extends  Core.Module{
 		});
 		this.subscribe(navigationEvent);
 	}
+	/**
+	 * szybkie dodawanie nowego pola, automatycznie dodaje do do wszystkich akcji
+	 */
+	public addField(name:string, type:Core.Action.FormType, validationNameList:Object, isOptional:boolean, options?:Object){
+		options = options || {};
+		isOptional = false;
+		var createField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
+		createField.optional = isOptional;
+		createField.formType = type;
+		var createAction = this.getAction(Core.SimpleModule.ACTION_CREATE);
+		createAction.addField(createField);
 
+		var updateField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
+		updateField.optional = isOptional;
+		updateField.formType = type;
+		var updateAction = this.getAction(Core.SimpleModule.ACTION_UPDATE);
+		updateAction.addField(updateField);
+
+		var deleteField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
+		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
+		deleteField.formType = type;
+		var deleteFormAction = this.getAction(Core.SimpleModule.ACTION_FORM_DELETE);
+		deleteFormAction.addField(deleteField);
+	}
 	public onListAction (request, response, done){
 		done();
 	}

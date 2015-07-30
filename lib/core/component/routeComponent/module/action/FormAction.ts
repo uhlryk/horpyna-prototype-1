@@ -42,13 +42,13 @@ class FormAction extends BaseAction {
 		bodyFields.push.apply(bodyFields, ownBodyFields);
 		for (var i = 0; i < bodyFields.length; i++) {
 			var field: Field = bodyFields[i];
-			var fieldForm: Object = new Object();
-			fieldForm["fieldName"] = field.getFieldName();
-			fieldForm["name"] = field.name;
-			fieldForm["fieldForm"] = field.fieldForm;
-			fieldForm["labelForm"] = field.labelForm;
-			fieldForm["value"] = "";
-			formContent['fields'].push(fieldForm);
+			var inputForm: Object = new Object();
+			inputForm["fieldName"] = field.getFieldName();
+			inputForm["name"] = field.name;
+			inputForm["formType"] = field.formType;
+			inputForm["labelForm"] = field.labelForm;
+			inputForm["value"] = "";
+			formContent['fields'].push(inputForm);
 		}
 		var paramAppList = request.getParamAppFieldList();
 		var route = this.targetAction.populateRoutePath(paramAppList);
