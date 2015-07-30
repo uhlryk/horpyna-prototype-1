@@ -16,9 +16,17 @@ class Component{
 	public static COMPONENT_INIT_NEED: string = "Component must be initialized before this method";
 	public static ADD_INIT_CANT: string = "Cant add element if object is initialized";
 	private _name:string;
+	private _id:number;
 	private _parent:Component;
 	protected debugger: Util.Debugger;
 	public static count = 0;
+	public static componentList:Component[] = [];
+	/**
+	 * Lista wszystkich komponentów ustawionych po kluczu jakim jest ich hash.
+	 * Jeśli struktura elementu przy budowie nie uległa zmianie to ma on ten sam hash
+	 * Hash przydzielany jest przy inicjacji - a więc na poziomie budowy nie mamy dostępnych po nim elementów
+	 */
+	public static hashList: Object = {};
 	private _logger: Util.Logger;
 	private _componentManager: ComponentManager;
 	/**
@@ -32,12 +40,21 @@ class Component{
 	constructor(name:string){
 		this._name = name;
 		this.checkName(name);
+		Component.componentList.push(this);
 		Component.count++;
+		this._id = Component.count;
 		this.debugger = new Util.Debugger("component:"+this.name);
 		this.debug('constructor %s a', this.name);
 		this._componentManager = null;
 		this.isInit = false;
 		this.onConstructor();
+	}
+	/**
+	 * Zwraca komponent na podstawie jego unikalnego id. Od konstrukcji jest on dostępny
+	 * Id jest stałe od momentu budowy aplikacji. Ponowna budowa spowoduje przydzielenie nowego id
+	 */
+	public static getById(id:number):Component{
+		return Component.componentList[id];
 	}
 	public onConstructor(){}
 		/**
@@ -126,6 +143,9 @@ class Component{
 	}
 	public get name():string{
 		return this._name;
+	}
+	public get id(): number {
+		return this._id;
 	}
 	/**
 	 * Buduje pełną ścieżkę od danego elementu do najwyższego elementu (z pominięciem ComponentManager)
