@@ -31,7 +31,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 			});
 		});
 		it("kod 200 updateform gdy brak elementu,", function (done) {
-			request(app).get("/res1/updateform/1")
+			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					expect(res.body.redirect.status).to.be.equal(302);
@@ -47,7 +47,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 createform,", function (done) {
-			request(app).get("/res1/createform")
+			request(app).get("/res1/create")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
@@ -79,7 +79,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 updateform,", function (done) {
-			request(app).get("/res1/updateform/1")
+			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
@@ -131,7 +131,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 			});
 		});
 		it("kod 200 updateform gdy brak elementu,", function (done) {
-			request(app).get("/res1/updateform/1")
+			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					expect(res.body.redirect.status).to.be.equal(302);
@@ -147,7 +147,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 createform,", function (done) {
-			request(app).get("/res1/createform")
+			request(app).get("/res1/create")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
@@ -178,7 +178,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 				});
 		});
 		it("kod 200 updateform,", function (done) {
-			request(app).get("/res1/updateform/1")
+			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();

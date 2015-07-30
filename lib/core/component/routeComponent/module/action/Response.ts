@@ -10,23 +10,17 @@ class Response{
 	public status:number;
 	private _redirectStatus:number;
 	/**
-	 * Obiekt widoku. Widok odpowiada za render do przeglądarki. Może to być JadeView, JsonView
-	 */
-	// public view:any;
-	/**
 	 * DOdatkowe parametry widoku. Np template
-	 * @type {Object}
 	 */
 	private viewParam: Object;
 	/**
 	 * dane do widoku do zrenderowania, w przypadku json jest to output
-	 * @type {Object}
 	 */
 	private data:Object;
 	private expressResponse:express.Response;
-	// private _action:BaseAction;
 	private _logger: Util.Logger;
 	private _allow: boolean;
+	private _valid: boolean;
 	private _redirect: string;
 	private _routePath: string;
 	constructor(expressResponse:express.Response){
@@ -35,6 +29,7 @@ class Response{
 		this.viewParam = new Object();
 		this.expressResponse = expressResponse;
 		this._routePath = null;
+		this._valid = true;
 	}
 	public set routePath(v : string) {
 		this._routePath = v;
@@ -42,9 +37,6 @@ class Response{
 	public get routePath() : string {
 		return this._routePath;
 	}
-	// public setViewClass(viewClass) {
-	// 	this.view = new viewClass(this.expressResponse);
-	// }
 	public set logger(logger: Util.Logger) {
 		this._logger = logger;
 	}
@@ -65,9 +57,6 @@ class Response{
 		}
 		return false;
 	}
-	// public getRedirect():string{
-	// 	return this._redirect;
-	// }
 	public getRedirectUrl():string {
 		return this._redirect;
 	}
@@ -91,25 +80,12 @@ class Response{
 	public get allow():boolean{
 		return this._allow;
 	}
-	// public render(){
-	// 	if (this.view) {
-	// 		this.view.status = this.status;
-	// 		this.view.data = this.data;
-	// 		this.view.param = this.viewParam;
-	// 		this.view.render();
-	// 	} else{
-	// 		this.expressResponse.status(this.status).send(this.data);
-	// 	}
-	// }
-	// public getView():any{
-	// 	return this.view;
-	// }
-	// public addViewParam(name:string, value:any){
-	// 	this.viewParam[name] = value;
-	// }
-	// public getParam(name: string):any {
-	// 	return this.viewParam[name];
-	// }
+	public set valid(v:boolean){
+		this._valid = v;
+	}
+	public get valid():boolean{
+		return this._valid;
+	}
 	public addView(name:string){
 		this.viewParam['view'] = name;
 	}
@@ -128,12 +104,5 @@ class Response{
 		}
 		return this.data;
 	}
-	// public set action(v: BaseAction) {
-	// 	this._action = v;
-	// }
-
-	// public get action():BaseAction{
-	// 	return this._action;
-	// }
 }
 export = Response;

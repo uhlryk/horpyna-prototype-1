@@ -27,50 +27,67 @@ class SimpleModule extends  Core.Module{
 		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
 		sizeField.optional = true;
 		listAction.addField(sizeField);
-		listAction.setActionHandler((request, response, done)=>{
-			this.onListAction(request, response, done);
-		});
-		var createAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_CREATE);
+		listAction.setActionHandler((request, response, done)=>{this.onListAction(request, response, done);});
+		// var createAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_CREATE);
+		// this.addAction(createAction);
+		// createAction.setActionHandler((request, response, done)=>{
+		// 	this.onCreateAction(request, response, done);
+		// });
+		// var formCreateAction = new Core.Action.FormAction(createAction, SimpleModule.ACTION_FORM_CREATE);
+		// this.addAction(formCreateAction);
+		// formCreateAction.setActionHandler((request, response, done)=>{
+		// 	this.onFormCreateAction(request, response, done);
+		// });
+
+		var createAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_CREATE);
 		this.addAction(createAction);
-		createAction.setActionHandler((request, response, done)=>{
-			this.onCreateAction(request, response, done);
-		});
-		var formCreateAction = new Core.Action.FormAction(createAction, SimpleModule.ACTION_FORM_CREATE);
-		this.addAction(formCreateAction);
-		formCreateAction.setActionHandler((request, response, done)=>{
-			this.onFormCreateAction(request, response, done);
-		});
+		createAction.setActionHandler((request, response, done)=>{this.onCreateAction(request, response, done);});
+		createAction.setFormActionHandler((request, response, done) => { this.onFormCreateAction(request, response, done); });
+
 		var detailAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(detailAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
 		detailAction.addField(idField);
-		detailAction.setActionHandler((request, response, done)=>{
-			this.onDetailAction(request, response, done);
-		});
-		var updateAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_UPDATE);
+		detailAction.setActionHandler((request, response, done)=>{this.onDetailAction(request, response, done);});
+
+		// var updateAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_UPDATE);
+		// this.addAction(updateAction);
+		// var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		// updateAction.addField(idField);
+		// updateAction.setActionHandler((request, response, done)=>{
+		// 	this.onUpdateAction(request, response, done);
+		// });
+		// var formUpdateAction = new Core.Action.FormAction(updateAction, SimpleModule.ACTION_FORM_UPDATE);
+		// this.addAction(formUpdateAction);
+		// formUpdateAction.setActionHandler((request, response, done) => {
+		// 	this.onFormUpdateAction(request, response, done);
+		// });
+
+		var updateAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_UPDATE);
+		updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(updateAction);
-		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
-		updateAction.addField(idField);
-		updateAction.setActionHandler((request, response, done)=>{
-			this.onUpdateAction(request, response, done);
-		});
-		var formUpdateAction = new Core.Action.FormAction(updateAction, SimpleModule.ACTION_FORM_UPDATE);
-		this.addAction(formUpdateAction);
-		formUpdateAction.setActionHandler((request, response, done) => {
-			this.onFormUpdateAction(request, response, done);
-		});
-		var deleteAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_DELETE);
+		updateAction.setActionHandler((request, response, done) => { this.onUpdateAction(request, response, done); });
+		updateAction.setFormActionHandler((request, response, done) => { this.onFormUpdateAction(request, response, done); });
+
+		// var deleteAction: Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, SimpleModule.ACTION_DELETE);
+		// this.addAction(deleteAction);
+		// var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		// deleteAction.addField(idField);
+		// deleteAction.setActionHandler((request, response, done)=>{
+		// 	this.onDeleteAction(request, response, done);
+		// });
+		// var formDeleteAction = new Core.Action.FormAction(deleteAction, SimpleModule.ACTION_FORM_DELETE);
+		// this.addAction(formDeleteAction);
+		// formDeleteAction.setActionHandler((request, response, done) => {
+		// 	this.onFormDeleteAction(request, response, done);
+		// });
+
+		var deleteAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_DELETE);
+		deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(deleteAction);
-		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
-		deleteAction.addField(idField);
-		deleteAction.setActionHandler((request, response, done)=>{
-			this.onDeleteAction(request, response, done);
-		});
-		var formDeleteAction = new Core.Action.FormAction(deleteAction, SimpleModule.ACTION_FORM_DELETE);
-		this.addAction(formDeleteAction);
-		formDeleteAction.setActionHandler((request, response, done) => {
-			this.onFormDeleteAction(request, response, done);
-		});
+		deleteAction.setActionHandler((request, response, done) => { this.onDeleteAction(request, response, done); });
+		deleteAction.setFormActionHandler((request, response, done) => { this.onFormDeleteAction(request, response, done); });
+
 		var navigationEvent = new Core.Event.Action.OnFinish();
 		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
 			this.onBuildNavigation(request, response, done);
@@ -98,33 +115,17 @@ class SimpleModule extends  Core.Module{
 		var deleteField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
 		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
 		deleteField.formType = type;
-		var deleteFormAction = this.getAction(Core.SimpleModule.ACTION_FORM_DELETE);
+		var deleteFormAction = (<Core.Action.DualAction>this.getAction(Core.SimpleModule.ACTION_DELETE)).formAction;
 		deleteFormAction.addField(deleteField);
 	}
-	public onListAction (request, response, done){
-		done();
-	}
-	public onDetailAction (request, response, done){
-		done();
-	}
-	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {
-		done();
-	}
-	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
-		done();
-	}
-	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, done) {
-		done();
-	}
- 	public onCreateAction (request, response, done){
-		done();
-	}
-	public onUpdateAction (request, response, done){
-		done();
-	}
-	public onDeleteAction (request, response, done){
-		done();
-	}
+	public onListAction (request, response, done){done();}
+	public onDetailAction (request, response, done){done();}
+	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {done();}
+	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){done();}
+	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, done) {done();}
+ 	public onCreateAction (request, response, done){done();}
+	public onUpdateAction (request, response, done){done();}
+	public onDeleteAction (request, response, done){done();}
 	/**
 	 * Callback na event navigationEvent
 	 * Odpala się dla wszystkich akcji tego modułu.
@@ -138,7 +139,13 @@ class SimpleModule extends  Core.Module{
 		for (var i = 0; i < actionListLength; i++) {
 			var action: Core.Action.BaseAction = actionList[i];
 			/**
-			 * Prezentujemy akcje które są dostępne przez GET
+			 * znaczy że akcja jest POST, ale ma subakcję GET
+			 */
+			if(action instanceof Core.Action.DualAction){
+				action = (<Core.Action.DualAction>action).formAction;
+			}
+			/**
+			 * Prezentujemy tylko akcje które są dostępne przez GET
 			 */
 			if(action.getMethod() !== Core.Action.BaseAction.GET){
 				continue;

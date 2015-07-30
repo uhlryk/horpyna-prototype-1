@@ -15,6 +15,10 @@ class RouteComponent extends Component{
 	 */
 	private _routeName:string;
 	/**
+	 * Pozwala wyłączyć dany element z budowanego routeName, na ścieżkę elementu będą się składać nad elementy i pod elementy
+	 */
+	private _disableRouteName: boolean;
+	/**
 	 * Cała ścieżka route do danego komponentu RouteComponent. Nie zawiera danego elementu
 	 */
 	// private _baseRoute: string;
@@ -22,12 +26,19 @@ class RouteComponent extends Component{
 	constructor(name:string){
 		super(name);
 		this.routeName = this.name;
+		this.disableRouteName = false;
 	}
 	/**
 	 * Nadpisuje init Component i dodaje w nim pobranie baseRoute od parent
 	 */
 	public init(): Util.Promise<void> {
 		return super.init();
+	}
+	public set disableRouteName(v:boolean){
+		this._disableRouteName = v;
+	}
+	public get disableRouteName():boolean{
+		return this._disableRouteName;
 	}
 	/**
 	 * Zwraca nazwę danego członu route
@@ -58,13 +69,17 @@ class RouteComponent extends Component{
 	 */
 	public getRoutePath():string{
 		var separator = "/";
+		var tempRouteName = separator + this.routeName;
+		if(this.disableRouteName === true){
+			tempRouteName = "";
+		}
 		if (this.isInit === false) {
 			throw SyntaxError(Component.COMPONENT_INIT_NEED);
 		}
 		if (this.parent instanceof RouteComponent === false) {
-			return separator + this.routeName;
+			return tempRouteName;
 		} else {
-			return (<RouteComponent>this.parent).getRoutePath() + separator + this.routeName;
+			return (<RouteComponent>this.parent).getRoutePath() + tempRouteName;
 		}
 	}
 	// public setViewClass(viewClass, force?:boolean){

@@ -4,6 +4,7 @@ import RouteComponent = require("../../RouteComponent");
 import Field = require("./field/Field");
 import FieldType = require("./field/FieldType");
 import IActionHandler = require("./IActionHandler");
+import Util = require("./../../../../util/Util");
 
 /**
  * Akcja dziedziczy po BaseAction. Jest powiązana z inną akcją.
@@ -12,9 +13,18 @@ import IActionHandler = require("./IActionHandler");
 
 class FormAction extends BaseAction {
 	private targetAction: BaseAction;
-	constructor(targetAction:BaseAction, name?:string){
-		super(BaseAction.GET, name || FormAction.formActionName(targetAction.name));
+	constructor(targetAction:BaseAction, name:string){
+		super(BaseAction.GET, name);
 		this.targetAction = targetAction;
+	}
+	public init(): Util.Promise<void> {
+		this.copyTargetParams();
+		return super.init();
+	}
+	/**
+	 * Kopiuje PARAM_FIELD z target action
+	 */
+	protected copyTargetParams(){
 		var paramFields: Field[] = this.targetAction.getFieldListByType(FieldType.PARAM_FIELD);
 		for (var i = 0; i < paramFields.length; i++) {
 			var field: Field = paramFields[i];
@@ -22,21 +32,16 @@ class FormAction extends BaseAction {
 		}
 	}
 	/**
-	 * Na podstawie nazwy akcji docelowej zwróci nazwę akcji wygenerowanej zawierającej formularz
-	 */
-	public static formActionName(targetActionName:string):string {
-		return "form" + targetActionName;
-	}
-	/**
 	 * na podstawie targetAction BODY_FIELD buduje formularz który ma służyć do dodawania wartości dla
 	 * targetAction
 	 */
-	public build(request: Request) {
+	public buildForm(request: Request) {
 		var formContent = new Object();
 		formContent['fields'] = [];
 		formContent['form'] = new Object();
 		formContent['form']['method'] = this.targetAction.getMethod();
 		formContent['form']['buttonName'] = "send";
+		formContent['form']["error-message"] = [];
 		var bodyFields: Field[] = this.targetAction.getFieldListByType(FieldType.BODY_FIELD);
 		var ownBodyFields: Field[] = this.getFieldListByType(FieldType.BODY_FIELD);
 		bodyFields.push.apply(bodyFields, ownBodyFields);
@@ -48,6 +53,7 @@ class FormAction extends BaseAction {
 			inputForm["formType"] = field.formType;
 			inputForm["labelForm"] = field.labelForm;
 			inputForm["value"] = "";
+			inputForm["error-message"] = null;
 			formContent['fields'].push(inputForm);
 		}
 		var paramAppList = request.getParamAppFieldList();
@@ -60,7 +66,7 @@ class FormAction extends BaseAction {
 	 */
 	public setActionHandler(actionHandler:IActionHandler){
 		super.setActionHandler((request, response, done) => {
-			response.setContent(this.build(request));
+			response.setContent(this.buildForm(request));
 			actionHandler(request, response, done);
 		});
 	}

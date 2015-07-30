@@ -256,6 +256,9 @@ class ResourceModule extends  SimpleModule{
 		var links:Object[] = [];
 		for (var i = 0; i < actionListLength; i++) {
 			var action: Core.Action.BaseAction = actionList[i];
+			if(action instanceof Core.Action.DualAction){
+				action = (<Core.Action.DualAction>action).formAction;
+			}
 			/**
 			 * Prezentujemy akcje które są dostępne przez GET
 			 */

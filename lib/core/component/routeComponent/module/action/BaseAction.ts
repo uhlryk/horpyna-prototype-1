@@ -1,5 +1,3 @@
-/// <reference path="../../../../../../typings/tsd.d.ts" />
-import express = require("express");
 import RouteComponent = require("../../RouteComponent");
 import Component = require("../../../Component");
 import Event = require("../../../event/Event");
@@ -31,9 +29,15 @@ class BaseAction extends RouteComponent {
 	public init(): Util.Promise<void> {
 		return super.init()
 		.then(()=>{
-			this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler());
+			this.addRoute();
 			return this.initFields();
 		});
+	}
+	/**
+	 * Buduje route
+	 */
+	protected addRoute(){
+		this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler());
 	}
 	public initFields(): Util.Promise<any> {
 		return Util.Promise.map(this.fieldList, (field: Field) => {
@@ -112,7 +116,7 @@ class BaseAction extends RouteComponent {
 	public setActionHandler(actionHandler:IActionHandler){
 		this.actionHandler = actionHandler;
 	}
-	protected requestHandler(request: Request, response: Response, doneAction) {
+	public requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
 		this.debug("action:publish():OnBegin");
 		Util.Promise.resolve()
@@ -132,7 +136,8 @@ class BaseAction extends RouteComponent {
 				response.addValue("error",validationResponse.errorValidatorList);
 				response.setStatus(422);
 				//tu powinniśmy chyba zrobić przekierowanie do miejsca które wywołało formularz
-				// response.allow = false;
+				response.allow = false;
+				response.valid = false;
 			}
 		})
 		.then(() => {
@@ -172,7 +177,6 @@ class BaseAction extends RouteComponent {
 	public getRequestHandler(){
 		this.debug("action:getRequestHandler()");
 		return (request:Request, response:Response, next)=>{
-
 			this.requestHandler(request, response, next);
 		}
 	}
