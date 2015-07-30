@@ -5,7 +5,7 @@ import Model = require("./model/Model");
 import Util = require("../../../util/Util");
 class Module extends RouteComponent{
 	private actionList:Action.BaseAction[];
-	// private defaultActionList:Action.BaseAction[];//może być więcej niż jedna akcja domyślna więc są one jako lista
+	private _defaultAction:Action.BaseAction;
 	private modelList:Model[];
 	private defaultModel:Model;
 	private moduleList:Module[];
@@ -49,12 +49,12 @@ class Module extends RouteComponent{
 			return action.init();
 		});
 	}
-	protected addAction(action: Action.BaseAction): Util.Promise<void> {
+	protected addAction(action: Action.BaseAction, isDefault?:boolean): Util.Promise<void> {
 		this.actionList.push(action);
 		return action.prepare(this);
-		// if(isDefault === true){
-			// this.defaultActionList.push(action);
-		// }
+		if(isDefault === true){
+			this._defaultAction = action;
+		}
 	}
 	public getActionList():Action.BaseAction[]{
 		return this.actionList;
@@ -67,9 +67,9 @@ class Module extends RouteComponent{
 			}
 		}
 	}
-	// public getDefaultActionList():Action.BaseAction[]{
-		// return this.defaultActionList;
-	// }
+	public get defaultAction():Action.BaseAction{
+		return this._defaultAction;
+	}
 	protected addModule(module: Module): Util.Promise<void> {
 		this.moduleList.push(module);
 		return module.prepare(this);

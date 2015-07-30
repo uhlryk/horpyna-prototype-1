@@ -12,7 +12,7 @@ class SimpleModule extends  Core.Module{
 	public onConstructor(){
 		super.onConstructor();
 		var listAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_LIST);
-		this.addAction(listAction);
+		this.addAction(listAction, true);
 		/**
 		 * order czyli po jakiej kolumnie sortujemy, ma po '-' kierunek sortowania ASC, DESC
 		 * a potem po przecinku więcej kolumn czyli
