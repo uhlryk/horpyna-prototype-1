@@ -14,4 +14,3 @@ export import FieldType = require("./core/component/routeComponent/module/action
 export import Query = require("./core/component/routeComponent/module/query/Query");
 export import SimpleModule = require("./app/module/SimpleModule");
 export import ResourceModule = require("./app/module/ResourceModule");
-// export import JadeResourceModule = require("./app/module/JadeResourceModule");

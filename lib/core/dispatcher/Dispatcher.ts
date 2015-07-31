@@ -1,5 +1,6 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
+import DispatcherError = require("./DispatcherError");
 import Util = require("./../util/Util");
 import ViewManager = require("./../view/ViewManager");
 import Module = require("./../component/routeComponent/module/Module");
@@ -17,7 +18,7 @@ class Dispatcher{
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
 	 */
-	private lastError: Action.ErrorAction;
+	private _error: DispatcherError;
 	/**
 	 * Akcja wywoływana na końcu
 	 */
@@ -66,8 +67,11 @@ class Dispatcher{
 	public setFinalAction(action:Action.BaseAction){
 		this.finalAction = action;
 	}
-	public setLastError(error:Action.ErrorAction){
-		this.lastError = error;
+	public set error(error:DispatcherError){
+		this._error = error;
+	}
+	public get error(): DispatcherError {
+		return this._error;
 	}
 	/**
 	 * Wywołuje się zawsze jako pierwsza akcja przed innymi
@@ -116,9 +120,9 @@ class Dispatcher{
 			this._viewManager.render(req, res);
 		});
 	}
-	private lastErrorRoute(){
-		this.debug('last error route');
-		this.router.use(this.lastError.getErrorHandler());
+	private errorRoute(){
+		this.debug('error route');
+		this.router.use(this._error.getErrorHandler());
 	}
 	/**
 	 * konfiguruje routy dla akcji
@@ -144,7 +148,7 @@ class Dispatcher{
 			this._logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
 			throw new Error(Dispatcher.FINAL_ACTION_NOT_SET);
 		}
-		if(this.lastError === undefined){
+		if(this._error === undefined){
 			this._logger.error(Dispatcher.LAST_ERROR_NOT_SET);
 			throw new Error(Dispatcher.LAST_ERROR_NOT_SET);
 		}
@@ -153,7 +157,7 @@ class Dispatcher{
 		this.homeRoute();
 		this.normalRoute();
 		this.finalRoute();
-		this.lastErrorRoute();
+		this.errorRoute();
 		this.debug('end');
 	}
 }

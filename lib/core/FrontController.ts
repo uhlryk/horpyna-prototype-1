@@ -1,8 +1,9 @@
 import Dispatcher = require("./dispatcher/Dispatcher");
+import DispatcherError = require("./dispatcher/DispatcherError");
 import ComponentManager = require("./component/ComponentManager");
 import DbManager = require("./dbManager/DbManager");
 import Module = require("./component/routeComponent/module/Module");
-import DefaultModule = require("./component/routeComponent/module/DefaultModule");
+import SystemModule = require("./component/routeComponent/module/SystemModule");
 import Model = require("./component/routeComponent/module/model/Model");
 import Util = require("./util/Util");
 import ViewManager = require("./view/ViewManager");
@@ -49,37 +50,31 @@ class FrontController {
 			throw new Error(FrontController.DB_MANAGER_NONE);
 		}
 	}
-	// private setConnectionToModels(){
-	// 	var moduleList:Module[] =this.componentManager.getModuleList();
-	// 	for(var moduleIndex in moduleList){
-	// 		var module:Module = moduleList[moduleIndex];
-	// 		var modelList:Model[] = module.getModelList();
-	// 		for(var modelIndex in modelList){
-	// 			var model:Model = modelList[modelIndex];
-	// 			if(model.isConnection() === false) {
-	// 				var modelConnectionName = model.getConnectionName();
-	// 				if(modelConnectionName){
-	// 					model.setConnection(this.dbManager.getConnection("modelConnectionName"));
-	// 				} else {
-	// 					model.setConnection(this.dbManager.getConnection());//zwraca domyślne bo nie podaliśmy nazwy
-	// 				}
-	// 			}
-	// 			model.prepare();
-
-	// 		};
-	// 	};
-	// }
 	public init():Promise<any>{
 		this.debug("front:init:");
 		this.debug("front:setup()");
 		this.setup();
 		this.componentManager.dispatcher = this.dispatcher;
 		this.componentManager.dbManager = this.dbManager;
-		this.debug("front:setDefault()");
-		this.setDefault();
+		this.debug("front:set SystemModule()");
+		var defaultModule: SystemModule = new SystemModule("default");
+		this.componentManager.addModule(defaultModule);
+		this.debug("front:set ActionBegin()");
+		var beginAction = defaultModule.getAction(SystemModule.ACTION_BEGIN);
+		this.dispatcher.setBeginAction(beginAction);
+		this.debug("front:set ActionFinal()");
+		var finalAction = defaultModule.getAction(SystemModule.ACTION_FINAL);
+		this.dispatcher.setFinalAction(finalAction);
+		this.debug("front:set ActionHome()");
+		var homeAction = defaultModule.getAction(SystemModule.ACTION_HOME);
+		this.dispatcher.setHomeAction(homeAction);
+		this.debug("front:set DispatcherError()");
+		var dispatcherError: DispatcherError = new DispatcherError();
+		dispatcherError.logger = this.logger;
+		this.dispatcher.error = dispatcherError;
+
 		this.dbManager.logger = this.logger;
 		this.dispatcher.logger = this.logger;
-		this.debug("front:dispatcher.createRoutes()");
 		this.dispatcher.viewManager = this.viewManager;
 		this.dispatcher.init();
 		this.debug("front:dbManager.init()");
@@ -87,27 +82,6 @@ class FrontController {
 		this.componentManager.logger = this.logger;
 		this.debug("front:componentManager.init()");
 		return this.componentManager.init();
-		// .then(()=>{
-		// 	this.debug("front:setConnectionToModels()");
-		// 	/* X */this.setConnectionToModels();
-			// this.debug("front:dbManager.build()");
-			// return this.dbManager.build();
-
-		// });
-	}
-	/**
-	 * Ustawia akcję home, final dla dispatchera
-	 */
-	private setDefault():void{
-		var defaultModule: DefaultModule = new DefaultModule("default");
-		this.componentManager.addModule(defaultModule);
-		var beginAction = defaultModule.getAction(DefaultModule.ACTION_BEGIN);
-		this.dispatcher.setBeginAction(beginAction);
-		var finalAction = defaultModule.getAction(DefaultModule.ACTION_FINAL);
-		this.dispatcher.setFinalAction(finalAction);
-		var homeAction = defaultModule.getAction(DefaultModule.ACTION_HOME);
-		this.dispatcher.setHomeAction(homeAction);
-		this.dispatcher.setLastError(defaultModule.errorAction);
 	}
 }
 export = FrontController;

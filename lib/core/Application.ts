@@ -21,10 +21,8 @@ class Application {
 	private dispatcher:Dispatcher;
 	private componentManager:ComponentManager;
 	private dbManager:DbManager;
-	// private router:express.Router;
 
 	constructor(router:express.Router) {
-		// this.router = router;
 		this.logger = new Util.Logger();
 		this.frontController = new FrontController();
 		this.frontController.debug("application:constructor:");
@@ -39,11 +37,20 @@ class Application {
 		viewManager.setDefaultView("horpyna/jade/default");
 		this.frontController.setViewManager(viewManager);
 	}
-	// public setViewClass(viewClass){
-	// 	this.componentManager.setViewClass(viewClass);
-	// }
+	/**
+	 * dpdaje nowy moduł
+	 */
 	public addModule(moduleInstance: Module): Util.Promise<void> {
 		return this.componentManager.addModule(moduleInstance);
+	}
+	/**
+	 * zwraca moduł po nazwie
+	 */
+	public getModule(name:string):Module{
+		return this.componentManager.getModule(name);
+	}
+	public getDispatcher():Dispatcher{
+		return this.dispatcher;
 	}
 	public setDbDefaultConnection(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string){
 		var connection = new Connection(dbType, host, port, dbName, userName, userPassword,"default");
@@ -53,18 +60,10 @@ class Application {
 		this.logger.info("Run Horpyna");
 		this.frontController.debug("application:init:");
 		this.frontController.debug("application:dispatcher.setRouter()");
-		// this.dispatcher.setRouter(this.router);
 		this.frontController.debug("application:frontController.init()");
 		var promise = this.frontController.init();
 		return promise;
 	}
-	/**
-	 * podpinamy pod app.use
-	 */
-	// public getMiddleware():express.Router{
-	// 	this.frontController.debug("application:getMiddleware:");
-	// 	return this.router;
-	// }
 	public getLogger():Util.Logger{
 		return this.logger;
 	}
