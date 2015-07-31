@@ -58,7 +58,7 @@ class SimpleModule extends  Core.Module{
 	/**
 	 * szybkie dodawanie nowego pola, automatycznie dodaje do do wszystkich akcji
 	 */
-	public addField(name:string, type:Core.Action.FormType, validationNameList:Object, isOptional:boolean, options?:Object){
+	public addField(name:string, type:string, validationNameList:Object, isOptional:boolean, options?:Object){
 		options = options || {};
 		isOptional = false;
 		var createField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);

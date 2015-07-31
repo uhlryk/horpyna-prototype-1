@@ -3,6 +3,9 @@ import Request = require("./Request");
 import RouteComponent = require("../../RouteComponent");
 import Field = require("./field/Field");
 import FieldType = require("./field/FieldType");
+import FormInputType = require("./field/FormInputType");
+import IInputForm = require("./IInputForm");
+import IForm = require("./IForm");
 import IActionHandler = require("./IActionHandler");
 import Util = require("./../../../../util/Util");
 
@@ -35,40 +38,54 @@ class FormAction extends BaseAction {
 	 * na podstawie targetAction BODY_FIELD buduje formularz który ma służyć do dodawania wartości dla
 	 * targetAction
 	 */
-	public buildForm(request: Request) {
-		var formContent = new Object();
-		formContent['fields'] = [];
-		formContent['form'] = new Object();
-		formContent['form']['method'] = this.targetAction.getMethod();
-		formContent['form']['buttonName'] = "send";
-		formContent['form']["errorList"] = [];
-		formContent['form']["valid"] = true;
+	public createForm(request: Request): IForm {
+		var form: IForm = <IForm>{};
+		form.method = this.targetAction.getMethod();
+		form.errorList = [];
+		form.valid = true;
 		var bodyFields: Field[] = this.targetAction.getFieldListByType(FieldType.BODY_FIELD);
 		var ownBodyFields: Field[] = this.getFieldListByType(FieldType.BODY_FIELD);
 		bodyFields.push.apply(bodyFields, ownBodyFields);
+		form.fields = [];
 		for (var i = 0; i < bodyFields.length; i++) {
 			var field: Field = bodyFields[i];
-			var inputForm: Object = new Object();
-			inputForm["fieldName"] = field.getFieldName();
-			inputForm["name"] = field.name;
-			inputForm["formType"] = field.formType;
-			inputForm["labelForm"] = field.labelForm;
-			inputForm["value"] = "";
-			inputForm["valid"] = true;
-			inputForm["errorList"] = [];
-			formContent['fields'].push(inputForm);
+			var inputField: IInputForm = this.createInputField(true, field.getFieldName(), FormInputType.TEXT, field.labelForm);
+			form.fields.push(inputField);
 		}
+		var inputField: IInputForm = this.createInputField(false, "submit", FormInputType.SUBMIT, "");
+		form.fields.push(inputField);
 		var paramAppList = request.getParamAppFieldList();
 		var route = this.targetAction.populateRoutePath(paramAppList);
-		formContent['form']['action'] = route;
-		return formContent;
+		form.action = route;
+		return form;
+	}
+	/**
+	 * Tworzy pojedyńcze pole dla formularza
+	 * @param  {boolean}    isBody jeśli false to mamy do czynienia z specjalnym polem typu submit, jeśli true to generowanym z pól
+	 * @param  {string}     name  odpowiada atrybutowi w input
+	 * @param  {string}     type  odpowiada atrybutowi w input
+	 * @param  {string}     label nazwa labela dla inputa
+	 * @return {IInputForm}       zwraca pole dla formularza
+	 */
+	protected createInputField(isBody:boolean, name: string, type: string, label: string): IInputForm {
+		var inputForm: IInputForm = <IInputForm>{};
+		inputForm.isBody = isBody;
+		inputForm.name = name;
+		inputForm.type = type;
+		inputForm.label = label;
+		inputForm.value = "";
+		inputForm.valid = true;
+		inputForm.errorList = [];
+		return inputForm;
 	}
 	/**
 	 * Poniższa konstrukcja pozwoli dodać do responsa formularz, nie psując działania ActionHandlera
 	 */
 	public setActionHandler(actionHandler:IActionHandler){
 		super.setActionHandler((request, response) => {
-			response.setContent(this.buildForm(request));
+			var content = new Object();
+			content['form'] = this.createForm(request)
+			response.content = content;
 			return actionHandler(request, response);
 		});
 	}

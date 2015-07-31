@@ -39,7 +39,7 @@ class Application {
 		var dispatcherError: DispatcherError = new DispatcherError();
 		this._dispatcher.error = dispatcherError;
 
-		viewManager.setDefaultView("horpyna/jade/default");
+		viewManager.defaultView = "horpyna/jade/default";
 	}
 	/**
 	 * dpdaje nowy moduł

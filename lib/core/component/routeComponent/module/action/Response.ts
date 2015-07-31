@@ -16,7 +16,7 @@ class Response{
 	/**
 	 * dane do widoku do zrenderowania, w przypadku json jest to output
 	 */
-	private data:Object;
+	private _data:Object;
 	private expressResponse:express.Response;
 	private _logger: Util.Logger;
 	private _allow: boolean;
@@ -25,7 +25,8 @@ class Response{
 	private _routePath: string;
 	constructor(expressResponse:express.Response){
 		this.status = 200;
-		this.data = new Object();
+		this._data = new Object();
+		this._data['content'] = new Object();
 		this.viewParam = new Object();
 		this.expressResponse = expressResponse;
 		this._routePath = null;
@@ -86,23 +87,26 @@ class Response{
 	public get valid():boolean{
 		return this._valid;
 	}
-	public addView(name:string){
+	public set view(name:string){
 		this.viewParam['view'] = name;
 	}
-	public getView():string{
+	public get view():string{
 		return this.viewParam['view'];
 	}
 	public addValue(name:string, value:any){
-		this.data[name] = value;
+		this._data[name] = value;
 	}
-	public setContent(value:any){
-		this.data['content'] = value;
+	public set content(value:any){
+		this._data['content'] = value;
+	}
+	public get content():any{
+		return this._data['content'];
 	}
 	public getData(name?:string):Object{
 		if(name){
-			return this.data[name];
+			return this._data[name];
 		}
-		return this.data;
+		return this._data;
 	}
 }
 export = Response;

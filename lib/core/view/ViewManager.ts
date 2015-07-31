@@ -16,7 +16,7 @@ class ViewManager{
 	public debug(...args: any[]) {
 		this.debugger.debug(args);
 	}
-	public setDefaultView(view:string){
+	public set defaultView(view:string){
 		this._defaultView = view;
 	}
 	public render(req:express.Request, res:express.Response){
@@ -26,7 +26,7 @@ class ViewManager{
 				this.debug("redirect %s", response.getRedirectUrl());
 				res.redirect(response.getRedirectStatus(), response.getRedirectUrl());
 			} else {
-				var view = response.getView();
+				var view = response.view;
 				this.debug("render %s %s", view, JSON.stringify(response.getData()));
 				res.render(view || this._defaultView, response.getData());
 			}

@@ -4,10 +4,9 @@ block content
 		unless content.form.valid
 			each error in content.form.errorList
 				p #{error}
-		each field in content.fields
-			label(for=field.fieldName) #{field.labelForm}
-			input(type=field.formType name=field.fieldName value=field.value)
+		each field in content.form.fields
+			label(for=field.name) #{field.label}
+			input(type=field.type name=field.name value=field.value?field.value:undefined)
 			unless field.valid
 				each error in field.errorList
 					p #{error}
-		button(type="submit") #{content.form.buttonName}

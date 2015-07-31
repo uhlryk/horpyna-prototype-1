@@ -11,27 +11,27 @@ class ResourceModule extends  SimpleModule{
 	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse){
 		return super.onFormCreateAction(request,response)
 		.then(()=>{
-			var content = response.getData("content");
+			var content = response.content;
+			var form: Core.Action.IForm = content["form"];
+			var fieldList: Core.Action.IInputForm[] = form.fields;
 			var validationResponse: Core.Validator.ValidationResponse = <Core.Validator.ValidationResponse>response.getData("validationError");
-			if (content && content['fields'] && validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
-				content["form"]["valid"] = false;
-				var fieldList: Object[] = content['fields'];
-				var fieldsNumber = fieldList.length;
+			if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
+				form.valid = false;
 				for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
 					var validatorResponse: Core.Validator.ValidatorResponse = validationResponse.responseValidatorList[i];
-					for (var j = 0; j < fieldsNumber; j++) {
-						var field = fieldList[j];
-						if (field["fieldName"] === validatorResponse.field){
-							field["value"] = validatorResponse.value;
-							field["valid"] = validatorResponse.valid;
+					for (var j = 0; j < fieldList.length; j++) {
+						var field:Core.Action.IInputForm = fieldList[j];
+						if (field.name === validatorResponse.field){
+							field.value = validatorResponse.value;
+							field.valid = validatorResponse.valid;
 							if (validatorResponse.valid === false) {
-								field["errorList"] = field["errorList"].concat(validatorResponse.errorList);
+								field.errorList = field.errorList.concat(validatorResponse.errorList);
 							}
 						}
 					}
 				}
 			}
-			response.addView("horpyna/jade/createFormAction");
+			response.view = "horpyna/jade/createFormAction";
 		});
 	}
 	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse){
@@ -49,35 +49,37 @@ class ResourceModule extends  SimpleModule{
 				response.setRedirect(listAction.getRoutePath());
 			} else {
 				model = model.toJSON();
-				var content = response.getData("content");
+				var content = response.content;
+				var form: Core.Action.IForm = content["form"];
+				var fieldList: Core.Action.IInputForm[] = form.fields;
 				var validationResponse: Core.Validator.ValidationResponse = <Core.Validator.ValidationResponse>response.getData("validationError");
-				var fieldList: Object[] = content['fields'];
-				var fieldsNumber = fieldList.length;
-				if (content && fieldList && validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
-					content["form"]["valid"] = false;
+				if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
+					form.valid = false;
 					for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
 						var validatorResponse: Core.Validator.ValidatorResponse = validationResponse.responseValidatorList[i];
-						for (var j = 0; j < fieldsNumber; j++) {
-							var field = fieldList[j];
-							if (field["fieldName"] === validatorResponse.field) {
-								field["value"] = validatorResponse.value;
-								field["valid"] = validatorResponse.valid;
+						for (var j = 0; j < fieldList.length; j++) {
+							var field: Core.Action.IInputForm = fieldList[j];
+							if (field.name === validatorResponse.field) {
+								field.value = validatorResponse.value;
+								field.valid = validatorResponse.valid;
 								if (validatorResponse.valid === false) {
-									field["errorList"] = field["errorList"].concat(validatorResponse.errorList);
+									field.errorList = field.errorList.concat(validatorResponse.errorList);
 								}
 							}
 						}
 					}
 				} else {
-					for (var i = 0; i < fieldsNumber; i++) {
-						var field = fieldList[i];
-						var fieldName = field["fieldName"];
-						var value = model[fieldName];
-						field["value"] = value;
+					for (var i = 0; i < fieldList.length; i++) {
+						var field: Core.Action.IInputForm = fieldList[i];
+						var name = field.name;
+						var value = model[name];
+						if (value) {
+							field.value = value;
+						}
 					}
 				}
 			}
-			response.addView("horpyna/jade/updateFormAction");
+			response.view = "horpyna/jade/updateFormAction";
 		});
 	}
 	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse) {
@@ -95,18 +97,19 @@ class ResourceModule extends  SimpleModule{
 				response.setRedirect(listAction.getRoutePath());
 			} else {
 				model = model.toJSON();
-				var content = response.getData("content");
-				var fieldsNumber = content["fields"].length;
-				if (fieldsNumber) {
-					for (var i = 0; i < fieldsNumber; i++) {
-						var field = content["fields"][i];
-						var fieldName = field["fieldName"];
-						var value = model[fieldName];
-						field["value"] = value;
+				var content = response.content;
+				var form: Core.Action.IForm = content["form"];
+				var fieldList: Core.Action.IInputForm[] = form.fields;
+				for (var i = 0; i < fieldList.length; i++) {
+					var field: Core.Action.IInputForm = fieldList[i];
+					var name = field.name;
+					var value = model[name];
+					if (value) {
+						field.value = value;
 					}
 				}
 			}
-			response.addView("horpyna/jade/deleteFormAction");
+			response.view = "horpyna/jade/deleteFormAction";
 		});
 	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse){
@@ -196,7 +199,7 @@ class ResourceModule extends  SimpleModule{
 				maxLoop = dataLength;
 			}
 			var responseContent = [];
-			response.setContent(responseContent);
+			response.content = responseContent;
 			for (var i = (page - 1) * pageSize; i < maxLoop; i++) {
 				var model = modelList[i];
 				var modelData = model.toJSON();
@@ -206,7 +209,7 @@ class ResourceModule extends  SimpleModule{
 				};
 				responseContent.push(data);
 			}
-			response.addView("horpyna/jade/listAction");
+			response.view = "horpyna/jade/listAction";
 		});
 	}
 	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse){
@@ -229,9 +232,9 @@ class ResourceModule extends  SimpleModule{
 					element: modelData,
 					navigation: this.fieldActionLink(modelData)
 				};
-				response.setContent(data);
+				response.content = data;
 			}
-			response.addView("horpyna/jade/detailAction");
+			response.view = "horpyna/jade/detailAction";
 		});
 	}
 	public onCreateAction (request:Core.ActionRequest,response:Core.ActionResponse){
@@ -243,7 +246,7 @@ class ResourceModule extends  SimpleModule{
 			return create.run();
 		})
 		.then((model)=>{
-			response.setContent(model.toJSON());
+			response.content = model.toJSON();
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
 			response.setRedirect(listAction.getRoutePath());
 		});
@@ -253,7 +256,6 @@ class ResourceModule extends  SimpleModule{
 		.then(() => {
 			var update = new Core.Query.Update();
 			update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-			// update.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
 			var paramAppList = request.getParamAppFieldList();
 			update.populateWhere(paramAppList);
 			update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
@@ -322,7 +324,7 @@ class ResourceModule extends  SimpleModule{
 	/**
  * rozszerza metodę simpleModule o dodawanie kolumn do defaultowego modelu
  */
-	public addField(name: string, type: Core.Action.FormType, validationNameList: Object, isOptional: boolean, options?: Object) {
+	public addField(name: string, type: string, validationNameList: Object, isOptional: boolean, options?: Object) {
 		options = options || {};
 		super.addField(name, type, validationNameList, isOptional, options);
 		var model = this.getDefaultModel();

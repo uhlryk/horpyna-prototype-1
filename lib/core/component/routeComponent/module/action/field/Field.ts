@@ -1,6 +1,6 @@
 import Component = require("../../../../Component");
 import Validator = require("./validator/Validator");
-import FormType = require("./FormType");
+import FormInputType = require("./FormInputType");
 import Util = require("./../../../../../util/Util");
 /**
  * Definiuje pojedyńczy parametr jaki otrzymuje akcja w request.
@@ -13,7 +13,7 @@ class Field extends Component {
 	private type:string;
 	public _optional: boolean;
 	private _labelForm: string;
-	private _formType: FormType;
+	private _formInputType: string;
 	/**
 	 * @param name określa nazwę będącą identyfikatorem komponentu | nazwa parametru otrzymanego z requesta
 	 * @param type url, query, body app
@@ -25,7 +25,7 @@ class Field extends Component {
 		this._optional = false;
 		this.fieldName = fieldName || name;
 		this.labelForm = name;
-		this.formType = FormType.TEXT;
+		this.formType = FormInputType.TEXT;
 	}
 	public set optional(val:boolean){
 		this._optional = val;
@@ -40,16 +40,16 @@ class Field extends Component {
 		return this._labelForm;
 	}
 	/**
-	 * Jakiego typu jest pole na formularzu FormType typ
+	 * Jakiego typu jest pole na formularzu FormInputType typ
 	 */
-	public set formType(v : FormType) {
-		this._formType = v;
+	public set formType(v : string) {
+		this._formInputType = v;
 	}
 	/**
-	 * Jakiego typu jest pole na formularzu FormType typ
+	 * Jakiego typu jest pole na formularzu FormInputType typ
 	 */
-	public get formType() : FormType {
-		return this._formType;
+	public get formType() : string {
+		return this._formInputType;
 	}
 	public setFieldName(fieldName: string) {
 		this.fieldName = fieldName;
