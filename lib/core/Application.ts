@@ -14,11 +14,12 @@ import ComponentManager = require("./component/ComponentManager");
 import Util = require("./util/Util");
 import Module = require("./component/routeComponent/module/Module");
 import ViewManager = require("./view/ViewManager");
+import DispatcherError = require("./dispatcher/DispatcherError");
 class Application {
 	public static MODULE_PATH_NONE: string = "Need 'module path'";
 	private logger:Util.Logger;
 	private frontController:FrontController;
-	private dispatcher:Dispatcher;
+	private _dispatcher:Dispatcher;
 	private componentManager:ComponentManager;
 	private dbManager:DbManager;
 
@@ -26,16 +27,19 @@ class Application {
 		this.logger = new Util.Logger();
 		this.frontController = new FrontController();
 		this.frontController.debug("application:constructor:");
-		this.dispatcher = new Dispatcher(router);
+		this._dispatcher = new Dispatcher(router);
 		this.componentManager = new ComponentManager();
 		this.dbManager = new DbManager();
 		this.frontController.setLogger(this.logger);
-		this.frontController.setDispatcher(this.dispatcher);
+		this.frontController.setDispatcher(this._dispatcher);
 		this.frontController.setComponentManager(this.componentManager);
 		this.frontController.setDbManager(this.dbManager);
 		var viewManager = new ViewManager();
-		viewManager.setDefaultView("horpyna/jade/default");
 		this.frontController.setViewManager(viewManager);
+		var dispatcherError: DispatcherError = new DispatcherError();
+		this._dispatcher.error = dispatcherError;
+
+		viewManager.setDefaultView("horpyna/jade/default");
 	}
 	/**
 	 * dpdaje nowy moduł
@@ -49,8 +53,8 @@ class Application {
 	public getModule(name:string):Module{
 		return this.componentManager.getModule(name);
 	}
-	public getDispatcher():Dispatcher{
-		return this.dispatcher;
+	public get dispatcher():Dispatcher{
+		return this._dispatcher;
 	}
 	public setDbDefaultConnection(dbType:string, host:string, port:number, dbName:string, userName:string, userPassword:string){
 		var connection = new Connection(dbType, host, port, dbName, userName, userPassword,"default");

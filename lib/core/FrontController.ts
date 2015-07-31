@@ -1,5 +1,5 @@
 import Dispatcher = require("./dispatcher/Dispatcher");
-import DispatcherError = require("./dispatcher/DispatcherError");
+
 import ComponentManager = require("./component/ComponentManager");
 import DbManager = require("./dbManager/DbManager");
 import Module = require("./component/routeComponent/module/Module");
@@ -68,11 +68,8 @@ class FrontController {
 		this.debug("front:set ActionHome()");
 		var homeAction = defaultModule.getAction(SystemModule.ACTION_HOME);
 		this.dispatcher.setHomeAction(homeAction);
-		this.debug("front:set DispatcherError()");
-		var dispatcherError: DispatcherError = new DispatcherError();
-		dispatcherError.logger = this.logger;
-		this.dispatcher.error = dispatcherError;
 
+		this.dispatcher.error.logger = this.logger;
 		this.dbManager.logger = this.logger;
 		this.dispatcher.logger = this.logger;
 		this.dispatcher.viewManager = this.viewManager;
