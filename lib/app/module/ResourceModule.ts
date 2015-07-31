@@ -39,7 +39,6 @@ class ResourceModule extends  SimpleModule{
 								field["valid"] = validatorResponse.valid;
 								if (validatorResponse.valid === false) {
 									field["errorList"] = field["errorList"].concat(validatorResponse.errorList);
-									content["form"]["errorList"] = content["form"]["errorList"].concat(validatorResponse.errorList);
 								}
 							}
 						}

@@ -27,8 +27,7 @@ class ViewManager{
 				res.redirect(response.getRedirectStatus(), response.getRedirectUrl());
 			} else {
 				var view = response.getView();
-				this.debug("render %s", view);
-				this.debug(response.getData());
+				this.debug("render %s %s", view, JSON.stringify(response.getData()));
 				res.render(view || this._defaultView, response.getData());
 			}
 		} else{
@@ -38,8 +37,7 @@ class ViewManager{
 					status: response.getRedirectStatus()
 				});
 			}
-			this.debug("json");
-			this.debug(response.getData());
+			this.debug("json %s", JSON.stringify(response.getData()));
 			res.status(response.status).send(response.getData());
 		}
 	}

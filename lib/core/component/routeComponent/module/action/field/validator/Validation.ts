@@ -91,9 +91,8 @@ class Validation{
 						if (response.valid === false) {
 							this.debug(response.valid);
 							this.validationResponse.valid = false;
-							this.validationResponse.responseValidatorList.push(response);
 						}
-						//nie ma błędów ale przechowujemy co było walidowane i przez jaki walidator <- przy wyświetlaniu formularza będzie potrzebne
+						//nawet jeśli nie ma błędów co było walidowane i przez jaki walidator <- przy wyświetlaniu formularza będzie potrzebne
 						this.validationResponse.responseValidatorList.push(response);
 					});
 				});
