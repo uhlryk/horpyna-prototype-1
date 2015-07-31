@@ -19,30 +19,18 @@ class ResourceModule extends  SimpleModule{
 				content["form"]["valid"] = false;
 				var fieldList: Object[] = content['fields'];
 				var fieldsNumber = fieldList.length;
-				/**
-				 * zwrócony formularz część danych ma poprawnych więc wypełniamy go danymi wysłanymi
-				 */
-				// for (var j = 0; j < fieldsNumber; j++) {
-				// 	var field = fieldList[j];
-				// 	field["value"] = request.getField(Core.FieldType.BODY_FIELD, field["fieldName"]);
-				// }
-				/**
-				 * wypełniamy błędy - można to dodać do ciała wcześniejszej pętli
-				 */
 				for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
 					var validatorResponse: Core.Validator.ValidatorResponse = validationResponse.responseValidatorList[i];
-					// if (validatorResponse.valid === false){
-						for (var j = 0; j < fieldsNumber; j++) {
-							var field = fieldList[j];
-							if (field["fieldName"] === validatorResponse.field){
-								field["value"] = validatorResponse.value;
-								field["valid"] = validatorResponse.valid;
-								if (validatorResponse.valid === false) {
-									field["errorList"] = field["errorList"].concat(validatorResponse.errorList);
-								}
+					for (var j = 0; j < fieldsNumber; j++) {
+						var field = fieldList[j];
+						if (field["fieldName"] === validatorResponse.field){
+							field["value"] = validatorResponse.value;
+							field["valid"] = validatorResponse.valid;
+							if (validatorResponse.valid === false) {
+								field["errorList"] = field["errorList"].concat(validatorResponse.errorList);
 							}
 						}
-					// }
+					}
 				}
 			}
 			response.addView("horpyna/jade/createFormAction");
@@ -67,10 +55,27 @@ class ResourceModule extends  SimpleModule{
 			} else {
 				model = model.toJSON();
 				var content = response.getData("content");
-				var fieldsNumber = content["fields"].length;
-				if (fieldsNumber) {
+				var validationResponse: Core.Validator.ValidationResponse = <Core.Validator.ValidationResponse>response.getData("validationError");
+				var fieldList: Object[] = content['fields'];
+				var fieldsNumber = fieldList.length;
+				if (content && fieldList && validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
+					content["form"]["valid"] = false;
+					for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
+						var validatorResponse: Core.Validator.ValidatorResponse = validationResponse.responseValidatorList[i];
+						for (var j = 0; j < fieldsNumber; j++) {
+							var field = fieldList[j];
+							if (field["fieldName"] === validatorResponse.field) {
+								field["value"] = validatorResponse.value;
+								field["valid"] = validatorResponse.valid;
+								if (validatorResponse.valid === false) {
+									field["errorList"] = field["errorList"].concat(validatorResponse.errorList);
+								}
+							}
+						}
+					}
+				} else {
 					for (var i = 0; i < fieldsNumber; i++) {
-						var field = content["fields"][i];
+						var field = fieldList[i];
 						var fieldName = field["fieldName"];
 						var value = model[fieldName];
 						field["value"] = value;

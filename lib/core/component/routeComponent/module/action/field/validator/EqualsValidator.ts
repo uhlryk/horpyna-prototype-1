@@ -16,10 +16,7 @@ class EqualsValidator extends BaseValidator {
 		if (Util.ValidatorList.equals(value, this.comparison)){
 			return true;
 		}
-		response.errorList = [{
-			formatter: this.getErrorMessage(),
-			args: [this.comparison]
-		}];
+		response.errorList = [Util.NodeUtil.format(this.getErrorMessage(), this.comparison)];
 		return false;
 	}
 }

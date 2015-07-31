@@ -22,29 +22,21 @@ class IsIntValidator extends BaseValidator {
 			if (Util.ValidatorList[method](value, { min:this.min, max:this.max })) {
 				return true
 			} else {
-				response.errorList = [{
-					formatter: this.getErrorMessage(this.messageMinMax),
-					args: [this.min, this.max]
-				}];
+				response.errorList = [Util.NodeUtil.format(this.getErrorMessage(this.messageMinMax), this.min, this.max)];
 				return false;
 			}
 		} else if (this.min) {
 			if (Util.ValidatorList[method](value, { min: this.min })) {
 				return true
 			} else {
-				response.errorList = [{
-					formatter: this.getErrorMessage(this.messageMin),
-					args: [this.min]
-				}];
+				response.errorList = [Util.NodeUtil.format(this.getErrorMessage(this.messageMin), this.min)];
 				return false;
 			}
 		} else {
 			if (Util.ValidatorList[method](value)) {
 				return true
 			} else {
-				response.errorList = [{
-					formatter: this.getErrorMessage(),
-				}];
+				response.errorList = [Util.NodeUtil.format(this.getErrorMessage())];
 				return false;
 			}
 		}

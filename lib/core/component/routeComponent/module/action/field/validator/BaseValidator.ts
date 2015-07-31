@@ -1,6 +1,5 @@
 import Component = require("../../../../../Component");
 import ValidatorResponse = require("./ValidatorResponse");
-import ValidatorError = require("./ValidatorError");
 import Field = require("./../Field");
 /**
  * Pojedyńczy walidator. podpina się jego instancję pod Field

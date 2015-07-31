@@ -1,3 +1,4 @@
+import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./ValidatorResponse");
 import BaseValidator = require("./BaseValidator");
 /**
@@ -16,16 +17,10 @@ class IsStringLengthValidator extends BaseValidator {
 	}
 	protected setIsValid(value: any, data: Object, response: ValidatorResponse): boolean {
 		if (value.length < this.min){
-			response.errorList = [{
-				formatter: this.getErrorMessage(this.messageMin),
-				args: [this.min]
-			}];
+			response.errorList = [Util.NodeUtil.format(this.getErrorMessage(this.messageMin), this.min)];
 			return false;
 		} else if (typeof this.max !== 'undefined' && value.length > this.max) {
-			response.errorList = [{
-				formatter: this.getErrorMessage(this.messageMax),
-				args: [this.max]
-			}];
+			response.errorList = [Util.NodeUtil.format(this.getErrorMessage(this.messageMax), this.max)];
 			return false;
 		}
 		return true;

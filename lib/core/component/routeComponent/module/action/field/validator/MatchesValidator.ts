@@ -18,10 +18,7 @@ class MatchesValidator extends BaseValidator {
 		if (Util.ValidatorList.matches(value, this.pattern, this.modifiers)){
 			return true;
 		}
-		response.errorList = [{
-			formatter: this.getErrorMessage(),
-			args: [this.pattern]
-		}];
+		response.errorList = [Util.NodeUtil.format(this.getErrorMessage())];
 		return false;
 	}
 }

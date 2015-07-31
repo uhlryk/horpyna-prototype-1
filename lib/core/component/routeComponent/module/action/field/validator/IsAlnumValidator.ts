@@ -14,9 +14,7 @@ class IsAlnumValidator extends BaseValidator {
 		if (Util.ValidatorList.isAlphanumeric(value)){
 			return true;
 		}
-		response.errorList = [{
-			formatter: this.getErrorMessage(),
-		}];
+		response.errorList = [Util.NodeUtil.format(this.getErrorMessage())];
 		return false;
 	}
 }

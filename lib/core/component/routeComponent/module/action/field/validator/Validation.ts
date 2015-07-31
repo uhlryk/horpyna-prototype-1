@@ -58,9 +58,7 @@ class Validation{
 					validator:"NotEmptyValidator",
 					value: value,
 					field: field.getFieldName(),
-					errorList: [{
-						formatter: "Value is required and can't be empty"
-					}]
+					errorList: ["Value is required and can't be empty"]
 				});
 			} else {
 				if (value === undefined) value = null;

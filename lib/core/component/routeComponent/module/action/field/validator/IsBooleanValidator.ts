@@ -14,9 +14,7 @@ class IsBooleanValidator extends BaseValidator {
 		if (Util.ValidatorList['isBoolean'](value)) {
 			return true;
 		}
-		response.errorList = [{
-			formatter: this.getErrorMessage(),
-		}];
+		response.errorList = [Util.NodeUtil.format(this.getErrorMessage())];
 		return false;
 	}
 }

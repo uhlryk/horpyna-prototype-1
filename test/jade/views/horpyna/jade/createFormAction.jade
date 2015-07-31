@@ -3,11 +3,11 @@ block content
 	form(method=content.form.method action=content.form.action)
 		unless content.form.valid
 			each error in content.form.errorList
-				p #{error.formatter}
+				p #{error}
 		each field in content.fields
 			label(for=field.fieldName) #{field.labelForm}
 			input(type=field.formType name=field.fieldName value=field.value)
 			unless field.valid
 				each error in field.errorList
-					p #{error.formatter}
+					p #{error}
 		button(type="submit") #{content.form.buttonName}

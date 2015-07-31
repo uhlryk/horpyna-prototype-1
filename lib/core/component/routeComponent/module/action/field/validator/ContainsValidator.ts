@@ -16,10 +16,7 @@ class ContainsValidator extends BaseValidator {
 		if (Util.ValidatorList.contains(value, this.seed)){
 			return true;
 		}
-		response.errorList = [{
-			formatter: this.getErrorMessage(),
-			args: [this.seed]
-		}];
+		response.errorList = [Util.NodeUtil.format(this.getErrorMessage(), this.seed)];
 		return false;
 	}
 }
