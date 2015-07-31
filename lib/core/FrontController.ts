@@ -1,6 +1,7 @@
 import Dispatcher = require("./dispatcher/Dispatcher");
-
 import ComponentManager = require("./component/ComponentManager");
+import CatchPromiseManager = require("./catchPromise/CatchPromiseManager");
+import FinalInitCatchPromise = require("./catchPromise/FinalInitCatchPromise");
 import DbManager = require("./dbManager/DbManager");
 import Module = require("./component/routeComponent/module/Module");
 import SystemModule = require("./component/routeComponent/module/SystemModule");
@@ -77,8 +78,15 @@ class FrontController {
 		this.debug("front:dbManager.init()");
 		this.dbManager.init();
 		this.componentManager.logger = this.logger;
+
+		var catchPromiseManager = new CatchPromiseManager();
+		catchPromiseManager.logger = this.logger;
+		var finalCatch = new FinalInitCatchPromise();
+		catchPromiseManager.addCatch(finalCatch, true);
 		this.debug("front:componentManager.init()");
-		return this.componentManager.init();
+		var initPromise = this.componentManager.init();
+		initPromise = catchPromiseManager.catchToPromise(initPromise);
+		return initPromise;
 	}
 }
 export = FrontController;

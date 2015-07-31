@@ -168,6 +168,7 @@ class BaseAction extends RouteComponent {
 			doneAction();
 		})
 		.catch((err)=>{
+			console.log("AA");
 			this.logger.error(err);
 			this.debug("error");
 			response.setStatus(500);
