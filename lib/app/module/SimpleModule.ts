@@ -24,30 +24,30 @@ class SimpleModule extends  Core.Module{
 		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
 		sizeField.optional = true;
 		listAction.addField(sizeField);
-		listAction.setActionHandler((request, response, done)=>{this.onListAction(request, response, done);});
+		listAction.setActionHandler((request, response) => { return this.onListAction(request, response);});
 
 		var createAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_CREATE);
 		this.addAction(createAction);
-		createAction.setActionHandler((request, response, done)=>{this.onCreateAction(request, response, done);});
-		createAction.setFormActionHandler((request, response, done) => { this.onFormCreateAction(request, response, done); });
+		createAction.setActionHandler((request, response) => { return this.onCreateAction(request, response);});
+		createAction.setFormActionHandler((request, response) => { return this.onFormCreateAction(request, response); });
 
 		var detailAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(detailAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
 		detailAction.addField(idField);
-		detailAction.setActionHandler((request, response, done)=>{this.onDetailAction(request, response, done);});
+		detailAction.setActionHandler((request, response) => { return this.onDetailAction(request, response);});
 
 		var updateAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_UPDATE);
 		updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(updateAction);
-		updateAction.setActionHandler((request, response, done) => { this.onUpdateAction(request, response, done); });
-		updateAction.setFormActionHandler((request, response, done) => { this.onFormUpdateAction(request, response, done); });
+		updateAction.setActionHandler((request, response) => { return this.onUpdateAction(request, response); });
+		updateAction.setFormActionHandler((request, response) => { return this.onFormUpdateAction(request, response); });
 
 		var deleteAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_DELETE);
 		deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(deleteAction);
-		deleteAction.setActionHandler((request, response, done) => { this.onDeleteAction(request, response, done); });
-		deleteAction.setFormActionHandler((request, response, done) => { this.onFormDeleteAction(request, response, done); });
+		deleteAction.setActionHandler((request, response) => { return this.onDeleteAction(request, response); });
+		deleteAction.setFormActionHandler((request, response) => { return this.onFormDeleteAction(request, response); });
 
 		var navigationEvent = new Core.Event.Action.OnFinish();
 		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
@@ -92,14 +92,14 @@ class SimpleModule extends  Core.Module{
 			}
 		}
 	}
-	public onListAction (request, response, done){done();}
-	public onDetailAction (request, response, done){done();}
-	public onFormCreateAction(request:Core.ActionRequest, response: Core.ActionResponse, done) {done();}
-	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){done();}
-	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, done) {done();}
- 	public onCreateAction (request, response, done){done();}
-	public onUpdateAction (request, response, done){done();}
-	public onDeleteAction (request, response, done){done();}
+	public onListAction (request, response) { return Core.Util.Promise.resolve();}
+	public onDetailAction (request, response) { return Core.Util.Promise.resolve();}
+	public onFormCreateAction(request, response) { return Core.Util.Promise.resolve();}
+	public onFormUpdateAction (request, response) { return Core.Util.Promise.resolve();}
+	public onFormDeleteAction(request, response) { return Core.Util.Promise.resolve();}
+ 	public onCreateAction (request, response) { return Core.Util.Promise.resolve();}
+	public onUpdateAction (request, response) { return Core.Util.Promise.resolve();}
+	public onDeleteAction (request, response) { return Core.Util.Promise.resolve();}
 	/**
 	 * Callback na event navigationEvent
 	 * Odpala się dla wszystkich akcji tego modułu.

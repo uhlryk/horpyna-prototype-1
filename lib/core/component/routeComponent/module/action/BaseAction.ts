@@ -135,8 +135,7 @@ class BaseAction extends RouteComponent {
 			if (validationResponse.valid === false){
 				response.addValue("validationError",validationResponse);
 				response.setStatus(422);
-				//tu powinniśmy chyba zrobić przekierowanie do miejsca które wywołało formularz
-				response.allow = false;
+ 				response.allow = false;
 				response.valid = false;
 			}
 		})
@@ -147,16 +146,13 @@ class BaseAction extends RouteComponent {
 		})
 		.then(() => {
 			if (response.allow === false) return;
-			return new Util.Promise<void>((resolve:()=>void)=> {
-				this.debug("action: check actionHandler if exist");
-				if (this.actionHandler) {
-					this.debug("action: actionHandler exist");
-					this.actionHandler(request, response, resolve);
-				} else {
-					this.debug("action: actionHandler not exist");
-					resolve();
-				}
-			})
+			this.debug("action: check actionHandler if exist");
+			if (this.actionHandler) {
+				this.debug("action: actionHandler exist");
+				return this.actionHandler(request, response);
+			} else {
+				this.debug("action: actionHandler not exist");
+			}
 		})
 		.then(() => {
 			if (response.allow === false) return;

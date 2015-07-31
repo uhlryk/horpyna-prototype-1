@@ -8,10 +8,8 @@ class ResourceModule extends  SimpleModule{
 		var resourceModel = new Core.Model(ResourceModule.RESOURCE_MODEL);
 		this.addModel(resourceModel, true);
 	}
-	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
-		new Core.Util.Promise<void>((resolve:()=>void)=>{
-			super.onFormCreateAction(request,response,resolve);
-		})
+	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse){
+		return super.onFormCreateAction(request,response)
 		.then(()=>{
 			var content = response.getData("content");
 			var validationResponse: Core.Validator.ValidationResponse = <Core.Validator.ValidationResponse>response.getData("validationError");
@@ -34,13 +32,10 @@ class ResourceModule extends  SimpleModule{
 				}
 			}
 			response.addView("horpyna/jade/createFormAction");
-			done();
 		});
 	}
-	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse, done){
-		new Core.Util.Promise<void>((resolve: () => void) => {
-			super.onFormUpdateAction(request, response, resolve);
-		})
+	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse){
+		return super.onFormUpdateAction(request, response)
 		.then(() => {
 			var find = new Core.Query.Find();
 			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
@@ -83,42 +78,38 @@ class ResourceModule extends  SimpleModule{
 				}
 			}
 			response.addView("horpyna/jade/updateFormAction");
-			done();
 		});
 	}
-	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, done) {
-		new Core.Util.Promise<void>((resolve: () => void) => {
-			super.onFormDeleteAction(request, response, resolve);
+	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse) {
+		return super.onFormDeleteAction(request, response)
+		.then(() => {
+			var find = new Core.Query.Find();
+			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+			var paramAppList = request.getParamAppFieldList();
+			find.populateWhere(paramAppList);
+			return find.run();
 		})
-			.then(() => {
-				var find = new Core.Query.Find();
-				find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-				var paramAppList = request.getParamAppFieldList();
-				find.populateWhere(paramAppList);
-				return find.run();
-			})
-			.then((model) => {
-				if (!model) {
-					var listAction = this.getAction(SimpleModule.ACTION_LIST);
-					response.setRedirect(listAction.getRoutePath());
-				} else {
-					model = model.toJSON();
-					var content = response.getData("content");
-					var fieldsNumber = content["fields"].length;
-					if (fieldsNumber) {
-						for (var i = 0; i < fieldsNumber; i++) {
-							var field = content["fields"][i];
-							var fieldName = field["fieldName"];
-							var value = model[fieldName];
-							field["value"] = value;
-						}
+		.then((model) => {
+			if (!model) {
+				var listAction = this.getAction(SimpleModule.ACTION_LIST);
+				response.setRedirect(listAction.getRoutePath());
+			} else {
+				model = model.toJSON();
+				var content = response.getData("content");
+				var fieldsNumber = content["fields"].length;
+				if (fieldsNumber) {
+					for (var i = 0; i < fieldsNumber; i++) {
+						var field = content["fields"][i];
+						var fieldName = field["fieldName"];
+						var value = model[fieldName];
+						field["value"] = value;
 					}
 				}
-				response.addView("horpyna/jade/deleteFormAction");
-				done();
-			});
+			}
+			response.addView("horpyna/jade/deleteFormAction");
+		});
 	}
-	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
+	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse){
 		var rawOrder = request.getField(Core.FieldType.QUERY_FIELD, 'order');
 		var page = request.getField(Core.FieldType.QUERY_FIELD, 'page');
 		var pageSize = request.getField(Core.FieldType.QUERY_FIELD, 'size');
@@ -126,47 +117,49 @@ class ResourceModule extends  SimpleModule{
 		var baseUri = Core.Util.Uri.updateQuery(listAction.getRoutePath(true), "order", rawOrder);
 		baseUri = Core.Util.Uri.updateQuery(baseUri, "page", page);
 		baseUri = Core.Util.Uri.updateQuery(baseUri, "size", pageSize);
-
-		var list = new Core.Query.List();
-		var model = this.getDefaultModel();
-		var columnNameList = model.getColumnNameList();
-		var order = [];
-		if (rawOrder) {
-			var orderList = rawOrder.split(",");
-			var length = orderList.length;
-			if (length > 0) {
-				order = [];
-				for (var i = 0; i < length; i++) {
-					var elem = orderList[i].split("-");
-					order.push(elem);
-					elem[1] = elem[1].toUpperCase();
-				}
-			}
-		}
-		var orderLength = order.length;
-		var columnLink = [];
-		response.addValue("orderLink", columnLink);
-		for (var i =0; i < columnNameList.length; i++){
-			var columnName = columnNameList[i];
-			var direction = "DESC";
-			for (var j = 0; j < orderLength; j++){
-				var orderElement = order[j];
-				if(orderElement[0] === columnName){
-					if (orderElement[1] === "DESC") {
-						direction = "ASC";
+		return super.onListAction(request, response)
+		.then(() => {
+			var list = new Core.Query.List();
+			var model = this.getDefaultModel();
+			var columnNameList = model.getColumnNameList();
+			var order = [];
+			if (rawOrder) {
+				var orderList = rawOrder.split(",");
+				var length = orderList.length;
+				if (length > 0) {
+					order = [];
+					for (var i = 0; i < length; i++) {
+						var elem = orderList[i].split("-");
+						order.push(elem);
+						elem[1] = elem[1].toUpperCase();
 					}
 				}
 			}
-			columnLink.push({
-				link: Core.Util.Uri.updateQuery(baseUri, "order", columnName + "-" + direction),
-				name:columnName,
-			});
-		}
-		list.setModel(model);
-		var paramAppList = request.getParamAppFieldList();
-		list.populateWhere(paramAppList);
-		list.setOrder(order);
-		list.run()
+			var orderLength = order.length;
+			var columnLink = [];
+			response.addValue("orderLink", columnLink);
+			for (var i = 0; i < columnNameList.length; i++) {
+				var columnName = columnNameList[i];
+				var direction = "DESC";
+				for (var j = 0; j < orderLength; j++) {
+					var orderElement = order[j];
+					if (orderElement[0] === columnName) {
+						if (orderElement[1] === "DESC") {
+							direction = "ASC";
+						}
+					}
+				}
+				columnLink.push({
+					link: Core.Util.Uri.updateQuery(baseUri, "order", columnName + "-" + direction),
+					name: columnName,
+				});
+			}
+			list.setModel(model);
+			var paramAppList = request.getParamAppFieldList();
+			list.populateWhere(paramAppList);
+			list.setOrder(order);
+			return list.run();
+		})
 		.then((modelList)=>{
 			var pagination = {};
 			response.addValue("pagination", pagination);
@@ -214,16 +207,17 @@ class ResourceModule extends  SimpleModule{
 				responseContent.push(data);
 			}
 			response.addView("horpyna/jade/listAction");
-			done();
 		});
 	}
-	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
-		var find = new Core.Query.Find();
-		find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		// find.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
-		var paramAppList = request.getParamAppFieldList();
-		find.populateWhere(paramAppList);
-		find.run()
+	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse){
+		return super.onDetailAction(request, response)
+		.then(()=>{
+			var find = new Core.Query.Find();
+			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+			var paramAppList = request.getParamAppFieldList();
+			find.populateWhere(paramAppList);
+			return find.run();
+		})
 		.then((model)=>{
 			if (!model) {
 				var listAction = this.getAction(SimpleModule.ACTION_LIST);
@@ -238,46 +232,51 @@ class ResourceModule extends  SimpleModule{
 				response.setContent(data);
 			}
 			response.addView("horpyna/jade/detailAction");
-			done();
 		});
 	}
-	public onCreateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
-		var create = new Core.Query.Create();
-		create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		create.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
-		create.run()
+	public onCreateAction (request:Core.ActionRequest,response:Core.ActionResponse){
+		return super.onCreateAction(request, response)
+		.then(() => {
+			var create = new Core.Query.Create();
+			create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+			create.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
+			return create.run();
+		})
 		.then((model)=>{
 			response.setContent(model.toJSON());
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
 			response.setRedirect(listAction.getRoutePath());
-			done(model.toJSON());
 		});
 	}
-	public onUpdateAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
-		var update = new Core.Query.Update();
-		update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		// update.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
-		var paramAppList = request.getParamAppFieldList();
-		update.populateWhere(paramAppList);
-		update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
-		update.run()
+	public onUpdateAction (request:Core.ActionRequest,response:Core.ActionResponse){
+		return super.onUpdateAction(request, response)
+		.then(() => {
+			var update = new Core.Query.Update();
+			update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+			// update.where("id", request.getField(Core.FieldType.PARAM_FIELD, 'id'));
+			var paramAppList = request.getParamAppFieldList();
+			update.populateWhere(paramAppList);
+			update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
+			return update.run();
+		})
 		.then(()=>{
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
 			response.setRedirect(listAction.getRoutePath());
-			done();
 		});
 	}
-	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse, done){
-		var deleteQuery = new Core.Query.Delete();
-		deleteQuery.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-		var paramAppList = request.getParamAppFieldList();
-		console.log(paramAppList);
-		deleteQuery.populateWhere(paramAppList);
-		deleteQuery.run()
+	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse){
+		return super.onDeleteAction(request, response)
+		.then(() => {
+			var deleteQuery = new Core.Query.Delete();
+			deleteQuery.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
+			var paramAppList = request.getParamAppFieldList();
+			console.log(paramAppList);
+			deleteQuery.populateWhere(paramAppList);
+			return deleteQuery.run();
+		})
 		.then(()=>{
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
 			response.setRedirect(listAction.getRoutePath());
-			done();
 		});
 	}
 	/**

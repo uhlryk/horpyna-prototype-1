@@ -2,6 +2,7 @@
 import express = require("express");
 import Module = require("./Module");
 import Action = require("./action/Action");
+import Util = require("../../../util/Util");
 /**
  * Moduł systemowy który zawiera akcję Begin, Home i Final
  */
@@ -13,33 +14,33 @@ class SystemModule extends  Module{
 		super.onConstructor();
 		var beginAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, SystemModule.ACTION_BEGIN);
 		this.addAction(beginAction);
-		beginAction.setActionHandler((request, response, done) => {
-			this.onBeginAction(request, response, done);
+		beginAction.setActionHandler((request, response) => {
+			return this.onBeginAction(request, response);
 		});
 		var finalAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, SystemModule.ACTION_FINAL);
 		this.addAction(finalAction);
-		finalAction.setActionHandler((request, response, done) => {
-			this.onFinalAction(request, response, done);
+		finalAction.setActionHandler((request, response) => {
+			return this.onFinalAction(request, response);
 		});
 		var homeAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, SystemModule.ACTION_HOME);
 		this.addAction(homeAction);
-		homeAction.setActionHandler((request, response, done) => {
-			this.onHomeAction(request, response, done);
+		homeAction.setActionHandler((request, response) => {
+			return this.onHomeAction(request, response);
 		});
 	}
-	protected onBeginAction(request: Action.Request, response: Action.Response, done) {
-		done();
+	protected onBeginAction(request: Action.Request, response: Action.Response): Util.Promise<void> {
+		return Util.Promise.resolve();
 	}
-	protected onFinalAction(request: Action.Request, response: Action.Response, done) {
+	protected onFinalAction(request: Action.Request, response: Action.Response): Util.Promise<void> {
 		if (response){
 			if(response.routePath === null){
 				response.setStatus(404);
 			}
 		}
-		done();
+		return Util.Promise.resolve();
 	}
-	protected onHomeAction(request: Action.Request, response: Action.Response, done) {
-		done();
+	protected onHomeAction(request: Action.Request, response: Action.Response): Util.Promise<void> {
+		return Util.Promise.resolve();
 	}
 }
 export = SystemModule;
