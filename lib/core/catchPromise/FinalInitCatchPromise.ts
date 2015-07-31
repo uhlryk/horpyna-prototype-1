@@ -1,8 +1,11 @@
 import CatchPromise = require("./CatchPromise");
 
 class FinalInitCatchPromise extends CatchPromise{
-	protected catchHandler(error) {
-		this.logger.error(error);
+	public getCatchHandler(data?:any){
+		return (err)=>{
+			this.logger.error(err);
+
+		};
 	}
 }
 export = FinalInitCatchPromise;

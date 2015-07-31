@@ -19,10 +19,12 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			// myApp.setViewClass(Core.View.JadeView);
 			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
 			module1.addAction(action1);
-			action1.setActionHandler(function (request, response, done) {
-				response.addView("index");
-				response.addValue("title", "mój tytuł");
-				done();
+			action1.setActionHandler(function (request, response) {
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					response.addView("index");
+					response.addValue("title", "mój tytuł");
+				});
 			});
 			myApp.init().then(function () {
 				done();

@@ -23,23 +23,38 @@ class CatchPromiseManager{
 	 * @param {CatchPromise}   v      [description]
 	 * @param {boolean} isFinal oznacza że będzie to ostatni catch
 	 */
-	public addCatch(v: CatchPromise, isFinal: boolean) {
-		v.logger = this.logger;
+	public addCatch(v: CatchPromise, isFinal?: boolean) {
 		if (isFinal === true) {
 			this._finalCatch = v;
 		} else {
 			this._catchList.push(v);
 		}
 	}
-	public catchToPromise(promise: Util.Promise<any>): Util.Promise<any> {
+	public getCatchList():CatchPromise[]{
+		return this._catchList
+	}
+	public getFinalCatch():CatchPromise{
+		return this._finalCatch;
+	}
+	public init(){
+		var length = this._catchList.length;
+		for (var i = 0; i < length; i++) {
+			var catchPromise: CatchPromise = this._catchList[i];
+			catchPromise.logger = this.logger
+		}
+		if (this._finalCatch){
+			this._finalCatch.logger = this.logger;
+		}
+	}
+	public catchToPromise(promise: Util.Promise<any>, data?:any): Util.Promise<any> {
 		var length = this._catchList.length;
 		for (var i = 0; i < length; i++){
 			var catchPromise:CatchPromise = this._catchList[i];
-			var handler = catchPromise.getCatchHandler();
+			var handler = catchPromise.getCatchHandler(data);
 			promise = promise.catch(handler);
 		}
 		if (this._finalCatch){
-			var handler = this._finalCatch.getCatchHandler();
+			var handler = this._finalCatch.getCatchHandler(data);
 			promise = promise.catch(handler);
 		}
 		return promise;

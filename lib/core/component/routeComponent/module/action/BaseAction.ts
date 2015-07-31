@@ -119,7 +119,7 @@ class BaseAction extends RouteComponent {
 	public requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
 		this.debug("action:publish():OnBegin");
-		Util.Promise.resolve()
+		var requestPromise = Util.Promise.resolve()
 		.then(() => {
 			if (response.allow === false) return;
 			return this.publish(request, response, Event.Action.OnBegin.EVENT_NAME)
@@ -162,13 +162,11 @@ class BaseAction extends RouteComponent {
 		.then(() => {
 			this.debug("action:finish");
 			doneAction();
-		})
-		.catch((err)=>{
-			console.log("AA");
-			this.logger.error(err);
-			this.debug("error");
-			response.setStatus(500);
-			doneAction();
+		});
+		this.componentManager.actionCatchPromiseManager.catchToPromise(requestPromise, {
+			request:request,
+			response:response,
+			done: doneAction
 		});
 	}
 	public getRequestHandler(){

@@ -122,7 +122,9 @@ class Component{
 		 * znaczy że rodzic jest już zainicjowany, więc może się ten moduł sam zainicjować
 		 */
 		if(this.parent.isInit === true){
-			return this.init();
+			var initPromise = this.init();
+			initPromise = this.componentManager.initCatchPromiseManager.catchToPromise(initPromise);
+			return initPromise;
 		}
 		return Util.Promise.resolve();
 	}

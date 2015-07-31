@@ -2,7 +2,10 @@ import Action = require("./routeComponent/module/action/Action");
 import Module = require("./routeComponent/module/Module");
 import Component = require("./Component");
 import Util = require("../util/Util");
-// import View = require("../view/View");
+import CatchPromiseManager = require("../catchPromise/CatchPromiseManager");
+import CatchPromise = require("../catchPromise/CatchPromise");
+import FinalActionCatchPromise = require("../catchPromise/FinalActionCatchPromise");
+import FinalInitCatchPromise = require("../catchPromise/FinalInitCatchPromise");
 import Dispatcher = require("../dispatcher/Dispatcher");
 import DbManager = require("../dbManager/DbManager");
 class ComponentManager extends Component{
@@ -11,28 +14,25 @@ class ComponentManager extends Component{
 
 	private _dispatcher: Dispatcher;
 	private _dbManager: DbManager;
+	private _actionCatchPromiseManager: CatchPromiseManager;
+	private _initCatchPromiseManager: CatchPromiseManager;
 	private moduleList:Module[];
-	/**
-	 * Ustawiamy moduł który będzie defaultowy dla route i nie będzie dodawał się do path
-	 * Możemy więc przez jakiś moduł mieć dostęp do "/"
-	 * @deprecated będziemy rezygnować z defaultowych modułów do skrócenia ścieżki. To ma być robione jawnie
-	 */
-	// private defaultModule : Module;
-	/**
-	 * Klasa odpowiedzialna za wyświetlanie widoków
-	 */
-	// private viewClass;
+
 	constructor() {
 		super("ComponentManager");
 		this.moduleList = [];
 		this.componentManager = this;
+		this._actionCatchPromiseManager = new CatchPromiseManager();
+		var finalActionCatchPromise = new FinalActionCatchPromise();
+		this._actionCatchPromiseManager.addCatch(finalActionCatchPromise);
+
+		this._initCatchPromiseManager = new CatchPromiseManager();
+		var finalInitCatchPromise = new FinalInitCatchPromise();
+		this._initCatchPromiseManager.addCatch(finalInitCatchPromise);
 	}
 	public addModule(module: Module): Util.Promise<void> {
 		this.moduleList.push(module);
 		return module.prepare(this);
-		// if(isDefault === true){
-		// 	this.defaultModule = module;
-		// }
 	}
 	public getModule(name:string){
 		return this.moduleList[name];
@@ -43,12 +43,12 @@ class ComponentManager extends Component{
 	public getModuleList() : Module[]{
 		return this.moduleList;
 	}
-	/**
-	 * @deprecated będziemy rezygnować z defaultowych modułów do skrócenia ścieżki. To ma być robione jawnie
-	 */
-	// public getDefaultModule():Module{
-	// 	return this.defaultModule;
-	// }
+	public get actionCatchPromiseManager(): CatchPromiseManager {
+		return this._actionCatchPromiseManager;
+	}
+	public get initCatchPromiseManager(): CatchPromiseManager {
+		return this._initCatchPromiseManager;
+	}
 	public set dispatcher(v: Dispatcher){
 		this._dispatcher = v;
 	}
@@ -74,21 +74,17 @@ class ComponentManager extends Component{
 		if (this._dbManager === undefined) {
 			throw new Error(ComponentManager.DB_MANAGER_NONE);
 		}
-		// if(!this.viewClass){
-		// 	this.viewClass = View.JsonView;
-		// }
 		this.isInit = true;
-		return Util.Promise.resolve()
+		this._actionCatchPromiseManager.logger = this.logger;
+		this._initCatchPromiseManager.logger = this.logger;
+		this._actionCatchPromiseManager.init();
+		this._initCatchPromiseManager.init();
+		var initPromise = Util.Promise.resolve()
 		.then(()=>{
 			return this.initModules();
 		});
-
-		// for(var name in this.moduleList){
-		// 	var module:Module = this.moduleList[name];
-		// 	module.logger = this.logger;
-		// 	module.setViewClass(this.viewClass);
-		// 	module.init();
-		// };
+		initPromise = this._initCatchPromiseManager.catchToPromise(initPromise);
+		return initPromise;
 	}
 	public initModules(): Util.Promise<any> {
 		return Util.Promise.map(this.moduleList, (childModule: Module) => {
@@ -96,9 +92,6 @@ class ComponentManager extends Component{
 			return childModule.init();
 		});
 	}
-	// public setViewClass(viewClass){
-	// 	this.viewClass = viewClass;
-	// }
 	/**
 	 * Metoda ta odpalana jest przez któryś z modułów zależnych który przesyła w górę event.
 	 * W tym miejscu event przestaje być lokalnym i ta metoda w dół publikuje go do wszystkich
@@ -113,6 +106,5 @@ class ComponentManager extends Component{
 			done();
 		});
 	}
-
 }
 export = ComponentManager;
