@@ -29,6 +29,7 @@ class Bootstrap extends Element {
 	protected initLogger(): Util.Logger {
 		var logger = new Util.Logger("./log");
 		Element.initLogger(logger)
+		this.router.use(require('morgan')("combined", { stream: logger.getStream() }));
 		return logger;
 	}
 	public init(){
