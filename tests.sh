@@ -51,6 +51,7 @@ do
 	elif [ ${!i} = "-d" ];
 	then ((i++))
 		debug=${!i};
+		isDebug=1;
 	elif [ ${!i} = "-l" ];
 	then ((i++))
 		log=${!i};
@@ -72,6 +73,9 @@ fi
 if [ "$debug" != "" ]
 then
 	debug="DEBUG=horpyna:$debug"
+elif [ "$isDebug" = 1 ]
+then
+	debug="DEBUG=horpyna*"
 fi
 
 if [ "$log" != "" ]

@@ -1,6 +1,6 @@
 extend layout
 block content
-	form(method=content.form.method action=content.form.action)
+	form(method=content.form.method action=content.form.action enctype="multipart/form-data")
 		each field in content.form.fields
 			label(for=field.name) #{field.label}
 				input(type=field.type name=field.name value=field.value?field.value:undefined disabled=field.isBody?"disabled":undefined)

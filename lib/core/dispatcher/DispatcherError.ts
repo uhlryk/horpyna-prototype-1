@@ -30,7 +30,11 @@ class DispatcherError extends Element{
 	 */
 	protected errorHandler(err:any, req:express.Request, res:express.Response,next:Function){
 		if (err.stack) {
-			this.logger.error(err.stack);
+			console.log(err.stack);
+			this.logger.info(err.stack);
+		} else{
+			console.log(err);
+			this.logger.info(err);
 		}
 		res.sendStatus(500);
 	}

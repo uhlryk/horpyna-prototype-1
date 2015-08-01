@@ -10,6 +10,7 @@ import Util = require("./util/Util");
 class Bootstrap extends Element {
 	private _application:Application;
 	private _router: express.Router;
+
 	constructor(application:Application, router:express.Router){
 		super();
 		this.initDebug("bootstrap");
@@ -23,10 +24,10 @@ class Bootstrap extends Element {
 	public get router(): express.Router {
 		return this._router;
 	}
-	public onConstruct(){
+	protected onConstruct(){
 		this.initLogger();
 	}
-	protected initLogger(): Util.Logger {
+	protected initLogger(){
 		var logger = new Util.Logger("./log");
 		Element.initLogger(logger)
 		this.router.use(require('morgan')("combined", { stream: logger.getStream() }));
@@ -36,8 +37,9 @@ class Bootstrap extends Element {
 		this.initDispatcher();
 		this.initSystemActions();
 		this.initView();
+		this.initFileUpload();
 	}
-	protected initDispatcher():Dispatcher{
+	protected initDispatcher(){
 		var dispatcher = this.application.dispatcher;
 		var dispatcherError: DispatcherError = new DispatcherError();
 		dispatcher.error = dispatcherError;
@@ -55,10 +57,13 @@ class Bootstrap extends Element {
 		var homeAction = defaultModule.getAction(SystemModule.ACTION_HOME);
 		dispatcher.setHomeAction(homeAction);
 	}
-	protected initView():ViewManager{
+	protected initView(){
 		var viewManager = this.application.viewManager;
 		viewManager.defaultView = "horpyna/jade/default";
 		return viewManager;
+	}
+	protected initFileUpload(){
+		this.addData("uploadDirectory","./upload");
 	}
 }
 export = Bootstrap;

@@ -12,13 +12,13 @@ import Util = require("../../../../../../util/Util");
 class Validation{
 	private action: Action.BaseAction;
 	private request: Action.Request;
-	private data: Object;
+	private valueByTypeList: Object;
 	private validationResponse: ValidationResponse;
 	protected debugger: Util.Debugger;
 	constructor(action:Action.BaseAction, request:Action.Request){
 		this.action = action;
 		this.request = request;
-		this.data = new Object();
+		this.valueByTypeList = new Object();
 		this.validationResponse = <ValidationResponse>{};
 		this.validationResponse.valid = true;
 		this.validationResponse.responseValidatorList = [];
@@ -63,8 +63,8 @@ class Validation{
 			} else {
 				if (value === undefined) value = null;
 			}
-			if (!this.data[type]) this.data[type] = new Object();
-			this.data[type][field.getFieldName()] = value;
+			if (!this.valueByTypeList[type]) this.valueByTypeList[type] = new Object();
+			this.valueByTypeList[type][field.getFieldName()] = value;
 		}
 		this.debug(this.validationResponse);
 	}
@@ -72,7 +72,12 @@ class Validation{
 		this.debug('validateValidators');
 		var fieldList: Field[] = this.action.getFieldList();
 		return Util.Promise.map(fieldList, (field: Field) => {
-			var value = this.data[field.getType()][field.getFieldName()];
+			//na liście wartości może nie być określonego typu - np FILE_FIELD
+			var valueList = this.valueByTypeList[field.getType()];
+			if (!valueList){
+				return;
+			}
+			var value = valueList[field.getFieldName()];
 			var validatorList: BaseValidator[] = field.getValidatorList();
 			this.debug("field name: %s, value: %s", field.name, value);
 			/**
@@ -82,7 +87,7 @@ class Validation{
 			if (value !== null) {
 				return Util.Promise.map(validatorList, (validator: BaseValidator) => {
 					return new Util.Promise<ValidatorResponse>((resolve: (ValidatorResponse) => void) => {
-						validator.validate(value, this.data, resolve);
+						validator.validate(value, this.valueByTypeList, resolve);
 					})
 					.then((response:ValidatorResponse)=>{
 						this.debug("validator name: %s", validator.name);
@@ -102,7 +107,11 @@ class Validation{
 		var fieldList: Field[] = this.action.getFieldList();
 		for (var i = 0; i < fieldList.length; i++) {
 			var field: Field = fieldList[i];
-			var value = this.data[field.getType()][field.getFieldName()];
+			var valueList = this.valueByTypeList[field.getType()];
+			if (!valueList){
+				return;
+			}
+			var value = valueList[field.getFieldName()];
 			this.request.addField(field.getType(), field.getFieldName(), value);
 		}
 	}

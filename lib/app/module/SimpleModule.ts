@@ -63,19 +63,19 @@ class SimpleModule extends  Core.Module{
 		isOptional = false;
 		var createField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
 		createField.optional = isOptional;
-		createField.formType = type;
+		createField.formInputType = type;
 		var createAction = this.getAction(Core.SimpleModule.ACTION_CREATE);
 		createAction.addField(createField);
 
 		var updateField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
 		updateField.optional = isOptional;
-		updateField.formType = type;
+		updateField.formInputType = type;
 		var updateAction = this.getAction(Core.SimpleModule.ACTION_UPDATE);
 		updateAction.addField(updateField);
 
 		var deleteField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
 		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
-		deleteField.formType = type;
+		deleteField.formInputType = type;
 		var deleteFormAction = (<Core.Action.DualAction>this.getAction(Core.SimpleModule.ACTION_DELETE)).formAction;
 		deleteFormAction.addField(deleteField);
 

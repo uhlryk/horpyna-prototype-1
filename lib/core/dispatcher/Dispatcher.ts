@@ -13,6 +13,7 @@ class Dispatcher extends Element{
 	public static BEGIN_ACTION_NOT_SET: string = "Begin action is not set'";
 	public static LAST_ERROR_NOT_SET: string = "Last error is not set'";
 	private router:express.Router;
+
 	private _viewManager: ViewManager;
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
@@ -31,12 +32,14 @@ class Dispatcher extends Element{
 	 */
 	private beginAction: Action.BaseAction;
 
-	private subRouter: express.Router;
+	private _subRouter: express.Router;
+	private _middlewareList: any[];
 	constructor(router: express.Router) {
 		super();
 		this.initDebug("dispatcher");
 		this.router = router;
-		this.subRouter = express.Router();
+		this._subRouter = express.Router();
+		this._middlewareList = [];
 	}
 	public set viewManager(v : ViewManager) {
 		this._viewManager = v;
@@ -63,6 +66,24 @@ class Dispatcher extends Element{
 	}
 	public get error(): DispatcherError {
 		return this._error;
+	}
+	/**
+	 * dodaje moduły które są middleware. Zostaną one włączone do route.use jako pierwsze w aplikacji
+	 * Można budować własne middleware lub używać zewnętrznych.
+	 * @param {(req: Request, res: Response, next: Function)=>any} middleware
+	 */
+	public addMiddleware(middleware:any){
+		this._middlewareList.push(middleware);
+	}
+	/**
+	 * Pierwszy route w aplikacji
+	 * Dodaje w pętli wszystkie middleware
+	 */
+	protected middlewareRoute(){
+		for (var i = 0; i < this._middlewareList.length; i++){
+			var middleware = this._middlewareList[i];
+			this.router.use(middleware);
+		}
 	}
 	/**
 	 * Wywołuje się zawsze jako pierwsza akcja przed innymi
@@ -119,10 +140,10 @@ class Dispatcher extends Element{
 	 * konfiguruje routy dla akcji
 	 */
 	private normalRoute(){
-		this.router.use(this.subRouter);
+		this.router.use(this._subRouter);
 	}
-	public addRoute(method:string, routePath:string, handler:Function){
-		this.subRouter[method](routePath, (req, res, next) => {
+	public addRoute(method:string, routePath:string, fileHandler:Function, handler:Function){
+		this._subRouter[method](routePath, fileHandler, (req, res, next) => {
 			var request: Action.Request = req['horpynaRequest'];
 			var response: Action.Response = res['horpynaResponse'];
 			response.allow = true;
@@ -144,6 +165,7 @@ class Dispatcher extends Element{
 			throw new Error(Dispatcher.LAST_ERROR_NOT_SET);
 		}
 		this.debug('start');
+		this.middlewareRoute();
 		this.beginRoute();
 		this.homeRoute();
 		this.normalRoute();

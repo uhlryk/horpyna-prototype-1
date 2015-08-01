@@ -1,5 +1,6 @@
 import Util = require("./util/Util");
 class Element{
+	private static _data: Object = new Object();
 	private static _logger: Util.Logger;
 	private _debugger: Util.Debugger;
 	public initDebug(name:string){
@@ -13,6 +14,12 @@ class Element{
 	}
 	public get logger(): Util.Logger {
 		return Element._logger;
+	}
+	public addData(name:string, v:any){
+		Element._data[name] = v;
+	}
+	public getData(name:string):any{
+		return Element._data[name];
 	}
 }
 export = Element;

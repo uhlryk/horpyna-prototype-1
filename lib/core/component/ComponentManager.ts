@@ -17,7 +17,6 @@ class ComponentManager extends Component{
 	private _actionCatchPromiseManager: CatchPromiseManager;
 	private _initCatchPromiseManager: CatchPromiseManager;
 	private _moduleList:Module[];
-
 	constructor() {
 		super("ComponentManager");
 		this._moduleList = [];

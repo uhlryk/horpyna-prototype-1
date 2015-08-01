@@ -14,7 +14,6 @@ import ComponentManager = require("./component/ComponentManager");
 import Util = require("./util/Util");
 import Module = require("./component/routeComponent/module/Module");
 import ViewManager = require("./view/ViewManager");
-
 class Application extends Element {
 	private _frontController:FrontController;
 	private _bootstrap: Bootstrap;

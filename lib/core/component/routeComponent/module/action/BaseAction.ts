@@ -37,7 +37,7 @@ class BaseAction extends RouteComponent {
 	 * Buduje route
 	 */
 	protected addRoute(){
-		this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getRequestHandler());
+		this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getFileHandler(), this.getRequestHandler());
 	}
 	public initFields(): Util.Promise<any> {
 		return Util.Promise.map(this.fieldList, (field: Field) => {
@@ -174,6 +174,38 @@ class BaseAction extends RouteComponent {
 		return (request:Request, response:Response, next)=>{
 			this.requestHandler(request, response, next);
 		}
+	}
+	/**
+	 * Zwraca middleware do obsługi plików (multer)
+	 */
+	public getFileHandler(){
+		this.debug("action:getFileHandler()");
+		var fileUpload: Util.FileUpload = new Util.FileUpload();
+		fileUpload.directory = this.getData("uploadDirectory");
+		var fileFields: Object[] = this.populateFileFields();
+		if (fileFields.length > 0) {
+			return fileUpload.create(fileFields);
+		} else{
+			return (request: Request, response: Response, next) => {next(); }
+		}
+	}
+	/**
+	 * Na potrzeby FileUpload tworzy listę pól które ma akcje i które są polami plików
+	 * @return {[name, count]} [description]
+	 */
+	protected populateFileFields():Object[]{
+		var fileFields: Object[] = [];
+		var fieldList: Field[] = this.getFieldList();
+		for (var index in this.fieldList) {
+			var field: Field = this.fieldList[index];
+			if (field.getType() === FieldType.FILE_FIELD) {
+				fileFields.push({
+					name: field.getFieldName(),
+					count: field.options['maxCount'] || 1,
+				});
+			}
+		}
+		return fileFields;
 	}
 }
 export  = BaseAction;

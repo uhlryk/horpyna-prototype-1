@@ -37,6 +37,9 @@
     },
     "validator/validator.d.ts": {
       "commit": "581563c4684d405afec14260ba79a89a52666c09"
+    },
+    "multer/multer.d.ts": {
+      "commit": "4df20c9706ce6ca27137617770b57f3a0d3f9689"
     }
   }
 }

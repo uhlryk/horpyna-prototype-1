@@ -39,6 +39,7 @@ class FormAction extends BaseAction {
 	 * targetAction
 	 */
 	public createForm(request: Request): IForm {
+		var paramAppList = request.getParamAppFieldList();
 		var form: IForm = <IForm>{};
 		form.method = this.targetAction.getMethod();
 		form.errorList = [];
@@ -52,9 +53,11 @@ class FormAction extends BaseAction {
 			var inputField: IInputForm = this.createInputField(true, field.getFieldName(), FormInputType.TEXT, field.labelForm);
 			form.fields.push(inputField);
 		}
-		var inputField: IInputForm = this.createInputField(false, "submit", FormInputType.SUBMIT, "");
+		var inputField: IInputForm = this.createInputField(false, "_source", FormInputType.HIDDEN, "");
+		inputField.value = this.populateRoutePath(paramAppList);
 		form.fields.push(inputField);
-		var paramAppList = request.getParamAppFieldList();
+		var inputField: IInputForm = this.createInputField(false, "_submit", FormInputType.SUBMIT, "");
+		form.fields.push(inputField);
 		var route = this.targetAction.populateRoutePath(paramAppList);
 		form.action = route;
 		return form;
