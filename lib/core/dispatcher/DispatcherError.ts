@@ -7,14 +7,10 @@ import Element = require("../Element");
  */
 class DispatcherError extends Element{
 	private _errorHandler: express.ErrorRequestHandler;
-	private debugger: Util.Debugger;
 	constructor() {
 		super();
-		this.debugger = new Util.Debugger("dispatcher");
+		this.initDebug("dispatcher");
 		this._errorHandler = this.errorHandler;
-	}
-	public debug(...args: any[]) {
-		this.debugger.debug(args);
 	}
 	/**
 	 * Można zmienić zachowanie na błąd

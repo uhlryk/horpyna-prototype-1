@@ -8,7 +8,6 @@ import ISubscriberCallback = require("./ISubscriberCallback");
  */
 class BaseEvent extends Element {
 	private type: string;
-	private debugger: Util.Debugger;
 	private subtype:string;
 	private callback: ISubscriberCallback;
 	public publicEvent:boolean;
@@ -21,15 +20,12 @@ class BaseEvent extends Element {
 	constructor(type: string, publicEvent?: boolean) {
 		super();
 		this.type = type;
-		this.debugger = new Util.Debugger("event:" + this.type);
+		this.initDebug("event:" + this.type);
 		if (publicEvent === undefined) publicEvent = false;
 		this.publicEvent = publicEvent;
 	}
 		public getType(): string {
 		return this.type;
-	}
-	public debug(...args: any[]) {
-		this.debugger.debug(args);
 	}
 	public addCallback(callback: ISubscriberCallback) {
 		this.callback = callback;

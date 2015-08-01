@@ -14,15 +14,11 @@ class FrontController extends Element {
 	private _dispatcher: Dispatcher;
 	private _componentManager: ComponentManager;
 	private _dbManager: DbManager;
-	private debugger: Util.Debugger;
 	private _viewManager: ViewManager;
 	constructor() {
 		super();
-		this.debugger = new Util.Debugger("core");
+		this.initDebug("core");
 		this.debug("front:constructor:");
-	}
-	public debug(...args: any[]) {
-		this.debugger.debug(args);
 	}
 	public set dispatcher(v: Dispatcher){
 		this._dispatcher = v;

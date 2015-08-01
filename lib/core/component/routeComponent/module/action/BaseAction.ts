@@ -22,7 +22,7 @@ class BaseAction extends RouteComponent {
 
 	constructor(method:string, name:string){
 		super(name);
-		this.debugger = new Util.Debugger("action:" + this.name);
+		this.initDebug("action:" + this.name);
 		this.method = method;
 		this.fieldList = [];
 	}

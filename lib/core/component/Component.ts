@@ -19,15 +19,8 @@ class Component extends Element {
 	private _name:string;
 	private _id:number;
 	private _parent:Component;
-	protected debugger: Util.Debugger;
 	public static count = 0;
 	public static componentList:Component[] = [];
-	/**
-	 * Lista wszystkich komponentów ustawionych po kluczu jakim jest ich hash.
-	 * Jeśli struktura elementu przy budowie nie uległa zmianie to ma on ten sam hash
-	 * Hash przydzielany jest przy inicjacji - a więc na poziomie budowy nie mamy dostępnych po nim elementów
-	 */
-	public static hashList: Object = {};
 	private _componentManager: ComponentManager;
 	/**
 	 * wywoływane przez moduły podrzędne sprawdzające czy dany moduł
@@ -44,7 +37,7 @@ class Component extends Element {
 		Component.componentList.push(this);
 		Component.count++;
 		this._id = Component.count;
-		this.debugger = new Util.Debugger("component:"+this.name);
+		this.initDebug("component:" + this.name);
 		this.debug('constructor %s a', this.name);
 		this._componentManager = null;
 		this.isInit = false;
@@ -76,9 +69,6 @@ class Component extends Element {
 	}
 	public get isInit() : boolean {
 		return this._isInit;
-	}
-	public debug(...args: any[]){
-		this.debugger.debug(args);
 	}
 	/**
 	 * Komponent się sam inicjuje gdy rodzic wywoła setParent i gdy rodzic jest zainicjowany

@@ -11,15 +11,11 @@ class DbManager extends Element{
 	public static NO_CONNECTION_NAME: string = "Connection not found";
 	private defaultConnection:Connection;
 	private connectionList:Connection[];
-	private debugger: Util.Debugger;
 	constructor() {
 		super();
 		this.connectionList=[];
-		this.debugger = new Util.Debugger("core");
+		this.initDebug("core");
 		this.debug("dbManager:constructor:");
-	}
-	public debug(...args: any[]) {
-		this.debugger.debug(args);
 	}
 	public addConnection(connection:Connection, isDefault?:boolean):void{
 		this.debug("dbManager:addConnection:"+connection.getConnectionName());

@@ -4,6 +4,7 @@ class Bootstrap extends Element {
 	private _application:Application;
 	constructor(application:Application){
 		super();
+		this.initDebug("bootstrap");
 		this._application = application;
 	}
 	public get application():Application{

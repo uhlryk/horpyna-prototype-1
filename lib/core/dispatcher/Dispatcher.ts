@@ -13,7 +13,6 @@ class Dispatcher extends Element{
 	public static BEGIN_ACTION_NOT_SET: string = "Begin action is not set'";
 	public static LAST_ERROR_NOT_SET: string = "Last error is not set'";
 	private router:express.Router;
-	private debugger: Util.Debugger;
 	private _viewManager: ViewManager;
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
@@ -35,12 +34,9 @@ class Dispatcher extends Element{
 	private subRouter: express.Router;
 	constructor(router: express.Router) {
 		super();
-		this.debugger = new Util.Debugger("dispatcher");
+		this.initDebug("dispatcher");
 		this.router = router;
 		this.subRouter = express.Router();
-	}
-	public debug(...args: any[]) {
-		this.debugger.debug(args);
 	}
 	public set viewManager(v : ViewManager) {
 		this._viewManager = v;

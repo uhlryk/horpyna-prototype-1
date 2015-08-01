@@ -10,13 +10,9 @@ class ViewManager extends Element{
 	private _renderView;
 	private _dataView;
 	private _defaultView;
-	private debugger: Util.Debugger;
 	constructor(){
 		super();
-		this.debugger = new Util.Debugger("view");
-	}
-	public debug(...args: any[]) {
-		this.debugger.debug(args);
+		this.initDebug("view");
 	}
 	public set defaultView(view:string){
 		this._defaultView = view;

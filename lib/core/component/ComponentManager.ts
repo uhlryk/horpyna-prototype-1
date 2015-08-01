@@ -16,11 +16,11 @@ class ComponentManager extends Component{
 	private _dbManager: DbManager;
 	private _actionCatchPromiseManager: CatchPromiseManager;
 	private _initCatchPromiseManager: CatchPromiseManager;
-	private moduleList:Module[];
+	private _moduleList:Module[];
 
 	constructor() {
 		super("ComponentManager");
-		this.moduleList = [];
+		this._moduleList = [];
 		this.componentManager = this;
 		this._actionCatchPromiseManager = new CatchPromiseManager();
 		var finalActionCatchPromise = new FinalActionCatchPromise();
@@ -31,17 +31,17 @@ class ComponentManager extends Component{
 		this._initCatchPromiseManager.addCatch(finalInitCatchPromise);
 	}
 	public addModule(module: Module): Util.Promise<void> {
-		this.moduleList.push(module);
+		this._moduleList.push(module);
 		return module.prepare(this);
 	}
 	public getModule(name:string){
-		return this.moduleList[name];
+		return this._moduleList[name];
 	}
 	/**
 	 * lista modułów bezpośrednio podpiętych pod ComponentManager
 	 */
 	public getModuleList() : Module[]{
-		return this.moduleList;
+		return this._moduleList;
 	}
 	public get actionCatchPromiseManager(): CatchPromiseManager {
 		return this._actionCatchPromiseManager;
@@ -85,7 +85,7 @@ class ComponentManager extends Component{
 		return initPromise;
 	}
 	public initModules(): Util.Promise<any> {
-		return Util.Promise.map(this.moduleList, (childModule: Module) => {
+		return Util.Promise.map(this._moduleList, (childModule: Module) => {
 			// childModule.setViewClass(this.viewClass);
 			return childModule.init();
 		});
@@ -97,7 +97,7 @@ class ComponentManager extends Component{
 	 * pasują do wzorca i jeśli tak odpalają callbacki.
 	 */
 	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
-		Util.Promise.map(this.moduleList, (module: Module) => {
+		Util.Promise.map(this._moduleList, (module: Module) => {
 			return module.broadcastPublisher(request, response, type, subtype, emiterPath);
 		})
 		.then(() => {

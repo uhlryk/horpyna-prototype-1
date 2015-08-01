@@ -13,10 +13,9 @@ class Connection extends Element{
 	private userPassword:string;
 	private sequelize:Sequelize.Sequelize;
 	private connectionName:string;
-	private debugger: Util.Debugger;
 	constructor(dbType: string, host: string, port: number, dbName: string, userName: string, userPassword: string, connectionName: string) {
 		super();
-		this.debugger = new Util.Debugger("connection:");
+		this.initDebug("connection:");
 		this.sequelize = new Sequelize(dbName, userName, userPassword, {
 			host : host,
 			dialect : dbType,
@@ -40,7 +39,7 @@ class Connection extends Element{
 		return this.connectionName;
 	}
 	public log(...args: any[]) {
-		this.debugger.debug(args);
+		this.debug(args);
 		this.logger.info(args[0]);
 	}
 
