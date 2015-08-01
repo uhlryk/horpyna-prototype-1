@@ -1,22 +1,17 @@
 import CatchPromise = require("./CatchPromise");
 import Util = require("./../util/Util");
+import Element = require("./../Element");
 /**
  * Obsługuje catch w promise chain
  * Zastosowanie przede wszystkich do BaseAction.requestHandler i do ComponentManager.init
  */
 
-class CatchPromiseManager{
+class CatchPromiseManager extends Element{
 	private _catchList: CatchPromise[];
 	private _finalCatch: CatchPromise;
-	private _logger: Util.Logger;
 	constructor(){
+		super();
 		this._catchList = [];
-	}
-	public set logger(logger: Util.Logger) {
-		this._logger = logger;
-	}
-	public get logger(): Util.Logger {
-		return this._logger;
 	}
 	/**
 	 * dodaje catch do listy
@@ -36,16 +31,7 @@ class CatchPromiseManager{
 	public getFinalCatch():CatchPromise{
 		return this._finalCatch;
 	}
-	public init(){
-		var length = this._catchList.length;
-		for (var i = 0; i < length; i++) {
-			var catchPromise: CatchPromise = this._catchList[i];
-			catchPromise.logger = this.logger
-		}
-		if (this._finalCatch){
-			this._finalCatch.logger = this.logger;
-		}
-	}
+	public init(){}
 	public catchToPromise(promise: Util.Promise<any>, data?:any): Util.Promise<any> {
 		var length = this._catchList.length;
 		for (var i = 0; i < length; i++){

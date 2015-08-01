@@ -1,11 +1,12 @@
 import Util = require("../../util/Util");
+import Element = require("../../Element");
 import Action = require("../routeComponent/module/action/Action");
 import ISubscriberCallback = require("./ISubscriberCallback");
 
 /**
  * Wywoływany by odebrać event
  */
-class BaseEvent {
+class BaseEvent extends Element {
 	private type: string;
 	private debugger: Util.Debugger;
 	private subtype:string;
@@ -18,6 +19,7 @@ class BaseEvent {
 	 */
 	private emiterRegExp:RegExp;
 	constructor(type: string, publicEvent?: boolean) {
+		super();
 		this.type = type;
 		this.debugger = new Util.Debugger("event:" + this.type);
 		if (publicEvent === undefined) publicEvent = false;

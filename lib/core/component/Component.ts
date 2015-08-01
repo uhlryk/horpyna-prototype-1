@@ -1,4 +1,5 @@
 import Util = require("../util/Util");
+import Element = require("../Element");
 import ComponentManager = require("./ComponentManager");
 import Action = require("./routeComponent/module/action/Action");
 /**
@@ -7,7 +8,7 @@ import Action = require("./routeComponent/module/action/Action");
  * Nazwa może zawierać tylko a-zA-Z\- i 0-9.
  *
  */
-class Component{
+class Component extends Element {
 	public static WRONG_NAME: string = "Name can contain only a-zA-Z0-9-";
 	public static EMPTY_NAME: string = "Name can't be null";
 	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
@@ -27,7 +28,6 @@ class Component{
 	 * Hash przydzielany jest przy inicjacji - a więc na poziomie budowy nie mamy dostępnych po nim elementów
 	 */
 	public static hashList: Object = {};
-	private _logger: Util.Logger;
 	private _componentManager: ComponentManager;
 	/**
 	 * wywoływane przez moduły podrzędne sprawdzające czy dany moduł
@@ -38,6 +38,7 @@ class Component{
 	 */
 	private _isInit: boolean;
 	constructor(name:string){
+		super();
 		this._name = name;
 		this.checkName(name);
 		Component.componentList.push(this);
@@ -76,15 +77,6 @@ class Component{
 	public get isInit() : boolean {
 		return this._isInit;
 	}
-	/**
-	 * wywołuje to parent w fazie init i przekazuje loggera
-	 */
-	public set logger(logger:Util.Logger){
-		this._logger = logger;
-	}
-	public get logger():Util.Logger{
-		return this._logger;
-	}
 	public debug(...args: any[]){
 		this.debugger.debug(args);
 	}
@@ -102,7 +94,6 @@ class Component{
 			throw SyntaxError(Component.INIT_NULL_PARENT);
 		}
 		this.isInit = true;
-		this.logger = this.parent.logger;
 		this.componentManager = this.parent.componentManager;
 		return Util.Promise.resolve();
 	}

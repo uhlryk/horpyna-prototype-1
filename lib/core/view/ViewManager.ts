@@ -2,15 +2,17 @@
 import express = require("express");
 import Action = require("./../component/routeComponent/module/action/Action");
 import Util = require("./../util/Util");
+import Element = require("./../Element");
 /**
  * Klasa odpowiada za zarządzanie widokami i renderowanie
  */
-class ViewManager{
+class ViewManager extends Element{
 	private _renderView;
 	private _dataView;
 	private _defaultView;
 	private debugger: Util.Debugger;
 	constructor(){
+		super();
 		this.debugger = new Util.Debugger("view");
 	}
 	public debug(...args: any[]) {

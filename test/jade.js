@@ -22,7 +22,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			action1.setActionHandler(function (request, response) {
 				return Core.Util.Promise.resolve()
 				.then(function(){
-					response.addView("index");
+					response.view = "index";
 					response.addValue("title", "mój tytuł");
 				});
 			});

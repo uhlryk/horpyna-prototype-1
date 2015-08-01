@@ -51,19 +51,6 @@ class RouteComponent extends Component{
 		return this._routeName;
 	}
 	/**
-	 * Człony elementów do których należy dany RouteComponent
-	 * @param {string} v [description]
-	 */
-	// public set baseRoute(v : string) {
-	// 	this._baseRoute = v;
-	// }
-	// public get baseRoute(): string {
-	// 	return this._baseRoute;
-	// }
-	// public get fullRoute():string{
-	// 	return RouteComponent.buildRoute(this.baseRoute, this.partialRoute);
-	// }
-	/**
 	 * Buduje pełną ścieżkę od danego elementu do najwyższego elementu ale używa routeName zamiast name
 	 * @return {string}           zwraca ścieżkę np grandparentcomponent/parentcomponent/thiscomponent
 	 */

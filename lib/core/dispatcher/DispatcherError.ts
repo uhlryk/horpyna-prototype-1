@@ -1,23 +1,17 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import express = require("express");
 import Util = require("./../util/Util");
-
+import Element = require("../Element");
 /**
  * Obsługuje błędy w dispatcher
  */
-class DispatcherError {
+class DispatcherError extends Element{
 	private _errorHandler: express.ErrorRequestHandler;
 	private debugger: Util.Debugger;
-	private _logger: Util.Logger;
 	constructor() {
+		super();
 		this.debugger = new Util.Debugger("dispatcher");
 		this._errorHandler = this.errorHandler;
-	}
-	public set logger(logger: Util.Logger) {
-		this._logger = logger;
-	}
-	public get logger(): Util.Logger {
-		return this._logger;
 	}
 	public debug(...args: any[]) {
 		this.debugger.debug(args);

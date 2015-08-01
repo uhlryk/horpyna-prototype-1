@@ -75,8 +75,6 @@ class ComponentManager extends Component{
 			throw new Error(ComponentManager.DB_MANAGER_NONE);
 		}
 		this.isInit = true;
-		this._actionCatchPromiseManager.logger = this.logger;
-		this._initCatchPromiseManager.logger = this.logger;
 		this._actionCatchPromiseManager.init();
 		this._initCatchPromiseManager.init();
 		var initPromise = Util.Promise.resolve()

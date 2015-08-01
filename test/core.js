@@ -79,7 +79,7 @@ describe("Funkcje podstawowe", function() {
 			app = require('./core/app')();
 			var router = new express.Router();
 			myApp = new Core.Application(router);
-			app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
+			app.use(require('morgan')("combined",{stream: myApp.logger.getStream() }));
 			myApp.init();
 			app.use("/test/", router);
 			app.get('/', function (req, res) {
@@ -136,7 +136,7 @@ describe("Funkcje podstawowe", function() {
 			app = require('./core/app')();
 			var router= new express.Router();
 			myApp = new Core.Application(router);
-			app.use(require('morgan')("combined",{stream: myApp.getLogger().getStream() }));
+			app.use(require('morgan')("combined",{stream: myApp.logger.getStream() }));
 			var simpleModule = new Core.SimpleModule("simple");
 			myApp.addModule(simpleModule);
 			myApp.init();

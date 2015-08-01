@@ -1,3 +1,4 @@
+import Element = require("./Element");
 import Dispatcher = require("./dispatcher/Dispatcher");
 import ComponentManager = require("./component/ComponentManager");
 import DbManager = require("./dbManager/DbManager");
@@ -6,37 +7,46 @@ import SystemModule = require("./component/routeComponent/module/SystemModule");
 import Model = require("./component/routeComponent/module/model/Model");
 import Util = require("./util/Util");
 import ViewManager = require("./view/ViewManager");
-class FrontController {
+class FrontController extends Element {
 	public static DISPATCHER_NONE: string = "Need 'dispatcher'";
 	public static COMPONENT_MANAGER_NONE: string = "Need 'ComponentManager'";
 	public static DB_MANAGER_NONE: string = "Need 'dbManager'";
-	private logger: Util.Logger;
-	private dispatcher: Dispatcher;
-	private componentManager: ComponentManager;
-	private dbManager: DbManager;
+	private _dispatcher: Dispatcher;
+	private _componentManager: ComponentManager;
+	private _dbManager: DbManager;
 	private debugger: Util.Debugger;
-	private viewManager: ViewManager;
+	private _viewManager: ViewManager;
 	constructor() {
+		super();
 		this.debugger = new Util.Debugger("core");
 		this.debug("front:constructor:");
 	}
 	public debug(...args: any[]) {
 		this.debugger.debug(args);
 	}
-	public setLogger(logger:Util.Logger){
-		this.logger = logger;
+	public set dispatcher(v: Dispatcher){
+		this._dispatcher = v;
 	}
-	public setDispatcher(dispatcher: Dispatcher):void{
-		this.dispatcher = dispatcher;
+	public get dispatcher() : Dispatcher {
+		return this._dispatcher;
 	}
-	public setComponentManager(moduleManager:ComponentManager):void{
-		this.componentManager = moduleManager;
+	public set componentManager(v:ComponentManager){
+		this._componentManager = v;
 	}
-	public setDbManager(dbManager:DbManager):void{
-		this.dbManager = dbManager;
+	public get componentManager(): ComponentManager {
+		return this._componentManager;
 	}
-	public setViewManager(viewManager:ViewManager){
-		this.viewManager = viewManager;
+	public set dbManager(v:DbManager){
+		this._dbManager = v;
+	}
+	public get dbManager(): DbManager {
+		return this._dbManager;
+	}
+	public set viewManager(v:ViewManager){
+		this._viewManager = v;
+	}
+	public get viewManager(): ViewManager {
+		return this._viewManager;
 	}
 	private setup():void{
 		if(this.dispatcher == undefined){
@@ -68,15 +78,10 @@ class FrontController {
 		var homeAction = defaultModule.getAction(SystemModule.ACTION_HOME);
 		this.dispatcher.setHomeAction(homeAction);
 
-		this.dispatcher.error.logger = this.logger;
-		this.dbManager.logger = this.logger;
-		this.dispatcher.logger = this.logger;
 		this.dispatcher.viewManager = this.viewManager;
 		this.dispatcher.init();
 		this.debug("front:dbManager.init()");
 		this.dbManager.init();
-		this.componentManager.logger = this.logger;
-
 		this.debug("front:componentManager.init()");
 		return this.componentManager.init();
 	}

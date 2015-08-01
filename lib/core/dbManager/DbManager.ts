@@ -1,27 +1,22 @@
 import Util = require("../util/Util");
+import Element = require("../Element");
 import Connection = require("./connection/Connection");
 /**
  * Obsługuje komunikację z bazą danych
  * Docelowo może być wiele połączeń do różnych baz danych.
  * W tej chwili akceptuje tylko jedno które musi być defaultowe
  */
-class DbManager {
+class DbManager extends Element{
 	public static DEFAULT_CONNECTION_EMPTY: string = "Default connection must be defined";
 	public static NO_CONNECTION_NAME: string = "Connection not found";
 	private defaultConnection:Connection;
 	private connectionList:Connection[];
-	private _logger: Util.Logger;
 	private debugger: Util.Debugger;
 	constructor() {
+		super();
 		this.connectionList=[];
 		this.debugger = new Util.Debugger("core");
 		this.debug("dbManager:constructor:");
-	}
-	public set logger(logger: Util.Logger) {
-		this._logger = logger;
-	}
-	public get logger(): Util.Logger {
-		return this._logger;
 	}
 	public debug(...args: any[]) {
 		this.debugger.debug(args);
@@ -60,7 +55,6 @@ class DbManager {
 		this.debug("dbManager:init:");
 		for (var index in this.connectionList) {
 			var connection: Connection = this.connectionList[index];
-			connection.logger = this._logger;
 		};
 	}
 	// public sync():Util.Promise<any>{

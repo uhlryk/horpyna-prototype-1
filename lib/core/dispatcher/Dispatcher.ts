@@ -7,13 +7,13 @@ import Module = require("./../component/routeComponent/module/Module");
 import RouteComponent = require("./../component/routeComponent/RouteComponent");
 import Action = require("./../component/routeComponent/module/action/Action");
 import Field = require("./../component/routeComponent/module/action/field/Field");
-class Dispatcher{
+import Element = require("../Element");
+class Dispatcher extends Element{
 	public static FINAL_ACTION_NOT_SET: string = "Final action is not set'";
 	public static BEGIN_ACTION_NOT_SET: string = "Begin action is not set'";
 	public static LAST_ERROR_NOT_SET: string = "Last error is not set'";
 	private router:express.Router;
 	private debugger: Util.Debugger;
-	private _logger: Util.Logger;
 	private _viewManager: ViewManager;
 	/**
 	 * Ostatni błąd na liście, jeśli pozostałe nie obsłużą błędu ten zakończy
@@ -34,15 +34,10 @@ class Dispatcher{
 
 	private subRouter: express.Router;
 	constructor(router: express.Router) {
+		super();
 		this.debugger = new Util.Debugger("dispatcher");
 		this.router = router;
 		this.subRouter = express.Router();
-	}
-	public set logger(logger: Util.Logger) {
-		this._logger = logger;
-	}
-	public get logger(): Util.Logger {
-		return this._logger;
 	}
 	public debug(...args: any[]) {
 		this.debugger.debug(args);
@@ -141,15 +136,15 @@ class Dispatcher{
 	}
 	public init():void{
 		if(this.beginAction === undefined){
-			this._logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
+			this.logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
 			throw new Error(Dispatcher.BEGIN_ACTION_NOT_SET);
 		}
 		if(this.finalAction === undefined){
-			this._logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
+			this.logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
 			throw new Error(Dispatcher.FINAL_ACTION_NOT_SET);
 		}
 		if(this._error === undefined){
-			this._logger.error(Dispatcher.LAST_ERROR_NOT_SET);
+			this.logger.error(Dispatcher.LAST_ERROR_NOT_SET);
 			throw new Error(Dispatcher.LAST_ERROR_NOT_SET);
 		}
 		this.debug('start');
