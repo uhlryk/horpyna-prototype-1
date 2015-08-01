@@ -1,12 +1,13 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 import winston = require('winston');
-
+import path = require("path");
 class Logger{
 	private logger;
 	public static CONSOLE_ALL: string = "all";
 	public static CONSOLE_ERROR: string = "error";
 	public static CONSOLE_MUTE: string = "mute";
-	constructor() {
+	constructor(logPath?:string) {
+		logPath = logPath || "'./log";
 		var mode = Logger.CONSOLE_MUTE;
 		if (process && process.env && process.env.HORPYNA_LOG){
 			mode = process.env.HORPYNA_LOG;
@@ -25,7 +26,7 @@ class Logger{
 		this.logger.add(winston.transports.File, {
 			name:'log.error',
 			level: 'error',
-			filename: './log/error.log',
+			filename: path.join(logPath, 'error.log'),
 			// handleExceptions: true,
 			json: true,
 			maxsize: 5242880, //5MB
@@ -35,7 +36,7 @@ class Logger{
 		this.logger.add(winston.transports.File, {
 			name:'log.info',
 			level: 'info',
-			filename: './log/info.log',
+			filename: path.join(logPath, 'info.log'),
 			// handleExceptions: true,
 			json: true,
 			maxsize: 5242880, //5MB

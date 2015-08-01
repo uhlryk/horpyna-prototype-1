@@ -43,22 +43,7 @@ class DbManager extends Element{
 	public getDb(name?:string){
 		this.getConnection(name).getDb();
 	}
-
-	/**
-	 * Tu jeszcze nie wiem co ma być robione
-	 */
 	public init(){
-		this.debug("dbManager:init:");
-		for (var index in this.connectionList) {
-			var connection: Connection = this.connectionList[index];
-		};
 	}
-	// public sync():Util.Promise<any>{
-	// 	this.debug("dbManager:build:");
-	// 	return Util.Promise.map(this.connectionList, (connection:Connection)=>{
-	// 		this.debug("dbManager:sync connection:" + connection.getConnectionName());
-	// 		return connection.getDb().sync({force:true});
-	// 	});
-	// }
 }
 export = DbManager;
