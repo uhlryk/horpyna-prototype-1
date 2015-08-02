@@ -12,7 +12,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 		before(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
+			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.addModule(moduleResource1);
 			var resModel = moduleResource1.getModel(Core.ResourceModule.RESOURCE_MODEL);
@@ -110,7 +110,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 		before(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
+			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.init().then(function () {
 				var resModel = moduleResource1.getModel(Core.ResourceModule.RESOURCE_MODEL);

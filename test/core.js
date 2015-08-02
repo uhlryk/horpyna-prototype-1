@@ -253,7 +253,7 @@ describe("Funkcje podstawowe", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			myApp.setDbDefaultConnection("mysql", "localhost", 8889, "awsystem", "root", "root");
+			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			var myModule = new Core.Module("module1");
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");

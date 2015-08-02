@@ -7,6 +7,7 @@ class FinalActionCatchPromise extends CatchPromise {
 		var done = data['done'];
 		return (err) => {
 			this.logger.error(err);
+			response.setStatus(500);
 			done();
 		};
 	}
