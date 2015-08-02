@@ -9,3 +9,6 @@ export import DecimalColumn = require("./DecimalColumn");
 export import DateColumn = require("./DateColumn");
 export import BoleanColumn = require("./BoleanColumn");
 export import EnumColumn = require("./EnumColumn");
+export import HstoreColumn = require("./HstoreColumn");
+export import JsonTypeColumn = require("./JsonTypeColumn");
+export import JsonBColumn = require("./JsonBColumn");

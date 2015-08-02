@@ -11,6 +11,9 @@ class DataTypes {
 	static DATE: any = Sequelize.DATE;
 	static BOOLEAN: any = Sequelize.BOOLEAN;
 	static ENUM: any = Sequelize.ENUM;
+	static HSTORE: any = Sequelize.HSTORE;
+	static JSONTYPE: any = Sequelize['JSONTYPE'];
+	static JSONB: any = Sequelize['JSONB'];
 	static UUID: any = Sequelize.UUID;
 }
 export = DataTypes;

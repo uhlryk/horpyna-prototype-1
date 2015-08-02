@@ -248,7 +248,7 @@ describe("Funkcje podstawowe", function() {
 				});
 		});
 	});
-	describe("Check db connection", function () {
+	describe("Sprawdzenie połączenia do bazy danych", function () {
 
 		beforeEach(function (done) {
 			app = require('./core/app')();
@@ -265,6 +265,9 @@ describe("Funkcje podstawowe", function() {
 			var col3 = new Core.Column.EnumColumn("a3");
 			col3.setList(["kot", "ala", "ma"]);
 			myModel.addColumn(col3);
+			myModel.addColumn(new Core.Column.HstoreColumn("a4"));
+			myModel.addColumn(new Core.Column.JsonTypeColumn("a5"));
+			myModel.addColumn(new Core.Column.JsonBColumn("a6"));
 			myModule.addModel(myModel);
 			// app.use(myApp.getMiddleware());
 			myApp.init().then(function () {
