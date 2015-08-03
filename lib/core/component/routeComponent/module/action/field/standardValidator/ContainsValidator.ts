@@ -1,6 +1,6 @@
 import Util = require("../../../../../../util/Util");
-import ValidatorResponse = require("./ValidatorResponse");
-import BaseValidator = require("./BaseValidator");
+import ValidatorResponse = require("./../ValidatorResponse");
+import BaseValidator = require("./../BaseValidator");
 /**
  * sprawdza czy parametr który jest stringiem ma dany fragment
  */
@@ -8,8 +8,8 @@ class ContainsValidator extends BaseValidator {
 	public VALIDATOR_NAME = "ContainsValidator";
 	private seed: string;
 	public message = "The input not contain '%s'";
-	constructor(name:string, seed:string){
-		super(name);
+	constructor(name: string, seed: string) {
+		super(name, false);
 		this.seed = seed;
 	}
 	protected setIsValid(value: any, data: Object, response: ValidatorResponse): boolean {

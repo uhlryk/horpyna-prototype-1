@@ -7,6 +7,10 @@ class Request{
 	private expressRequest:express.Request;
 	// private _action:BaseAction;
 	private _logger: Util.Logger;
+	/**
+	 * dane systemowe przenoszone między modułami systemowymi
+	 */
+	private _data:Object;
 	constructor(expressRequest:express.Request){
 		this.expressRequest = expressRequest;
 		this.allFieldList = new Object();
@@ -16,6 +20,8 @@ class Request{
 		this.allFieldList[FieldType.APP_FIELD] = new Object();
 		this.allFieldList[FieldType.HEADER_FIELD] = new Object();
 		this.allFieldList[FieldType.FILE_FIELD] = new Object();
+
+		this._data = new Object();
 	}
 	/**
 	 * Na podstawie express requesta wyciąga Horpyna request
@@ -40,6 +46,15 @@ class Request{
 	}
 	public getFieldList(type: string): any {
 		return this.allFieldList[type];
+	}
+	public addValue(name: string, value: any) {
+		this._data[name] = value;
+	}
+	public getValue(name: string):any {
+		return this._data[name];
+	}
+	public removeValue(name: string) {
+		delete this._data[name];
 	}
 	/**
 	 * Zwraca listę pól parametrów (PARAM_FIELD) nadpisaną przez pola aplikacji(APP_FIELD)

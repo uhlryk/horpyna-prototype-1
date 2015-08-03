@@ -1,6 +1,3 @@
-export import BaseValidator = require("./BaseValidator");
-export import ValidationResponse = require("./ValidationResponse");
-export import ValidatorResponse = require("./ValidatorResponse");
 export import ContainsValidator = require("./ContainsValidator");
 export import EqualsValidator = require("./EqualsValidator");
 export import IsAlphaValidator = require("./IsAlphaValidator");

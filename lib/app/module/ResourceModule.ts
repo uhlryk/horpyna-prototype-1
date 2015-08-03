@@ -14,7 +14,7 @@ class ResourceModule extends  SimpleModule{
 			var content = response.content;
 			var form: Core.Action.IForm = content["form"];
 			var fieldList: Core.Action.IInputForm[] = form.fields;
-			var validationResponse: Core.Validator.ValidationResponse = <Core.Validator.ValidationResponse>response.getData("validationError");
+			var validationResponse: Core.Action.ValidationResponse = <Core.Action.ValidationResponse>response.getData("validationError");
 			if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
 				form.valid = false;
 				for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
@@ -52,7 +52,7 @@ class ResourceModule extends  SimpleModule{
 				var content = response.content;
 				var form: Core.Action.IForm = content["form"];
 				var fieldList: Core.Action.IInputForm[] = form.fields;
-				var validationResponse: Core.Validator.ValidationResponse = <Core.Validator.ValidationResponse>response.getData("validationError");
+				var validationResponse: Core.Action.ValidationResponse = <Core.Action.ValidationResponse>response.getData("validationError");
 				if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
 					form.valid = false;
 					for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {

@@ -5,9 +5,11 @@ import Field = require("./field/Field");
 import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
-import Validation = require("./field/validator/Validation");
-import ValidationResponse = require("./field/validator/ValidationResponse");
+import Validation = require("./Validation");
+import UploadValidation = require("./UploadValidation");
+import ValidationResponse = require("./ValidationResponse");
 import FieldType = require("./field/FieldType");
+import BaseValidator = require("./field/BaseValidator");
 import IActionHandler = require("./IActionHandler");
 
 class BaseAction extends RouteComponent {
@@ -119,6 +121,8 @@ class BaseAction extends RouteComponent {
 	public requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
 		this.debug("action:publish():OnBegin");
+		var uploadValidationResponse: ValidationResponse = request.getValue("validationError");
+		request.removeValue("validationError");
 		var requestPromise = Util.Promise.resolve()
 		.then(() => {
 			if (response.allow === false) return;
@@ -132,7 +136,11 @@ class BaseAction extends RouteComponent {
 		})
 		.then((validationResponse:ValidationResponse)=>{
 			if (response.allow === false) return;
-			if (validationResponse.valid === false){
+			if ((uploadValidationResponse && uploadValidationResponse.valid === false) || validationResponse.valid === false) {
+				if (uploadValidationResponse){
+					validationResponse.responseValidatorList.concat(uploadValidationResponse.responseValidatorList);
+				}
+				validationResponse.valid = false;
 				response.addValue("validationError",validationResponse);
 				response.setStatus(422);
  				response.allow = false;
@@ -177,10 +185,28 @@ class BaseAction extends RouteComponent {
 		}
 	}
 	/**
-	 * Uchwyt na obsługę walidacji plików
+	 * Uchwyt na obsługę walidacji plików. Jeśli walidacja poprawna to done(), gdy negatywna done(false)
+	 * UWAGA!!!
+	 * Walidatory na tym poziomie nie mogą być asynchroniczne
+	 * W przeciwnym razie moduł uploadu pliku nie powiąże się z błędem przekroczenia rozmiaru i innymi limitami
+	 * -PROBLEM ZEWNĘTRZNEGO MODUŁU - MULTER
 	 */
 	protected fileFilterHandler(request:Request, file, done){
-		done();
+		// var requestPromise = Util.Promise.resolve()
+		// .then(() => {
+			this.debug("action:validate UploadFile " + file['fieldname']);
+			var validation = new UploadValidation(this, request, file['fieldname']);
+			var validationResponse: ValidationResponse = validation.validate();
+		// })
+		// .then((validationResponse:ValidationResponse)=>{
+			if (validationResponse.valid === false){
+				request.addValue("validationError", validationResponse);
+				console.log("B1");
+				done(false);
+			}
+			console.log("B2");
+			done(true);
+		// })
 	}
 	/**
 	 * Zwraca middleware do obsługi plików (multer)
@@ -190,13 +216,35 @@ class BaseAction extends RouteComponent {
 		var fileUpload: Util.FileUpload = new Util.FileUpload();
 		fileUpload.directory = this.getData("uploadDirectory");
 		var fileFields: Object[] = this.populateFileFields();
-		if (fileFields.length > 0) {
-			fileUpload.fileFilterHandler = (request:Request, file, done)=>{
-				this.fileFilterHandler(request, file, done);
-			};
-			return fileUpload.create(fileFields);
-		} else{
-			return (req, res, next) => {
+		fileUpload.fileFilterHandler = (request: Request, file, done) => {
+			this.fileFilterHandler(request, file, done);
+		};
+		return (req, res, next) => {
+			var response: Response = Response.ExpressToResponse(res);
+			if (fileFields.length > 0 && response.allow === true) {
+				fileUpload.create(fileFields)(req, res, function(err){
+					console.log("A");
+					if (err) {
+						var request: Request = Request.ExpressToRequest(req);
+						var validationResponse: ValidationResponse = request.getValue("validationError");
+						if(!validationResponse){
+							validationResponse = <ValidationResponse>{};
+							validationResponse.valid = false;
+							validationResponse.responseValidatorList = [];
+							request.addValue("validationError", validationResponse);
+						}
+						validationResponse.responseValidatorList.push({
+							valid:false,
+							validator:"FileSizeValidator",
+							value: null,
+							field: err.field,
+							errorList: [err.code]
+						});
+						console.log(err);
+					}
+					next();
+				});
+			} else {
 				this.debug("getFileHandler no file callback");
 				next();
 			}

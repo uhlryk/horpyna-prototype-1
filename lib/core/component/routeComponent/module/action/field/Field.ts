@@ -1,5 +1,5 @@
 import Component = require("../../../../Component");
-import Validator = require("./validator/Validator");
+import Validator = require("./Validator");
 import FormInputType = require("./FormInputType");
 import Util = require("./../../../../../util/Util");
 /**

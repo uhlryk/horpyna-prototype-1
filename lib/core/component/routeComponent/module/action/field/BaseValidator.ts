@@ -1,14 +1,26 @@
-import Component = require("../../../../../Component");
+import Component = require("../../../../Component");
 import ValidatorResponse = require("./ValidatorResponse");
-import Field = require("./../Field");
+import Field = require("./Field");
 /**
  * Pojedyńczy walidator. podpina się jego instancję pod Field
  */
 class BaseValidator extends Component {
+	public static PREUPLOAD_PHASE: string = "preupload";
+	public static POSTUPLOAD_PHASE: string = "postupload";
 	public VALIDATOR_NAME = "BaseValidator";
 	public message = "";
-	constructor(name:string){
+	private _isFileValidator:boolean;
+	private _validatorPhase:string;
+	constructor(name:string, isFileValidator:boolean, validationPhase?:string){
 		super(name);
+		this._isFileValidator = isFileValidator;
+		this._validatorPhase = validationPhase ? validationPhase : BaseValidator.POSTUPLOAD_PHASE;
+	}
+	public isFileValidator():boolean{
+		return this._isFileValidator;
+	}
+	public get validationPhase():string{
+		return this._validatorPhase;
 	}
 	/**
 	 * Zwraca wiadomość w błędzie. W tym miejscu będzie w razie potrzeby ją tłumaczył.

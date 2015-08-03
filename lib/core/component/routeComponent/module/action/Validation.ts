@@ -1,37 +1,35 @@
-import Action = require("./../../Action");
-import Field = require("../Field");
-import BaseValidator = require("./BaseValidator");
+import Action = require("./Action");
+import Field = require("./field/Field");
+import BaseValidator = require("./field/BaseValidator");
 import ValidationResponse = require("./ValidationResponse");
-import ValidatorResponse = require("./ValidatorResponse");
-import FieldType = require("../FieldType");
-import Util = require("../../../../../../util/Util");
-
+import ValidatorResponse = require("./field/ValidatorResponse");
+import FieldType = require("./field/FieldType");
+import Util = require("./../../../../util/Util");
+import Element = require("./../../../../Element");
 /**
  * Odpowiada za przeprowadzenie procesu walidacji
  */
-class Validation{
+class Validation extends Element {
 	private action: Action.BaseAction;
 	private request: Action.Request;
 	private valueByTypeList: Object;
 	private validationResponse: ValidationResponse;
-	protected debugger: Util.Debugger;
 	constructor(action:Action.BaseAction, request:Action.Request){
+		super();
 		this.action = action;
 		this.request = request;
 		this.valueByTypeList = new Object();
 		this.validationResponse = <ValidationResponse>{};
 		this.validationResponse.valid = true;
 		this.validationResponse.responseValidatorList = [];
-		this.debugger = new Util.Debugger("validation");
-	}
-	public debug(...args: any[]){
-		this.debugger.debug(args);
+		this.initDebug("validation");
 	}
 	private checkFields() {
 		this.checkTypeFields(FieldType.PARAM_FIELD, this.request.getExpressRequest().params);
 		this.checkTypeFields(FieldType.QUERY_FIELD, this.request.getExpressRequest().query);
 		this.checkTypeFields(FieldType.BODY_FIELD, this.request.getExpressRequest().body);
 		this.checkTypeFields(FieldType.HEADER_FIELD, this.request.getExpressRequest().headers);
+		this.checkTypeFields(FieldType.FILE_FIELD, this.request.getExpressRequest().files);
 		this.checkTypeFields(FieldType.APP_FIELD, null);
 	}
 	private checkTypeFields(type: string, expressFieldList: Object) {
@@ -86,6 +84,9 @@ class Validation{
 			 */
 			if (value !== null) {
 				return Util.Promise.map(validatorList, (validator: BaseValidator) => {
+					if(validator.validationPhase !== BaseValidator.POSTUPLOAD_PHASE){
+						return;
+					}
 					return new Util.Promise<ValidatorResponse>((resolve: (ValidatorResponse) => void) => {
 						validator.validate(value, this.valueByTypeList, resolve);
 					})
@@ -95,7 +96,10 @@ class Validation{
 							this.debug(response.valid);
 							this.validationResponse.valid = false;
 						}
-						//nawet jeśli nie ma błędów co było walidowane i przez jaki walidator <- przy wyświetlaniu formularza będzie potrzebne
+						/**
+						 * nawet jeśli nie ma błędów przy danej walidacji, to mogą być przy innych, a wtedy informacja
+						 * co zwalidowane dla jakich pól będzie ważna, dlatego nawet poprawne walidacje zapisuję
+						 */
 						this.validationResponse.responseValidatorList.push(response);
 					});
 				});

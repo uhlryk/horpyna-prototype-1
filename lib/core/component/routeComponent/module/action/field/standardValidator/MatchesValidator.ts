@@ -1,6 +1,6 @@
 import Util = require("../../../../../../util/Util");
-import ValidatorResponse = require("./ValidatorResponse");
-import BaseValidator = require("./BaseValidator");
+import ValidatorResponse = require("./../ValidatorResponse");
+import BaseValidator = require("./../BaseValidator");
 /**
  * sprawdza czy parametr który jest stringiem ma dany fragment
  */
@@ -10,7 +10,7 @@ class MatchesValidator extends BaseValidator {
 	private modifiers: string;
 	public message = "The input not match '%s' pattern";
 	constructor(name:string, pattern:any, modifiers?:string){
-		super(name);
+		super(name, false);
 		this.pattern = pattern;
 		this.modifiers = modifiers;
 	}

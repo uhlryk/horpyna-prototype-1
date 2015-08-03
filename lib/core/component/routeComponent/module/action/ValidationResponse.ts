@@ -1,4 +1,4 @@
-import ValidatorResponse = require("./ValidatorResponse");
+import ValidatorResponse = require("./field/ValidatorResponse");
 
 interface ValidationResponse {
 	valid: boolean;

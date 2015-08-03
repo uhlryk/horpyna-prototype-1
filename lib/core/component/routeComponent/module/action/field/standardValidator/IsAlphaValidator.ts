@@ -1,14 +1,14 @@
 import Util = require("../../../../../../util/Util");
-import ValidatorResponse = require("./ValidatorResponse");
-import BaseValidator = require("./BaseValidator");
+import ValidatorResponse = require("./../ValidatorResponse");
+import BaseValidator = require("./../BaseValidator");
 /**
  * sprawdza czy parametr string ma znaki a-zA-Z
  */
 class IsAlphaValidator extends BaseValidator {
 	public VALIDATOR_NAME = "IsAlphaValidator";
 	public message = "The input may contain only a-zA-Z";
-	constructor(name:string){
-		super(name);
+	constructor(name: string) {
+		super(name, false);
 	}
 	protected setIsValid(value: any, data: Object, response: ValidatorResponse): boolean {
 		if (Util.ValidatorList.isAlpha(value)){
