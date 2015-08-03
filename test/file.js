@@ -21,6 +21,18 @@ var deleteFolderRecursive = function(path) {
 		fs.rmdirSync(path);
 	}
 };
+var isAnyFileInUploadDir = function(path) {
+	if( fs.existsSync(path) ) {
+		var isFile = false;
+		fs.readdirSync(path).forEach(function(file,index){
+			var curPath = path + "/" + file;
+			isFile = true;
+		});
+		return isFile;
+	} else {
+		return false;
+	}
+};
 var sourceDir="./test/upload";
 var uploadDir="./upload";
 describe("Test uploadu: ", function(){
@@ -48,6 +60,7 @@ describe("Test uploadu: ", function(){
 				.attach("field1",sourceDir+"/text.txt")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					done();
 				});
 		});
@@ -55,9 +68,8 @@ describe("Test uploadu: ", function(){
 			request(app).post("/mod1/file/")
 				.attach("field1",sourceDir+"/text.txt")
 				.end(function (err, res) {
-					console.log(res.body);
-					console.log(res.text);
 					expect(res.status).to.be.equal(200);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
 					done();
 				});
 		});

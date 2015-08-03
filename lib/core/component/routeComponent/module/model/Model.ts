@@ -93,6 +93,7 @@ class Model extends Component{
 			var column:Column.BaseColumn = this.columnList[index];
 			tableStructure[column.name] = column.build();
 		}
+		this.debug(tableStructure);
 		this._model = this.connection.getDb().define(tableName, tableStructure, {
 			timestamps: false,
 		});

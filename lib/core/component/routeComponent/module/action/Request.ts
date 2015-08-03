@@ -1,6 +1,5 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 import express = require("express");
-import BaseAction = require("./BaseAction");
 import Util = require("./../../../../util/Util");
 import FieldType = require("./field/FieldType");
 class Request{
@@ -16,13 +15,14 @@ class Request{
 		this.allFieldList[FieldType.BODY_FIELD] = new Object();
 		this.allFieldList[FieldType.APP_FIELD] = new Object();
 		this.allFieldList[FieldType.HEADER_FIELD] = new Object();
+		this.allFieldList[FieldType.FILE_FIELD] = new Object();
 	}
-	// public set action(v: BaseAction) {
-	// 	this._action = v;
-	// }
-	// public get action():BaseAction {
-	// 	return this._action;
-	// }
+	/**
+	 * Na podstawie express requesta wyciąga Horpyna request
+	 */
+	public static ExpressToRequest(req: express.Request): Request{
+		return req['horpynaRequest'];
+	}
 	public set logger(logger:Util.Logger){
 		this._logger = logger;
 	}
@@ -33,9 +33,6 @@ class Request{
 		return this.expressRequest;
 	}
 	public addField(type: string, name: string, value: any) {
-		if (!this.allFieldList[type]){
-			this.allFieldList[type] = new Object();
-		}
 		this.allFieldList[type][name] = value;
 	}
 	public getField(type: string, name: string): any {

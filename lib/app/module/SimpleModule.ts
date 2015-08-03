@@ -58,24 +58,28 @@ class SimpleModule extends  Core.Module{
 	/**
 	 * szybkie dodawanie nowego pola, automatycznie dodaje do do wszystkich akcji
 	 */
-	public addField(name:string, type:string, validationNameList:Object, isOptional:boolean, options?:Object){
+	public addField(name:string, formInputType:string, validationNameList:Object, isOptional:boolean, options?:Object){
+		var fieldType = Core.Action.FieldType.BODY_FIELD;
+		if(formInputType === Core.Action.FormInputType.FILE){
+			fieldType = Core.Action.FieldType.FILE_FIELD;
+		}
 		options = options || {};
 		isOptional = false;
-		var createField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
+		var createField: Core.Field = new Core.Field(name, fieldType);
 		createField.optional = isOptional;
-		createField.formInputType = type;
+		createField.formInputType = formInputType;
 		var createAction = this.getAction(Core.SimpleModule.ACTION_CREATE);
 		createAction.addField(createField);
 
-		var updateField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
+		var updateField: Core.Field = new Core.Field(name, fieldType);
 		updateField.optional = isOptional;
-		updateField.formInputType = type;
+		updateField.formInputType = formInputType;
 		var updateAction = this.getAction(Core.SimpleModule.ACTION_UPDATE);
 		updateAction.addField(updateField);
 
-		var deleteField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD);
+		var deleteField: Core.Field = new Core.Field(name, fieldType);
 		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
-		deleteField.formInputType = type;
+		deleteField.formInputType = formInputType;
 		var deleteFormAction = (<Core.Action.DualAction>this.getAction(Core.SimpleModule.ACTION_DELETE)).formAction;
 		deleteFormAction.addField(deleteField);
 
@@ -127,7 +131,7 @@ class SimpleModule extends  Core.Module{
 			/**
 			 * Jeśli są akcje które mają PARAM_FIELD to nie są tu prezentowane (bo wymagają i tak id)
 			 */
-			var paramFieldList = action.getFieldListByType(Core.FieldType.PARAM_FIELD);
+			var paramFieldList = action.getFieldListByType(Core.Action.FieldType.PARAM_FIELD);
 			if (paramFieldList.length > 0 ){
 				continue;
 			}

@@ -4,6 +4,7 @@ class FloatColumn extends BaseColumn{
 	private decimal:number;
 	constructor(name:string, total?:number, decimal?:number){
 		super(name);
+		this.debug("Float constructor total:"+total + " decimal:"+decimal);
 		this.total = total;
 		this.decimal = decimal;
 		this.createColumn();

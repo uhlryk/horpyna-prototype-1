@@ -113,9 +113,9 @@ class ResourceModule extends  SimpleModule{
 		});
 	}
 	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse){
-		var rawOrder = request.getField(Core.FieldType.QUERY_FIELD, 'order');
-		var page = request.getField(Core.FieldType.QUERY_FIELD, 'page');
-		var pageSize = request.getField(Core.FieldType.QUERY_FIELD, 'size');
+		var rawOrder = request.getField(Core.Action.FieldType.QUERY_FIELD, 'order');
+		var page = request.getField(Core.Action.FieldType.QUERY_FIELD, 'page');
+		var pageSize = request.getField(Core.Action.FieldType.QUERY_FIELD, 'size');
 		var listAction = this.getAction(SimpleModule.ACTION_LIST);
 		var baseUri = Core.Util.Uri.updateQuery(listAction.getRoutePath(true), "order", rawOrder);
 		baseUri = Core.Util.Uri.updateQuery(baseUri, "page", page);
@@ -242,7 +242,9 @@ class ResourceModule extends  SimpleModule{
 		.then(() => {
 			var create = new Core.Query.Create();
 			create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
-			create.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
+			create.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
+			var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
+			console.log(JSON.stringify(fileList));
 			return create.run();
 		})
 		.then((model)=>{
@@ -258,7 +260,7 @@ class ResourceModule extends  SimpleModule{
 			update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 			var paramAppList = request.getParamAppFieldList();
 			update.populateWhere(paramAppList);
-			update.populate(request.getFieldList(Core.FieldType.BODY_FIELD));
+			update.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
 			return update.run();
 		})
 		.then(()=>{
@@ -308,7 +310,7 @@ class ResourceModule extends  SimpleModule{
 			 * Jeśli są akcje które nie mają PARAM_FIELD to nie są tu prezentowane
 			 * ta nawigacja dotyczy danego elementu i jego parametrów
 			 */
-			var paramFieldList = action.getFieldListByType(Core.FieldType.PARAM_FIELD);
+			var paramFieldList = action.getFieldListByType(Core.Action.FieldType.PARAM_FIELD);
 			var paramFieldListLength = paramFieldList.length;
 			if (paramFieldListLength === 0 ){
 				continue;
@@ -324,12 +326,22 @@ class ResourceModule extends  SimpleModule{
 	/**
  * rozszerza metodę simpleModule o dodawanie kolumn do defaultowego modelu
  */
-	public addField(name: string, type: string, validationNameList: Object, isOptional: boolean, options?: Object) {
+	public addField(name: string, formInputType: string, validationNameList: Object, isOptional: boolean, options?: Object) {
 		options = options || {};
-		super.addField(name, type, validationNameList, isOptional, options);
+		super.addField(name, formInputType, validationNameList, isOptional, options);
 		var model = this.getDefaultModel();
 		//na razie nie rozbudowujemy tego tak że system ma zamapowane typ forma a typy kolumn
-		model.addColumn(new Core.Column.StringColumn(name, options['length'] || 50));
+		switch (formInputType){
+			case Core.Action.FormInputType.FILE:
+				if (options['db_file'] === true) {//znaczy że plik ma być zapisywany w bazie danych a nie na dysku
+					model.addColumn(new Core.Column.BlobColumn(name));
+				} else {
+					model.addColumn(new Core.Column.JsonColumn(name));
+				}
+				break;
+			default:
+				model.addColumn(new Core.Column.StringColumn(name, options['length'] || 50));
+		}
 	}
 }
 export = ResourceModule;

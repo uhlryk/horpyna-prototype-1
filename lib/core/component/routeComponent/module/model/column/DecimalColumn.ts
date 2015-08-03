@@ -4,6 +4,7 @@ class DecimalColumn extends BaseColumn{
 	private decimal:number;
 	constructor(name:string, total?:number, decimal?:number){
 		super(name);
+		this.debug("Decimal constuctor total:" + total + " decimal:" + decimal);
 		this.total = total;
 		this.decimal = decimal;
 		this.createColumn();

@@ -6,6 +6,8 @@ import ViewManager = require("./../view/ViewManager");
 import Module = require("./../component/routeComponent/module/Module");
 import RouteComponent = require("./../component/routeComponent/RouteComponent");
 import Action = require("./../component/routeComponent/module/action/Action");
+// import Response = require("./../component/routeComponent/module/action/Response");
+// import Request = require("./../component/routeComponent/module/action/Request");
 import Field = require("./../component/routeComponent/module/action/field/Field");
 import Element = require("../Element");
 class Dispatcher extends Element{
@@ -106,8 +108,8 @@ class Dispatcher extends Element{
 			this.debug('home route');
 			this.router.all("/", (req, res, next) => {
 				var handler = this.homeAction.getRequestHandler();
-				var request: Action.Request = req['horpynaRequest'];
-				var response: Action.Response = res['horpynaResponse'];
+				var request: Action.Request = Action.Request.ExpressToRequest(req);
+				var response: Action.Response = Action.Response.ExpressToResponse(res);
 				response.allow = true;
 				response.routePath = "/";
 				handler(request, response, next);
@@ -120,15 +122,15 @@ class Dispatcher extends Element{
 		this.debug('final route');
 		this.router.use((req, res, next) => {
 			var handler = this.finalAction.getRequestHandler();
-			var request: Action.Request = req['horpynaRequest'];
-			var response: Action.Response = res['horpynaResponse'];
+			var request: Action.Request = Action.Request.ExpressToRequest(req);
+			var response: Action.Response = Action.Response.ExpressToResponse(res);
 			response.allow = true;
 			this.debug('final action');
 			handler(request, response, next);
 		});
 		this.router.use((req, res) => {
 			this.debug('final render');
-			var response: Action.Response = res['horpynaResponse'];
+			var response: Action.Response = Action.Response.ExpressToResponse(res);
 			this._viewManager.render(req, res);
 		});
 	}
@@ -144,8 +146,8 @@ class Dispatcher extends Element{
 	}
 	public addRoute(method:string, routePath:string, fileHandler:Function, handler:Function){
 		this._subRouter[method](routePath, fileHandler, (req, res, next) => {
-			var request: Action.Request = req['horpynaRequest'];
-			var response: Action.Response = res['horpynaResponse'];
+			var request: Action.Request = Action.Request.ExpressToRequest(req);
+			var response: Action.Response = Action.Response.ExpressToResponse(res);
 			response.allow = true;
 			response.routePath = routePath;
 			handler(request, response, next);

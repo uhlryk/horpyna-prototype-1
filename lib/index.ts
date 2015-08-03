@@ -10,7 +10,6 @@ export import ActionRequest = require("./core/component/routeComponent/module/ac
 export import ActionResponse = require("./core/component/routeComponent/module/action/Response");
 export import Field = require("./core/component/routeComponent/module/action/field/Field");
 export import Validator = require("./core/component/routeComponent/module/action/field/validator/Validator");
-export import FieldType = require("./core/component/routeComponent/module/action/field/FieldType");
 export import Query = require("./core/component/routeComponent/module/query/Query");
 export import SimpleModule = require("./app/module/SimpleModule");
 export import ResourceModule = require("./app/module/ResourceModule");

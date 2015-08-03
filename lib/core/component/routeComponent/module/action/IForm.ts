@@ -6,6 +6,7 @@ interface IForm {
 	method: string;
 	action: string;
 	valid: boolean;
+	isMultipart: boolean;
 	fields: IInputForm[];
 	errorList: string[];
 }

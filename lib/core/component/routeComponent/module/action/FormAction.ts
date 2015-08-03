@@ -44,15 +44,35 @@ class FormAction extends BaseAction {
 		form.method = this.targetAction.getMethod();
 		form.errorList = [];
 		form.valid = true;
-		var bodyFields: Field[] = this.targetAction.getFieldListByType(FieldType.BODY_FIELD);
-		var ownBodyFields: Field[] = this.getFieldListByType(FieldType.BODY_FIELD);
-		bodyFields.push.apply(bodyFields, ownBodyFields);
+		var fieldList: Field[] = this.targetAction.getFieldList();
 		form.fields = [];
-		for (var i = 0; i < bodyFields.length; i++) {
-			var field: Field = bodyFields[i];
-			var inputField: IInputForm = this.createInputField(true, field.getFieldName(), FormInputType.TEXT, field.labelForm);
-			form.fields.push(inputField);
+		form.isMultipart = false;
+		var tempNameField = [];
+		for (var i = 0; i < fieldList.length; i++) {
+			var field: Field = fieldList[i];
+			if (field.getType() === FieldType.BODY_FIELD || field.getType() === FieldType.FILE_FIELD) {
+				if (field.getType() === FieldType.FILE_FIELD){
+					form.isMultipart = true;
+				}
+				tempNameField.push(field.getFieldName());
+				var inputField: IInputForm = this.createInputField(true, field.getFieldName(), field.formInputType, field.labelForm);
+				form.fields.push(inputField);
+			}
 		}
+		fieldList = this.getFieldList();
+		for (var i = 0; i < fieldList.length; i++) {
+			var field: Field = fieldList[i];
+			if (field.getType() === FieldType.BODY_FIELD || field.getType() === FieldType.FILE_FIELD) {
+				if (field.getType() === FieldType.FILE_FIELD){
+					form.isMultipart = true;
+				}
+				if (tempNameField.indexOf(field.getFieldName()) === -1) {
+					var inputField: IInputForm = this.createInputField(true, field.getFieldName(), field.formInputType, field.labelForm);
+					form.fields.push(inputField);
+				}
+			}
+		}
+
 		var inputField: IInputForm = this.createInputField(false, "_source", FormInputType.HIDDEN, "");
 		inputField.value = this.populateRoutePath(paramAppList);
 		form.fields.push(inputField);

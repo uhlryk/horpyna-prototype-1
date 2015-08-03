@@ -172,8 +172,15 @@ class BaseAction extends RouteComponent {
 	public getRequestHandler(){
 		this.debug("action:getRequestHandler()");
 		return (request:Request, response:Response, next)=>{
+			this.debug(request.getExpressRequest['body']);
 			this.requestHandler(request, response, next);
 		}
+	}
+	/**
+	 * Uchwyt na obsługę walidacji plików
+	 */
+	protected fileFilterHandler(request:Request, file, done){
+		done();
 	}
 	/**
 	 * Zwraca middleware do obsługi plików (multer)
@@ -184,9 +191,15 @@ class BaseAction extends RouteComponent {
 		fileUpload.directory = this.getData("uploadDirectory");
 		var fileFields: Object[] = this.populateFileFields();
 		if (fileFields.length > 0) {
+			fileUpload.fileFilterHandler = (request:Request, file, done)=>{
+				this.fileFilterHandler(request, file, done);
+			};
 			return fileUpload.create(fileFields);
 		} else{
-			return (request: Request, response: Response, next) => {next(); }
+			return (req, res, next) => {
+				this.debug("getFileHandler no file callback");
+				next();
+			}
 		}
 	}
 	/**

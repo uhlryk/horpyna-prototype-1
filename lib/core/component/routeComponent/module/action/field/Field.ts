@@ -17,12 +17,12 @@ class Field extends Component {
 	private _formInputType: string;
 	/**
 	 * @param name określa nazwę będącą identyfikatorem komponentu | nazwa parametru otrzymanego z requesta
-	 * @param type url, query, body app
+	 * @param fieldType url, query, body app
 	 */
-	constructor(name:string, type:string, options?:Object){
+	constructor(name:string, fieldType:string, options?:Object){
 		super(name);
 		this._options = options || {};
-		this._type = type;
+		this._type = fieldType;
 		this._validatorList = [];
 		this._optional = this._options['optional'] || false;
 		this._fieldName = this._options['fieldName'] || name;

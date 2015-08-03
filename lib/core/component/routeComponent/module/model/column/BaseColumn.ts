@@ -8,10 +8,12 @@ class Column extends Component{
 	private attributeOptions:Sequelize.AttributeOptions;
 	constructor(name:string){
 		super(name);
+		this.initDebug("column:"+this.name);
 		this.attributeOptions = <Sequelize.AttributeOptions>{};
 		this.attributeOptions.field = name;
 	}
 	public setType(type:string){
+		this.debug("setType " + JSON.stringify(type));
 		this.attributeOptions.type = type;
 	}
 	public setAllowNull(allowNull:boolean){
@@ -30,6 +32,7 @@ class Column extends Component{
 		this.attributeOptions.field = field;
 	}
 	public build(){
+		this.debug("build " + JSON.stringify(this.attributeOptions));
 		return this.attributeOptions;
 	}
 }

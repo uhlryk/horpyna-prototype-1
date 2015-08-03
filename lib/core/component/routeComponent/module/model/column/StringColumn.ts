@@ -4,6 +4,7 @@ class StringColumn extends BaseColumn{
 	private binary:boolean;
 	constructor(name:string, length?:number, binary?:boolean){
 		super(name);
+		this.debug("String constructor length:" +length + " binary:"+binary);
 		this.length = length;
 		this.binary = binary;
 		this.createColumn();

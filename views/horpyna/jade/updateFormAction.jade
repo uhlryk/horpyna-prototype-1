@@ -1,6 +1,6 @@
 extend layout
 block content
-	form(method=content.form.method action=content.form.action enctype="multipart/form-data")
+	form(method=content.form.method action=content.form.action enctype=content.form.isMultipart?"multipart/form-data":undefined)
 		unless content.form.valid
 			each error in content.form.errorList
 				p #{error}

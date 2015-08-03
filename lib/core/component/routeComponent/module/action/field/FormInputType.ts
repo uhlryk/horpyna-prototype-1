@@ -1,4 +1,5 @@
 class FormInputType {
+	public static FILE: string = "file";
 	public static SUBMIT: string = "submit";
 	public static TEXT: string = "text";
 	public static HIDDEN: string = "hidden";

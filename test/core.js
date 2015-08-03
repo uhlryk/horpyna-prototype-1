@@ -266,7 +266,7 @@ describe("Funkcje podstawowe", function() {
 			col3.setList(["kot", "ala", "ma"]);
 			myModel.addColumn(col3);
 			myModel.addColumn(new Core.Column.HstoreColumn("a4"));
-			myModel.addColumn(new Core.Column.JsonTypeColumn("a5"));
+			myModel.addColumn(new Core.Column.JsonColumn("a5"));
 			myModel.addColumn(new Core.Column.JsonBColumn("a6"));
 			myModule.addModel(myModel);
 			// app.use(myApp.getMiddleware());

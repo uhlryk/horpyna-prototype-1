@@ -1,7 +1,6 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
 // import View = require("../../../../view/View");
 import express = require("express");
-import BaseAction = require("./BaseAction");
 import Util = require("./../../../../util/Util");
 /**
  * Obiekt z odpowiedzią na requesta. Jest to wrapper na express.Response
@@ -31,6 +30,12 @@ class Response{
 		this.expressResponse = expressResponse;
 		this._routePath = null;
 		this._valid = true;
+	}
+	/**
+	 * Na podstawie express requesta wyciąga Horpyna request
+	 */
+	public static ExpressToResponse(res: express.Response): Response {
+		return res['horpynaResponse'];
 	}
 	public set routePath(v : string) {
 		this._routePath = v;
