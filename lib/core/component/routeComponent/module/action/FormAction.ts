@@ -105,11 +105,11 @@ class FormAction extends BaseAction {
 	 * Poniższa konstrukcja pozwoli dodać do responsa formularz, nie psując działania ActionHandlera
 	 */
 	public setActionHandler(actionHandler:IActionHandler){
-		super.setActionHandler((request, response) => {
+		super.setActionHandler((request, response, action) => {
 			var content = new Object();
 			content['form'] = this.createForm(request)
 			response.content = content;
-			return actionHandler(request, response);
+			return actionHandler(request, response, action);
 		});
 	}
 }

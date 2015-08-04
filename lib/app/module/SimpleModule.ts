@@ -31,30 +31,30 @@ class SimpleModule extends  Core.Module{
 		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
 		sizeField.optional = true;
 		this._listAction.addField(sizeField);
-		this._listAction.setActionHandler((request, response) => { return this.onListAction(request, response); });
+		this._listAction.setActionHandler((request, response, action) => { return this.onListAction(request, response, action); });
 
 		this._createAction = new Core.Action.DualAction(SimpleModule.ACTION_CREATE);
 		this.addAction(this._createAction);
-		this._createAction.setActionHandler((request, response) => { return this.onCreateAction(request, response); });
-		this._createAction.setFormActionHandler((request, response) => { return this.onFormCreateAction(request, response); });
+		this._createAction.setActionHandler((request, response, action) => { return this.onCreateAction(request, response, <Core.Action.DualAction>action); });
+		this._createAction.setFormActionHandler((request, response, action) => { return this.onFormCreateAction(request, response, <Core.Action.FormAction>action); });
 
 		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(this._detailAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
 		this._detailAction.addField(idField);
-		this._detailAction.setActionHandler((request, response) => { return this.onDetailAction(request, response);});
+		this._detailAction.setActionHandler((request, response, action) => { return this.onDetailAction(request, response, action);});
 
 		this._updateAction = new Core.Action.DualAction(SimpleModule.ACTION_UPDATE);
 		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._updateAction);
-		this._updateAction.setActionHandler((request, response) => { return this.onUpdateAction(request, response); });
-		this._updateAction.setFormActionHandler((request, response) => { return this.onFormUpdateAction(request, response); });
+		this._updateAction.setActionHandler((request, response, action) => { return this.onUpdateAction(request, response, <Core.Action.DualAction>action); });
+		this._updateAction.setFormActionHandler((request, response, action) => { return this.onFormUpdateAction(request, response, <Core.Action.FormAction>action); });
 
 		this._deleteAction = new Core.Action.DualAction(SimpleModule.ACTION_DELETE);
 		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteAction);
-		this._deleteAction.setActionHandler((request, response) => { return this.onDeleteAction(request, response); });
-		this._deleteAction.setFormActionHandler((request, response) => { return this.onFormDeleteAction(request, response); });
+		this._deleteAction.setActionHandler((request, response, action) => { return this.onDeleteAction(request, response, <Core.Action.DualAction>action); });
+		this._deleteAction.setFormActionHandler((request, response, action) => { return this.onFormDeleteAction(request, response, <Core.Action.FormAction>action); });
 
 		var navigationEvent = new Core.Event.Action.OnFinish();
 		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
@@ -118,14 +118,14 @@ class SimpleModule extends  Core.Module{
 			}
 		}
 	}
-	public onListAction (request, response) { return Core.Util.Promise.resolve();}
-	public onDetailAction (request, response) { return Core.Util.Promise.resolve();}
-	public onFormCreateAction(request, response) { return Core.Util.Promise.resolve();}
-	public onFormUpdateAction (request, response) { return Core.Util.Promise.resolve();}
-	public onFormDeleteAction(request, response) { return Core.Util.Promise.resolve();}
- 	public onCreateAction (request, response) { return Core.Util.Promise.resolve();}
-	public onUpdateAction (request, response) { return Core.Util.Promise.resolve();}
-	public onDeleteAction (request, response) { return Core.Util.Promise.resolve();}
+	public onListAction (request, response, action) { return Core.Util.Promise.resolve();}
+	public onDetailAction (request, response, action) { return Core.Util.Promise.resolve();}
+	public onFormCreateAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
+	public onFormUpdateAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
+	public onFormDeleteAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
+ 	public onCreateAction(request, response, action:Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+		public onUpdateAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+		public onDeleteAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
 	/**
 	 * Callback na event navigationEvent
 	 * Odpala się dla wszystkich akcji tego modułu.

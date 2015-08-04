@@ -8,8 +8,8 @@ class ResourceModule extends  SimpleModule{
 		var resourceModel = new Core.Model(ResourceModule.RESOURCE_MODEL);
 		this.addModel(resourceModel, true);
 	}
-	public onFormCreateAction (request:Core.ActionRequest, response:Core.ActionResponse){
-		return super.onFormCreateAction(request,response)
+	public onFormCreateAction(request: Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.FormAction) {
+		return super.onFormCreateAction(request,response, action)
 		.then(()=>{
 			var content = response.content;
 			var form: Core.Action.IForm = content["form"];
@@ -34,8 +34,8 @@ class ResourceModule extends  SimpleModule{
 			response.view = "horpyna/jade/createFormAction";
 		});
 	}
-	public onFormUpdateAction (request:Core.ActionRequest, response:Core.ActionResponse){
-		return super.onFormUpdateAction(request, response)
+	public onFormUpdateAction(request: Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.FormAction) {
+		return super.onFormUpdateAction(request, response, action)
 		.then(() => {
 			var find = new Core.Query.Find();
 			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
@@ -82,8 +82,8 @@ class ResourceModule extends  SimpleModule{
 			response.view = "horpyna/jade/updateFormAction";
 		});
 	}
-	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse) {
-		return super.onFormDeleteAction(request, response)
+	public onFormDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.FormAction) {
+		return super.onFormDeleteAction(request, response, action)
 		.then(() => {
 			var find = new Core.Query.Find();
 			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
@@ -112,7 +112,7 @@ class ResourceModule extends  SimpleModule{
 			response.view = "horpyna/jade/deleteFormAction";
 		});
 	}
-	public onListAction (request:Core.ActionRequest,response:Core.ActionResponse){
+	public onListAction (request:Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.BaseAction){
 		var rawOrder = request.getField(Core.Action.FieldType.QUERY_FIELD, 'order');
 		var page = request.getField(Core.Action.FieldType.QUERY_FIELD, 'page');
 		var pageSize = request.getField(Core.Action.FieldType.QUERY_FIELD, 'size');
@@ -120,7 +120,7 @@ class ResourceModule extends  SimpleModule{
 		var baseUri = Core.Util.Uri.updateQuery(listAction.getRoutePath(true), "order", rawOrder);
 		baseUri = Core.Util.Uri.updateQuery(baseUri, "page", page);
 		baseUri = Core.Util.Uri.updateQuery(baseUri, "size", pageSize);
-		return super.onListAction(request, response)
+		return super.onListAction(request, response, action)
 		.then(() => {
 			var list = new Core.Query.List();
 			var model = this.getDefaultModel();
@@ -212,8 +212,8 @@ class ResourceModule extends  SimpleModule{
 			response.view = "horpyna/jade/listAction";
 		});
 	}
-	public onDetailAction (request:Core.ActionRequest,response:Core.ActionResponse){
-		return super.onDetailAction(request, response)
+	public onDetailAction (request:Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.BaseAction){
+		return super.onDetailAction(request, response, action)
 		.then(()=>{
 			var find = new Core.Query.Find();
 			find.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
@@ -237,8 +237,8 @@ class ResourceModule extends  SimpleModule{
 			response.view = "horpyna/jade/detailAction";
 		});
 	}
-	public onCreateAction (request:Core.ActionRequest,response:Core.ActionResponse){
-		return super.onCreateAction(request, response)
+	public onCreateAction(request: Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.DualAction) {
+		return super.onCreateAction(request, response, action)
 		.then(() => {
 			var create = new Core.Query.Create();
 			create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
@@ -253,8 +253,8 @@ class ResourceModule extends  SimpleModule{
 			response.setRedirect(listAction.getRoutePath());
 		});
 	}
-	public onUpdateAction (request:Core.ActionRequest,response:Core.ActionResponse){
-		return super.onUpdateAction(request, response)
+	public onUpdateAction(request: Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.DualAction) {
+		return super.onUpdateAction(request, response, action)
 		.then(() => {
 			var update = new Core.Query.Update();
 			update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
@@ -268,8 +268,8 @@ class ResourceModule extends  SimpleModule{
 			response.setRedirect(listAction.getRoutePath());
 		});
 	}
-	public onDeleteAction (request:Core.ActionRequest,response:Core.ActionResponse){
-		return super.onDeleteAction(request, response)
+	public onDeleteAction(request: Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.DualAction) {
+		return super.onDeleteAction(request, response, action)
 		.then(() => {
 			var deleteQuery = new Core.Query.Delete();
 			deleteQuery.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
