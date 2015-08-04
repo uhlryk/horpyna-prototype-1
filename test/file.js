@@ -147,4 +147,49 @@ describe("Test uploadu: ", function(){
 			});
 		});
 	});
+	describe("Sprawdzenie uploadu zdjęcia z walidacją rozmiaru ", function () {
+		var myField1;
+		beforeEach(function (done) {
+			deleteFolderRecursive(uploadDir);
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
+			myModule.addAction(fileAction);
+			myField1 = new Core.Field("field1", Core.Action.FieldType.FILE_FIELD);
+			fileAction.addField(myField1);
+			// var myField2 = new Core.Field("field2", Core.Action.FieldType.FILE_FIELD);
+			// fileAction.addField(myField2);
+			done();
+		});
+		it("zwraca 200 gdy wyślemy plik o właściwym rozmiarze'", function (done) {
+			var SizeValidator = Core.Validator.File.SizeValidator;
+			var val = new SizeValidator("mime", 3, 10);
+			myField1.addValidator(val);
+			myApp.init().then(function () {
+				request(app).post("/mod1/file/")
+				.attach("field1",sourceDir+"/text.txt")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					done();
+				});
+			});
+		});
+		it("zwraca 422 gdy wyślemy plik o za dużym rozmiarze'", function (done) {
+			var SizeValidator = Core.Validator.File.SizeValidator;
+			var val = new SizeValidator("mime", 3, 10);
+			myField1.addValidator(val);
+			myApp.init().then(function () {
+				request(app).post("/mod1/file/")
+				.attach("field1",sourceDir+"/textBig.txt")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					done();
+				});
+			});
+		});
+	});
 });

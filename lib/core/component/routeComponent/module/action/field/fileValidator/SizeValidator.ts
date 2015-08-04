@@ -2,39 +2,22 @@ import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./../ValidatorResponse");
 import BaseValidator = require("./../BaseValidator");
 /**
- * sprawdza czy mime danego pliku jest poprawne
- * listę mime przekazujemy w acceptedMimeTypes. Jest to lista w której mamy mime, ale może też dany element listy być też listą
- * Dzięki czemu możemy zrobić presety mime types
+ * Waliduje rozmiar pliku, jeśli
  */
-class MimeTypeValidator extends BaseValidator {
-	public static ALL_IMAGE_MIME = ['image/bmp', 'image/gif', 'image/jpeg', 'image/tiff'];
-	public static JPEG_MIME = 'image/jpeg';
-	public static PDF_MIME = ['application/pdf', 'application/x-pdf'];
-	public static TEXT_MIME = 'text/plain';
-	public VALIDATOR_NAME = "MimeTypeValidator";
-	public message = "File %s has wrong mime type %s";
-	private _mimeTypes: string[];
-	constructor(name: string, acceptedMimeTypes, validationPhase?:string) {
+class SizeValidator extends BaseValidator {
+	public VALIDATOR_NAME = "SizeValidator";
+	private min: number;
+	private max: number;
+	public messageMin = "The input is less than %s bytes size"
+	public messageMax = "The input is more than %s bytes size";
+
+	constructor(name: string, min: number, max: number, validationPhase?: string) {
 		super(name, true, validationPhase);
 		if (!validationPhase){
 			validationPhase = BaseValidator.POSTUPLOAD_PHASE;
 		}
-		this._mimeTypes = [];
-		if (typeof acceptedMimeTypes !== 'string') {
-			for (var i = 0; i < acceptedMimeTypes.length; i++) {
-				var mimeObject = acceptedMimeTypes[i];
-				if (typeof mimeObject !== 'string') {
-					for (var j = 0; j < acceptedMimeTypes.length; j++) {
-						var subMimeObject = mimeObject[j];
-						this._mimeTypes.push(subMimeObject);
-					}
-				} else {
-					this._mimeTypes.push(mimeObject);
-				}
-			}
-		} else {
-			this._mimeTypes.push(acceptedMimeTypes);
-		}
+		this.min = min;
+		this.max = max;
 	}
 	protected setIsValid(value: any, data: Object, response: ValidatorResponse): boolean {
 		var valueList = [];
@@ -46,12 +29,15 @@ class MimeTypeValidator extends BaseValidator {
 		var valid = true;
 		for (var i = 0; i < valueList.length; i++){
 			var file = valueList[i];
-			if (this._mimeTypes.indexOf(file['mimetype']) === -1) {
-				response.errorList = [Util.NodeUtil.format(this.getErrorMessage(), file.originalname, file.mimetype)];
+			if (file.size < this.min) {
+				response.errorList = [Util.NodeUtil.format(this.getErrorMessage(this.messageMin), this.min)];
+				valid = false;
+			} else if (file.size > this.max) {
+				response.errorList = [Util.NodeUtil.format(this.getErrorMessage(this.messageMax), this.max)];
 				valid = false;
 			}
 		}
 		return valid;
 	}
 }
-export = MimeTypeValidator;
+export = SizeValidator;
