@@ -6,10 +6,17 @@ class SimpleModule extends  Core.Module{
 	public static ACTION_CREATE = "create";
 	public static ACTION_UPDATE = "update";
 	public static ACTION_DELETE = "delete";
+
+	private _listAction: Core.Action.BaseAction;
+	private _createAction: Core.Action.DualAction;
+	private _updateAction: Core.Action.DualAction;
+	private _detailAction: Core.Action.BaseAction;
+	private _deleteAction: Core.Action.DualAction;
+
 	public onConstructor(){
 		super.onConstructor();
-		var listAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_LIST);
-		this.addAction(listAction, true);
+		this._listAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_LIST);
+		this.addAction(this._listAction, true);
 		/**
 		 * order czyli po jakiej kolumnie sortujemy, ma po '-' kierunek sortowania ASC, DESC
 		 * a potem po przecinku więcej kolumn czyli
@@ -17,43 +24,58 @@ class SimpleModule extends  Core.Module{
 		 */
 		var orderField: Core.Field = new Core.Field("order", Core.Action.FieldType.QUERY_FIELD);
 		orderField.optional = true;
-		listAction.addField(orderField);
+		this._listAction.addField(orderField);
 		var pageField: Core.Field = new Core.Field("page", Core.Action.FieldType.QUERY_FIELD);
 		pageField.optional = true;
-		listAction.addField(pageField);
+		this._listAction.addField(pageField);
 		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
 		sizeField.optional = true;
-		listAction.addField(sizeField);
-		listAction.setActionHandler((request, response) => { return this.onListAction(request, response);});
+		this._listAction.addField(sizeField);
+		this._listAction.setActionHandler((request, response) => { return this.onListAction(request, response); });
 
-		var createAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_CREATE);
-		this.addAction(createAction);
-		createAction.setActionHandler((request, response) => { return this.onCreateAction(request, response);});
-		createAction.setFormActionHandler((request, response) => { return this.onFormCreateAction(request, response); });
+		this._createAction = new Core.Action.DualAction(SimpleModule.ACTION_CREATE);
+		this.addAction(this._createAction);
+		this._createAction.setActionHandler((request, response) => { return this.onCreateAction(request, response); });
+		this._createAction.setFormActionHandler((request, response) => { return this.onFormCreateAction(request, response); });
 
-		var detailAction:Core.Action.BaseAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
-		this.addAction(detailAction);
+		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
+		this.addAction(this._detailAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
-		detailAction.addField(idField);
-		detailAction.setActionHandler((request, response) => { return this.onDetailAction(request, response);});
+		this._detailAction.addField(idField);
+		this._detailAction.setActionHandler((request, response) => { return this.onDetailAction(request, response);});
 
-		var updateAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_UPDATE);
-		updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
-		this.addAction(updateAction);
-		updateAction.setActionHandler((request, response) => { return this.onUpdateAction(request, response); });
-		updateAction.setFormActionHandler((request, response) => { return this.onFormUpdateAction(request, response); });
+		this._updateAction = new Core.Action.DualAction(SimpleModule.ACTION_UPDATE);
+		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this.addAction(this._updateAction);
+		this._updateAction.setActionHandler((request, response) => { return this.onUpdateAction(request, response); });
+		this._updateAction.setFormActionHandler((request, response) => { return this.onFormUpdateAction(request, response); });
 
-		var deleteAction: Core.Action.DualAction = new Core.Action.DualAction(SimpleModule.ACTION_DELETE);
-		deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
-		this.addAction(deleteAction);
-		deleteAction.setActionHandler((request, response) => { return this.onDeleteAction(request, response); });
-		deleteAction.setFormActionHandler((request, response) => { return this.onFormDeleteAction(request, response); });
+		this._deleteAction = new Core.Action.DualAction(SimpleModule.ACTION_DELETE);
+		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this.addAction(this._deleteAction);
+		this._deleteAction.setActionHandler((request, response) => { return this.onDeleteAction(request, response); });
+		this._deleteAction.setFormActionHandler((request, response) => { return this.onFormDeleteAction(request, response); });
 
 		var navigationEvent = new Core.Event.Action.OnFinish();
 		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
 			this.onBuildNavigation(request, response, done);
 		});
 		this.subscribe(navigationEvent);
+	}
+	public get listAction(): Core.Action.BaseAction{
+		return this._listAction;
+	}
+	public get createAction(): Core.Action.DualAction{
+		return this._createAction;
+	}
+	public get updateAction(): Core.Action.DualAction {
+		return this._updateAction;
+	}
+	public get detailAction(): Core.Action.BaseAction {
+		return this._detailAction;
+	}
+	public get deleteAction(): Core.Action.DualAction {
+		return this._deleteAction;
 	}
 	/**
 	 * szybkie dodawanie nowego pola, automatycznie dodaje do do wszystkich akcji
@@ -70,19 +92,17 @@ class SimpleModule extends  Core.Module{
 		var createField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
 		createField.optional = isOptional;
 		createField.formInputType = formInputType;
-		var createAction = this.getAction(Core.SimpleModule.ACTION_CREATE);
-		createAction.addField(createField);
+		this.createAction.addField(createField);
 
 		var updateField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
 		updateField.optional = isOptional;
 		updateField.formInputType = formInputType;
-		var updateAction = this.getAction(Core.SimpleModule.ACTION_UPDATE);
-		updateAction.addField(updateField);
+		this.updateAction.addField(updateField);
 
 		var deleteField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
 		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
 		deleteField.formInputType = formInputType;
-		var deleteFormAction = (<Core.Action.DualAction>this.getAction(Core.SimpleModule.ACTION_DELETE)).formAction;
+		var deleteFormAction = this.deleteAction.formAction;
 		deleteFormAction.addField(deleteField);
 
 		for(var validationName in validationNameList){
