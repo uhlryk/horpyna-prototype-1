@@ -36,7 +36,7 @@ var isAnyFileInUploadDir = function(path) {
 var sourceDir="./test/upload";
 var uploadDir="./upload";
 describe("Test uploadu: ", function(){
-	describe("Sprawdzenie uploadu zdjęcia gdy akcja nie ma pola pliku", function () {
+	describe("Sprawdzenie uploadu zdjęcia bez walidacji", function () {
 		var myField1;
 		beforeEach(function (done) {
 			deleteFolderRecursive(uploadDir);
@@ -72,6 +72,79 @@ describe("Test uploadu: ", function(){
 					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
 					done();
 				});
+		});
+	});
+	describe("Sprawdzenie uploadu zdjęcia z walidacją mime type", function () {
+		var myField1;
+		beforeEach(function (done) {
+			deleteFolderRecursive(uploadDir);
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
+			myModule.addAction(fileAction);
+			myField1 = new Core.Field("field1", Core.Action.FieldType.FILE_FIELD);
+			fileAction.addField(myField1);
+			// var myField2 = new Core.Field("field2", Core.Action.FieldType.FILE_FIELD);
+			// fileAction.addField(myField2);
+			done();
+		});
+		it("zwraca 200 gdy wyślemy plik o właściwym mime, a walidacja w fazie preupload'", function (done) {
+			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Validator.BaseValidator.PREUPLOAD_PHASE);
+			myField1.addValidator(val);
+			myApp.init().then(function () {
+				request(app).post("/mod1/file/")
+				.attach("field1",sourceDir+"/text.txt")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					done();
+				});
+			});
+		});
+		it("zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie preupload'", function (done) {
+			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Validator.BaseValidator.PREUPLOAD_PHASE);
+			myField1.addValidator(val);
+			myApp.init().then(function () {
+				request(app).post("/mod1/file/")
+				.attach("field1",sourceDir+"/text.txt")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					done();
+				});
+			});
+		});
+		it("zwraca 200 gdy wyślemy plik o właściwym mime, a walidacja w fazie postupload'", function (done) {
+			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Validator.BaseValidator.POSTUPLOAD_PHASE);
+			myField1.addValidator(val);
+			myApp.init().then(function () {
+				request(app).post("/mod1/file/")
+				.attach("field1",sourceDir+"/text.txt")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					done();
+				});
+			});
+		});
+		it("zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie postupload'", function (done) {
+			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Validator.BaseValidator.POSTUPLOAD_PHASE);
+			myField1.addValidator(val);
+			myApp.init().then(function () {
+				request(app).post("/mod1/file/")
+				.attach("field1",sourceDir+"/text.txt")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					done();
+				});
+			});
 		});
 	});
 });

@@ -59,25 +59,27 @@ class SimpleModule extends  Core.Module{
 	 * szybkie dodawanie nowego pola, automatycznie dodaje do do wszystkich akcji
 	 */
 	public addField(name:string, formInputType:string, validationNameList:Object, isOptional:boolean, options?:Object){
+		options = options || {};
+		var fieldOptions = {};
 		var fieldType = Core.Action.FieldType.BODY_FIELD;
 		if(formInputType === Core.Action.FormInputType.FILE){
 			fieldType = Core.Action.FieldType.FILE_FIELD;
+			fieldOptions['maxCount'] = options['fileMaxCount'] || 1;
 		}
-		options = options || {};
-		isOptional = false;
-		var createField: Core.Field = new Core.Field(name, fieldType);
+
+		var createField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
 		createField.optional = isOptional;
 		createField.formInputType = formInputType;
 		var createAction = this.getAction(Core.SimpleModule.ACTION_CREATE);
 		createAction.addField(createField);
 
-		var updateField: Core.Field = new Core.Field(name, fieldType);
+		var updateField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
 		updateField.optional = isOptional;
 		updateField.formInputType = formInputType;
 		var updateAction = this.getAction(Core.SimpleModule.ACTION_UPDATE);
 		updateAction.addField(updateField);
 
-		var deleteField: Core.Field = new Core.Field(name, fieldType);
+		var deleteField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
 		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
 		deleteField.formInputType = formInputType;
 		var deleteFormAction = (<Core.Action.DualAction>this.getAction(Core.SimpleModule.ACTION_DELETE)).formAction;

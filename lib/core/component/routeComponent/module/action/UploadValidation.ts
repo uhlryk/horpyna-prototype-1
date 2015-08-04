@@ -33,10 +33,13 @@ class UploadValidation extends Element {
 			var validator: BaseValidator = validatorList[i];
 		// return Util.Promise.map(validatorList, (validator: BaseValidator) => {
 			if(validator.validationPhase !== BaseValidator.PREUPLOAD_PHASE){
+				// console.log("nie jest to preupload");
 				continue;
 			}
+				// console.log("jest to preupload");
 			// return new Util.Promise<ValidatorResponse>((resolve: (ValidatorResponse) => void) => {
-			validator.validate(this._file, null, function(response: ValidatorResponse) {
+				// var validatorName = validator.name
+			validator.validate(this._file, null, (response: ValidatorResponse) => {
 					this.debug("validator name: %s", validator.name);
 					if (response.valid === false) {
 						this.debug(response.valid);

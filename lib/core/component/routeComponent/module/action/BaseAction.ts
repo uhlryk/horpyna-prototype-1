@@ -195,16 +195,17 @@ class BaseAction extends RouteComponent {
 		// var requestPromise = Util.Promise.resolve()
 		// .then(() => {
 			this.debug("action:validate UploadFile " + file['fieldname']);
-			var validation = new UploadValidation(this, request, file['fieldname']);
+			var validation = new UploadValidation(this, file, file['fieldname']);
 			var validationResponse: ValidationResponse = validation.validate();
 		// })
 		// .then((validationResponse:ValidationResponse)=>{
 			if (validationResponse.valid === false){
+				this.debug("validation false");
+				this.debug(validationResponse);
 				request.addValue("validationError", validationResponse);
-				console.log("B1");
 				done(false);
 			}
-			console.log("B2");
+			this.debug("validation true");
 			done(true);
 		// })
 	}
@@ -223,7 +224,6 @@ class BaseAction extends RouteComponent {
 			var response: Response = Response.ExpressToResponse(res);
 			if (fileFields.length > 0 && response.allow === true) {
 				fileUpload.create(fileFields)(req, res, function(err){
-					console.log("A");
 					if (err) {
 						var request: Request = Request.ExpressToRequest(req);
 						var validationResponse: ValidationResponse = request.getValue("validationError");
@@ -255,6 +255,7 @@ class BaseAction extends RouteComponent {
 	 * @return {[name, count]} [description]
 	 */
 	protected populateFileFields():Object[]{
+		this.debug("action:populateFileFields()");
 		var fileFields: Object[] = [];
 		var fieldList: Field[] = this.getFieldList();
 		for (var index in this.fieldList) {
