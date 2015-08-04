@@ -21,9 +21,16 @@ class BaseAction extends RouteComponent {
 	public static GET:string = "get";
 	public static PUT:string = "put";
 	public static DELETE:string = "delete";
-
-	constructor(method:string, name:string){
+	/**
+	 * Specyficzne opcje dla akcji
+	 * options.uploadDirectory - katalog gdzie będą uploadowane pliki
+	 * options.fileMaxSize - maksymalny rozmiar jaki mogą mieć pliki
+	 * options.maxFiles - maksymalna liczba plików wysyłanych do akcji na raz
+	 */
+	private _options: Object;
+	constructor(method:string, name:string, options?:Object){
 		super(name);
+		this._options = options || {};
 		this.initDebug("action:" + this.name);
 		this.method = method;
 		this.fieldList = [];
@@ -215,7 +222,9 @@ class BaseAction extends RouteComponent {
 	public getFileHandler(){
 		this.debug("action:getFileHandler()");
 		var fileUpload: Util.FileUpload = new Util.FileUpload();
-		fileUpload.directory = this.getData("uploadDirectory");
+		fileUpload.directory = this._options['uploadDirectory'] || this.getGlobalValue("uploadDirectory");
+		fileUpload.fileSize = this._options['fileMaxSize'] || this.getGlobalValue("fileMaxSize");
+		fileUpload.maxFileCount = this._options['maxFiles'] || this.getGlobalValue("maxFiles");
 		var fileFields: Object[] = this.populateFileFields();
 		fileUpload.fileFilterHandler = (request: Request, file, done) => {
 			this.fileFilterHandler(request, file, done);

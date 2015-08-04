@@ -63,7 +63,9 @@ class Bootstrap extends Element {
 		return viewManager;
 	}
 	protected initFileUpload(){
-		this.addData("uploadDirectory","./upload");
+		this.addGlobalValue("uploadDirectory","./upload");
+		this.addGlobalValue("fileMaxSize", 12);
+		this.addGlobalValue("maxFiles", 5);
 	}
 }
 export = Bootstrap;

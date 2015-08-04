@@ -10,6 +10,10 @@ class FileUpload{
 	 */
 	private _fileSize: number;
 	/**
+	 * Maksymalna liczba plików w formularzu
+	 */
+	private _maxFilesCount: number;
+	/**
 	 * callback na starcie pozwalający zmienić nazwę pliku
 	 */
 	private _filenameHandler: (req, file, cb: (error, filename: string) => void) => void;
@@ -24,6 +28,7 @@ class FileUpload{
 	constructor(){
 		this._directory = "./tmp";
 		this._fileSize = 12;
+		this._maxFilesCount = 5;
 	}
 	/**
 	 * setter i getter na ścieżkę do katalogu w którym mają być pliki zapisywane.
@@ -42,6 +47,12 @@ class FileUpload{
 	}
 	public set fileSize(v: number) {
 		this._fileSize = v;
+	}
+	public get maxFileCount(): number {
+		return this._maxFilesCount;
+	}
+	public set maxFileCount(v: number) {
+		this._maxFilesCount = v;
 	}
 	/**
 	 * Opcjonalny uchwyt na zmianę nazwy pliku na początku procesu
@@ -95,7 +106,7 @@ class FileUpload{
 			fileFilter: this._fileFilterHandler,
 			limits:{
 				fileSize: 1024 * 1024 * this._fileSize,//maksymalny rozmiar każdego pliku
-				files:100,//maksymalna liczba plików
+				files:5,//maksymalna liczba plików
 			}
 		}).fields(fields);
 	}

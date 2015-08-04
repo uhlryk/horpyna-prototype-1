@@ -1,8 +1,12 @@
 import Util = require("./util/Util");
 class Element{
-	private static _data: Object = new Object();
+	private static _globalData: Object = new Object();
+	private _data: Object;
 	private static _logger: Util.Logger;
 	private _debugger: Util.Debugger;
+	constructor(){
+		this._data = new Object();
+	}
 	public initDebug(name:string){
 		this._debugger = new Util.Debugger(name);
 	}
@@ -15,11 +19,17 @@ class Element{
 	public get logger(): Util.Logger {
 		return Element._logger;
 	}
-	public addData(name:string, v:any){
-		Element._data[name] = v;
+	public addGlobalValue(name:string, v:any){
+		Element._globalData[name] = v;
 	}
-	public getData(name:string):any{
-		return Element._data[name];
+	public getGlobalValue(name:string):any{
+		return Element._globalData[name];
+	}
+	public addValue(name:string, v:any){
+		this._data[name] = v;
+	}
+	public getValue(name:string):any{
+		return this._data[name];
 	}
 }
 export = Element;
