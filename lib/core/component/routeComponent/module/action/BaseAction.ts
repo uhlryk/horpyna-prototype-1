@@ -249,7 +249,7 @@ class BaseAction extends RouteComponent {
 							field: err.field,
 							errorList: [err.code]
 						});
-						console.log(err);
+						// console.log(err);
 					}
 					next();
 				});

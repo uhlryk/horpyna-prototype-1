@@ -80,8 +80,9 @@ class SimpleModule extends  Core.Module{
 	/**
 	 * szybkie dodawanie nowego pola, automatycznie dodaje do do wszystkich akcji
 	 */
-	public addField(name:string, formInputType:string, validationNameList:Object, isOptional:boolean, options?:Object){
+	public addField(name:string, formInputType:string, validationNameList:Object, options?:Object){
 		options = options || {};
+		var isOptional: boolean = options['isOptional'] || false;
 		var fieldOptions = {};
 		var fieldType = Core.Action.FieldType.BODY_FIELD;
 		if(formInputType === Core.Action.FormInputType.FILE){
@@ -95,9 +96,25 @@ class SimpleModule extends  Core.Module{
 		this.createAction.addField(createField);
 
 		var updateField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
-		updateField.optional = isOptional;
+		// if (formInputType === Core.Action.FormInputType.FILE) {
+		// 	updateField.optional = true;
+		// } else {
+			updateField.optional = isOptional;
+		// }
 		updateField.formInputType = formInputType;
 		this.updateAction.addField(updateField);
+		/**
+		 * Jeśli mamy do czynienia z edycją formularza, gdzie dane pole jest plikiem i jest opcjonalne
+		 * to tworzymy dodatkowe pole tekstowe - docelowo będzie to checkbox który pozwala oznaczyć by usunąć stary plik
+		 * bez dodania nowego
+		 */
+		if (formInputType === Core.Action.FormInputType.FILE && isOptional === true) {
+			var fileHelperField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD, fieldOptions);
+			fileHelperField.formInputType = Core.Action.FormInputType.NUMBER;
+			fileHelperField.optional = true;
+			this.updateAction.addField(fileHelperField);
+		}
+
 
 		var deleteField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
 		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe

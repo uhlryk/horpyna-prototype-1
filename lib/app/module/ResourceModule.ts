@@ -244,8 +244,8 @@ class ResourceModule extends  SimpleModule{
 			create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 			create.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
 			create.populate(request.getFieldList(Core.Action.FieldType.FILE_FIELD));
-			var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
-			console.log(JSON.stringify(fileList));
+			// var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
+			// console.log(JSON.stringify(fileList));
 			return create.run();
 		})
 		.then((model)=>{
@@ -261,8 +261,33 @@ class ResourceModule extends  SimpleModule{
 			update.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 			var paramAppList = request.getParamAppFieldList();
 			update.populateWhere(paramAppList);
-			update.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
-			update.populate(request.getFieldList(Core.Action.FieldType.FILE_FIELD));
+
+			var bodyList = request.getFieldList(Core.Action.FieldType.BODY_FIELD);
+			var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
+			/**
+			 * mechanizm pozwala usuwać pliki które w edycji nie zostały dodane a dla których pole jest opcjonalne
+			 * @param {[type]} var fieldName in fileList [description]
+			 */
+			for (var fieldName in fileList){
+				var fieldValue = fileList[fieldName];
+				//wartość jest pusta, a więc przy edycji nie została wysłana
+				if (!fieldValue){
+					//sprawdzamy czy w formularzu zostało wysłane polecenie usunięcie pliku jeśli był wcześniej dodany
+					var valueDeleteFile = bodyList[fieldName];
+					var field: Core.Field = action.getField(Core.Action.FieldType.BODY_FIELD, fieldName);
+					//jeśli valueDeleteFile = "1" to znaczy że jest polecenie usunięcia pliku
+					//sprawdzamy czy pole jest opcjonalne - czyli czy może być puste przez jego usunięcie
+					if (valueDeleteFile === "1" && field.optional === true) {
+						//domyślnie mechanizm zastąpi plik w bazie polem null, nie musimy nic robić - potem usunąć tylko stary plik
+					} else {
+						//stary plik musi zostać, usuwamy wpis o tym że dany plik w bazie ma być zastąpiony nullem
+						delete fileList[fieldName];
+						delete bodyList[fieldName];
+					}
+				}
+			}
+			update.populate(bodyList);
+			update.populate(fileList);
 			return update.run();
 		})
 		.then(()=>{
@@ -276,7 +301,7 @@ class ResourceModule extends  SimpleModule{
 			var deleteQuery = new Core.Query.Delete();
 			deleteQuery.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 			var paramAppList = request.getParamAppFieldList();
-			console.log(paramAppList);
+			// console.log(paramAppList);
 			deleteQuery.populateWhere(paramAppList);
 			return deleteQuery.run();
 		})
@@ -328,9 +353,9 @@ class ResourceModule extends  SimpleModule{
 	/**
  * rozszerza metodę simpleModule o dodawanie kolumn do defaultowego modelu
  */
-	public addField(name: string, formInputType: string, validationNameList: Object, isOptional: boolean, options?: Object) {
+	public addField(name: string, formInputType: string, validationNameList: Object, options?: Object) {
 		options = options || {};
-		super.addField(name, formInputType, validationNameList, isOptional, options);
+		super.addField(name, formInputType, validationNameList, options);
 		var model = this.getDefaultModel();
 		//na razie nie rozbudowujemy tego tak że system ma zamapowane typ forma a typy kolumn
 		switch (formInputType){

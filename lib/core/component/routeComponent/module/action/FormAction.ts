@@ -51,24 +51,24 @@ class FormAction extends BaseAction {
 		for (var i = 0; i < fieldList.length; i++) {
 			var field: Field = fieldList[i];
 			if (field.getType() === FieldType.BODY_FIELD || field.getType() === FieldType.FILE_FIELD) {
-				if (field.getType() === FieldType.FILE_FIELD){
-					form.isMultipart = true;
-				}
 				tempNameField.push(field.getFieldName());
 				var inputField: IInputForm = this.createInputField(true, field.getFieldName(), field.formInputType, field.labelForm);
 				form.fields.push(inputField);
+				if (field.getType() === FieldType.FILE_FIELD){
+					form.isMultipart = true;
+				}
 			}
 		}
 		fieldList = this.getFieldList();
 		for (var i = 0; i < fieldList.length; i++) {
 			var field: Field = fieldList[i];
 			if (field.getType() === FieldType.BODY_FIELD || field.getType() === FieldType.FILE_FIELD) {
-				if (field.getType() === FieldType.FILE_FIELD){
-					form.isMultipart = true;
-				}
 				if (tempNameField.indexOf(field.getFieldName()) === -1) {
 					var inputField: IInputForm = this.createInputField(true, field.getFieldName(), field.formInputType, field.labelForm);
 					form.fields.push(inputField);
+				}
+				if (field.getType() === FieldType.FILE_FIELD){
+					form.isMultipart = true;
 				}
 			}
 		}
@@ -90,7 +90,7 @@ class FormAction extends BaseAction {
 	 * @param  {string}     label nazwa labela dla inputa
 	 * @return {IInputForm}       zwraca pole dla formularza
 	 */
-	protected createInputField(isBody:boolean, name: string, type: string, label: string): IInputForm {
+	public createInputField(isBody:boolean, name: string, type: string, label: string): IInputForm {
 		var inputForm: IInputForm = <IInputForm>{};
 		inputForm.isBody = isBody;
 		inputForm.name = name;
