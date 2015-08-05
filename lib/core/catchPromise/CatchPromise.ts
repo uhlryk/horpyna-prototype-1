@@ -1,8 +1,3 @@
-import Util = require("./../util/Util");
-import Element = require("./../Element");
-class CatchPromise extends Element{
-	public getCatchHandler(data?:any){
-		return (err)=>{};
-	}
-}
-export = CatchPromise;
+export import BaseCatchPromise = require("./BaseCatchPromise");
+export import Init = require("./init/Init");
+export import Action = require("./action/Action");

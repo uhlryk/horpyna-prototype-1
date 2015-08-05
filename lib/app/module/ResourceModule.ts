@@ -243,6 +243,7 @@ class ResourceModule extends  SimpleModule{
 			var create = new Core.Query.Create();
 			create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 			create.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
+			create.populate(request.getFieldList(Core.Action.FieldType.FILE_FIELD));
 			var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
 			console.log(JSON.stringify(fileList));
 			return create.run();
@@ -261,6 +262,7 @@ class ResourceModule extends  SimpleModule{
 			var paramAppList = request.getParamAppFieldList();
 			update.populateWhere(paramAppList);
 			update.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
+			update.populate(request.getFieldList(Core.Action.FieldType.FILE_FIELD));
 			return update.run();
 		})
 		.then(()=>{

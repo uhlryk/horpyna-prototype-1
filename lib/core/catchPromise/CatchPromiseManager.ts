@@ -1,4 +1,4 @@
-import CatchPromise = require("./CatchPromise");
+import BaseCatchPromise = require("./BaseCatchPromise");
 import Util = require("./../util/Util");
 import Element = require("./../Element");
 /**
@@ -7,41 +7,51 @@ import Element = require("./../Element");
  */
 
 class CatchPromiseManager extends Element{
-	private _catchList: CatchPromise[];
-	private _finalCatch: CatchPromise;
+	private _catchList: BaseCatchPromise[];
+	private _finalCatch: BaseCatchPromise;
 	constructor(){
 		super();
 		this._catchList = [];
 	}
 	/**
 	 * dodaje catch do listy
-	 * @param {CatchPromise}   v      [description]
+	 * @param {BaseCatchPromise}   v      [description]
 	 * @param {boolean} isFinal oznacza że będzie to ostatni catch
 	 */
-	public addCatch(v: CatchPromise, isFinal?: boolean) {
+	public addCatch(v: BaseCatchPromise, isFinal?: boolean) {
 		if (isFinal === true) {
 			this._finalCatch = v;
 		} else {
 			this._catchList.push(v);
 		}
 	}
-	public getCatchList():CatchPromise[]{
+	public getCatchList():BaseCatchPromise[]{
 		return this._catchList
 	}
-	public getFinalCatch():CatchPromise{
+	public getFinalCatch():BaseCatchPromise{
 		return this._finalCatch;
 	}
 	public init(){}
 	public catchToPromise(promise: Util.Promise<any>, data?:any): Util.Promise<any> {
 		var length = this._catchList.length;
 		for (var i = 0; i < length; i++){
-			var catchPromise:CatchPromise = this._catchList[i];
+			var catchPromise:BaseCatchPromise = this._catchList[i];
 			var handler = catchPromise.getCatchHandler(data);
-			promise = promise.catch(handler);
+			if (catchPromise.catchError) {
+				promise = promise.catch(catchPromise.catchError, handler);
+
+			} else {
+				promise = promise.catch(handler);
+			}
 		}
 		if (this._finalCatch){
 			var handler = this._finalCatch.getCatchHandler(data);
-			promise = promise.catch(handler);
+			if (catchPromise.catchError) {
+				promise = promise.catch(catchPromise.catchError, handler);
+
+			} else {
+				promise = promise.catch(handler);
+			}
 		}
 		return promise;
 	}

@@ -1,6 +1,6 @@
-import CatchPromise = require("./CatchPromise");
+import BaseCatchPromise = require("./../BaseCatchPromise");
 
-class FinalActionCatchPromise extends CatchPromise {
+class FinalActionCatchPromise extends BaseCatchPromise {
 	public getCatchHandler(data?: any) {
 		var request = data['request'];
 		var response = data['response'];
@@ -8,6 +8,7 @@ class FinalActionCatchPromise extends CatchPromise {
 		return (err) => {
 			this.logger.error(err);
 			response.setStatus(500);
+			this.logger.error("ACTION");
 			done();
 		};
 	}

@@ -7,6 +7,7 @@ import ViewManager = require("./view/ViewManager");
 import SystemModule = require("./component/routeComponent/module/SystemModule");
 import DispatcherError = require("./dispatcher/DispatcherError");
 import Util = require("./util/Util");
+import CatchPromise = require("./catchPromise/CatchPromise");
 class Bootstrap extends Element {
 	private _application:Application;
 	private _router: express.Router;
@@ -37,6 +38,7 @@ class Bootstrap extends Element {
 		this.initDispatcher();
 		this.initSystemActions();
 		this.initView();
+		this.initCatchPromises();
 		this.initFileUpload();
 	}
 	protected initDispatcher(){
@@ -56,6 +58,13 @@ class Bootstrap extends Element {
 		dispatcher.setFinalAction(finalAction);
 		var homeAction = defaultModule.getAction(SystemModule.ACTION_HOME);
 		dispatcher.setHomeAction(homeAction);
+	}
+	protected initCatchPromises(){
+		var componentManager = this.application.componentManager;
+		componentManager.actionCatchPromiseManager.addCatch(new CatchPromise.Action.FinalCatchPromise(), true);
+		componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.FinalCatchPromise(), true);
+		componentManager.actionCatchPromiseManager.addCatch(new CatchPromise.Action.DbConnectionCatchPromise());
+		componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.DbConnectionCatchPromise());
 	}
 	protected initView(){
 		var viewManager = this.application.viewManager;

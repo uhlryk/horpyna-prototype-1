@@ -3,9 +3,9 @@ import Module = require("./routeComponent/module/Module");
 import Component = require("./Component");
 import Util = require("../util/Util");
 import CatchPromiseManager = require("../catchPromise/CatchPromiseManager");
-import CatchPromise = require("../catchPromise/CatchPromise");
-import FinalActionCatchPromise = require("../catchPromise/FinalActionCatchPromise");
-import FinalInitCatchPromise = require("../catchPromise/FinalInitCatchPromise");
+// import CatchPromise = require("../catchPromise/CatchPromise");
+// import FinalActionCatchPromise = require("../catchPromise/FinalActionCatchPromise");
+// import FinalInitCatchPromise = require("../catchPromise/FinalInitCatchPromise");
 import Dispatcher = require("../dispatcher/Dispatcher");
 import DbManager = require("../dbManager/DbManager");
 class ComponentManager extends Component{
@@ -22,12 +22,12 @@ class ComponentManager extends Component{
 		this._moduleList = [];
 		this.componentManager = this;
 		this._actionCatchPromiseManager = new CatchPromiseManager();
-		var finalActionCatchPromise = new FinalActionCatchPromise();
-		this._actionCatchPromiseManager.addCatch(finalActionCatchPromise);
+		// var finalActionCatchPromise = new FinalActionCatchPromise();
+		// this._actionCatchPromiseManager.addCatch(finalActionCatchPromise);
 
 		this._initCatchPromiseManager = new CatchPromiseManager();
-		var finalInitCatchPromise = new FinalInitCatchPromise();
-		this._initCatchPromiseManager.addCatch(finalInitCatchPromise);
+		// var finalInitCatchPromise = new FinalInitCatchPromise();
+		// this._initCatchPromiseManager.addCatch(finalInitCatchPromise);
 	}
 	public addModule(module: Module): Util.Promise<void> {
 		this._moduleList.push(module);
