@@ -110,7 +110,7 @@ class SimpleModule extends  Core.Module{
 		 */
 		if (formInputType === Core.Action.FormInputType.FILE && optional === true) {
 			var fileHelperField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD, fieldOptions);
-			fileHelperField.formInputType = Core.Action.FormInputType.NUMBER;
+			fileHelperField.formInputType = Core.Action.FormInputType.CHECKBOX;
 			fileHelperField.optional = true;
 			this.updateAction.addField(fileHelperField);
 		}

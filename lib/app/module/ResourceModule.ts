@@ -78,6 +78,28 @@ class ResourceModule extends  SimpleModule{
 						}
 					}
 				}
+				/**
+				 * HACK
+				 * hack biorący listę pól plików a następnie sprawdzający czy są dla tych plików checkboxy do usunięcia pliku
+				 * jeśli tak to wypełnia je właściwymi danymi
+				 */
+				var fileFieldList: string[] = [];
+				for (var i = 0; i < fieldList.length; i++) {
+					var field: Core.Action.IInputForm = fieldList[i];
+					if (field.type === Core.Action.FormInputType.FILE){
+						fileFieldList.push(field.name);
+					}
+				}
+				for (var i = 0; i < fieldList.length; i++) {
+					var field: Core.Action.IInputForm = fieldList[i];
+					if (field.type === Core.Action.FormInputType.CHECKBOX && fileFieldList.indexOf(field.name) !== -1) {
+						field.value = "1";
+						field.label = "Delete file";
+					}
+				}
+
+
+				//KONIEC HACKA
 			}
 			response.view = "horpyna/jade/updateFormAction";
 		});

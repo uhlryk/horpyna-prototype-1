@@ -17,6 +17,8 @@ class FormInputType {
 	public static TIME: string = "time";
 	public static URL: string = "url";
 	public static WEEK: string = "week";
+	public static CHECKBOX: string = "checkbox";
+
 	//temat etapu 2
 	// RADIO,
 	// CHECKBOX,

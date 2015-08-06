@@ -3,4 +3,4 @@ block content
 	form(method=content.form.method action=content.form.action enctype=content.form.isMultipart?"multipart/form-data":undefined)
 		each field in content.form.fields
 			label(for=field.name) #{field.label}
-				input(type=field.type name=field.name value=field.value?field.value:undefined disabled=field.isBody?"disabled":undefined)
+			input(type=field.type name=field.name value=field.value?field.value:undefined disabled=field.isBody?"disabled":undefined)
