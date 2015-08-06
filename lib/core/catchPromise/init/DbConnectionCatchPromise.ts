@@ -10,6 +10,7 @@ class FinalInitCatchPromise extends BaseCatchPromise{
 	}
 	public getCatchHandler(data?:any){
 		return (err)=>{
+			this.logger.error(err);
 			this.logger.error(FinalInitCatchPromise.DB_CONNECTION);
 		};
 	}

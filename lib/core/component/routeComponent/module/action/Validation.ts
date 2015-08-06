@@ -43,7 +43,7 @@ class Validation extends Element {
 			 */
 			var value: any = requestFieldList[field.getFieldName()];
 			if (value === undefined) {//znaczy że dany fieldetr nie był jeszcze dodany więc sprawdzamy czy jest w requestach expressa
-				if (expressFieldList !== null) {
+				if (expressFieldList) {
 					value = expressFieldList[field.getFieldName()];
 				}
 			}

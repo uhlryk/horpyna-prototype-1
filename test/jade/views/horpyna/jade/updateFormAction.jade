@@ -6,7 +6,15 @@ block content
 				p #{error}
 		each field in content.form.fields
 			label(for=field.name) #{field.label}
-			input(type=field.type name=field.name value=field.value?field.value:undefined)
+			if field.value.files
+				each file in field.value.files
+					if file.mimetype == 'image/jpeg'
+						img(src=file.path)
+					else
+						a(href=file.path) #{file.originalname}
+				input(type=field.type name=field.name)
+			else
+				input(type=field.type name=field.name value=field.value?field.value:undefined)
 			unless field.valid
 				each error in field.errorList
 					p #{error}

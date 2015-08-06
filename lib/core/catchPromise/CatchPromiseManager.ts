@@ -46,12 +46,12 @@ class CatchPromiseManager extends Element{
 		}
 		if (this._finalCatch){
 			var handler = this._finalCatch.getCatchHandler(data);
-			if (catchPromise.catchError) {
-				promise = promise.catch(catchPromise.catchError, handler);
+			// if (catchPromise.catchError) {
+				// promise = promise.catch(catchPromise.catchError, handler);
 
-			} else {
+			// } else {
 				promise = promise.catch(handler);
-			}
+			// }
 		}
 		return promise;
 	}

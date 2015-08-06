@@ -13,6 +13,7 @@ class FinalInitCatchPromise extends BaseCatchPromise{
 		var response = data['response'];
 		var done = data['done'];
 		return (err)=>{
+			this.logger.error(err);
 			this.logger.error(FinalInitCatchPromise.DB_CONNECTION);
 			response.setStatus(500);
 			done();

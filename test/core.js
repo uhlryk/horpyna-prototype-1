@@ -265,7 +265,7 @@ describe("Funkcje podstawowe", function() {
 			var col3 = new Core.Column.EnumColumn("a3");
 			col3.setList(["kot", "ala", "ma"]);
 			myModel.addColumn(col3);
-			myModel.addColumn(new Core.Column.HstoreColumn("a4"));
+			// myModel.addColumn(new Core.Column.HstoreColumn("a4"));
 			myModel.addColumn(new Core.Column.JsonColumn("a5"));
 			myModel.addColumn(new Core.Column.JsonBColumn("a6"));
 			myModule.addModel(myModel);

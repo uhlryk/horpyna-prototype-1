@@ -6,12 +6,14 @@ class SimpleModule extends  Core.Module{
 	public static ACTION_CREATE = "create";
 	public static ACTION_UPDATE = "update";
 	public static ACTION_DELETE = "delete";
+	public static ACTION_FILE = "file";
 
 	private _listAction: Core.Action.BaseAction;
 	private _createAction: Core.Action.DualAction;
 	private _updateAction: Core.Action.DualAction;
 	private _detailAction: Core.Action.BaseAction;
 	private _deleteAction: Core.Action.DualAction;
+	private _fileAction: Core.Action.BaseAction;
 
 	public onConstructor(){
 		super.onConstructor();
@@ -56,6 +58,14 @@ class SimpleModule extends  Core.Module{
 		this._deleteAction.setActionHandler((request, response, action) => { return this.onDeleteAction(request, response, <Core.Action.DualAction>action); });
 		this._deleteAction.setFormActionHandler((request, response, action) => { return this.onFormDeleteAction(request, response, <Core.Action.FormAction>action); });
 
+		this._fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_FILE);
+		this._fileAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._fileAction.addField(new Core.Field("column", Core.Action.FieldType.QUERY_FIELD));
+		this._fileAction.addField(new Core.Field("count", Core.Action.FieldType.QUERY_FIELD));
+		this.addAction(this._fileAction);
+		this._fileAction.setActionHandler((request, response, action) => { return this.onFileAction(request, response, action); });
+		this._fileAction.addValue("showInNavigation", false);
+
 		var navigationEvent = new Core.Event.Action.OnFinish();
 		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
 			this.onBuildNavigation(request, response, done);
@@ -76,6 +86,9 @@ class SimpleModule extends  Core.Module{
 	}
 	public get deleteAction(): Core.Action.DualAction {
 		return this._deleteAction;
+	}
+	public get fileAction(): Core.Action.BaseAction {
+		return this._fileAction;
 	}
 	/**
 	 * szybkie dodawanie nowego pola, automatycznie dodaje do do wszystkich akcji
@@ -141,8 +154,9 @@ class SimpleModule extends  Core.Module{
 	public onFormUpdateAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
 	public onFormDeleteAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
  	public onCreateAction(request, response, action:Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
-		public onUpdateAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
-		public onDeleteAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+	public onUpdateAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+	public onDeleteAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+	public onFileAction(request, response, action: Core.Action.BaseAction) { return Core.Util.Promise.resolve(); }
 	/**
 	 * Callback na event navigationEvent
 	 * Odpala się dla wszystkich akcji tego modułu.

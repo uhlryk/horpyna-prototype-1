@@ -244,7 +244,7 @@ describe("Test uploadu: ", function(){
 		it("kod 200 list", function (done) {
 			request(app).get("/res1/list")
 				.end(function (err, res) {
-					filePath = res.body.content[0].element.field1[0].path;
+					filePath = res.body.content[0].element.field1.files[0].path;
 					expect(isPath(filePath)).to.be.true;
 					expect(res.status).to.be.equal(200);
 					done();
@@ -253,7 +253,7 @@ describe("Test uploadu: ", function(){
 		it("kod 200 detail", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					filePath = res.body.content.element.field1[0].path;
+					filePath = res.body.content.element.field1.files[0].path;
 					expect(isPath(filePath)).to.be.true;
 					expect(res.status).to.be.equal(200);
 					done();
@@ -339,7 +339,7 @@ describe("Test uploadu: ", function(){
 		it("kod 200 szczegóły formularza który ma plik dodany", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					filePath = res.body.content.element.field1[0].path;
+					filePath = res.body.content.element.field1.files[0].path;
 					expect(isPath(filePath)).to.be.true;
 					expect(res.status).to.be.equal(200);
 					done();
@@ -358,7 +358,7 @@ describe("Test uploadu: ", function(){
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
 					// expect(res.body.content.element.field1).to.be.not.null;
-					filePath = res.body.content.element.field1[0].path;
+					filePath = res.body.content.element.field1.files[0].path;
 					expect(isPath(filePath)).to.be.true;
 					expect(res.status).to.be.equal(200);
 					done();

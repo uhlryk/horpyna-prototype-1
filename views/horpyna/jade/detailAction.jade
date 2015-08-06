@@ -4,7 +4,15 @@ block content
 		each val, name in content.element
 			tr
 				td= name
-				td= val
+				if val && val.files
+					td
+						each file in val.files
+							if file.mimetype == 'image/jpeg'
+								img(src=file.path)
+							else
+								a(href=file.path) #{file.originalname}
+				else
+					td= val
 		each val in content.navigation
 			tr
 				td

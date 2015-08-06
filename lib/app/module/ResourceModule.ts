@@ -265,9 +265,26 @@ class ResourceModule extends  SimpleModule{
 			var create = new Core.Query.Create();
 			create.setModel(this.getModel(ResourceModule.RESOURCE_MODEL));
 			create.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
-			create.populate(request.getFieldList(Core.Action.FieldType.FILE_FIELD));
-			// var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
-			// console.log(JSON.stringify(fileList));
+			/**
+			 * w danych o pliku zostawiamy tylko istotne informacje originalname, mimetype, size, destination, filename, path
+			 */
+			var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
+			/**
+			 * w danych o pliku zostawiamy tylko istotne informacje originalname, mimetype, size, destination, filename, path
+			 */
+			for (var fieldName in fileList) {
+				var fieldFileList = fileList[fieldName];
+				if (fieldFileList) {
+					for (var i = 0; i < fieldFileList.length; i++) {
+						var singleFile = fieldFileList[i];
+						delete singleFile['fieldname'];
+						delete singleFile['encoding'];
+					}
+					fileList[fieldName] = { files: fieldFileList }
+				}
+			}
+			console.log(fileList);
+			create.populate(fileList);
 			return create.run();
 		})
 		.then((model)=>{
@@ -288,7 +305,6 @@ class ResourceModule extends  SimpleModule{
 			var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
 			/**
 			 * mechanizm pozwala usuwać pliki które w edycji nie zostały dodane a dla których pole jest opcjonalne
-			 * @param {[type]} var fieldName in fileList [description]
 			 */
 			for (var fieldName in fileList){
 				var fieldValue = fileList[fieldName];
@@ -309,6 +325,20 @@ class ResourceModule extends  SimpleModule{
 				}
 			}
 			update.populate(bodyList);
+			/**
+			 * w danych o pliku zostawiamy tylko istotne informacje originalname, mimetype, size, destination, filename, path
+			 */
+			for (var fieldName in fileList) {
+				var fieldFileList = fileList[fieldName];
+				if (fieldFileList) {
+					for (var i = 0; i < fieldFileList.length; i++) {
+						var singleFile = fieldFileList[i];
+						delete singleFile['fieldname'];
+						delete singleFile['encoding'];
+					}
+					fileList[fieldName] = { files: fieldFileList }
+				}
+			}
 			update.populate(fileList);
 			return update.run();
 		})
@@ -331,6 +361,49 @@ class ResourceModule extends  SimpleModule{
 			var listAction = this.getAction(Core.SimpleModule.ACTION_LIST);
 			response.setRedirect(listAction.getRoutePath());
 		});
+	}
+	public onFileAction (request:Core.ActionRequest, response: Core.ActionResponse, action: Core.Action.BaseAction){
+		var resuorceModel: Core.Model = this.getModel(ResourceModule.RESOURCE_MODEL);
+		var columnQuery = request.getField(Core.Action.FieldType.QUERY_FIELD, "column");
+		var countQuery = request.getField(Core.Action.FieldType.QUERY_FIELD, "count");
+		return super.onFileAction(request, response, action)
+		.then(()=>{
+			var find = new Core.Query.Find();
+			find.setModel(resuorceModel);
+			var paramAppList = request.getParamAppFieldList();
+			find.populateWhere(paramAppList);
+			return find.run();
+		})
+		.then((model)=>{
+				if (!model || resuorceModel.getColumnNameList().indexOf(columnQuery) === -1) {
+				response.setStatus(404);
+			} else {
+				var modelData = model.toJSON();
+				var column = modelData[columnQuery];
+				if (column && column[countQuery]) {
+					var file = column[countQuery];
+					if (file['path'] && file['orginalname']) {
+						response.setDownload(file['path'], file['orginalname'], (err)=>{
+							this.onFileDownload(err);
+						});
+					} else{
+						response.setStatus(404);
+					}
+				} else {
+					response.setStatus(404);
+				}
+			}
+		});
+	}
+	public onFileDownload(err){
+		if (err) {
+			this.debug("failure download file");
+		// Handle error, but keep in mind the response may be partially-sent
+		// so check res.headersSent
+		} else {
+			this.debug("success download file");
+		// decrement a download credit, etc.
+		}
 	}
 	/**
 	 * zwraca listę linków wygenerowanych z akcji które mają GET i parametry

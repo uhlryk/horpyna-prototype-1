@@ -145,6 +145,7 @@ class Dispatcher extends Element{
 		this.router.use(this._subRouter);
 	}
 	public addRoute(method:string, routePath:string, fileHandler:Function, handler:Function){
+		this.debug('standard route method:%s routePath:%s', method, routePath);
 		this._subRouter[method](routePath, fileHandler, (req, res, next) => {
 			var request: Action.Request = Action.Request.ExpressToRequest(req);
 			var response: Action.Response = Action.Response.ExpressToResponse(res);

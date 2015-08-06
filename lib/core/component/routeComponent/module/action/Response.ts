@@ -22,6 +22,7 @@ class Response{
 	private _valid: boolean;
 	private _redirect: string;
 	private _routePath: string;
+	private _download: { path: string; filename?: string; fn?:(err)=>void };
 	constructor(expressResponse:express.Response){
 		this.status = 200;
 		this._data = new Object();
@@ -48,6 +49,18 @@ class Response{
 	}
 	public get logger(): Util.Logger {
 		return this._logger;
+	}
+	public setDownload(path: string, filename?: string, fn?: (err) => void) {
+		this._download = <{ path: string; filename?: string; fn?: (err) => void }>{ path: path };
+		if (filename) {
+			this._download.filename = filename;
+		}
+		if (fn) {
+			this._download.fn = fn;
+		}
+	}
+	public get download(): { path: string; filename?: string; fn?: (err) => void } {
+		return this._download;
 	}
 	public setRedirect(url: string, status?: number){
 		this._redirect = url;

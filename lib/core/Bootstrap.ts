@@ -63,8 +63,8 @@ class Bootstrap extends Element {
 		var componentManager = this.application.componentManager;
 		componentManager.actionCatchPromiseManager.addCatch(new CatchPromise.Action.FinalCatchPromise(), true);
 		componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.FinalCatchPromise(), true);
-		componentManager.actionCatchPromiseManager.addCatch(new CatchPromise.Action.DbConnectionCatchPromise());
-		componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.DbConnectionCatchPromise());
+		// componentManager.actionCatchPromiseManager.addCatch(new CatchPromise.Action.DbConnectionCatchPromise());
+		// componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.DbConnectionCatchPromise());
 	}
 	protected initView(){
 		var viewManager = this.application.viewManager;

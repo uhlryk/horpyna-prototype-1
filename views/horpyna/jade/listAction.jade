@@ -9,7 +9,15 @@ block content
 		each row in content
 			tr
 				each val in row.element
-					td= val
+					if val && val.files
+						td
+							each file in val.files
+								if file.mimetype == 'image/jpeg'
+									img(src=file.path)
+								else
+									a(href=file.path) #{file.originalname}
+					else
+						td= val
 				each val in row.navigation
 					td
 						a(href=val.link) #{val.name}
