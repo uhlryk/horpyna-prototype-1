@@ -1,6 +1,7 @@
 import Component = require("../../../../Component");
 import Validator = require("./Validator");
 import FormInputType = require("./FormInputType");
+import FieldType = require("./FieldType");
 import Util = require("./../../../../../util/Util");
 /**
  * Definiuje pojedyńczy parametr jaki otrzymuje akcja w request.
@@ -28,6 +29,9 @@ class Field extends Component {
 		this._fieldName = this._options['fieldName'] || name;
 		this.labelForm = name;
 		this.formInputType = FormInputType.TEXT;
+		if (fieldType === FieldType.FILE_FIELD){
+			this.formInputType = FormInputType.FILE;
+		}
 	}
 	public set optional(val:boolean){
 		this._optional = val;
