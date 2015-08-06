@@ -82,16 +82,16 @@ class SimpleModule extends  Core.Module{
 	 */
 	public addField(name:string, formInputType:string, validationNameList:Object, options?:Object){
 		options = options || {};
-		var isOptional: boolean = options['isOptional'] || false;
+		var optional: boolean = options['optional'] || false;
 		var fieldOptions = {};
 		var fieldType = Core.Action.FieldType.BODY_FIELD;
 		if(formInputType === Core.Action.FormInputType.FILE){
 			fieldType = Core.Action.FieldType.FILE_FIELD;
-			fieldOptions['maxCount'] = options['fileMaxCount'] || 1;
+			fieldOptions['maxFiles'] = options['fieldMaxFiles'] || 1;
 		}
 
 		var createField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
-		createField.optional = isOptional;
+		createField.optional = optional;
 		createField.formInputType = formInputType;
 		this.createAction.addField(createField);
 
@@ -99,7 +99,7 @@ class SimpleModule extends  Core.Module{
 		// if (formInputType === Core.Action.FormInputType.FILE) {
 		// 	updateField.optional = true;
 		// } else {
-			updateField.optional = isOptional;
+			updateField.optional = optional;
 		// }
 		updateField.formInputType = formInputType;
 		this.updateAction.addField(updateField);
@@ -108,7 +108,7 @@ class SimpleModule extends  Core.Module{
 		 * to tworzymy dodatkowe pole tekstowe - docelowo będzie to checkbox który pozwala oznaczyć by usunąć stary plik
 		 * bez dodania nowego
 		 */
-		if (formInputType === Core.Action.FormInputType.FILE && isOptional === true) {
+		if (formInputType === Core.Action.FormInputType.FILE && optional === true) {
 			var fileHelperField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD, fieldOptions);
 			fileHelperField.formInputType = Core.Action.FormInputType.NUMBER;
 			fileHelperField.optional = true;

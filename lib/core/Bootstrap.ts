@@ -74,7 +74,7 @@ class Bootstrap extends Element {
 	protected initFileUpload(){
 		this.addGlobalValue("uploadDirectory","./upload");
 		this.addGlobalValue("fileMaxSize", 12);
-		this.addGlobalValue("maxFiles", 5);
+		this.addGlobalValue("formMaxFiles", 5);
 	}
 }
 export = Bootstrap;

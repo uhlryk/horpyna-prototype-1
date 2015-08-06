@@ -299,7 +299,7 @@ describe("Test uploadu: ", function(){
 			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.addModule(moduleResource1);
 			moduleResource1.addField("sometext", Core.Action.FormInputType.TEXT, [], {length:50});
-			moduleResource1.addField("field1", Core.Action.FormInputType.FILE, [], {isOptional:true});
+			moduleResource1.addField("field1", Core.Action.FormInputType.FILE, [], {optional:true});
 			myApp.init().then(function () {
 				done();
 			});

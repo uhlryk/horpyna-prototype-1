@@ -224,7 +224,7 @@ class BaseAction extends RouteComponent {
 		var fileUpload: Util.FileUpload = new Util.FileUpload();
 		fileUpload.directory = this._options['uploadDirectory'] || this.getGlobalValue("uploadDirectory");
 		fileUpload.fileSize = this._options['fileMaxSize'] || this.getGlobalValue("fileMaxSize");
-		fileUpload.maxFileCount = this._options['maxFiles'] || this.getGlobalValue("maxFiles");
+		fileUpload.maxFileCount = this._options['maxFiles'] || this.getGlobalValue("formMaxFiles");
 		var fileFields: Object[] = this.populateFileFields();
 		fileUpload.fileFilterHandler = (request: Request, file, done) => {
 			this.fileFilterHandler(request, file, done);
@@ -272,7 +272,7 @@ class BaseAction extends RouteComponent {
 			if (field.getType() === FieldType.FILE_FIELD) {
 				fileFields.push({
 					name: field.getFieldName(),
-					count: field.options['maxCount'] || 1,
+					count: field.options['maxFiles'] || 1,
 				});
 			}
 		}
