@@ -13,9 +13,9 @@ block content
 						td
 							each file in val.files
 								if file.mimetype == 'image/jpeg'
-									img(src=file.path)
+									img(src=file.uri)
 								else
-									a(href=file.path) #{file.originalname}
+									a(href=file.uri) #{file.originalname}
 					else
 						td= val
 				each val in row.navigation

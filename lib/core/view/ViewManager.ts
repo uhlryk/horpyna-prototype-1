@@ -19,7 +19,10 @@ class ViewManager extends Element{
 	}
 	public render(req:express.Request, res:express.Response){
 		var response: Action.Response = res['horpynaResponse'];
-		if (req.query['view'] !== "json" && req['app']['get']("view engine")) {
+		if (response.download){
+			this.debug("show file %s", response.download.filename);
+			res.download(response.download.path, response.download.filename, response.download.fn);
+		} else if (req.query['view'] !== "json" && req['app']['get']("view engine")) {
 			if (response.isRedirect()) {
 				this.debug("redirect %s", response.getRedirectUrl());
 				res.redirect(response.getRedirectStatus(), response.getRedirectUrl());

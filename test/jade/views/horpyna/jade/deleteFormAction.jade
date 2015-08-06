@@ -6,8 +6,8 @@ block content
 			if field.value.files
 				each file in field.value.files
 					if file.mimetype == 'image/jpeg'
-						img(src=file.path)
+						img(src=file.uri)
 					else
-						a(href=file.path) #{file.originalname}
+						a(href=file.uri) #{file.originalname}
 			else
 				input(type=field.type name=field.name value=field.value?field.value:undefined disabled=field.isBody?"disabled":undefined)

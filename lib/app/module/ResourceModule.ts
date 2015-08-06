@@ -97,9 +97,22 @@ class ResourceModule extends  SimpleModule{
 						field.label = "Delete file";
 					}
 				}
-
-
 				//KONIEC HACKA
+				/**
+				 * do każdego pliku do jego parametrów dodaje pole uri które jest linkiem na akcję obsługującą ten plik
+				 */
+				var uriFileAction = this.fileAction.populateRoutePath(model);
+				for (var colName in model) {
+					var val = model[colName];
+					if(val && val.files){
+						for (var z in val.files) {
+							var file = val.files[z];
+							var uri = Core.Util.Uri.updateQuery(uriFileAction, "column", colName);
+							uri = Core.Util.Uri.updateQuery(uri, "count", z);
+							file['uri'] = uri;
+						}
+					}
+				}
 			}
 			response.view = "horpyna/jade/updateFormAction";
 		});
@@ -119,6 +132,8 @@ class ResourceModule extends  SimpleModule{
 				response.setRedirect(listAction.getRoutePath());
 			} else {
 				model = model.toJSON();
+
+
 				var content = response.content;
 				var form: Core.Action.IForm = content["form"];
 				var fieldList: Core.Action.IInputForm[] = form.fields;
@@ -128,6 +143,21 @@ class ResourceModule extends  SimpleModule{
 					var value = model[name];
 					if (value) {
 						field.value = value;
+					}
+				}
+				/**
+				 * do każdego pliku do jego parametrów dodaje pole uri które jest linkiem na akcję obsługującą ten plik
+				 */
+				var uriFileAction = this.fileAction.populateRoutePath(model);
+				for (var colName in model) {
+					var val = model[colName];
+					if(val && val.files){
+						for (var j in val.files) {
+							var file = val.files[j];
+							var uri = Core.Util.Uri.updateQuery(uriFileAction, "column", colName);
+							uri = Core.Util.Uri.updateQuery(uri, "count", j);
+							file['uri'] = uri;
+						}
 					}
 				}
 			}
@@ -225,6 +255,22 @@ class ResourceModule extends  SimpleModule{
 			for (var i = (page - 1) * pageSize; i < maxLoop; i++) {
 				var model = modelList[i];
 				var modelData = model.toJSON();
+				/**
+				 * do każdego pliku do jego parametrów dodaje pole uri które jest linkiem na akcję obsługującą ten plik
+				 */
+				var uriFileAction = this.fileAction.populateRoutePath(modelData);
+				for (var colName in modelData){
+					var val = modelData[colName];
+					if(val && val.files){
+						for (var j in val.files) {
+							var file = val.files[j];
+							var uri = Core.Util.Uri.updateQuery(uriFileAction, "column", colName);
+							uri = Core.Util.Uri.updateQuery(uri, "count", j);
+							file['uri'] = uri;
+						}
+					}
+				}
+
 				var data = {
 					element: modelData,
 					navigation: this.fieldActionLink(modelData)
@@ -249,7 +295,21 @@ class ResourceModule extends  SimpleModule{
 				response.setRedirect(listAction.getRoutePath());
 			} else {
 				var modelData = model.toJSON();
-
+				/**
+				 * do każdego pliku do jego parametrów dodaje pole uri które jest linkiem na akcję obsługującą ten plik
+				 */
+				var uriFileAction = this.fileAction.populateRoutePath(modelData);
+				for (var colName in modelData){
+					var val = modelData[colName];
+					if(val && val.files){
+						for (var j in val.files) {
+							var file = val.files[j];
+							var uri = Core.Util.Uri.updateQuery(uriFileAction, "column", colName);
+							uri = Core.Util.Uri.updateQuery(uri, "count", j);
+							file['uri'] = uri;
+						}
+					}
+				}
 				var data = {
 					element: modelData,
 					navigation: this.fieldActionLink(modelData)
@@ -375,15 +435,15 @@ class ResourceModule extends  SimpleModule{
 			return find.run();
 		})
 		.then((model)=>{
-				if (!model || resuorceModel.getColumnNameList().indexOf(columnQuery) === -1) {
+			if (!model || resuorceModel.getColumnNameList().indexOf(columnQuery) === -1) {
 				response.setStatus(404);
 			} else {
 				var modelData = model.toJSON();
 				var column = modelData[columnQuery];
-				if (column && column[countQuery]) {
-					var file = column[countQuery];
-					if (file['path'] && file['orginalname']) {
-						response.setDownload(file['path'], file['orginalname'], (err)=>{
+				if (column && column.files && column.files[countQuery]) {
+					var file = column.files[countQuery];
+					if (file['path'] && file['originalname']) {
+						response.setDownload(file['path'], file['originalname'], (err)=>{
 							this.onFileDownload(err);
 						});
 					} else{
@@ -394,6 +454,7 @@ class ResourceModule extends  SimpleModule{
 				}
 			}
 		});
+						console.log("X8");
 	}
 	public onFileDownload(err){
 		if (err) {

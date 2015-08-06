@@ -223,7 +223,7 @@ describe("Test uploadu: ", function(){
 				done();
 			});
 		});
-		it("kod 200 create", function (done) {
+		it("kod 200 tworzymy pole bez pliku", function (done) {
 			request(app).post("/res1/create")
 				.field("sometext", "ala")
 				.end(function (err, res) {
@@ -231,13 +231,20 @@ describe("Test uploadu: ", function(){
 					done();
 				});
 		});
-		it("kod 200 create", function (done) {
+		it("kod 200 tworzymy pole z plikiem", function (done) {
 			request(app).post("/res1/create")
 				.attach("field1",sourceDir+"/textBig.txt")
 				.field("sometext", "ala")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					expect(res.body.redirect.status).to.be.equal(302);
+					done();
+				});
+		});
+		it("pobieramy plik", function (done) {
+			request(app).get("/res1/file/1?column=field1&count=0")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(200);
 					done();
 				});
 		});
