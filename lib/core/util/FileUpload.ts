@@ -88,8 +88,13 @@ class FileUpload{
 			v(request, file, (cbResult: boolean) => { cb(null, cbResult || cbResult===undefined ? true:false)});
 		};
 	}
-
-	public create(fields?: Object[]): any {
+	/**
+	 * Tworzymy uchwyt dla route na moduł który będzie obsługiwał pliki
+	 * Jako argument podajemy mu listę obiektów które mają  {name:nazwa pola,count:licza plików na pole}
+	 * @param  {Object[]} fields [{name, count}]
+	 * @return {any}             zwraca middleware
+	 */
+	public createRoute(fields?: Object[]): any {
 		fields = fields || [];
 		var storageConfig = {};
 		if(this._directoryHandler){

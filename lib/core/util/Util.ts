@@ -6,3 +6,4 @@ export import Promise = require("./Promise");
 export import Uri = require("./Uri");
 export import NodeUtil = require("./NodeUtil");
 export import ValidatorList = require("./ValidatorList");
+export import FS = require("./FS");

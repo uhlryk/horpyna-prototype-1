@@ -115,7 +115,11 @@ describe("Test uploadu: ", function(){
 				});
 			});
 		});
-		it("zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie preupload'", function (done) {
+		/**
+		 * multer powinien usunąc plik który nie przechodzi weryfikacji
+		 * błąd jest w metodzie fileFilter która powinna jeśli callback (null,false) usunąć plik a tego nie robi
+		 */
+		it("TEST NIEUDANY BO MULTER ŹLE DZIAŁA zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie preupload'", function (done) {
 			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
 			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Validator.BaseValidator.PREUPLOAD_PHASE);
 			myField1.addValidator(val);
@@ -124,7 +128,7 @@ describe("Test uploadu: ", function(){
 				.attach("field1",sourceDir+"/text.txt")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(422);
-					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					done();
 				});
 			});
@@ -152,7 +156,7 @@ describe("Test uploadu: ", function(){
 				.attach("field1",sourceDir+"/text.txt")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(422);
-					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					done();
 				});
 			});
@@ -201,7 +205,7 @@ describe("Test uploadu: ", function(){
 				.attach("field1",sourceDir+"/textBig.txt")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(422);
-					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					done();
 				});
 			});
@@ -275,7 +279,7 @@ describe("Test uploadu: ", function(){
 				});
 		});
 		it("kod 200 edujemy plik, więc ścieżka powinna być inna", function (done) {
-			deleteFolderRecursive(uploadDir);
+			// deleteFolderRecursive(uploadDir);
 			request(app).post("/res1/update/1")
 				.field("sometext", "ala222")
 				.attach("field1",sourceDir+"/text.txt")
@@ -377,6 +381,7 @@ describe("Test uploadu: ", function(){
 				.field("field1", "1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
@@ -385,7 +390,34 @@ describe("Test uploadu: ", function(){
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
 					expect(res.body.content.element.field1).to.be.null;
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					expect(res.status).to.be.equal(200);
+					done();
+				});
+		});
+	});
+	describe("Sprawdzenie uploadu pliku gdy pojawi się błąd walidacji niezwiązany z plikiem - plik musi zostać usunięty", function (done) {
+		var moduleResource1;
+		var filePath;
+		before(function (done) {
+			deleteFolderRecursive(uploadDir);
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
+			moduleResource1 = new Core.ResourceModule("res1");
+			myApp.addModule(moduleResource1);
+			moduleResource1.addField("sometext", Core.Action.FormInputType.TEXT, [], {length:50});
+			moduleResource1.addField("field1", Core.Action.FormInputType.FILE, []);
+			myApp.init().then(function () {
+				done();
+			});
+		});
+		it("kod 200 tworzymy pole z plikiem bez wysłania pola tekstowego", function (done) {
+			request(app).post("/res1/create")
+				.attach("field1",sourceDir+"/textBig.txt")
+				.end(function (err, res) {
+					expect(res.status).to.be.equal(422);
+					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					done();
 				});
 		});

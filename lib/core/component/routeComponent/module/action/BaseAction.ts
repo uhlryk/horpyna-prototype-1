@@ -152,6 +152,25 @@ class BaseAction extends RouteComponent {
 				response.setStatus(422);
  				response.allow = false;
 				response.valid = false;
+				/**
+				 * był błąd więc usuwamy wszystkie pliki które się zuploadowały
+				 */
+				var uploadFileList = request.getExpressRequest().files;
+				// if (uploadFileList && uploadFileList.length) {
+				// 	return Util.Promise.map(uploadFileList, (fileList: any[]) => {
+				// 		return Util.Promise.map(fileList, (file: any) => {
+				// 			Util.FS.unlink(file.path);
+				// 		});
+				// 	});
+				// }
+				for (var fieldName in uploadFileList) {
+					var fileList:any[] = uploadFileList[fieldName];
+					for (var i = 0; i < fileList.length; i++) {
+						var file = fileList[i];
+						Util.FS.unlinkSync(file.path);
+					}
+				}
+
 			}
 		})
 		.then(() => {
@@ -232,7 +251,7 @@ class BaseAction extends RouteComponent {
 		return (req, res, next) => {
 			var response: Response = Response.ExpressToResponse(res);
 			if (fileFields.length > 0 && response.allow === true) {
-				fileUpload.create(fileFields)(req, res, function(err){
+				fileUpload.createRoute(fileFields)(req, res, function(err){
 					if (err) {
 						var request: Request = Request.ExpressToRequest(req);
 						var validationResponse: ValidationResponse = request.getValue("validationError");
@@ -249,7 +268,7 @@ class BaseAction extends RouteComponent {
 							field: err.field,
 							errorList: [err.code]
 						});
-						// console.log(err);
+						console.log(err);
 					}
 					next();
 				});
