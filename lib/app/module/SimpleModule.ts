@@ -33,37 +33,37 @@ class SimpleModule extends  Core.Module{
 		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
 		sizeField.optional = true;
 		this._listAction.addField(sizeField);
-		this._listAction.setActionHandler((request, response, action) => { return this.onListAction(request, response, action); });
+		// this._listAction.setActionHandler((request, response, action) => { return this.onListAction(request, response, action); });
 
 		this._createAction = new Core.Action.DualAction(SimpleModule.ACTION_CREATE);
 		this.addAction(this._createAction);
-		this._createAction.setActionHandler((request, response, action) => { return this.onCreateAction(request, response, <Core.Action.DualAction>action); });
-		this._createAction.setFormActionHandler((request, response, action) => { return this.onFormCreateAction(request, response, <Core.Action.FormAction>action); });
+		// this._createAction.setActionHandler((request, response, action) => { return this.onCreateAction(request, response, <Core.Action.DualAction>action); });
+		// this._createAction.setFormActionHandler((request, response, action) => { return this.onFormCreateAction(request, response, <Core.Action.FormAction>action); });
 
 		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_DETAIL);
 		this.addAction(this._detailAction);
 		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
 		this._detailAction.addField(idField);
-		this._detailAction.setActionHandler((request, response, action) => { return this.onDetailAction(request, response, action);});
+		// this._detailAction.setActionHandler((request, response, action) => { return this.onDetailAction(request, response, action);});
 
 		this._updateAction = new Core.Action.DualAction(SimpleModule.ACTION_UPDATE);
 		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._updateAction);
-		this._updateAction.setActionHandler((request, response, action) => { return this.onUpdateAction(request, response, <Core.Action.DualAction>action); });
-		this._updateAction.setFormActionHandler((request, response, action) => { return this.onFormUpdateAction(request, response, <Core.Action.FormAction>action); });
+		// this._updateAction.setActionHandler((request, response, action) => { return this.onUpdateAction(request, response, <Core.Action.DualAction>action); });
+		// this._updateAction.setFormActionHandler((request, response, action) => { return this.onFormUpdateAction(request, response, <Core.Action.FormAction>action); });
 
 		this._deleteAction = new Core.Action.DualAction(SimpleModule.ACTION_DELETE);
 		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteAction);
-		this._deleteAction.setActionHandler((request, response, action) => { return this.onDeleteAction(request, response, <Core.Action.DualAction>action); });
-		this._deleteAction.setFormActionHandler((request, response, action) => { return this.onFormDeleteAction(request, response, <Core.Action.FormAction>action); });
+		// this._deleteAction.setActionHandler((request, response, action) => { return this.onDeleteAction(request, response, <Core.Action.DualAction>action); });
+		// this._deleteAction.setFormActionHandler((request, response, action) => { return this.onFormDeleteAction(request, response, <Core.Action.FormAction>action); });
 
 		this._fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, SimpleModule.ACTION_FILE);
 		this._fileAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this._fileAction.addField(new Core.Field("column", Core.Action.FieldType.QUERY_FIELD));
 		this._fileAction.addField(new Core.Field("count", Core.Action.FieldType.QUERY_FIELD));
 		this.addAction(this._fileAction);
-		this._fileAction.setActionHandler((request, response, action) => { return this.onFileAction(request, response, action); });
+		// this._fileAction.setActionHandler((request, response, action) => { return this.onFileAction(request, response, action); });
 		this._fileAction.addValue("showInNavigation", false);
 
 		var navigationEvent = new Core.Event.Action.OnFinish();
@@ -148,15 +148,15 @@ class SimpleModule extends  Core.Module{
 			}
 		}
 	}
-	public onListAction (request, response, action) { return Core.Util.Promise.resolve();}
-	public onDetailAction (request, response, action) { return Core.Util.Promise.resolve();}
-	public onFormCreateAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
-	public onFormUpdateAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
-	public onFormDeleteAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
- 	public onCreateAction(request, response, action:Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
-	public onUpdateAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
-	public onDeleteAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
-	public onFileAction(request, response, action: Core.Action.BaseAction) { return Core.Util.Promise.resolve(); }
+	// public onListAction (request, response, action) { return Core.Util.Promise.resolve();}
+	// public onDetailAction (request, response, action) { return Core.Util.Promise.resolve();}
+	// public onFormCreateAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
+	// public onFormUpdateAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
+	// public onFormDeleteAction(request, response, action: Core.Action.FormAction) { return Core.Util.Promise.resolve(); }
+ 	// public onCreateAction(request, response, action:Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+	// public onUpdateAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+	// public onDeleteAction(request, response, action: Core.Action.DualAction) { return Core.Util.Promise.resolve(); }
+	// public onFileAction(request, response, action: Core.Action.BaseAction) { return Core.Util.Promise.resolve(); }
 	/**
 	 * Callback na event navigationEvent
 	 * Odpala się dla wszystkich akcji tego modułu.

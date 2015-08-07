@@ -1,4 +1,5 @@
 export import BaseAction= require("./BaseAction");
+export import ActionHandlerController = require("./ActionHandlerController");
 export import FormAction= require("./FormAction");
 export import IInputForm = require("./IInputForm");
 export import IForm = require("./IForm");
