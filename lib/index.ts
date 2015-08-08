@@ -11,5 +11,4 @@ export import ActionResponse = require("./core/component/routeComponent/module/a
 export import Field = require("./core/component/routeComponent/module/action/field/Field");
 export import Validator = require("./core/component/routeComponent/module/action/field/Validator");
 export import Query = require("./core/component/routeComponent/module/query/Query");
-export import SimpleModule = require("./app/module/SimpleModule");
 export import ResourceModule = require("./app/module/ResourceModule");

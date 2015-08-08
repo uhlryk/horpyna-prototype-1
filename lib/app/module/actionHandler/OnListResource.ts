@@ -149,6 +149,12 @@ class OnListResource extends Core.Action.ActionHandlerController {
 				action = (<Core.Action.DualAction>action).formAction;
 			}
 			/**
+			 * Nie dodajemy akcji które wyraźnie tego nie chca
+			 */
+			if (action.getValue("showInNavigation") === false){
+				continue;
+			}
+			/**
 			 * Prezentujemy akcje które są dostępne przez GET
 			 */
 			if (action.getMethod() !== Core.Action.BaseAction.GET) {

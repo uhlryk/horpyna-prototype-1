@@ -7,7 +7,6 @@ import OnDetailResource = require("./actionHandler/OnDetailResource");
 import OnCreateResource = require("./actionHandler/OnCreateResource");
 import OnUpdateResource = require("./actionHandler/OnUpdateResource");
 import OnDeleteResource = require("./actionHandler/OnDeleteResource");
-import SimpleModule = require("./SimpleModule");
 import Core = require("../../index");
 
 class ResourceModule extends Core.Module {
