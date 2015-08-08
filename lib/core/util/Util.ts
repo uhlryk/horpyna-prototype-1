@@ -7,3 +7,4 @@ export import Uri = require("./Uri");
 export import NodeUtil = require("./NodeUtil");
 export import ValidatorList = require("./ValidatorList");
 export import FS = require("./FS");
+export import Morgan = require("./Morgan");
