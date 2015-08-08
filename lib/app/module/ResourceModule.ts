@@ -32,20 +32,15 @@ class ResourceModule extends Core.Module {
 	protected onConstructActions(){
 		this._fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "file");
 		this._fileAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
-		this._fileAction.addField(new Core.Field("column", Core.Action.FieldType.QUERY_FIELD));
-		this._fileAction.addField(new Core.Field("count", Core.Action.FieldType.QUERY_FIELD));
+		this._fileAction.addField(new Core.Field("column", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._fileAction.addField(new Core.Field("count", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._fileAction);
 		this._fileAction.addValue("showInNavigation", false);
 		this._listAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "list");
-		var orderField: Core.Field = new Core.Field("order", Core.Action.FieldType.QUERY_FIELD);
-		orderField.optional = true;
-		this._listAction.addField(orderField);
-		var pageField: Core.Field = new Core.Field("page", Core.Action.FieldType.QUERY_FIELD);
-		pageField.optional = true;
-		this._listAction.addField(pageField);
-		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
-		sizeField.optional = true;
-		this._listAction.addField(sizeField);
+
+		this._listAction.addField(new Core.Field("order", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field("page", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field("size", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._listAction, true);
 		this._createAction = new Core.Action.DualAction("create");
 		this.addAction(this._createAction);

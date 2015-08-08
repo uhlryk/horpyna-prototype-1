@@ -23,22 +23,38 @@ class OnFileResource extends Core.Action.ActionHandlerController {
 			return find.run();
 		})
 		.then((model) => {
-				if (!model || this._model.getColumnNameList().indexOf(columnQuery) === -1) {
+				if (!model) {
+				console.log("A-1");
 				response.setStatus(404);
 			} else {
+					if (this._model.getColumnNameList().indexOf(columnQuery) === -1) {
+					columnQuery = null;
+				}
+				if (countQuery === null) {
+					countQuery = 0;
+				}
 				var modelData = model.toJSON();
-				var column = modelData[columnQuery];
-				if (column && column.files && column.files[countQuery]) {
-					var file = column.files[countQuery];
-					if (file['path'] && file['originalname']) {
-						response.setDownload(file['path'], file['originalname'], (err) => {
-							this.onFileDownloadCb(err);
-						});
-					} else {
-						response.setStatus(404);
+				console.log("A0");
+				response.setStatus(404);
+				for(var columnName in modelData){
+					console.log(columnName + "  " + columnQuery + "  " + countQuery);
+					if (columnQuery === null || columnName === columnQuery){
+						var column = modelData[columnName];
+						console.log(column);
+						if (column && column.files) {
+							console.log("A1");
+							var file = column.files[countQuery];
+							console.log(file);
+							if (file['path'] && file['originalname']) {
+								console.log("A2");
+								response.setStatus(200);
+								response.setDownload(file['path'], file['originalname'], (err) => {
+									this.onFileDownloadCb(err);
+								});
+							}
+							break;
+						}
 					}
-				} else {
-					response.setStatus(404);
 				}
 			}
 		});
