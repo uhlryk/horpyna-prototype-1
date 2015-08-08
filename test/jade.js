@@ -46,15 +46,15 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.addModule(moduleResource1);
-			var resModel = moduleResource1.getModel(Core.ResourceModule.RESOURCE_MODEL);
+			var resModel = moduleResource1.getDefaultModel();
 			var nameCol = new Core.Column.StringColumn("name", 50);
 			resModel.addColumn(nameCol);
 			var passCol = new Core.Column.StringColumn("pass", 50);
 			resModel.addColumn(passCol);
-			var createAction = moduleResource1.getAction(Core.SimpleModule.ACTION_CREATE);
+			var createAction = moduleResource1.createAction;
 			createAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
 			createAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
-			var updateAction = moduleResource1.getAction(Core.SimpleModule.ACTION_UPDATE);
+			var updateAction = moduleResource1.updateAction;
 			updateAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
 			updateAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
 			// app.use(myApp.getMiddleware());

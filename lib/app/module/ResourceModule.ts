@@ -10,61 +10,197 @@ import OnDeleteResource = require("./actionHandler/OnDeleteResource");
 import SimpleModule = require("./SimpleModule");
 import Core = require("../../index");
 
-class ResourceModule extends SimpleModule {
-	public static RESOURCE_MODEL = "model";
+class ResourceModule extends Core.Module {
+	private _model: Core.Model;
+	private _listAction: Core.Action.BaseAction;
+	private _createAction: Core.Action.DualAction;
+	private _updateAction: Core.Action.DualAction;
+	private _detailAction: Core.Action.BaseAction;
+	private _deleteAction: Core.Action.DualAction;
+	private _fileAction: Core.Action.BaseAction;
+
 	public onConstructor() {
 		super.onConstructor();
-		var resourceModel = new Core.Model(ResourceModule.RESOURCE_MODEL);
-		this.addModel(resourceModel, true);
-
-		var onList = new OnListResource(this, resourceModel, "horpyna/jade/listAction", this.fileAction);
-		this.listAction.setActionHandler(onList.getActionHandler());
-
-		var onFile = new OnFileResource(resourceModel);
+		this.onConstructModels();
+		this.onConstructActions();
+		this.onConstructActionHandlers();
+		this.onConstructSubscribers();
+	}
+	protected onConstructModels(){
+		this._model = new Core.Model("model");
+		this.addModel(this._model, true);
+	}
+	protected onConstructActions(){
+		this._fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "file");
+		this._fileAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._fileAction.addField(new Core.Field("column", Core.Action.FieldType.QUERY_FIELD));
+		this._fileAction.addField(new Core.Field("count", Core.Action.FieldType.QUERY_FIELD));
+		this.addAction(this._fileAction);
+		this._fileAction.addValue("showInNavigation", false);
+		this._listAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "list");
+		var orderField: Core.Field = new Core.Field("order", Core.Action.FieldType.QUERY_FIELD);
+		orderField.optional = true;
+		this._listAction.addField(orderField);
+		var pageField: Core.Field = new Core.Field("page", Core.Action.FieldType.QUERY_FIELD);
+		pageField.optional = true;
+		this._listAction.addField(pageField);
+		var sizeField: Core.Field = new Core.Field("size", Core.Action.FieldType.QUERY_FIELD);
+		sizeField.optional = true;
+		this._listAction.addField(sizeField);
+		this.addAction(this._listAction, true);
+		this._createAction = new Core.Action.DualAction("create");
+		this.addAction(this._createAction);
+		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "detail");
+		this.addAction(this._detailAction);
+		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		this._detailAction.addField(idField);
+		this._updateAction = new Core.Action.DualAction("update");
+		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this.addAction(this._updateAction);
+		this._deleteAction = new Core.Action.DualAction("delete");
+		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this.addAction(this._deleteAction);
+	}
+	protected onConstructActionHandlers(){
+		var onFile = new OnFileResource(this.model);
 		this.fileAction.setActionHandler(onFile.getActionHandler());
-
+		var onList = new OnListResource(this, this.model, "horpyna/jade/listAction", this.fileAction);
+		this.listAction.setActionHandler(onList.getActionHandler());
 		var onFormCreate = new OnFormCreateResource("horpyna/jade/createFormAction");
 		this.createAction.setFormActionHandler(onFormCreate.getActionHandler());
-
-		var onFormUpdate = new OnFormUpdateResource(resourceModel, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
+		var onFormUpdate = new OnFormUpdateResource(this.model, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
-
-		var onFormDelete = new OnFormDeleteResource(resourceModel, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
+		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
-
-		var onDetail = new OnDetailResource(this, resourceModel, "horpyna/jade/detailAction", this.listAction, this.fileAction);
+		var onDetail = new OnDetailResource(this, this.model, "horpyna/jade/detailAction", this.listAction, this.fileAction);
 		this.detailAction.setActionHandler(onDetail.getActionHandler());
-
-		var onCreate = new OnCreateResource(resourceModel, this.listAction);
+		var onCreate = new OnCreateResource(this.model, this.listAction);
 		this.createAction.setActionHandler(onCreate.getActionHandler());
-
-		var onUpdate = new OnUpdateResource(resourceModel, this.listAction, this.listAction);
+		var onUpdate = new OnUpdateResource(this.model, this.listAction, this.listAction);
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
-
-		var onDelete = new OnDeleteResource(resourceModel, this.listAction, this.listAction);
+		var onDelete = new OnDeleteResource(this.model, this.listAction, this.listAction);
 		this.deleteAction.setActionHandler(onDelete.getActionHandler());
-
-
 	}
+	protected onConstructSubscribers(){
+		var navigationEvent = new Core.Event.Action.OnFinish();
+		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
+			this.onBuildNavigation(request, response, done);
+		});
+		this.subscribe(navigationEvent);
+	}
+	public get model(): Core.Model{return this._model; }
+	public get listAction(): Core.Action.BaseAction{return this._listAction; }
+	public get createAction(): Core.Action.DualAction{return this._createAction; }
+	public get updateAction(): Core.Action.DualAction {return this._updateAction; }
+	public get detailAction(): Core.Action.BaseAction {return this._detailAction; }
+	public get deleteAction(): Core.Action.DualAction {return this._deleteAction; }
+	public get fileAction(): Core.Action.BaseAction {return this._fileAction; }
 	/**
- * rozszerza metodę simpleModule o dodawanie kolumn do defaultowego modelu
+ * przyśpiesza dodawanie pól body do CRUD.
  */
 	public addField(name: string, formInputType: string, validationNameList: Object, options?: Object) {
 		options = options || {};
-		super.addField(name, formInputType, validationNameList, options);
-		var model = this.getDefaultModel();
+		var optional: boolean = options['optional'] || false;
+		var fieldOptions = {};
+		var fieldType = Core.Action.FieldType.BODY_FIELD;
+		if(formInputType === Core.Action.FormInputType.FILE){
+			fieldType = Core.Action.FieldType.FILE_FIELD;
+			fieldOptions['maxFiles'] = options['fieldMaxFiles'] || 1;
+		}
+		var createField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
+		createField.optional = optional;
+		createField.formInputType = formInputType;
+		this.createAction.addField(createField);
+
+		var updateField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
+		updateField.optional = optional;
+		updateField.formInputType = formInputType;
+		this.updateAction.addField(updateField);
+		/**
+		 * Jeśli mamy do czynienia z edycją formularza, gdzie dane pole jest plikiem i jest opcjonalne
+		 * to tworzymy dodatkowe pole tekstowe - docelowo będzie to checkbox który pozwala oznaczyć by usunąć stary plik
+		 * bez dodania nowego
+		 */
+		if (formInputType === Core.Action.FormInputType.FILE && optional === true) {
+			var fileHelperField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD, fieldOptions);
+			fileHelperField.formInputType = Core.Action.FormInputType.CHECKBOX;
+			fileHelperField.optional = true;
+			this.updateAction.addField(fileHelperField);
+		}
+		var deleteField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
+		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
+		deleteField.formInputType = formInputType;
+		var deleteFormAction = this.deleteAction.formAction;
+		deleteFormAction.addField(deleteField);
+
+		for(var validationName in validationNameList){
+			var data = validationNameList[validationName];
+			if(data.class){
+				data.params.unshift(data.name);
+				var createValidator = Object.create(data.class.prototype);
+				createValidator.constructor.apply(createValidator, data.params);
+				createField.addValidator(createValidator);
+				var updateValidator = Object.create(data.class.prototype);
+				updateValidator.constructor.apply(updateValidator, data.params);
+				updateField.addValidator(updateValidator);
+			}
+		}
 		//na razie nie rozbudowujemy tego tak że system ma zamapowane typ forma a typy kolumn
 		switch (formInputType){
 			case Core.Action.FormInputType.FILE:
 				if (options['db_file'] === true) {//znaczy że plik ma być zapisywany w bazie danych a nie na dysku
-					model.addColumn(new Core.Column.BlobColumn(name));
+					this.model.addColumn(new Core.Column.BlobColumn(name));
 				} else {
-					model.addColumn(new Core.Column.JsonColumn(name));
+					this.model.addColumn(new Core.Column.JsonColumn(name));
 				}
 				break;
 			default:
-				model.addColumn(new Core.Column.StringColumn(name, options['length'] || 50));
+				this.model.addColumn(new Core.Column.StringColumn(name, options['length'] || 50));
 		}
+	}
+	/**
+	 * Callback na event navigationEvent
+	 * Odpala się dla wszystkich akcji tego modułu.
+	 * Dodaje blok nawigacyjny po akcjach tego modułu
+	 */
+	private onBuildNavigation(request: Core.Action.Request, response: Core.Action.Response, done) {
+		var responseContent: Object = new Object();
+		responseContent['links'] = [];
+		var actionList = this.getActionList();
+		var actionListLength = actionList.length;
+		for (var i = 0; i < actionListLength; i++) {
+			var action: Core.Action.BaseAction = actionList[i];
+			/**
+			 * znaczy że akcja jest POST, ale ma subakcję GET
+			 */
+			if(action instanceof Core.Action.DualAction){
+				action = (<Core.Action.DualAction>action).formAction;
+			}
+			/**
+			 * Prezentujemy tylko akcje które są dostępne przez GET
+			 */
+			if(action.getMethod() !== Core.Action.BaseAction.GET){
+				continue;
+			}
+			/**
+			 * Jeśli są akcje które mają PARAM_FIELD to nie są tu prezentowane (bo wymagają i tak id)
+			 */
+			var paramFieldList = action.getFieldListByType(Core.Action.FieldType.PARAM_FIELD);
+			if (paramFieldList.length > 0 ){
+				continue;
+			}
+			var linkObject = {
+				link: action.getRoutePath(),
+				name: action.name,
+				active: false
+			};
+			if(action.getRoutePath() === response.routePath){
+				linkObject.active = true;
+			}
+			responseContent['links'].push(linkObject);
+		}
+		response.addValue("localnavigation", responseContent);
+		done();
 	}
 }
 export = ResourceModule;
