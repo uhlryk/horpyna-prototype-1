@@ -4,7 +4,6 @@ export import Module = require("./core/component/routeComponent/module/Module");
 export import Util = require("./core/util/Util");
 export import Event = require("./core/component/event/Event");
 
-export import ProcessModel = require("./core/component/process/ProcessModel");
 export import Node = require("./core/component/process/Node");
 
 export import Model = require("./core/component/routeComponent/module/model/Model");

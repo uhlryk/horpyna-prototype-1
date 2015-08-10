@@ -4,16 +4,16 @@ import Request = require("./../routeComponent/module/action/Request");
 import BaseAction = require("./../routeComponent/module/action/BaseAction");
 import Util = require("./../../util/Util");
 
-import Node = require("./Node");
+import BaseNode = require("./BaseNode");
 // import ProcessShareObject = require("./ProcessShareObject");
 /**
  * Rozpoczynająca łańcuch procesów biznesowych.
  * Jest podpinana do ActionHandlera. I do niej się podpina kolejne node'y
  * Jest to obiekt który odpowiada jednemu procesowi biznesowemu
  */
-class ProcessModel extends Node{
+class ProcessModel extends BaseNode{
 	private _actionHandler: IActionHandler;
-	private _allNodeList: Node[];
+	private _allNodeList: BaseNode[];
 	constructor(){
 		super();
 		this.initDebug("process");
@@ -23,9 +23,13 @@ class ProcessModel extends Node{
 	protected actionHandler(request: Request, response: Response, action: BaseAction): Util.Promise<void> {
 		return Util.Promise.resolve()
 		.then(()=>{
-			var nodeResolverList: ((response?: any) => void)[] = [];
-			var nodePromiseList: Util.Promise<any>[] = [];
-			var parentPromiseList: Util.Promise<any>[][] = [];
+			//dla każdego node tworzymy promise a to jest lista resolverów dla tych promisów
+			var nodeResolverList: ((response: Object) => void)[] = [];
+			//dla każdego node tworzymy promise i tu mamy całą listę
+			var nodePromiseList: Util.Promise<Object>[] = [];
+			//lista z nodami która ma listę parent promisów tych nodów
+			//służy do spawdzania czy dla danego node wszyscy rodzice się zrealizowali
+			var parentPromiseList: Util.Promise<Object>[][] = [];
 			/**
 			 * dla każdego node budujemy tyle deffered objects ile ma dzieci.
 			 * Każde dziecko dostaje jeden taki obiekt od danego rodzica. Ale moze mieć wiele rodziców
@@ -33,19 +37,18 @@ class ProcessModel extends Node{
 			 * będzie miało informację że może teraz swoje procesy rozpocząć
 			 */
 			for (var i = 0; i < this._allNodeList.length; i++) {
-				var node: Node = this._allNodeList[i];
-				// var resolver = Util.Promise.defer<any>();
+				var node: BaseNode = this._allNodeList[i];
 				var resolve;
-				var promise = new Util.Promise<any>(function(){
+				var promise = new Util.Promise<Object>(function() {
 					resolve = arguments[0];
 				})
 				nodePromiseList[i] = promise;
 				nodeResolverList[i] = resolve;
 				for (var j = 0; j < node.childNodes.length; j++) {
-					var childNode: Node = node.childNodes[j];
+					var childNode: BaseNode = node.childNodes[j];
 					//szukamy indexu pod jakim występuje na liście wszystkich elementów dany childNode
 					for (var z = 0; z < this._allNodeList.length; z++){
-						var otherNode: Node = this._allNodeList[z];
+						var otherNode: BaseNode = this._allNodeList[z];
 						if (otherNode === childNode){
 							if(!parentPromiseList[z]){
 								parentPromiseList[z] = [];
@@ -56,21 +59,21 @@ class ProcessModel extends Node{
 				}
 			}
 			for (var i = 0; i < this._allNodeList.length; i++) {
-				var node: Node = this._allNodeList[i];
+				var node: BaseNode = this._allNodeList[i];
 				if (node !== this) {
 					node.getProcessHandler(nodeResolverList[i], parentPromiseList[i], request, response);
 				}
 			}
-			//realizuje resolve tego elementu co powoduje kaskadowe odpalanie kolejnych Node'ów
-			nodeResolverList[0]();
+			//realizuje resolve tego elementu co powoduje kaskadowe odpalanie kolejnych BaseNode'ów
+			nodeResolverList[0]({});
 
-			//zwraca promise jak wszystkie Node zrealizują swój obiekt resolver
-			return Util.Promise.all<any>(nodePromiseList)
+			//zwraca promise jak wszystkie BaseNode zrealizują swój obiekt resolver
+			return Util.Promise.all<Object>(nodePromiseList)
 			.then(()=>{
 			});
 		});
 	}
-	public addNode(node:Node){
+	public addNode(node:BaseNode){
 		this._allNodeList.push(node);
 	}
 	/**
