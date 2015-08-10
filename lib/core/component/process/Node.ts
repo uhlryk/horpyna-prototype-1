@@ -46,14 +46,16 @@ class Node extends Element {
 	 * @param {Request}  request  [description]
 	 * @param {Response} response [description]
 	 */
-	public getProcessHandler(resolver: Util.Promise.Resolver<any>, parentResolverList: Util.Promise.Resolver<any>[], request: Request, response: Response) {
-		Promise.all(parentResolverList)
-		.then((response)=>{
+	public getProcessHandler(resolver: (response:any)=>void, parentResolverList: Util.Promise<any>[], request: Request, response: Response) {
+		// parentResolverList[0].
+		Util.Promise.all<any>(parentResolverList)
+		.then((response)=>{//response jest tablicą odpowiedzi z rodziców
 			console.log(response);
 			return this.content(response);
 		})
-		.then((response) => {
-			resolver.resolve(response);
+		.then((response) => {//odpowiedź z content
+			console.log(response);
+			resolver(response);
 		});
 	}
 	/**
@@ -61,8 +63,7 @@ class Node extends Element {
 	 */
 	protected content(processEntry: any): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
-			console.log("Z2");
-			resolve(processEntry);
+			resolve("dummy text");
 		});
 	}
 }

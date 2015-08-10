@@ -66,8 +66,22 @@ class ResourceModule extends Core.Module {
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
 		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
-		var onDetail = new OnDetailResource(this, this.model, "horpyna/jade/detailAction", this.listAction, this.fileAction);
-		this.detailAction.setActionHandler(onDetail.getActionHandler());
+		// var onDetail = new OnDetailResource(this, this.model, "horpyna/jade/detailAction", this.listAction, this.fileAction);
+		// this.detailAction.setActionHandler(onDetail.getActionHandler());
+
+		var detailProcessModel = new Core.ProcessModel();
+		this.detailAction.setActionHandler(detailProcessModel.getActionHandler());
+		var nodeA1 = new Core.Node(detailProcessModel);
+		detailProcessModel.addChildNode(nodeA1);
+		var nodeA2 = new Core.Node(detailProcessModel);
+		detailProcessModel.addChildNode(nodeA2);
+		var nodeA2B1 = new Core.Node(detailProcessModel);
+		nodeA2.addChildNode(nodeA2B1);
+		//ten Node podpięty jest pod dwóch rodziców
+		var nodeA1A2B2 = new Core.Node(detailProcessModel);
+		nodeA2.addChildNode(nodeA1A2B2);
+		nodeA1.addChildNode(nodeA1A2B2);
+
 		var onCreate = new OnCreateResource(this.model, this.listAction);
 		this.createAction.setActionHandler(onCreate.getActionHandler());
 		var onUpdate = new OnUpdateResource(this.model, this.listAction, this.listAction);
