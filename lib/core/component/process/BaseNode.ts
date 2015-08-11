@@ -80,19 +80,17 @@ class BaseNode extends Element {
 	 * @param {Request}  request  [description]
 	 * @param {Response} response [description]
 	 */
-	public getProcessHandler(resolver: (processResponse: Object) => void, parentResolverList: Util.Promise<Object>[], request: Request, response: Response) {
+	public getProcessHandler(resolver: (processResponse: any) => void, parentResolverList: Util.Promise<any>[], request: Request, response: Response) {
 		// parentResolverList[0].
-		Util.Promise.all<Object>(parentResolverList)
+		Util.Promise.all<any>(parentResolverList)
 		/**
 		 * response jest tablicą odpowiedzi z rodziców. Większość Node używa tylko jednego strumienia odpowiedzi,
 		 * Jeśli otrzyma ich więcej to używa odpowiedz defaultowej czyli pierwszego zarejestrowanego rodzica.
 		 */
 		.then((processResponseList)=>{
-			console.log(response);
 			return this.content(processResponseList, request, response);
 		})
 		.then((response) => {//odpowiedź z content
-			console.log(response);
 			resolver(response);
 		});
 	}
@@ -103,7 +101,7 @@ class BaseNode extends Element {
 	 * @param  {Request} request      actionRequest
 	 * @return {Object}               zwraca obiekt z key:value gdzie key to string a value:any
 	 */
-	public mapResponse(name:string, processEntry: any, request: Request):Object{
+	public mapResponse(name:string, processEntry: Object, request: Request):Object{
 		var mapResponse = new Object();
 		if (this._dataMapper[name]) {
 			for (var type in this._dataMapper) {
@@ -129,8 +127,11 @@ class BaseNode extends Element {
 	/**
 	 * Tu logika danego node. Zwrócić musi obiekt odpowiedzi
 	 */
-	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<Object> {
-		return new Util.Promise<Object>((resolve: (processResponse: Object) => void) => {
+	protected content(processEntryList: any[], request: Request, response: Response): Util.Promise<Object> {
+		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
+			console.log("A1");
+			console.log(processEntryList);
+			console.log("A2");
 			resolve({});
 		});
 	}

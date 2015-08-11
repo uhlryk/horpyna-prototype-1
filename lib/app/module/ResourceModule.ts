@@ -66,21 +66,19 @@ class ResourceModule extends Core.Module {
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
 		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
-		var onDetail = new OnDetailResource(this, this.model, "horpyna/jade/detailAction", this.listAction, this.fileAction);
-		this.detailAction.setActionHandler(onDetail.getActionHandler());
+		// var onDetail = new OnDetailResource(this, this.model, "horpyna/jade/detailAction", this.listAction, this.fileAction);
+		// this.detailAction.setActionHandler(onDetail.getActionHandler());
 
-/*		var detailProcessModel = new Core.Node.ProcessModel();
+		var detailProcessModel = new Core.Node.ProcessModel();
 		this.detailAction.setActionHandler(detailProcessModel.getActionHandler());
-		var nodeA1 = new Core.Node.BaseNode(detailProcessModel);
-		detailProcessModel.addChildNode(nodeA1);
+		var findNode = new Core.Node.Db.Find(detailProcessModel);
+		findNode.setModel(this.model);
+		findNode.addMapper("where", Core.Action.FieldType.APP_FIELD);
+		findNode.addMapper("where", Core.Action.FieldType.PARAM_FIELD);
+		detailProcessModel.addChildNode(findNode);
 		var nodeA2 = new Core.Node.BaseNode(detailProcessModel);
-		detailProcessModel.addChildNode(nodeA2);
-		var nodeA2B1 = new Core.Node.BaseNode(detailProcessModel);
-		nodeA2.addChildNode(nodeA2B1);
-		//ten Node.BaseNode podpięty jest pod dwóch rodziców i się odpali jak oboje rodziców się wykona
-		var nodeA1A2B2 = new Core.Node.BaseNode(detailProcessModel);
-		nodeA2.addChildNode(nodeA1A2B2);
-		nodeA1.addChildNode(nodeA1A2B2);*/
+		findNode.addChildNode(nodeA2);
+
 
 		var onCreate = new OnCreateResource(this.model, this.listAction);
 		this.createAction.setActionHandler(onCreate.getActionHandler());

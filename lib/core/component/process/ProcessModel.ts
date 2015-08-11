@@ -24,12 +24,12 @@ class ProcessModel extends BaseNode{
 		return Util.Promise.resolve()
 		.then(()=>{
 			//dla każdego node tworzymy promise a to jest lista resolverów dla tych promisów
-			var nodeResolverList: ((response: Object) => void)[] = [];
+			var nodeResolverList: ((response: any) => void)[] = [];
 			//dla każdego node tworzymy promise i tu mamy całą listę
-			var nodePromiseList: Util.Promise<Object>[] = [];
+			var nodePromiseList: Util.Promise<any>[] = [];
 			//lista z nodami która ma listę parent promisów tych nodów
 			//służy do spawdzania czy dla danego node wszyscy rodzice się zrealizowali
-			var parentPromiseList: Util.Promise<Object>[][] = [];
+			var parentPromiseList: Util.Promise<any>[][] = [];
 			/**
 			 * dla każdego node budujemy tyle deffered objects ile ma dzieci.
 			 * Każde dziecko dostaje jeden taki obiekt od danego rodzica. Ale moze mieć wiele rodziców
@@ -39,7 +39,7 @@ class ProcessModel extends BaseNode{
 			for (var i = 0; i < this._allNodeList.length; i++) {
 				var node: BaseNode = this._allNodeList[i];
 				var resolve;
-				var promise = new Util.Promise<Object>(function() {
+				var promise = new Util.Promise<any>(function() {
 					resolve = arguments[0];
 				})
 				nodePromiseList[i] = promise;
@@ -68,9 +68,8 @@ class ProcessModel extends BaseNode{
 			nodeResolverList[0]({});
 
 			//zwraca promise jak wszystkie BaseNode zrealizują swój obiekt resolver
-			return Util.Promise.all<Object>(nodePromiseList)
-			.then(()=>{
-			});
+			return Util.Promise.all<any>(nodePromiseList)
+			.then(()=>{});
 		});
 	}
 	public addNode(node:BaseNode){
