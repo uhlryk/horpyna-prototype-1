@@ -25,7 +25,7 @@ class Find extends BaseDbNode {
 					var data = model.toJSON();
 					resolve(data);
 				} else {
-					resolve({});
+					resolve(null);
 				}
 			});
 		});

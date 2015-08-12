@@ -7,7 +7,6 @@ import Response = require("./../routeComponent/module/action/Response");
 import Request = require("./../routeComponent/module/action/Request");
 class BaseNode extends Element {
 	public static NODE_RESPONSE: string = "node";
-
 	private _childNodeList: BaseNode[];
 	private _parentNodeList: BaseNode[];
 	/**
@@ -150,8 +149,9 @@ class BaseNode extends Element {
 	 * @return {Object}               zwraca obiekt z key:value gdzie key to string a value:any
 	 */
 	public mapResponse(name: string, processEntry: Object, request: Request): Object {
-		var mapResponse = new Object();
+		var mapResponse = null;
 		if (this._dataMapper[name]) {
+			mapResponse = new Object();
 			for (var type in this._dataMapper) {
 				var typeKeys = this._dataMapper[type];
 				var typeData;
@@ -178,11 +178,7 @@ class BaseNode extends Element {
 	 */
 	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
-
-			console.log("A1");
-			console.log(processEntryList);
-			console.log("A2");
-			resolve({});
+			resolve(null);
 		});
 	}
 }

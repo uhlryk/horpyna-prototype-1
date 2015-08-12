@@ -72,12 +72,18 @@ class ResourceModule extends Core.Module {
 		var detailProcessModel = new Core.Node.ProcessModel();
 		this.detailAction.setActionHandler(detailProcessModel.getActionHandler());
 		var findNode = new Core.Node.Db.Find(detailProcessModel);
+		var ifNode = new Core.Node.Gateway.IfExist(detailProcessModel);
+		var redirectNode = new Core.Node.Response.Redirect(detailProcessModel);
+		var sendDataNode = new Core.Node.Response.SendData(detailProcessModel);
+
 		findNode.setModel(this.model);
 		findNode.addMapper("where", Core.Action.FieldType.APP_FIELD);
 		findNode.addMapper("where", Core.Action.FieldType.PARAM_FIELD);
 		detailProcessModel.addChildNode(findNode);
-		var ifNode = new Core.Node.Gateway.IfExist(detailProcessModel);
 		findNode.addChildNode(ifNode);
+		redirectNode.setTargetAction(this.listAction);
+		ifNode.addNegativeChildNode(redirectNode);
+		ifNode.addPositiveChildNode(sendDataNode);
 
 
 		var onCreate = new OnCreateResource(this.model, this.listAction);
