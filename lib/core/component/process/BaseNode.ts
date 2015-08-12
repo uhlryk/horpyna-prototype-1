@@ -121,10 +121,10 @@ class BaseNode extends Element {
 			}
 			//content odpali się tylko jeśli przynajmniej jeden rodzic jest allow
 			if (allowProcessResponseList.length > 0) {
-				return this.content(allowProcessResponseList, request, response, processList[this.processId]);
+				return this.content(allowProcessResponseList, request, response, processList);
 			} else{
 				//jeśli żaden rodzic nie jest allow to blokujemy wszystkie connection wychodzące od tego Node
-				this.onAllParentConnectionBlocked(processObject);
+				this.onAllChildrenConnectionBlocked(processObject);
 			}
 		})
 		.then((response) => {//odpowiedź z content
@@ -135,7 +135,7 @@ class BaseNode extends Element {
 	/**
 	 * Gdy wszyskie połączenia od rodziców są zablokowane to następuje blokada połączeń wychodzących od tego Node
 	 */
-	protected onAllParentConnectionBlocked(processObject: IProcessObject) {
+	protected onAllChildrenConnectionBlocked(processObject: IProcessObject) {
 		var connectionList: IConnection[] = processObject.childrenConnections;
 		for (var i = 0; i < connectionList.length; i++){
 			var connection = connectionList[i];
@@ -149,7 +149,7 @@ class BaseNode extends Element {
 	 * @param  {Request} request      actionRequest
 	 * @return {Object}               zwraca obiekt z key:value gdzie key to string a value:any
 	 */
-	public mapResponse(name:string, processEntry: Object, request: Request):Object{
+	public mapResponse(name: string, processEntry: Object, request: Request): Object {
 		var mapResponse = new Object();
 		if (this._dataMapper[name]) {
 			for (var type in this._dataMapper) {
@@ -176,8 +176,9 @@ class BaseNode extends Element {
 	 * Tu logika danego node. Zwrócić musi obiekt odpowiedzi
 	 * @param  {IProcessObject} processObject obiekt pozwala zablokować strumień danych
 	 */
-	protected content(processEntryList: any[], request: Request, response: Response, processObject: IProcessObject): Util.Promise<any> {
+	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
+
 			console.log("A1");
 			console.log(processEntryList);
 			console.log("A2");

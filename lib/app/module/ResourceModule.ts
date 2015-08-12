@@ -76,8 +76,8 @@ class ResourceModule extends Core.Module {
 		findNode.addMapper("where", Core.Action.FieldType.APP_FIELD);
 		findNode.addMapper("where", Core.Action.FieldType.PARAM_FIELD);
 		detailProcessModel.addChildNode(findNode);
-		var nodeA2 = new Core.Node.BaseNode(detailProcessModel);
-		findNode.addChildNode(nodeA2);
+		var ifNode = new Core.Node.Gateway.IfExist(detailProcessModel);
+		findNode.addChildNode(ifNode);
 
 
 		var onCreate = new OnCreateResource(this.model, this.listAction);
