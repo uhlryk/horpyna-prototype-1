@@ -2,6 +2,7 @@ import Element = require("./../../Element");
 import Util = require("./../../util/Util");
 import ProcessModel = require("./ProcessModel");
 import IProcessObject = require("./IProcessObject");
+import IConnection = require("./IConnection");
 import Response = require("./../routeComponent/module/action/Response");
 import Request = require("./../routeComponent/module/action/Request");
 class BaseNode extends Element {
@@ -85,17 +86,14 @@ class BaseNode extends Element {
 	 * z danej listy z szczegółami procesów tworzy listę promisów rodziców danego node
 	 * @param {IProcessObject[]} processList [description]
 	 */
-	protected parentProcessList(processList: IProcessObject[]): { promise: (Util.Promise<any>)[]; allow: boolean[];} {
-		var parentPromiseList: Util.Promise<any>[] = [];
-		var parentAllowList: boolean[] = [];
+	protected getParentPromiseList(processList: IProcessObject[]): (Util.Promise<void>)[] {
+		var parentPromiseList: Util.Promise<void>[] = [];
 		for (var i = 0; i < this._parentNodeList.length; i++) {
 			var parentNode = this._parentNodeList[i];
 			var parentProcessId = parentNode.processId;
-			var parentPromise: Util.Promise<any> = processList[parentProcessId].promise;
-			parentPromiseList.push(parentPromise);
-			parentAllowList.push(processList[parentProcessId].allow);
+			parentPromiseList.push(processList[parentProcessId].promise);
 		}
-		return { promise: parentPromiseList, allow: parentAllowList };
+		return parentPromiseList;
 	}
 	/**
 	 * Wywołuje to dla każdego node ProcessModel, nie w hierarchi ale jak na liście (struktura płaska)
@@ -105,33 +103,44 @@ class BaseNode extends Element {
 	 */
 	public getProcessHandler(processList: IProcessObject[], request: Request, response: Response) {
 		// parentResolverList[0].
-		var parentProcessList = this.parentProcessList(processList);
-		Util.Promise.all<any>(parentProcessList.promise)
+		var parentPromiseList = this.getParentPromiseList(processList);
+		Util.Promise.all<void>(parentPromiseList)
 		/**
 		 * response jest tablicą odpowiedzi z rodziców. Większość Node używa tylko jednego strumienia odpowiedzi,
 		 * Jeśli otrzyma ich więcej to używa odpowiedz defaultowej czyli pierwszego zarejestrowanego rodzica.
 		 */
-		.then((processResponseList)=>{
-			//do content dodamy tylko te response, dla których allow jest true
+		.then(()=>{
+			//do content dodamy tylko te response, dla których connection jest otwarte
 			var allowProcessResponseList = [];
-			for (var i = 0; i < parentProcessList.allow.length; i++){
-				var allow = parentProcessList.allow[i];
-				if(allow === true){
-					allowProcessResponseList.push(processResponseList[i]);
+			var processObject = processList[this.processId];
+			for (var i = 0; i < processObject.parentConnections.length; i++) {
+				var connection : IConnection = processObject.parentConnections[i];
+				if (connection.open === true) {
+					allowProcessResponseList.push(connection.parent.response);
 				}
 			}
 			//content odpali się tylko jeśli przynajmniej jeden rodzic jest allow
 			if (allowProcessResponseList.length > 0) {
-				return this.content(processResponseList, request, response, processList[this.processId]);
+				return this.content(allowProcessResponseList, request, response, processList[this.processId]);
 			} else{
-				//jeśli żaden rodzic nie jest allow to tego Node też blokujemy
-				processList[this.processId].allow = false;
+				//jeśli żaden rodzic nie jest allow to blokujemy wszystkie connection wychodzące od tego Node
+				this.onAllParentConnectionBlocked(processObject);
 			}
 		})
 		.then((response) => {//odpowiedź z content
-			// resolver(response);
-			processList[this.processId].resolver(response);
+			processList[this.processId].response = response || null;
+			processList[this.processId].resolver();
 		});
+	}
+	/**
+	 * Gdy wszyskie połączenia od rodziców są zablokowane to następuje blokada połączeń wychodzących od tego Node
+	 */
+	protected onAllParentConnectionBlocked(processObject: IProcessObject) {
+		var connectionList: IConnection[] = processObject.childrenConnections;
+		for (var i = 0; i < connectionList.length; i++){
+			var connection = connectionList[i];
+			connection.open = false;
+		}
 	}
 	/**
 	 * Dla jakiego name zamapowanego chcemy wyciągnąć obiekt z konkretnymi odpowiedziami
@@ -167,7 +176,7 @@ class BaseNode extends Element {
 	 * Tu logika danego node. Zwrócić musi obiekt odpowiedzi
 	 * @param  {IProcessObject} processObject obiekt pozwala zablokować strumień danych
 	 */
-	protected content(processEntryList: any[], request: Request, response: Response, processObject: IProcessObject): Util.Promise<Object> {
+	protected content(processEntryList: any[], request: Request, response: Response, processObject: IProcessObject): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			console.log("A1");
 			console.log(processEntryList);

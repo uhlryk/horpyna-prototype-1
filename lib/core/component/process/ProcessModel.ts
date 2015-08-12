@@ -6,6 +6,7 @@ import Util = require("./../../util/Util");
 
 import BaseNode = require("./BaseNode");
 import IProcessObject = require("./IProcessObject");
+import IConnection = require("./IConnection");
 // import ProcessShareObject = require("./ProcessShareObject");
 /**
  * Rozpoczynająca łańcuch procesów biznesowych.
@@ -25,61 +26,57 @@ class ProcessModel extends BaseNode{
 		return Util.Promise.resolve()
 		.then(()=>{
 			var processNodeList:IProcessObject[] = [];
-			//lista zawierająca
-			// var allowList: boolean[] = [];
-			//dla każdego node tworzymy promise a to jest lista resolverów dla tych promisów
-			// var nodeResolverList: ((response: any) => void)[] = [];
 			//dla każdego node tworzymy promise i tu mamy całą listę
-			var nodePromiseList: Util.Promise<any>[] = [];
-			//lista z nodami która ma listę parent promisów tych nodów
-			//służy do spawdzania czy dla danego node wszyscy rodzice się zrealizowali
-			// var parentPromiseList: Util.Promise<any>[][] = [];
-			/**
-			 * dla każdego node budujemy tyle deffered objects ile ma dzieci.
-			 * Każde dziecko dostaje jeden taki obiekt od danego rodzica. Ale moze mieć wiele rodziców
-			 * Jeśli wszyscy rodzice wykonają swoje promise to dziecko na podstawie realizacji wszystkich deffered objectów
-			 * będzie miało informację że może teraz swoje procesy rozpocząć
-			 */
+			var nodePromiseList: Util.Promise<void>[] = [];
+
 			for (var i = 0; i < this._allNodeList.length; i++) {
 				var node: BaseNode = this._allNodeList[i];
 				var resolve;
-				var promise = new Util.Promise<any>(function() {
+				var promise = new Util.Promise<void>(function() {
 					resolve = arguments[0];
 				})
-				processNodeList.push({
+
+				var processObject = <IProcessObject>{
 					promise: promise,
 					resolver: resolve,
-					allow: true,
 					response: null,
-				});
+					node: node,
+				};
+				processObject.childrenConnections = [];
+				processObject.parentConnections = [];
+				processNodeList[i] = processObject;
 				nodePromiseList[i] = promise;
-				// nodeResolverList[i] = resolve;
-				// for (var j = 0; j < node.childNodes.length; j++) {
-				// 	var childNode: BaseNode = node.childNodes[j];
-				// 	//szukamy indexu pod jakim występuje na liście wszystkich elementów dany childNode
-				// 	for (var z = 0; z < this._allNodeList.length; z++){
-				// 		var otherNode: BaseNode = this._allNodeList[z];
-				// 		if (otherNode === childNode){
-				// 			if(!parentPromiseList[z]){
-				// 				parentPromiseList[z] = [];
-				// 			}
-				// 			parentPromiseList[z].push(promise);
-				// 		}
-				// 	}
-				// }
 			}
 			for (var i = 0; i < this._allNodeList.length; i++) {
 				var node: BaseNode = this._allNodeList[i];
+				var processObject = processNodeList[node.processId];
+				/**
+				 * dla każdego Node w processNodeList tworzy connections które są jako obiekty dzielone z dziećmi
+				 * zaczynamy od listowania dzieci danego Node i stworzenie tyle connections ile jest dzieci.
+				 * Connections są doddawane do processNodeList danego Node jako childrenConnections
+				 * i do każdego dziecka jako parentConnections
+				 */
+				for (var j = 0; j < node.childNodes.length; j++){
+					var childNode = node.childNodes[j];
+					var childProcessObject = processNodeList[childNode.processId];
+					var connection = <IConnection>{ open: true };//obiekt jest współdzielony więc jak go zmieni rodzic to dziecko też będzie miało zmieniony
+					connection.parent = processObject;
+					connection.child = childProcessObject;
+					processObject.childrenConnections.push(connection);
+					childProcessObject.parentConnections.push(connection);
+				}
+
 				if (node !== this) {
 					node.getProcessHandler(processNodeList, request, response);
 				}
 			}
 			//realizuje resolve tego elementu co powoduje kaskadowe odpalanie kolejnych BaseNode'ów
-			// nodeResolverList[0]({});
-			processNodeList[this.processId].resolver({});
+			processNodeList[this.processId].resolver();
 			//zwraca promise jak wszystkie BaseNode zrealizują swój obiekt resolver
-			return Util.Promise.all<any>(nodePromiseList)
-			.then(()=>{});
+			return Util.Promise.all<void>(nodePromiseList)
+			.then(function(){
+
+			});
 		});
 	}
 	public addNode(node:BaseNode): number{
