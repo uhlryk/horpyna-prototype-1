@@ -36,7 +36,6 @@ class OnCreateResource extends Core.Action.ActionHandlerController {
 					fileList[fieldName] = { files: fieldFileList }
 				}
 			}
-			console.log(fileList);
 			create.populate(fileList);
 			return create.run();
 		})

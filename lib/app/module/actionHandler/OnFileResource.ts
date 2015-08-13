@@ -24,7 +24,6 @@ class OnFileResource extends Core.Action.ActionHandlerController {
 		})
 		.then((model) => {
 				if (!model) {
-				console.log("A-1");
 				response.setStatus(404);
 			} else {
 					if (this._model.getColumnNameList().indexOf(columnQuery) === -1) {
@@ -34,19 +33,13 @@ class OnFileResource extends Core.Action.ActionHandlerController {
 					countQuery = 0;
 				}
 				var modelData = model.toJSON();
-				console.log("A0");
 				response.setStatus(404);
 				for(var columnName in modelData){
-					console.log(columnName + "  " + columnQuery + "  " + countQuery);
 					if (columnQuery === null || columnName === columnQuery){
 						var column = modelData[columnName];
-						console.log(column);
 						if (column && column.files) {
-							console.log("A1");
 							var file = column.files[countQuery];
-							console.log(file);
 							if (file['path'] && file['originalname']) {
-								console.log("A2");
 								response.setStatus(200);
 								response.setDownload(file['path'], file['originalname'], (err) => {
 									this.onFileDownloadCb(err);

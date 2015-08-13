@@ -152,8 +152,8 @@ class BaseNode extends Element {
 		var mapResponse = null;
 		if (this._dataMapper[name]) {
 			mapResponse = new Object();
-			for (var type in this._dataMapper) {
-				var typeKeys = this._dataMapper[type];
+			for (var type in this._dataMapper[name]) {
+				var typeKeys = this._dataMapper[name][type];
 				var typeData;
 				switch(type){
 					case BaseNode.NODE_RESPONSE:

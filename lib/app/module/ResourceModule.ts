@@ -74,17 +74,19 @@ class ResourceModule extends Core.Module {
 		var findNode = new Core.Node.Db.Find(detailProcessModel);
 		var ifNode = new Core.Node.Gateway.IfExist(detailProcessModel);
 		var redirectNode = new Core.Node.Response.Redirect(detailProcessModel);
+		var fileLinksNode = new Core.Node.Modify.FileLinks(detailProcessModel);
 		var sendDataNode = new Core.Node.Response.SendData(detailProcessModel);
-
 		findNode.setModel(this.model);
-		findNode.addMapper("where", Core.Action.FieldType.APP_FIELD);
-		findNode.addMapper("where", Core.Action.FieldType.PARAM_FIELD);
+		findNode.where(Core.Action.FieldType.APP_FIELD);
+		findNode.where(Core.Action.FieldType.PARAM_FIELD);
 		detailProcessModel.addChildNode(findNode);
 		findNode.addChildNode(ifNode);
 		redirectNode.setTargetAction(this.listAction);
 		ifNode.addNegativeChildNode(redirectNode);
-		ifNode.addPositiveChildNode(sendDataNode);
-
+		ifNode.addPositiveChildNode(fileLinksNode);
+		fileLinksNode.setFileAction(this.fileAction);
+		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
+		fileLinksNode.addChildNode(sendDataNode);
 
 		var onCreate = new OnCreateResource(this.model, this.listAction);
 		this.createAction.setActionHandler(onCreate.getActionHandler());

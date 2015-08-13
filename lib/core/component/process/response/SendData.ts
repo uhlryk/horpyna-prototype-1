@@ -14,9 +14,6 @@ class SendData extends BaseNode{
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
-			console.log("B1");
-			console.log(processEntryList[0]);
-			console.log("B2");
 			response.addValue(this._key || "content", processEntryList[0]);
 			response.view = this._view;
 			resolve(null);

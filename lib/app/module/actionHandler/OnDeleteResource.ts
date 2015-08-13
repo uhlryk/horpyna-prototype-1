@@ -27,7 +27,6 @@ class OnDeleteResource extends Core.Action.ActionHandlerController {
 				response.setRedirect(this._onEmptyAction.getRoutePath());
 			} else {
 				var oldModelData = model.toJSON();
-				console.log(oldModelData);
 				for(var colName in oldModelData){
 					var colValue = oldModelData[colName];
 					if(colValue && colValue.files){
@@ -37,7 +36,6 @@ class OnDeleteResource extends Core.Action.ActionHandlerController {
 				var deleteQuery = new Core.Query.Delete();
 				deleteQuery.setModel(this._model);
 				var paramAppList = request.getParamAppFieldList();
-				// console.log(paramAppList);
 				deleteQuery.populateWhere(paramAppList);
 				return deleteQuery.run();
 			}
