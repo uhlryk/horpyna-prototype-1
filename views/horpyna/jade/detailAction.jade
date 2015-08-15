@@ -1,8 +1,13 @@
 extend layout
 block content
 	table
-		each val, name in content.element
+		each val, name in content
 			tr
+				if name == 'nav_after'
+					td
+					td
+					each link in val
+						a(href=link.link) #{link.name}
 				td= name
 				if val && val.files
 					td
@@ -13,8 +18,4 @@ block content
 								a(href=file.uri) #{file.originalname}
 				else
 					td= val
-		each val in content.navigation
-			tr
-				td
-				td
-					a(href=val.link) #{val.name}
+

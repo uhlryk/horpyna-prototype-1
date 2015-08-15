@@ -23,7 +23,6 @@ class ResourceModule extends Core.Module {
 		this.onConstructModels();
 		this.onConstructActions();
 		this.onConstructActionHandlers();
-		// this.onConstructSubscribers();
 	}
 	protected onConstructModels(){
 		this._model = new Core.Model("model");
@@ -44,16 +43,21 @@ class ResourceModule extends Core.Module {
 		this.addAction(this._listAction, true);
 		this._createAction = new Core.Action.DualAction("create");
 		this.addAction(this._createAction);
-		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "detail");
-		this.addAction(this._detailAction);
-		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
-		this._detailAction.addField(idField);
+
+		this.onConstructDetailAction();
+
 		this._updateAction = new Core.Action.DualAction("update");
 		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._updateAction);
 		this._deleteAction = new Core.Action.DualAction("delete");
 		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteAction);
+	}
+	protected onConstructDetailAction(){
+		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "detail");
+		this.addAction(this._detailAction);
+		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		this._detailAction.addField(idField);
 	}
 	protected onConstructActionHandlers(){
 		var onFile = new OnFileResource(this.model);
@@ -66,56 +70,15 @@ class ResourceModule extends Core.Module {
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
 		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
-		// var onDetail = new OnDetailResource(this, this.model, "horpyna/jade/detailAction", this.listAction, this.fileAction);
-		// this.detailAction.setActionHandler(onDetail.getActionHandler());
-
-		var detailProcessModel = new Core.Node.ProcessModel();
-		this.detailAction.setActionHandler(detailProcessModel.getActionHandler());
-		var findNode = new Core.Node.Db.Find(detailProcessModel);
-		var ifNode = new Core.Node.Gateway.IfExist(detailProcessModel);
-		var redirectNode = new Core.Node.Response.Redirect(detailProcessModel);
-		var fileLinksNode = new Core.Node.Modify.FileLinks(detailProcessModel);
-		var sendDataNode = new Core.Node.Response.SendData(detailProcessModel);
-		var addActionLinksNode = new Core.Node.Modify.AddActionLinks(detailProcessModel);
-		var addSecondaryActionLinksNode = new Core.Node.Modify.AddActionLinks(detailProcessModel);
-		var navSendDataNode = new Core.Node.Response.SendData(detailProcessModel);
-		var EmptyNode = new Core.Node.Modify.Empty(detailProcessModel);
-
-		detailProcessModel.addChildNode(EmptyNode);
-		EmptyNode.addChildNode(addSecondaryActionLinksNode);
-		addSecondaryActionLinksNode.addActionAfterAll(this._createAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
-		addSecondaryActionLinksNode.addActionAfterAll(this._listAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
-		addSecondaryActionLinksNode.addChildNode(navSendDataNode);
-		navSendDataNode.setResponseKey("navigation");
-
-		detailProcessModel.addChildNode(findNode);
-		findNode.setModel(this.model);
-		findNode.addWhere(Core.Action.FieldType.APP_FIELD);
-		findNode.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		findNode.addChildNode(ifNode);
-		ifNode.addNegativeChildNode(redirectNode);
-		redirectNode.setTargetAction(this.listAction);
-		ifNode.addPositiveChildNode(fileLinksNode);
-		fileLinksNode.setFileAction(this.fileAction);
-		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
-		fileLinksNode.addChildNode(addActionLinksNode);
-		addActionLinksNode.addActionAfterAll(this._updateAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
-		addActionLinksNode.addActionAfterAll(this._deleteAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
-		addActionLinksNode.addChildNode(sendDataNode);
-
 		var onCreate = new OnCreateResource(this.model, this.listAction);
 		this.createAction.setActionHandler(onCreate.getActionHandler());
 		var onUpdate = new OnUpdateResource(this.model, this.listAction, this.listAction);
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
 		var onDelete = new OnDeleteResource(this.model, this.listAction, this.listAction);
 		this.deleteAction.setActionHandler(onDelete.getActionHandler());
-	}
-	protected onConstructSubscribers(){
-		var navigationEvent = new Core.Event.Action.OnFinish();
-		navigationEvent.addCallback((request: Core.Action.Request, response: Core.Action.Response, done) => {
-			this.onBuildNavigation(request, response, done);
-		});
-		this.subscribe(navigationEvent);
+
+		var onDetail = new OnDetailResource(this);
+		this.detailAction.setActionHandler(onDetail.getActionHandler());
 	}
 	public get model(): Core.Model{return this._model; }
 	public get listAction(): Core.Action.BaseAction{return this._listAction; }
@@ -186,50 +149,6 @@ class ResourceModule extends Core.Module {
 			default:
 				this.model.addColumn(new Core.Column.StringColumn(name, options['length'] || 50));
 		}
-	}
-	/**
-	 * Callback na event navigationEvent
-	 * Odpala się dla wszystkich akcji tego modułu.
-	 * Dodaje blok nawigacyjny po akcjach tego modułu
-	 */
-	private onBuildNavigation(request: Core.Action.Request, response: Core.Action.Response, done) {
-		var responseContent: Object = new Object();
-		responseContent['links'] = [];
-		var actionList = this.getActionList();
-		var actionListLength = actionList.length;
-		for (var i = 0; i < actionListLength; i++) {
-			var action: Core.Action.BaseAction = actionList[i];
-			/**
-			 * znaczy że akcja jest POST, ale ma subakcję GET
-			 */
-			if(action instanceof Core.Action.DualAction){
-				action = (<Core.Action.DualAction>action).formAction;
-			}
-			/**
-			 * Prezentujemy tylko akcje które są dostępne przez GET
-			 */
-			if(action.getMethod() !== Core.Action.BaseAction.GET){
-				continue;
-			}
-			/**
-			 * Jeśli są akcje które mają PARAM_FIELD to nie są tu prezentowane (bo wymagają i tak id)
-			 */
-			var paramFieldList = action.getFieldListByType(Core.Action.FieldType.PARAM_FIELD);
-			if (paramFieldList.length > 0 ){
-				continue;
-			}
-			var linkObject = {
-				link: action.getRoutePath(),
-				name: action.name,
-				active: false
-			};
-			if(action.getRoutePath() === response.routePath){
-				linkObject.active = true;
-			}
-			responseContent['links'].push(linkObject);
-		}
-		response.addValue("localnavigation", responseContent);
-		done();
 	}
 }
 export = ResourceModule;

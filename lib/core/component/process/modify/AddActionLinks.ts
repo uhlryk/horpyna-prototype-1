@@ -45,9 +45,9 @@ class AddActionLinks extends AddObjectElement{
 			var action = this._actionBefore[i];
 			var params = this.mapResponse("before_" + action.name, processEntry, request);
 			if (params) {
-				responseObject["nav_before"].push(action.populateRoutePath(params));
+				responseObject["nav_before"].push({ link: action.populateRoutePath(params), name: action.name});
 			} else {
-				responseObject["nav_before"].push(action.getRoutePath(false));
+				responseObject["nav_before"].push({ link: action.getRoutePath(false), name: action.name });
 			}
 		}
 		return responseObject;
@@ -62,9 +62,9 @@ class AddActionLinks extends AddObjectElement{
 			var action = this._actionAfter[i];
 			var params = this.mapResponse("after_" + action.name, processEntry, request);
 			if (params) {
-				responseObject["nav_after"].push(action.populateRoutePath(params));
+				responseObject["nav_after"].push({ link: action.populateRoutePath(params), name: action.name });
 			} else {
-				responseObject["nav_after"].push(action.getRoutePath(false));
+				responseObject["nav_after"].push({ link: action.getRoutePath(false), name: action.name });
 			}
 		}
 		return responseObject
