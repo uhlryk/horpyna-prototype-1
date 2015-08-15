@@ -77,13 +77,24 @@ class ResourceModule extends Core.Module {
 		var fileLinksNode = new Core.Node.Modify.FileLinks(detailProcessModel);
 		var sendDataNode = new Core.Node.Response.SendData(detailProcessModel);
 		var addActionLinksNode = new Core.Node.Modify.AddActionLinks(detailProcessModel);
+		var addSecondaryActionLinksNode = new Core.Node.Modify.AddActionLinks(detailProcessModel);
+		var navSendDataNode = new Core.Node.Response.SendData(detailProcessModel);
+		var EmptyNode = new Core.Node.Modify.Empty(detailProcessModel);
+
+		detailProcessModel.addChildNode(EmptyNode);
+		EmptyNode.addChildNode(addSecondaryActionLinksNode);
+		addSecondaryActionLinksNode.addActionAfterAll(this._createAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
+		addSecondaryActionLinksNode.addActionAfterAll(this._listAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
+		addSecondaryActionLinksNode.addChildNode(navSendDataNode);
+		navSendDataNode.setResponseKey("navigation");
+
+		detailProcessModel.addChildNode(findNode);
 		findNode.setModel(this.model);
 		findNode.addWhere(Core.Action.FieldType.APP_FIELD);
 		findNode.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		detailProcessModel.addChildNode(findNode);
 		findNode.addChildNode(ifNode);
-		redirectNode.setTargetAction(this.listAction);
 		ifNode.addNegativeChildNode(redirectNode);
+		redirectNode.setTargetAction(this.listAction);
 		ifNode.addPositiveChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
