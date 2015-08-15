@@ -7,26 +7,26 @@ class List extends BaseDbNode {
 	/**
 	 * Mapujemy jaki typ danych odpowiada za warunki listy
 	 */
-	public where(type: string, key?: string[]) {
+	public addWhere(type: string, key?: string[]) {
 		this.addMapper("where", type, key);
 	}
 	/**
 	 * Mapujemy jaki typ danych odpowiada za sortowanie listy wartość musi być [<columnName>,<direction: ASC | DESC>]
 	 * zignoruje te dane które nie spełniają kryterium
 	 */
-	public order(type:string, key?:string[]) {
+	public addOrder(type:string, key?:string[]) {
 		this.addMapper("order", type, key);
 	}
 	/**
 	 * Używa tylko jednej wartości ale możemy dać wiele, wtedy w pętli pojedzie aż znajdzie jedną poprawną
 	 */
-	public page(type: string, key?: string[]){
+	public setPage(type: string, key?: string[]){
 		this.addMapper("page", type, key);
 	}
 	/**
 	 * Używa tylko jednej wartości ale możemy dać wiele, wtedy w pętli pojedzie aż znajdzie jedną poprawną
 	 */
-	public size(type: string, key?: string[]){
+	public setSize(type: string, key?: string[]){
 		this.addMapper("size", type, key);
 	}
 	/**

@@ -5,7 +5,7 @@ import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 /**
- * W tablicy obiektów lub obiekcie przekształca strukturę w bazie danych która określa plik na link do pliku
+ * Pozwala zmodyfikować pole w obiekcie lub w tablicy obiektów
  */
 class ChangeObjectElement extends BaseNode {
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {

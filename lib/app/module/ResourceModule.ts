@@ -23,7 +23,7 @@ class ResourceModule extends Core.Module {
 		this.onConstructModels();
 		this.onConstructActions();
 		this.onConstructActionHandlers();
-		this.onConstructSubscribers();
+		// this.onConstructSubscribers();
 	}
 	protected onConstructModels(){
 		this._model = new Core.Model("model");
@@ -76,9 +76,10 @@ class ResourceModule extends Core.Module {
 		var redirectNode = new Core.Node.Response.Redirect(detailProcessModel);
 		var fileLinksNode = new Core.Node.Modify.FileLinks(detailProcessModel);
 		var sendDataNode = new Core.Node.Response.SendData(detailProcessModel);
+		var addActionLinksNode = new Core.Node.Modify.AddActionLinks(detailProcessModel);
 		findNode.setModel(this.model);
-		findNode.where(Core.Action.FieldType.APP_FIELD);
-		findNode.where(Core.Action.FieldType.PARAM_FIELD);
+		findNode.addWhere(Core.Action.FieldType.APP_FIELD);
+		findNode.addWhere(Core.Action.FieldType.PARAM_FIELD);
 		detailProcessModel.addChildNode(findNode);
 		findNode.addChildNode(ifNode);
 		redirectNode.setTargetAction(this.listAction);
@@ -86,7 +87,10 @@ class ResourceModule extends Core.Module {
 		ifNode.addPositiveChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
-		fileLinksNode.addChildNode(sendDataNode);
+		fileLinksNode.addChildNode(addActionLinksNode);
+		addActionLinksNode.addActionAfterAll(this._updateAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
+		addActionLinksNode.addActionAfterAll(this._deleteAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
+		addActionLinksNode.addChildNode(sendDataNode);
 
 		var onCreate = new OnCreateResource(this.model, this.listAction);
 		this.createAction.setActionHandler(onCreate.getActionHandler());

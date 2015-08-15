@@ -10,7 +10,7 @@ class Find extends BaseDbNode {
 	/**
 	 * Mapujemy jaki typ danych odpowiada za warunki listy
 	 */
-	public where(type: string, key?: string[]) {
+	public addWhere(type: string, key?: string[]) {
 		this.addMapper("where", type, key);
 	}
 	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<Object> {
