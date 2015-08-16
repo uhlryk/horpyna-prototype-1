@@ -10,24 +10,24 @@ class List extends BaseDbNode {
 	public addWhere(type: string, key?: string[]) {
 		this.addMapper("where", type, key);
 	}
-	/**
-	 * Mapujemy jaki typ danych odpowiada za sortowanie listy wartość musi być [<columnName>,<direction: ASC | DESC>]
-	 * zignoruje te dane które nie spełniają kryterium
-	 */
-	public addOrder(type:string, key?:string[]) {
-		this.addMapper("order", type, key);
+
+	public setOrder(type:string, key:string) {
+		this.setMapper("order", type, key);
+	}
+	public setDirection(type:string, key:string) {
+		this.setMapper("direction", type, key);
 	}
 	/**
 	 * Używa tylko jednej wartości ale możemy dać wiele, wtedy w pętli pojedzie aż znajdzie jedną poprawną
 	 */
-	public setPage(type: string, key?: string[]){
-		this.addMapper("page", type, key);
+	public setPage(type: string, key: string){
+		this.setMapper("page", type, key);
 	}
 	/**
 	 * Używa tylko jednej wartości ale możemy dać wiele, wtedy w pętli pojedzie aż znajdzie jedną poprawną
 	 */
-	public setSize(type: string, key?: string[]){
-		this.addMapper("size", type, key);
+	public setSize(type: string, key: string){
+		this.setMapper("size", type, key);
 	}
 	/**
 	 * Przeszukuje zmapowane wartości dla numeru strony i wybiera jedną właściwą
@@ -65,26 +65,12 @@ class List extends BaseDbNode {
 		}
 		return value;
 	}
-	/**
-	 * z mapowania sortowania wyciąga wartości
-	 */
-	protected setOrderValue(processEntry, request): Object[] {
-		var mappedObject = this.mapResponse("order", processEntry, request);
-		var value = [];
-		for (var key in mappedObject) {
-			var v = mappedObject[key];
-			if(v && v.length == 2){
-				value.push(v);
-			}
-		}
-		return value;
-	}
 	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<Object> {
 		var processEntry = processEntryList[0];
 		var list = new Query.List();
 		list.setModel(this.getModel());
 		list.populateWhere(this.mapResponse("where", processEntry, request));
-		list.setOrder(this.setOrderValue(processEntry, request));
+		list.setOrder([[this.mapResponse("order", processEntry, request)[0], this.mapResponse("order", processEntry, request)[0]]]);
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			list.run()
 			.then((modelList) => {
@@ -106,7 +92,7 @@ class List extends BaseDbNode {
 					size: pageSize,
 					maxList: modelList.length
 				});
-			});
+			})
 		});
 	}
 }

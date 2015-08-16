@@ -61,6 +61,15 @@ class BaseNode extends Element {
 		}
 	}
 	/**
+	 * Podobne do powyższego ale zamiast dodawać ustawia, jeśli więc jest wpis pod danym name to zostanie zastąpiony
+	 * key może być też tylko jednym wpisem
+	 */
+	public setMapper(name: string, type: string, key: string) {
+		this._dataMapper[name] = new Object();
+		this._dataMapper[name][type] = [];
+		this._dataMapper[name][type].push(key);
+	}
+	/**
 	 * Dodaje listę innych nodów co zbuduje rozgałęzienie, te na liście mogą mieć kolejne rozgałęzienia
 	 * A jeśli mamy rozgalęzienie to nodę który robił dane rozgałęzienie musi je sam zamknąć dając node który
 	 * logicznie obsłuży wiele rozgałęzień (dowolny node)

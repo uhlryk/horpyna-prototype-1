@@ -19,16 +19,16 @@ class FileLinks extends ChangeObjectElement{
 	public mapActionParams(type: string, key?: string[]) {
 		this.addMapper("params", type, key);
 	}
-	protected checkIfValueModify(key: string, value: any, processEntry: any, request: Request, response: Response): boolean {
+	protected checkIfValueModify(key: string, value: any, dataObject: Object, request: Request, response: Response): boolean {
 		if (value && value.files) {
 			return true;
 		}
 		return false;
 	}
-	protected modifyValue(key: string, value: any, processEntry: any, request: Request, response: Response): any {
+	protected modifyValue(key: string, value: any, dataObject: Object, request: Request, response: Response): any {
 		var uriFileAction = "/";
 		if (this._action) {
-			var params = this.mapResponse("params", processEntry, request);
+			var params = this.mapResponse("params", dataObject, request);
 			if (params) {
 				uriFileAction = this._action.populateRoutePath(params);
 			} else {

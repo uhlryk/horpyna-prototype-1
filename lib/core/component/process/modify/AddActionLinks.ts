@@ -29,21 +29,21 @@ class AddActionLinks extends AddObjectElement{
 			}
 		}
 	}
-	protected checkIfAddBeforeAll(processEntry: any, request: Request, response: Response): boolean {
+	protected checkIfAddBeforeAll(dataObject: Object, request: Request, response: Response): boolean {
 		return this._actionBefore.length?true:false;
 	}
-	protected checkIfAddAfterAll(processEntry: any, request: Request, response: Response): boolean {
+	protected checkIfAddAfterAll(dataObject: Object, request: Request, response: Response): boolean {
 		return this._actionAfter.length?true:false;
 	}
 	/**
 	 * Wszystkie linki dodane zostaną jako jedna pozycja
 	 */
-	protected addBeforeAll(processEntry: any, request: Request, response: Response): Object {
+	protected addBeforeAll(dataObject: Object, request: Request, response: Response): Object {
 		var responseObject = new Object();
 		responseObject["nav_before"] = [];
 		for (var i = 0; i < this._actionBefore.length; i++){
 			var action = this._actionBefore[i];
-			var params = this.mapResponse("before_" + action.name, processEntry, request);
+			var params = this.mapResponse("before_" + action.name, dataObject, request);
 			if (params) {
 				responseObject["nav_before"].push({ link: action.populateRoutePath(params), name: action.name});
 			} else {
@@ -55,12 +55,12 @@ class AddActionLinks extends AddObjectElement{
 	/**
 	 * Wszystkie linki dodane zostaną jako jedna pozycja
 	 */
-	protected addAfterAll(processEntry: any, request: Request, response: Response): Object {
+	protected addAfterAll(dataObject: Object, request: Request, response: Response): Object {
 		var responseObject = new Object();
 		responseObject["nav_after"] = [];
 		for (var i = 0; i < this._actionAfter.length; i++){
 			var action = this._actionAfter[i];
-			var params = this.mapResponse("after_" + action.name, processEntry, request);
+			var params = this.mapResponse("after_" + action.name, dataObject, request);
 			if (params) {
 				responseObject["nav_after"].push({ link: action.populateRoutePath(params), name: action.name });
 			} else {

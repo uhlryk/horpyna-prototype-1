@@ -19,10 +19,10 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		var addActionLinksNode = new Core.Node.Modify.AddActionLinks(this);
 		var addSecondaryActionLinksNode = new Core.Node.Modify.AddActionLinks(this);
 		var navSendDataNode = new Core.Node.Response.SendData(this);
-		var EmptyNode = new Core.Node.Modify.Empty(this);
+		var emptyNode = new Core.Node.Modify.Empty(this);
 
-		this.addChildNode(EmptyNode);
-		EmptyNode.addChildNode(addSecondaryActionLinksNode);
+		this.addChildNode(emptyNode);
+		emptyNode.addChildNode(addSecondaryActionLinksNode);
 		addSecondaryActionLinksNode.addActionAfterAll(this._module.createAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
 		addSecondaryActionLinksNode.addActionAfterAll(this._module.listAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
 		addSecondaryActionLinksNode.addChildNode(navSendDataNode);

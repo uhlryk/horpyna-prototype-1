@@ -13,7 +13,7 @@ class Find extends BaseDbNode {
 	public addWhere(type: string, key?: string[]) {
 		this.addMapper("where", type, key);
 	}
-	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<Object> {
+	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<any> {
 		var processEntry = processEntryList[0];
 		var find = new Query.Find();
 		find.setModel(this.getModel());

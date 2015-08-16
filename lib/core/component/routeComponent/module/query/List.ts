@@ -9,13 +9,11 @@ class List extends BaseQuery{
 	private whereQuery:WhereQuery;
 	private _pageSize: number;
 	private _page: number;
-	private _order: Object[];
+	private _order: string[][];
 	constructor(){
 		super();
 		this.whereQuery = new WhereQuery();
-		// this._pageSize = 3;
-		// this._page = 1;
-		this._order = [['id', 'DESC']];
+
 	}
 	public setModel(model:Model){
 		super.setModel(model);;
@@ -30,31 +28,34 @@ class List extends BaseQuery{
 	public getWhereList():Object{
 		return this.whereQuery.getList();
 	}
-	// public setPageSize(pageSize:number){
-	// 	if (pageSize) {
-	// 		if (pageSize < 1) pageSize = 1;
-	// 		this._pageSize = pageSize;
-	// 	}
-	// }
-	// public setPage(page:number){
-	// 	if (page) {
-	// 		if (page < 1) page = 1;
-	// 		this._page = page;
-	// 	}
-	// }
-	public setOrder(order: Object[]) {
-		if(order){
-			this._order = order;
+	/**
+	 * do order dodajemy dane w formie:
+	 * [[<NazwaKolumna>,<Direction ASC|DESC>]]
+	 */
+	public setOrder(order: string[][]) {
+		this._order = order;
+	}
+	public getOrder():string[][]{
+		var order: string[][] = [];
+		if (this._order){
+			for (var i = 0; i < this._order.length; i++){
+				var pair:string[] = this._order[i];
+				if (pair[0] && pair[1]){
+					order.push(pair);
+				}
+			}
 		}
+		if(order.length === 0){
+			order = [['id', 'DESC']];
+		}
+		return order;
 	}
 	public run():Orm.PromiseT<Orm.Instance<any,any>[]>{
 		return this.getModel().model.findAll({
 			attributes: this.getModel().getColumnNameList(),
 			where:this.whereQuery.getList(),
 			limit: List.MAX_DATA+1,//jeśli będzie o ten jeden więcej to wiemy że mamy więcej wyników w bazie niż max
-			// limit: this._pageSize,
-			// offset: (this._page - 1) * this._pageSize,
-			order: this._order
+			order: this.getOrder()
 		});
 	}
 }

@@ -37,9 +37,10 @@ class ResourceModule extends Core.Module {
 		this._fileAction.addValue("showInNavigation", false);
 		this._listAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "list");
 
-		this._listAction.addField(new Core.Field("order", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
-		this._listAction.addField(new Core.Field("page", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
-		this._listAction.addField(new Core.Field("size", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field("o", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field("d", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field("p", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field("s", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._listAction, true);
 		this._createAction = new Core.Action.DualAction("create");
 		this.addAction(this._createAction);
@@ -62,8 +63,6 @@ class ResourceModule extends Core.Module {
 	protected onConstructActionHandlers(){
 		var onFile = new OnFileResource(this.model);
 		this.fileAction.setActionHandler(onFile.getActionHandler());
-		var onList = new OnListResource(this, this.model, "horpyna/jade/listAction", this.fileAction);
-		this.listAction.setActionHandler(onList.getActionHandler());
 		var onFormCreate = new OnFormCreateResource("horpyna/jade/createFormAction");
 		this.createAction.setFormActionHandler(onFormCreate.getActionHandler());
 		var onFormUpdate = new OnFormUpdateResource(this.model, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
@@ -79,6 +78,8 @@ class ResourceModule extends Core.Module {
 
 		var onDetail = new OnDetailResource(this);
 		this.detailAction.setActionHandler(onDetail.getActionHandler());
+		var onList = new OnListResource(this);
+		this.listAction.setActionHandler(onList.getActionHandler());
 	}
 	public get model(): Core.Model{return this._model; }
 	public get listAction(): Core.Action.BaseAction{return this._listAction; }
