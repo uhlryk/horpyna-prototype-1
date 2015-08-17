@@ -6,7 +6,7 @@ import IConnection = require("./IConnection");
 import Response = require("./../routeComponent/module/action/Response");
 import Request = require("./../routeComponent/module/action/Request");
 class BaseNode extends Element {
-	public static NODE_RESPONSE: string = "node";
+	public static NODE_RESPONSE: string = "node_response_stream";
 	private _childNodeList: BaseNode[];
 	private _parentNodeList: BaseNode[];
 	/**
@@ -17,7 +17,14 @@ class BaseNode extends Element {
 	 * Możemy też jako typ zamapować wynik otrzymany z poprzedniego Node!!! W tej sytuacji typ = NODE_RESPONSE
 	 * @type {name: {type:[key]}}
 	 */
-	private _dataMapper: Object;
+	private _mapSource: Object;
+	/**
+	 * Wartość bazowo jest false; oznacza że mapowanie jakie jest przypisane do
+	 * entry map jest domyślne
+	 * Gdy dodajemy inne mapowanie to aplikacja sprawdzi czy mapowanie jest domyślne, wtedy zastąpi je nowym, jeśli nie jest domyślne
+	 * to doda do poprzedniego
+	 */
+	private _mapSourceEntrySet: boolean;
 	/**
 	 * Index jaki node ma na liście w danym processModel
 	 */
@@ -28,7 +35,9 @@ class BaseNode extends Element {
 	 */
 	constructor(processModel:ProcessModel){
 		super();
-		this._dataMapper = new Object();
+		this._mapSource = new Object();
+		this._mapSourceEntrySet = false;
+		this.addMapSource("entry_source", BaseNode.NODE_RESPONSE);
 		this._childNodeList = [];
 		this._parentNodeList = [];
 		if (processModel) {
@@ -39,23 +48,23 @@ class BaseNode extends Element {
 		return this._processId;
 	}
 	/**
-	 * Metoda mapująca, opis pul przy this._dataMapper
+	 * Metoda mapująca, opis pul przy this._mapSource
 	 * @param {string}   name [description]
-	 * @param {string}   type [description]
+	 * @param {string}   sourceType [description]
 	 * @param {string[]} key  [description]
 	 */
-	public addMapper(name:string, type:string, key?:string[]){
-		if(!this._dataMapper[name]){
-			this._dataMapper[name] = new Object();
+	public addMapSource(name:string, sourceType:string, key?:string[]){
+		if(!this._mapSource[name]){
+			this._mapSource[name] = new Object();
 		}
-		if(!this._dataMapper[name][type]){
-			this._dataMapper[name][type] = [];
+		if(!this._mapSource[name][sourceType]){
+			this._mapSource[name][sourceType] = [];
 		}
 		if(key){
 			for (var i = 0; i < key.length; i++){
 				var k: string = key[i];
-				if (this._dataMapper[name][type].indexOf(k) === -1){
-					this._dataMapper[name][type].push(k);
+				if (this._mapSource[name][sourceType].indexOf(k) === -1){
+					this._mapSource[name][sourceType].push(k);
 				}
 			}
 		}
@@ -64,10 +73,31 @@ class BaseNode extends Element {
 	 * Podobne do powyższego ale zamiast dodawać ustawia, jeśli więc jest wpis pod danym name to zostanie zastąpiony
 	 * key może być też tylko jednym wpisem
 	 */
-	public setMapper(name: string, type: string, key: string) {
-		this._dataMapper[name] = new Object();
-		this._dataMapper[name][type] = [];
-		this._dataMapper[name][type].push(key);
+	public setMapSource(name: string, sourceType: string, key: string) {
+		this._mapSource[name] = new Object();
+		this._mapSource[name][sourceType] = [];
+		this._mapSource[name][sourceType].push(key);
+	}
+	/**
+	 * Mapowanie moze zwrócić null jeśli brak elementów lub gdy nie zostały ustawione, czasem chcemy
+	 * w zależności od sytuacji odpowiednio się zachować np jeśli nie ustawiliśmy w find where to używamy entry_source map
+	 */
+	public isMapSourceSet(name: string) {
+		if (!this._mapSource[name]) {
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * Określamy źródło danych wejściowych. Jeśli nie określimy to źródłem będzie tablica odpowiedzi node'ów poprzednich
+	 */
+	public addEntryMapSource(sourceType: string, key?: string[]) {
+		if (this._mapSourceEntrySet === false){
+			this._mapSourceEntrySet = true;
+			//usuwamy domyślne mapowanie
+			this._mapSource["entry_source"] = new Object();
+		}
+			this.addMapSource("entry_source", sourceType, key);
 	}
 	/**
 	 * Dodaje listę innych nodów co zbuduje rozgałęzienie, te na liście mogą mieć kolejne rozgałęzienia
@@ -110,7 +140,6 @@ class BaseNode extends Element {
 	 * @param {Response} response [description]
 	 */
 	public getProcessHandler(processList: IProcessObject[], request: Request, response: Response) {
-		// parentResolverList[0].
 		var parentPromiseList = this.getParentPromiseList(processList);
 		Util.Promise.all<void>(parentPromiseList)
 		/**
@@ -150,36 +179,207 @@ class BaseNode extends Element {
 			connection.open = false;
 		}
 	}
+	public static MAP_OBJECT_ARRAY: string = "object_array";
+	public static MAP_OBJECT: string = "object";
+	public static MAP_VALUE_ARRAY: string = "value_array";//tablica pojedyńczych wartości prostych number lub string
+	public static MAP_VALUE: string = "value";//pojedyncza wartość prosta, jakiś number lub string
 	/**
-	 * Dla jakiego name zamapowanego chcemy wyciągnąć obiekt z konkretnymi odpowiedziami
-	 * @param  {string}  name         odpowiada name w _dataMapper
+	 * Dla danego mapowania (po nazwie - name) budujemy mappedSource odpowiedź. jej forma zależy od mapType
+	 * @param  {string}  name         odpowiada name w _mapSource
+	 * @param  {string}  mapType  określa jak mają być zamapowane strumienie, aktualnie mamy ObjectArray, Object, PrimitiveArray, Primitive
 	 * @param  {any[]}   processEntry odpowiedź z poprzedniego Node
 	 * @param  {Request} request      actionRequest
 	 * @return {Object}               zwraca obiekt z key:value gdzie key to string a value:any
 	 */
-	public mapResponse(name: string, processEntry: Object, request: Request): Object {
-		var mapResponse = null;
-		if (this._dataMapper[name]) {
-			mapResponse = new Object();
-			for (var type in this._dataMapper[name]) {
-				var typeKeys = this._dataMapper[name][type];
-				var typeData;
-				switch(type){
+	public getMappedSource(name: string, mapType:string, processEntryList: Object[], request: Request): any {
+		var mappedSource = null;
+		if (this._mapSource[name]) {
+			for (var sourceType in this._mapSource[name]) {
+				var sourceTypeKeys = this._mapSource[name][sourceType];
+				switch(sourceType){
 					case BaseNode.NODE_RESPONSE:
-						typeData = processEntry;
+						for (var i = 0; i < processEntryList.length; i++) {
+							var processEntry = processEntryList[i];
+							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntry);
+						}
 						break;
 					default:
-						typeData = request.getFieldList(type);
-				}
-				for (var key in typeData){
-					var value = typeData[key];
-					if (typeKeys.length === 0 || typeKeys.indexOf(key) !== -1){
-						mapResponse[key] = value;
-					}
+						mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, request.getFieldList(sourceType));
 				}
 			}
 		}
-		return mapResponse;
+		return mappedSource;
+	}
+	/**
+	 * mapuje pojedyńczy source
+	 * Spsób mapowania zależy od mapType.
+	 */
+	protected mapSource(mappedSource, mapType: string, sourceTypeKeys: string[], sourceData:any):any {
+		switch (mapType){
+			/**
+			 * sprawdza czy mamy tablicę wejściowa - mappedSource jeśli nie to ją tworzymy
+			 * Jeśli dane wejściwe -sourceData są tablicą to iterujemy po każdym elemencie
+			 * i interesują nas tylko te elementy które są obiektami, pozostałe ignorujemy
+			 * dla każdego elementy tworzymy nowy obiekt z kluczamy tylko takimi jak są w - sourceTypeKeys - chyba że nie ustawione wtedy
+			 * bierzemy wszystkie
+			 * Jeśli dane wejściowe - sourceData to obiekt to tworzymy również nowy obiekt składający się z kluczy sourceTypeKeys
+			 */
+			case BaseNode.MAP_OBJECT_ARRAY:
+				if (!mappedSource){
+					mappedSource = [];
+				}
+				if (Util._.isArray(sourceData)) {//source jest tablicą obiektów
+					for (var i = 0; i < sourceData['length']; i++) {
+						var streamObj = sourceData[i];
+						if (Util._.isPlainObject(streamObj)) {
+							var element = new Object();
+							for (var key in streamObj) {
+								var value = streamObj[key];
+								if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+									element[key] = value;
+								}
+							}
+							mappedSource.push(element);
+						}
+					}
+				} else if (Util._.isPlainObject(sourceData)) {
+					var element = new Object();
+					for (var key in sourceData) {
+						var value = sourceData[key];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+							element[key] = value;
+						}
+					}
+					mappedSource.push(element);
+				}
+				break;
+			/**
+			 * Sprawdza czy mamy obiekt wejściowy - mappedSource - jeśli nie to go tworzymy
+			 * Jeśli dane wejsćiowe to tablica to iterujemy i interesują nas elementy które są obiektami
+			 * w każdym obiekcie klucze które są zgodne z sourceTypeKeys przenosimy do mappedSource- mogą się nadpisywać
+			 * Jeśli dane wejściowe sourceData to obiekt to iterujemy po nim i do  mappedSource dodajemy te zgodne z sourceTypeKeys
+			 */
+			case BaseNode.MAP_OBJECT:
+				if (!mappedSource){
+					mappedSource = new Object();
+				}
+				if (Util._.isArray(sourceData)) {//source jest tablicą obiektów
+					for (var i = 0; i < sourceData['length']; i++) {
+						var streamObj = sourceData[i];
+						if (Util._.isPlainObject(streamObj)) {
+							for (var key in streamObj) {
+								var value = streamObj[key];
+								if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+									mappedSource[key] = value;
+								}
+							}
+						}
+					}
+				} else if (Util._.isPlainObject(sourceData)) {
+					for (var key in sourceData) {
+						var value = sourceData[key];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+							mappedSource[key] = value;
+						}
+					}
+				}
+				break;
+			/**
+			 * sprawdza czy mamy tablicę wejsiową - mappedSource - jeśli nie to ją tworzymy
+			 * Jeśli dane wejściowe są tablicą to sprawdzamy czy to tablica obiektów
+			 * jeśli tak to wyciągamy z każdego obiektu wartości których klucze są zgodne z sourceTypeKeys
+			 * lub w przypadku nie ustawienia wszystkie wartości i wrzucamy do tablicy wejściowej
+			 * Jeśli w tablicy nie ma obiektu tylko number, string boolean lub data to też zapisujemy w tablicy
+			 * Jeśli dane wejściowe to obiekt to wyciągamy wartości których klucze są zgodne z sourceTypeKeys
+			 * Jeśli dane wejściowe to tylko number, string boolean lub data to też zapisujemy w tablicy
+			 */
+			case BaseNode.MAP_VALUE_ARRAY:
+				if (!mappedSource){
+					mappedSource = [];
+				}
+				if (Util._.isArray(sourceData)) {//source jest tablicą obiektów
+					for (var i = 0; i < sourceData['length']; i++) {
+						var streamObj = sourceData[i];
+						if (Util._.isPlainObject(streamObj)) {
+							for (var key in streamObj) {
+								var value = streamObj[key];
+								if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+									mappedSource.push(value);
+								}
+							}
+						} else if (Util._.isNumber(streamObj) || Util._.isString(streamObj) || Util._.isBoolean(streamObj) || Util._.isDate(streamObj)){
+							mappedSource.push(streamObj);
+						}
+					}
+				} else if (Util._.isPlainObject(sourceData)) {
+					for (var key in sourceData) {
+						var value = sourceData[key];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+							mappedSource.push(value);
+						}
+					}
+				} else if (Util._.isNumber(sourceData) || Util._.isString(sourceData) || Util._.isBoolean(sourceData) || Util._.isDate(sourceData)) {
+					mappedSource.push(sourceData);
+				}
+				break;
+			/**
+			 * otrzymujemy pojedyńczą wartość, która może być wyciągnięta z tablicy obiektów, obiektu, tablicy czy wartości
+			 */
+			case BaseNode.MAP_VALUE:
+				if (Util._.isArray(sourceData)) {//source jest tablicą obiektów
+					for (var i = 0; i < sourceData['length']; i++) {
+						var streamObj = sourceData[i];
+						if (Util._.isPlainObject(streamObj)) {
+							for (var key in streamObj) {
+								var value = streamObj[key];
+								if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+									mappedSource = value;
+								}
+							}
+						} else if (Util._.isNumber(streamObj) || Util._.isString(streamObj) || Util._.isBoolean(streamObj) || Util._.isDate(streamObj)){
+							mappedSource = streamObj;
+						}
+					}
+				} else if (Util._.isPlainObject(sourceData)) {
+					for (var key in sourceData) {
+						var value = sourceData[key];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+							mappedSource = value;
+						}
+					}
+				} else if (Util._.isNumber(sourceData) || Util._.isString(sourceData) || Util._.isBoolean(sourceData) || Util._.isDate(sourceData)) {
+					mappedSource = sourceData;
+				}
+				break;
+		}
+		return mappedSource;
+	}
+	public getMappedObjectArray(name: string, processEntryList: Object[], request: Request):Object[] {
+		return this.getMappedSource(name, BaseNode.MAP_OBJECT_ARRAY, processEntryList, request);
+	}
+	public getMappedObject(name: string, processEntryList: Object[], request: Request):Object {
+		return this.getMappedSource(name, BaseNode.MAP_OBJECT, processEntryList, request);
+	}
+	public getMappedValueArray(name: string, processEntryList: Object[], request: Request): any[] {
+		return this.getMappedSource(name, BaseNode.MAP_VALUE_ARRAY, processEntryList, request);
+	}
+	public getMappedValue(name: string, processEntryList: Object[], request: Request): any {
+		return this.getMappedSource(name, BaseNode.MAP_VALUE, processEntryList, request);
+	}
+	public getEntryMappedSource(mapType: string, processEntryList: Object[], request: Request): any {
+		return this.getMappedSource("entry_source", mapType, processEntryList, request);
+	}
+	public getEntryMappedObjectArray(processEntryList: Object[], request: Request): Object[] {
+		return this.getMappedObjectArray("entry_source", processEntryList, request);
+	}
+	public getEntryMappedObject(processEntryList: Object[], request: Request): Object {
+		return this.getMappedObject("entry_source", processEntryList, request);
+	}
+	public getEntryMappedValueArray(processEntryList: Object[], request: Request): any[] {
+		return this.getMappedValueArray("entry_source", processEntryList, request);
+	}
+	public getEntryMappedValue(processEntryList: Object[], request: Request): any {
+		return this.getMappedValue("entry_source", processEntryList, request);
 	}
 	/**
 	 * Tu logika danego node. Zwrócić musi obiekt odpowiedzi

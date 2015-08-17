@@ -1,4 +1,5 @@
 import BaseDbNode = require("./BaseDbNode");
+import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
 import Query = require("./../../routeComponent/module/query/Query");
 import Response = require("./../../routeComponent/module/action/Response");
@@ -11,13 +12,12 @@ class Find extends BaseDbNode {
 	 * Mapujemy jaki typ danych odpowiada za warunki listy
 	 */
 	public addWhere(type: string, key?: string[]) {
-		this.addMapper("where", type, key);
+		this.addMapSource("where", type, key);
 	}
 	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<any> {
-		var processEntry = processEntryList[0];
 		var find = new Query.Find();
 		find.setModel(this.getModel());
-		find.populateWhere(this.mapResponse("where", processEntry, request));
+		find.populateWhere(this.getMappedObject("where", processEntryList, request));
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			find.run()
 			.then((model) => {

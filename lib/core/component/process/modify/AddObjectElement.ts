@@ -17,10 +17,10 @@ class AddObjectElement extends BaseNode {
 				if (Array.isArray(processEntry)){
 					processResponse = [];
 					for (var i = 0; i < processEntry.length; i++){
-						processResponse.push(this.addInObject(processEntry[i], request, response));
+						processResponse.push(this.addInObject(processEntry[i], processEntryList, request, response));
 					}
 				} else {
-					processResponse = this.addInObject(processEntry, request, response);
+					processResponse = this.addInObject(processEntry, processEntryList, request, response);
 				}
 				resolve(processResponse);
 			} else{
@@ -31,23 +31,23 @@ class AddObjectElement extends BaseNode {
 	/**
 	 * Node akceptuje listę obiektów lub obiekt, poniższa metoda obsługuje pojedyńćzy obiekt
 	 */
-	protected addInObject(dataObject: Object, request: Request, response: Response): Object {
+	protected addInObject(dataObject: Object, processEntryList: any[], request: Request, response: Response): Object {
 		var responseObject = new Object();
-		if (this.checkIfAddBeforeAll(dataObject, request, response)) {
-			this.mergeObjects(responseObject, this.addBeforeAll(dataObject, request, response));
+		if (this.checkIfAddBeforeAll(dataObject, processEntryList, request, response)) {
+			this.mergeObjects(responseObject, this.addBeforeAll(dataObject, processEntryList, request, response));
 		}
 		for(var key in dataObject){
 			var val = dataObject[key];
-			if (this.checkIfAddBeforeElement(key, val, dataObject, request, response) === true) {
-				this.mergeObjects(responseObject, this.addBeforeElement(key, val, dataObject, request, response));
+			if (this.checkIfAddBeforeElement(key, val, dataObject, processEntryList, request, response) === true) {
+				this.mergeObjects(responseObject, this.addBeforeElement(key, val, dataObject, processEntryList, request, response));
 			}
 			responseObject[key] = val;
-			if (this.checkIfAddAfterElement(key, val, dataObject, request, response) === true) {
-				this.mergeObjects(responseObject, this.addAfterElement(key, val, dataObject, request, response));
+			if (this.checkIfAddAfterElement(key, val, dataObject, processEntryList, request, response) === true) {
+				this.mergeObjects(responseObject, this.addAfterElement(key, val, dataObject, processEntryList, request, response));
 			}
 		}
-		if (this.checkIfAddAfterAll(dataObject, request, response)) {
-			this.mergeObjects(responseObject, this.addAfterAll(dataObject, request, response));
+		if (this.checkIfAddAfterAll(dataObject, processEntryList, request, response)) {
+			this.mergeObjects(responseObject, this.addAfterAll(dataObject, processEntryList, request, response));
 		}
 		return responseObject;
 	}
@@ -57,30 +57,30 @@ class AddObjectElement extends BaseNode {
 			responseObject[key] = value;
 		}
 	}
-	protected checkIfAddBeforeAll(dataObject: Object, request: Request, response: Response): boolean {
+	protected checkIfAddBeforeAll(dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
 		return false;
 	}
-	protected checkIfAddBeforeElement(key: string, value: any, dataObject: Object, request: Request, response: Response): boolean {
+	protected checkIfAddBeforeElement(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
 		return false;
 	}
-	protected checkIfAddAfterElement(key: string, value: any, dataObject: Object, request: Request, response: Response): boolean {
+	protected checkIfAddAfterElement(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
 		return false;
 	}
-	protected checkIfAddAfterAll(dataObject: Object, request: Request, response: Response): boolean {
+	protected checkIfAddAfterAll(dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
 		return false;
 	}
 
 
-	protected addBeforeAll(dataObject: Object, request: Request, response: Response): Object {
+	protected addBeforeAll(dataObject: Object, processEntryList: any[], request: Request, response: Response): Object {
 		return {};
 	}
-	protected addBeforeElement(key: string, value: any, dataObject: Object, request: Request, response: Response): Object {
+	protected addBeforeElement(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): Object {
 		return {};
 	}
-	protected addAfterElement(key: string, value: any, dataObject: Object, request: Request, response: Response): Object {
+	protected addAfterElement(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): Object {
 		return {};
 	}
-	protected addAfterAll(dataObject: Object, request: Request, response: Response): Object {
+	protected addAfterAll(dataObject: Object, processEntryList: any[], request: Request, response: Response): Object {
 		return {};
 	}
 }

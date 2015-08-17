@@ -37,9 +37,13 @@ class ResourceModule extends Core.Module {
 		this._fileAction.addValue("showInNavigation", false);
 		this._listAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "list");
 
+		//order
 		this._listAction.addField(new Core.Field("o", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		//direction asc | desc
 		this._listAction.addField(new Core.Field("d", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		//page num
 		this._listAction.addField(new Core.Field("p", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		//page size
 		this._listAction.addField(new Core.Field("s", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._listAction, true);
 		this._createAction = new Core.Action.DualAction("create");

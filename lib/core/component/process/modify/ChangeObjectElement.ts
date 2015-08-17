@@ -16,10 +16,10 @@ class ChangeObjectElement extends BaseNode {
 				if (Array.isArray(processEntry)){
 					processResponse = [];
 					for (var i = 0; i < processEntry.length; i++){
-						processResponse.push(this.changeInObject(processEntry[i], request, response));
+						processResponse.push(this.changeInObject(processEntry[i], processEntryList, request, response));
 					}
 				} else {
-					processResponse = this.changeInObject(processEntry, request, response);
+					processResponse = this.changeInObject(processEntry, processEntryList, request, response);
 				}
 				resolve(processEntry);
 			} else{
@@ -30,18 +30,18 @@ class ChangeObjectElement extends BaseNode {
 	/**
 	 * Node akceptuje listę obiektów lub obiekt, poniższa metoda obsługuje pojedyńćzy obiekt
 	 */
-	protected changeInObject(dataObject: Object, request: Request, response: Response): Object {
+	protected changeInObject(dataObject: Object, processEntryList: any[], request: Request, response: Response): Object {
 		var responseObject = new Object();
 		for(var key in dataObject){
 			var val = dataObject[key];
-			if (this.checkIfKeyValueModify(key, val, dataObject, request, response) === true) {
-				var newKey = this.modifyKey(key, val, dataObject, request, response);
-				responseObject[newKey] = this.modifyValue(key, val, dataObject, request, response);
-			} else if (this.checkIfKeyModify(key, val, dataObject, request, response) === true) {
-				var newKey = this.modifyKey(key, val, dataObject, request, response);
+			if (this.checkIfKeyValueModify(key, val, dataObject, processEntryList, request, response) === true) {
+				var newKey = this.modifyKey(key, val, dataObject, processEntryList, request, response);
+				responseObject[newKey] = this.modifyValue(key, val, dataObject, processEntryList, request, response);
+			} else if (this.checkIfKeyModify(key, val, dataObject, processEntryList, request, response) === true) {
+				var newKey = this.modifyKey(key, val, dataObject, processEntryList, request, response);
 				responseObject[newKey] = val;
-			} else if (this.checkIfValueModify(key, val, dataObject, request, response) === true) {
-				responseObject[key] = this.modifyValue(key, val, dataObject, request, response);
+			} else if (this.checkIfValueModify(key, val, dataObject, processEntryList, request, response) === true) {
+				responseObject[key] = this.modifyValue(key, val, dataObject, processEntryList, request, response);
 			} else {
 				responseObject[key] = val;
 			}
@@ -52,32 +52,32 @@ class ChangeObjectElement extends BaseNode {
 	 * Sprawdza czy dany element wymaga modyfikacji klucza i wartości
 	 *
 	 */
-	protected checkIfKeyValueModify(key: string, value: any, dataObject: Object, request: Request, response: Response): boolean {
+	protected checkIfKeyValueModify(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
 		return false;
 	}
 	/**
 	 * Sprawdza czy dany element wymaga modyfikacji klucza
 	 *
 	 */
-	protected checkIfKeyModify(key: string, value: any, dataObject: Object, request: Request, response: Response): boolean {
+	protected checkIfKeyModify(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
 		return false;
 	}
 	/**
 	 * sprawdza czy dany element wymaga modyfikacji wartości
 	 */
-	protected checkIfValueModify(key: string, value: any, dataObject: Object, request: Request, response: Response): boolean {
+	protected checkIfValueModify(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
 		return false;
 	}
 	/**
  * Modyfikuje dany klucz w elemencie obiektu
  */
-	protected modifyKey(key: string, value: any, dataObject: Object, request: Request, response: Response): string {
+	protected modifyKey(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): string {
 		return key;
 	}
 	/**
 	 * Modyfikuje daną wartość w elemencie obiektu
 	 */
-	protected modifyValue(key: string, value: any, dataObject: Object, request: Request, response: Response): any {
+	protected modifyValue(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): any {
 		return value;
 	}
 }

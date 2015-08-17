@@ -255,7 +255,7 @@ describe("Test uploadu: ", function(){
 		it("kod 200 list", function (done) {
 			request(app).get("/res1/list")
 				.end(function (err, res) {
-					filePath = res.body.content[0].element.field1.files[0].path;
+					filePath = res.body.content[0].field1.files[0].path;
 					expect(isPath(filePath)).to.be.true;
 					expect(res.status).to.be.equal(200);
 					done();

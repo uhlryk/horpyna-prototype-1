@@ -40,7 +40,10 @@ class List extends BaseQuery{
 		if (this._order){
 			for (var i = 0; i < this._order.length; i++){
 				var pair:string[] = this._order[i];
-				if (pair[0] && pair[1]){
+				if (pair[0]){
+					if (!pair[1]){
+						pair[1] = "DESC";
+					}
 					order.push(pair);
 				}
 			}

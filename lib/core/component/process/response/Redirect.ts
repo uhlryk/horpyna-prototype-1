@@ -21,7 +21,7 @@ class Redirect extends BaseNode {
 	 * Jeśli akcja ma parametry to wskazujemy z jakiego źródła ma stworzyć obiekt do populate params
 	 */
 	public mapTargetParams(type: string, key?: string[]) {
-		this.addMapper("params", type, key);
+		this.addMapSource("params", type, key);
 	}
 	private _url: string;
 	/**
@@ -34,7 +34,7 @@ class Redirect extends BaseNode {
 		var processEntry = processEntryList[0];
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			if(this._action){
-				var params = this.mapResponse("params", processEntry, request);
+				var params = this.getMappedObject("params", processEntry, request);
 				if (params){
 					response.setRedirect(this._action.populateRoutePath(params));
 				} else {

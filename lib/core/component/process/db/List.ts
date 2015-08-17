@@ -1,4 +1,5 @@
 import BaseDbNode = require("./BaseDbNode");
+import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
 import Query = require("./../../routeComponent/module/query/Query");
 import Response = require("./../../routeComponent/module/action/Response");
@@ -8,40 +9,40 @@ class List extends BaseDbNode {
 	 * Mapujemy jaki typ danych odpowiada za warunki listy
 	 */
 	public addWhere(type: string, key?: string[]) {
-		this.addMapper("where", type, key);
+		this.addMapSource("where", type, key);
 	}
 
 	public setOrder(type:string, key:string) {
-		this.setMapper("order", type, key);
+		this.setMapSource("order", type, key);
 	}
 	public setDirection(type:string, key:string) {
-		this.setMapper("direction", type, key);
+		this.setMapSource("direction", type, key);
 	}
 	/**
 	 * Używa tylko jednej wartości ale możemy dać wiele, wtedy w pętli pojedzie aż znajdzie jedną poprawną
 	 */
 	public setPage(type: string, key: string){
-		this.setMapper("page", type, key);
+		this.setMapSource("page", type, key);
 	}
 	/**
 	 * Używa tylko jednej wartości ale możemy dać wiele, wtedy w pętli pojedzie aż znajdzie jedną poprawną
 	 */
-	public setSize(type: string, key: string){
-		this.setMapper("size", type, key);
+	public setSize(type: string, key: string) {
+		this.setMapSource("size", type, key);
 	}
 	/**
 	 * Przeszukuje zmapowane wartości dla numeru strony i wybiera jedną właściwą
 	 */
-	protected setPageValue(processEntry, request):number {
-		var mappedObject = this.mapResponse("page", processEntry, request);
-		var value;
-		for (var key in mappedObject){
-			var v = Number(mappedObject[key]);
-			if (v > 0 && v < Query.List.MAX_DATA) {
-				value = v;
-				break;
-			}
-		}
+	protected setPageValue(processEntryList: Object[], request): number {
+		// var mappedObject = this.mapResponse("page", processEntry, request);
+		// for (var key in mappedObject){
+		// 	var v = Number(mappedObject[key]);
+		// 	if (v > 0 && v < Query.List.MAX_DATA) {
+		// 		value = v;
+		// 		break;
+		// 	}
+		// }
+		var value = Number(this.getMappedValue("page", processEntryList, request));
 		if(!value){
 			value = 1;
 		}
@@ -50,15 +51,19 @@ class List extends BaseDbNode {
 	/**
 	 * Przeszukuje zmapowane wartości dla ilości pozycji na stronie i wybiera jedną właściwą
 	 */
-	protected setPageSizeValue(processEntry, request): number {
-		var mappedObject = this.mapResponse("size", processEntry, request);
-		var value;
-		for (var key in mappedObject) {
-			var v = Number(mappedObject[key]);
-			if (v > 0 && v < Query.List.MAX_DATA) {
-				value = v;
-				break;
-			}
+	protected setPageSizeValue(processEntryList: Object[], request): number {
+		// var mappedObject = this.mapResponse("size", processEntry, request);
+		// var value;
+		// for (var key in mappedObject) {
+		// 	var v = Number(mappedObject[key]);
+		// 	if (v > 0 && v < Query.List.MAX_DATA) {
+		// 		value = v;
+		// 		break;
+		// 	}
+		// }
+		var value = Number(this.getMappedValue("size", processEntryList, request));
+		if (value > 0 && value < Query.List.MAX_DATA) {
+			value = 0;
 		}
 		if (!value) {
 			value = Query.List.DEFAULT_PAGE_SIZE;
@@ -66,16 +71,15 @@ class List extends BaseDbNode {
 		return value;
 	}
 	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<Object> {
-		var processEntry = processEntryList[0];
 		var list = new Query.List();
 		list.setModel(this.getModel());
-		list.populateWhere(this.mapResponse("where", processEntry, request));
-		list.setOrder([[this.mapResponse("order", processEntry, request)[0], this.mapResponse("order", processEntry, request)[0]]]);
+		list.populateWhere(this.getMappedObject("where", processEntryList, request));
+		list.setOrder([[this.getMappedValue("order", processEntryList, request), this.getMappedValue("order", processEntryList, request)]]);
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			list.run()
 			.then((modelList) => {
-				var page = this.setPageValue(processEntry, request);
-				var pageSize = this.setPageSizeValue(processEntry, request);
+				var page = this.setPageValue(processEntryList, request);
+				var pageSize = this.setPageSizeValue(processEntryList, request);
 				var listResponse = [];
 				var count = 0;
 				for (var i = (page - 1) * pageSize; i < modelList.length; i++) {
