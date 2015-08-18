@@ -38,9 +38,9 @@ class OnListResource extends Core.Node.ProcessModel {
 		//O => Find	=> GetObjectElement => FileLinks => AddActionLinks
 		var addActionLinksNode = new Core.Node.Modify.AddActionLinks(this);
 		fileLinksNode.addChildNode(addActionLinksNode);
-		addActionLinksNode.addActionAfterAll(this._module.updateAction.formAction, [{ type: Core.Node.BaseNode.NODE_RESPONSE }]);
-		addActionLinksNode.addActionAfterAll(this._module.deleteAction.formAction, [{ type: Core.Node.BaseNode.NODE_RESPONSE }]);
-		addActionLinksNode.addActionAfterAll(this._module.detailAction, [{ type: Core.Node.BaseNode.NODE_RESPONSE }]);
+		addActionLinksNode.addActionAfterAll(this._module.updateAction.formAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
+		addActionLinksNode.addActionAfterAll(this._module.deleteAction.formAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
+		addActionLinksNode.addActionAfterAll(this._module.detailAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
 
 		//O => Find	=> GetObjectElement => FileLinks => AddActionLinks => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData(this);
