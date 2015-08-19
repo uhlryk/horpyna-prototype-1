@@ -17,9 +17,11 @@ class BaseNode extends Element {
 	 * budując diagram musimy określić dla jakiego modelu jest ten element
 	 * @param {ProcessModel} processModel obiekt danego modelu dla któ®ego są te elementy
 	 */
-	 private _nodeMapper: NodeMapper;
+	private _nodeMapper: NodeMapper;
+	private _entryType: string;
 	constructor(processModel:ProcessModel){
 		super();
+		this.initDebug("node:");
 		this._nodeMapper = new NodeMapper();
 		this._nodeMapper.addDefaultMapSource("entry_source", NodeMapper.RESPONSE_NODE);
 		this._childNodeList = [];
@@ -27,6 +29,7 @@ class BaseNode extends Element {
 		if (processModel) {
 			this._processId = processModel.addNode(this);
 		}
+		this._entryType = NodeMapper.MAP_OBJECT;
 	}
 	public get processId():number{
 		return this._processId;
@@ -59,6 +62,16 @@ class BaseNode extends Element {
 	 */
 	public addEntryMapSource(sourceType: string, key?: string[]) {
 		this._nodeMapper.addMapSource("entry_source", sourceType, key);
+	}
+	/**
+	 * Możemy zmienić sposób w jaki będą mapowane dane źródłowe
+	 * domyślnie jest to tablica obiektów
+	 */
+	public setEntryMapType(type: string){
+		this._entryType = type;
+	}
+	public getEntryMapType():string{
+		return this._entryType;
 	}
 	/**
 	 * Dodaje listę innych nodów co zbuduje rozgałęzienie, te na liście mogą mieć kolejne rozgałęzienia
@@ -165,6 +178,9 @@ class BaseNode extends Element {
 	}
 	public getEntryMappedSource(mapType: string, processEntryList: Object[], request: Request): any {
 		return this.getMappedSource("entry_source", mapType, processEntryList, request);
+	}
+	public getEntryMappedByType(processEntryList: Object[], request: Request): Object[] {
+		return this.getMappedSource("entry_source", this._entryType, processEntryList, request);
 	}
 	public getEntryMappedObjectArray(processEntryList: Object[], request: Request): Object[] {
 		return this.getMappedObjectArray("entry_source", processEntryList, request);

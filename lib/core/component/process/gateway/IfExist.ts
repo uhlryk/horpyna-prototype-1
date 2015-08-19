@@ -5,12 +5,18 @@ import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
 import IProcessObject = require("./../IProcessObject");
 import IConnection = require("./../IConnection");
+import ProcessModel = require("./../ProcessModel");
 /**
  * Node zwraca obiekt z danym wpisem w bazie danych
  */
 class IfExist extends BaseGateway {
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:IfExist");
+	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve:(response)=>void) => {
+			this.debug("begin");
 			var processObject: IProcessObject = processObjectList[this.processId];
 			var processEntry;
 			for (var i = 0; i < processEntryList.length; i++){

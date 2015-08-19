@@ -1,15 +1,17 @@
 import Request = require("./../routeComponent/module/action/Request");
 import Util = require("./../../util/Util");
+import Element = require("./../../Element");
 /**
  * Odpowiada za mapowanie danych source (PARAM_FIELD, QUERY_FIELD, BODY_FILED itp) na określony obiekt używany
  * w Node
  */
-class NodeMapper{
+class NodeMapper extends Element{
 	public static RESPONSE_NODE: string = "node_response_stream";
 	public static MAP_OBJECT_ARRAY: string = "object_array";
 	public static MAP_OBJECT: string = "object";
 	public static MAP_VALUE_ARRAY: string = "value_array";//tablica pojedyńczych wartości prostych number lub string
 	public static MAP_VALUE: string = "value";//pojedyncza wartość prosta, jakiś number lub string
+	public static MAP_RAW: string = "raw";//wszystko wrzuca do jednej tablicy
 	/**
 	 * Możemy zrobić mapowanie tak że np jeśli Node oczekuje danych do WHERE to możemy określić że ma jako te dane brać całe QUERY_FIELD
 	 * name jest to klucz do jakiegoś pola specyficznego dla danego Node
@@ -26,6 +28,8 @@ class NodeMapper{
 	 */
 	private _mapSourceDefault: Object;
 	constructor() {
+		super();
+		this.initDebug("nodemapper");
 		this._mapSource = new Object();
 		this._mapSourceDefault = new Object();
 	}
@@ -115,15 +119,19 @@ class NodeMapper{
 	protected mapSource(mappedSource, mapType: string, sourceTypeKeys: string[], sourceData:any):any {
 		switch (mapType){
 			case NodeMapper.MAP_OBJECT_ARRAY:
+				this.debug("mapSource MAP_OBJECT_ARRAY");
 				mappedSource = this.mapSourceObjectArray(mappedSource, sourceTypeKeys, sourceData);
 				break;
 			case NodeMapper.MAP_OBJECT:
+				this.debug("mapSource MAP_OBJECT");
 				mappedSource = this.mapSourceObject(mappedSource, sourceTypeKeys, sourceData);
 				break;
 			case NodeMapper.MAP_VALUE_ARRAY:
+				this.debug("mapSource MAP_VALUE_ARRAY");
 				mappedSource = this.mapSourceValueArray(mappedSource, sourceTypeKeys, sourceData);
 				break;
 			case NodeMapper.MAP_VALUE:
+				this.debug("mapSource MAP_VALUE");
 				mappedSource = this.mapSourceValue(mappedSource, sourceTypeKeys, sourceData);
 				break;
 		}
@@ -133,6 +141,7 @@ class NodeMapper{
 	 * sprawdza czy mamy tablicę wejściowa - mappedSource jeśli nie to ją tworzymy
 	 * Jeśli dane wejściwe -sourceData są tablicą to iterujemy po każdym elemencie
 	 * i interesują nas tylko te elementy które są obiektami, pozostałe ignorujemy
+	 * do obiektów zalicza się też array a więc tablica obiektów to też tablica tablic
 	 * dla każdego elementy tworzymy nowy obiekt z kluczamy tylko takimi jak są w - sourceTypeKeys - chyba że nie ustawione wtedy
 	 * bierzemy wszystkie
 	 * Jeśli dane wejściowe - sourceData to obiekt to tworzymy również nowy obiekt składający się z kluczy sourceTypeKeys
@@ -153,6 +162,15 @@ class NodeMapper{
 						}
 					}
 					mappedSource.push(element);
+				} else if (Util._.isArray(streamObj)) {
+					var arr = [];
+					for (var i = 0; i < streamObj.length; i++) {
+						var value = streamObj[i];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(String(i)) !== -1) {
+							arr.push(value);
+						}
+					}
+					mappedSource.push(arr);
 				}
 			}
 		} else if (Util._.isPlainObject(sourceData)) {
@@ -212,7 +230,7 @@ class NodeMapper{
 		if (!mappedSource){
 			mappedSource = [];
 		}
-		if (Util._.isArray(sourceData)) {//source jest tablicą obiektów
+		if (Util._.isArray(sourceData)) {//source jest tablicą
 			for (var i = 0; i < sourceData['length']; i++) {
 				var streamObj = sourceData[i];
 				if (Util._.isPlainObject(streamObj)) {

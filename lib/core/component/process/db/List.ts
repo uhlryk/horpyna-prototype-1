@@ -4,7 +4,12 @@ import Util = require("./../../../util/Util");
 import Query = require("./../../routeComponent/module/query/Query");
 import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
+import ProcessModel = require("./../ProcessModel");
 class List extends BaseDbNode {
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:List");
+	}
 	/**
 	 * Mapujemy jaki typ danych odpowiada za warunki listy
 	 */
@@ -76,6 +81,7 @@ class List extends BaseDbNode {
 		list.populateWhere(this.getMappedObject("where", processEntryList, request));
 		list.setOrder([[this.getMappedValue("order", processEntryList, request), this.getMappedValue("order", processEntryList, request)]]);
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
+			this.debug("begin");
 			list.run()
 			.then((modelList) => {
 				var page = this.setPageValue(processEntryList, request);

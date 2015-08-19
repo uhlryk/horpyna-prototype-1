@@ -4,26 +4,34 @@ import Request = require("./../../routeComponent/module/action/Request");
 import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
+import NodeMapper = require("./../NodeMapper");
+import ProcessModel = require("./../ProcessModel");
 /**
  * Pozwala dodać pole w obiekcie lub w każdym z obiektów tablicy
  */
 class AddObjectElement extends BaseNode {
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:AddObjectElement");
+	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve:(response)=>void) => {
-			var processEntry = processEntryList[0];
-			processEntry = processEntry || {};
+			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
+			this.debug(entryMappedSource);
 			var processResponse;
-			if(processEntry){
-				if (Array.isArray(processEntry)){
+			if (entryMappedSource) {
+				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
 					processResponse = [];
-					for (var i = 0; i < processEntry.length; i++){
-						processResponse.push(this.addInObject(processEntry[i], processEntryList, request, response));
+					for (var i = 0; i < entryMappedSource.length; i++) {
+						processResponse.push(this.addInObject(entryMappedSource, processEntryList, request, response));
 					}
-				} else {
-					processResponse = this.addInObject(processEntry, processEntryList, request, response);
+				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
+					processResponse = this.addInObject(entryMappedSource, processEntryList, request, response);
 				}
+				this.debug(processResponse);
 				resolve(processResponse);
 			} else{
+				this.debug("null");
 				resolve(null);
 			}
 		});

@@ -11,6 +11,7 @@ class AddActionLinks extends AddObjectElement{
 		super(processModel)
 		this._actionBefore = [];
 		this._actionAfter = [];
+		this.initDebug("node:AddActionLinks");
 	}
 	public addActionBeforeAll(action: BaseAction, populateList?: {type: string; key?: string[]}[]) {
 		this._actionBefore.push(action);

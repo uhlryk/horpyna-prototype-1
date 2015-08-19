@@ -1,21 +1,22 @@
 extend layout
 block content
 	table
-		each val, name in content
-			tr
-				if name == 'nav_after'
-					td
-					td
-					each link in val
-						a(href=link.link) #{link.name}
-				td= name
-				if val && val.files
-					td
-						each file in val.files
-							if file.mimetype == 'image/jpeg'
-								img(src=file.uri)
-							else
-								a(href=file.uri) #{file.originalname}
-				else
-					td= val
+		each block in content
+			each val, name in block
+				tr
+					if name == 'nav_after'
+						td
+						td
+						each link in val
+							a(href=link.link) #{link.name}
+					td= name
+					if val && val.files
+						td
+							each file in val.files
+								if file.mimetype == 'image/jpeg'
+									img(src=file.uri)
+								else
+									a(href=file.uri) #{file.originalname}
+					else
+						td= val
 

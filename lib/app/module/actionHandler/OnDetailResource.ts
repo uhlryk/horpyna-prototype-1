@@ -30,6 +30,7 @@ class OnDetailResource extends Core.Node.ProcessModel {
 
 		//O => Find => If +> FileLinks
 		var fileLinksNode = new Core.Node.Modify.FileLinks(this);
+		// fileLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		ifNode.addPositiveChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);

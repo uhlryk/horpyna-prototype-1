@@ -4,10 +4,15 @@ import Util = require("./../../../util/Util");
 import Query = require("./../../routeComponent/module/query/Query");
 import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
+import ProcessModel = require("./../ProcessModel");
 /**
  * Node zwraca obiekt z danym wpisem w bazie danych
  */
 class Find extends BaseDbNode {
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:Find");
+	}
 	/**
 	 * Mapujemy jaki typ danych odpowiada za warunki listy
 	 */
@@ -19,6 +24,7 @@ class Find extends BaseDbNode {
 		find.setModel(this.getModel());
 		find.populateWhere(this.getMappedObject("where", processEntryList, request));
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
+			this.debug("begin");
 			find.run()
 			.then((model) => {
 				if (model) {

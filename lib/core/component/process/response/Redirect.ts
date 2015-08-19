@@ -5,11 +5,16 @@ import Request = require("./../../routeComponent/module/action/Request");
 import IProcessObject = require("./../IProcessObject");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 import FieldType = require("./../../routeComponent/module/action/field/FieldType");
+import ProcessModel = require("./../ProcessModel");
 /**
  * Ustawia w odpowiedzi przekierowanie
  */
 class Redirect extends BaseNode {
 	private _action: BaseAction;
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:Redirect");
+	}
 	/**
 	 * wskazujemy akcję do której ma być redirect
 	 * @param {BaseAction} v [description]
@@ -31,10 +36,9 @@ class Redirect extends BaseNode {
 		this._url = v;
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
-		var processEntry = processEntryList[0];
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			if(this._action){
-				var params = this.getMappedObject("params", processEntry, request);
+				var params = this.getMappedObject("params", processEntryList, request);
 				if (params){
 					response.setRedirect(this._action.populateRoutePath(params));
 				} else {

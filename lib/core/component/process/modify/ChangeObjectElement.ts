@@ -3,26 +3,36 @@ import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
 import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
+import NodeMapper = require("./../NodeMapper");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
+import ProcessModel = require("./../ProcessModel");
 /**
  * Pozwala zmodyfikować pole w obiekcie lub w tablicy obiektów
  */
 class ChangeObjectElement extends BaseNode {
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:ChangeObjectElement");
+	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve:(response)=>void) => {
-			var processEntry = processEntryList[0];
+			this.debug("begin");
+			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
+			this.debug(entryMappedSource);
 			var processResponse;
-			if(processEntry){
-				if (Array.isArray(processEntry)){
+			if (entryMappedSource) {
+				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
 					processResponse = [];
-					for (var i = 0; i < processEntry.length; i++){
-						processResponse.push(this.changeInObject(processEntry[i], processEntryList, request, response));
+					for (var i = 0; i < entryMappedSource.length; i++) {
+						processResponse.push(this.changeInObject(entryMappedSource[i], processEntryList, request, response));
 					}
-				} else {
-					processResponse = this.changeInObject(processEntry, processEntryList, request, response);
+				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
+					processResponse = this.changeInObject(entryMappedSource, processEntryList, request, response);
 				}
-				resolve(processEntry);
+				this.debug(entryMappedSource);
+				resolve(entryMappedSource);
 			} else{
+				this.debug("null");
 				resolve(null);
 			}
 		});

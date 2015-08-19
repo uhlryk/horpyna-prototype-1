@@ -4,9 +4,13 @@ import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 import Util = require("./../../../util/Util");
 import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
-
+import ProcessModel = require("./../ProcessModel");
 class FileLinks extends ChangeObjectElement{
 	private _action: BaseAction;
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:FileLinks");
+	}
 	/**
 	 * wskazujemy akcję która obsługuje dane pliki
 	 * @param {BaseAction} v [description]

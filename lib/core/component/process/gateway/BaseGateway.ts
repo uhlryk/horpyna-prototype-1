@@ -7,6 +7,7 @@ class BaseGateway extends BaseNode {
 	private _negativeNode: BaseNode[];
 	constructor(processModel: ProcessModel) {
 		super(processModel);
+		this.initDebug("node:BaseGatway");
 		this._positiveNode = []
 		this._negativeNode = []
 	}

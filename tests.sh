@@ -72,7 +72,18 @@ fi
 
 if [ "$debug" != "" ]
 then
-	debug="DEBUG=horpyna:$debug"
+	debugList=`echo $debug | sed 's/\,/ /g'`
+	set -o noglob #możemy mieć w patternie *; jeśli nie zablokujemy tworzenia nazw tą komendą to gwiazdki zastąpią się plikami
+	for deb in ${debugList}
+	do
+		if [ "$ndebug" != "" ]
+		then
+			ndebug="$ndebug,horpyna:$deb"
+		else
+			ndebug="horpyna:$deb"
+		fi
+	done
+	debug="DEBUG=$ndebug"
 elif [ "$isDebug" = 1 ]
 then
 	debug="DEBUG=horpyna*"
@@ -82,6 +93,5 @@ if [ "$log" != "" ]
 then
 	log="HORPYNA_LOG=$log"
 fi
-
 command="NODE_ENV=$node_env $debug $log $mocha_dir_path --check-leaks --timeout $timeout $test_dir_path$separator$file"
 env $command

@@ -24,38 +24,38 @@ class OnListResource extends Core.Node.ProcessModel {
 		listNode.setPage(Core.Action.FieldType.QUERY_FIELD,"p");
 		listNode.setSize(Core.Action.FieldType.QUERY_FIELD,"s");
 
-		//O => Find	=> GetObjectElement
-		var getObjectElementNode = new Core.Node.Modify.GetObjectElement(this);
-		listNode.addChildNode(getObjectElementNode);
-		getObjectElementNode.elementKey("list");
+		//O => Find	=> ObjectElement
+		var objectElementNode = new Core.Node.Modify.ObjectElement(this);
+		listNode.addChildNode(objectElementNode);
+		objectElementNode.elementKey("list");
 
-		//O => Find	=> GetObjectElement => FileLinks
+		//O => Find	=> ObjectElement => FileLinks
 		var fileLinksNode = new Core.Node.Modify.FileLinks(this);
-		getObjectElementNode.addChildNode(fileLinksNode);
+		objectElementNode.addChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
-		//O => Find	=> GetObjectElement => FileLinks => AddActionLinks
+		//O => Find	=> ObjectElement => FileLinks => AddActionLinks
 		var addActionLinksNode = new Core.Node.Modify.AddActionLinks(this);
 		fileLinksNode.addChildNode(addActionLinksNode);
 		addActionLinksNode.addActionAfterAll(this._module.updateAction.formAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
 		addActionLinksNode.addActionAfterAll(this._module.deleteAction.formAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
 		addActionLinksNode.addActionAfterAll(this._module.detailAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
 
-		//O => Find	=> GetObjectElement => FileLinks => AddActionLinks => SendData => X
+		//O => Find	=> ObjectElement => FileLinks => AddActionLinks => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData(this);
 		addActionLinksNode.addChildNode(sendDataNode);
 		sendDataNode.setView("horpyna/jade/listAction");
 
-		//O => Find	=> GetObjectElement => UniqueKeyObject
-		var keyListNode = new Core.Node.Modify.UniqueKeyObject(this);
-		getObjectElementNode.addChildNode(keyListNode);
-		keyListNode.setNewKeyValue("o");
+		//O => Find	=> ObjectElement => UniqueKeyObject
+		var keyListNode = new Core.Node.Modify.UniqueKeyList(this);
+		objectElementNode.addChildNode(keyListNode);
 		// keyListNode.addDataSource(Core.Node.BaseNode.NODE_RESPONSE);
 
 		//O => Empty => AddActionLinks => UniqueKeyObject => SendData => X
 		var orderSendDataNode = new Core.Node.Response.SendData(this);
 		keyListNode.addChildNode(orderSendDataNode);
+		orderSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
 		orderSendDataNode.setResponseKey("order");
 
 		//O => Empty

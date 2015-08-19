@@ -4,31 +4,44 @@ import Request = require("./../../routeComponent/module/action/Request");
 import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
+import NodeMapper = require("./../NodeMapper");
+import ProcessModel = require("./../ProcessModel");
 /**
- * z otrzymanego responsa rodzica (obiektu lub tablicy obiektów) wyciąga jeden element i go zwraca
+ * z otrzymanego źródła wyciąga jeden element i go zwraca
  * samodzielnie lub jako tablicę (jeśli rodzic przekazał mu tablicę)
+ * jeśli mamy tablicę elementów prostych a kluczem jest liczba to zwróci element tablicy pod tym kluczem
+ * jeśli tablica tablic a kluczem jest liczba to zwróci tablicę elementów gdzie elementy były elementami tablicy wewnętrznej o danym kluczu
  */
-class GetObjectElement extends BaseNode {
+class ObjectElement extends BaseNode {
 	private _key: string;
+	constructor(processModel: ProcessModel) {
+		super(processModel);
+		this.initDebug("node:ObjectElement");
+	}
 	public elementKey(key: string) {
 		this._key = key;
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve:(response)=>void) => {
-			var processEntry = processEntryList[0];
-			processEntry = processEntry || {};
+			this.debug("begin");
+			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
+			this.debug(entryMappedSource);
 			var processResponse;
-			if(processEntry){
-				if (Array.isArray(processEntry)){
+			if (entryMappedSource) {
+				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
 					processResponse = [];
-					for (var i = 0; i < processEntry.length; i++){
-						processResponse.push(this.getFromObject(processEntry[i], request, response));
+					for (var i = 0; i < entryMappedSource.length; i++) {
+						processResponse.push(this.getFromObject(entryMappedSource[i]));
 					}
-				} else {
-					processResponse = this.getFromObject(processEntry, request, response);
+				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
+					processResponse = this.getFromObject(entryMappedSource);
+				} else if (this.getEntryMapType() === NodeMapper.MAP_VALUE_ARRAY) {
+					processResponse = this.getFromObject(entryMappedSource);
 				}
+				this.debug(processResponse);
 				resolve(processResponse);
 			} else{
+				this.debug("null");
 				resolve(null);
 			}
 		});
@@ -41,7 +54,7 @@ class GetObjectElement extends BaseNode {
 	 * @param  {Response} response     actionResponse
 	 * @return {Object}                [description]
 	 */
-	protected getFromObject(dataObject, request: Request, response: Response): Object {
+	protected getFromObject(dataObject): Object {
 		var responseObject = new Object();
 		if (this._key) {
 			responseObject = dataObject[this._key];
@@ -49,4 +62,4 @@ class GetObjectElement extends BaseNode {
 		return responseObject;
 	}
 }
-export = GetObjectElement;
+export = ObjectElement;
