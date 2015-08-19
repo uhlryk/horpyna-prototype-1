@@ -35,16 +35,17 @@ class OnListResource extends Core.Node.ProcessModel {
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
-		//O => Find	=> ObjectToElement => FileLinks => AddActionLinks
-		var addActionLinksNode = new Core.Node.Modify.AddActionLinks(this);
+		//O => Find	=> ObjectToElement => FileLinks => ActionLink
+		var addActionLinksNode = new Core.Node.Modify.ActionLink(this);
 		fileLinksNode.addChildNode(addActionLinksNode);
-		addActionLinksNode.addActionAfterAll(this._module.updateAction.formAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
-		addActionLinksNode.addActionAfterAll(this._module.deleteAction.formAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
-		addActionLinksNode.addActionAfterAll(this._module.detailAction, [{ type: Core.Node.NodeMapper.RESPONSE_NODE }]);
+		addActionLinksNode.addAction(this._module.updateAction.formAction);
+		addActionLinksNode.addAction(this._module.deleteAction.formAction);
+		addActionLinksNode.addAction(this._module.detailAction);
 
-		//O => Find	=> ObjectToElement => FileLinks => AddActionLinks => SendData => X
+		//O => Find	=> ObjectToElement => FileLinks => ActionLink => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData(this);
-		addActionLinksNode.addChildNode(sendDataNode);
+		// addActionLinksNode.addChildNode(sendDataNode);
+		fileLinksNode.addChildNode(sendDataNode);
 		sendDataNode.setView("horpyna/jade/listAction");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject
@@ -68,14 +69,15 @@ class OnListResource extends Core.Node.ProcessModel {
 		var emptyNode = new Core.Node.Modify.Empty(this);
 		this.addChildNode(emptyNode);
 
-		//O => Empty => AddActionLinks
-		var addSecondaryActionLinksNode = new Core.Node.Modify.AddActionLinks(this);
+		//O => Empty => ActionLink
+		var addSecondaryActionLinksNode = new Core.Node.Modify.ActionLink(this);
 		emptyNode.addChildNode(addSecondaryActionLinksNode);
-		addSecondaryActionLinksNode.addActionAfterAll(this._module.createAction.formAction, [{ type: Core.Action.FieldType.PARAM_FIELD }]);
+		addSecondaryActionLinksNode.addAction(this._module.createAction.formAction);
 
-		//O => Empty => AddActionLinks => SendData => X
+		//O => Empty => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData(this);
 		addSecondaryActionLinksNode.addChildNode(navSendDataNode);
+		navSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		navSendDataNode.setResponseKey("navigation");
 
 	}

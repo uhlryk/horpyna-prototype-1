@@ -34,10 +34,10 @@ class NodeMapper extends Element{
 		this._mapSourceDefault = new Object();
 	}
 	/**
-	 * Metoda mapująca, opis pul przy this._mapSource
-	 * @param {string}   name [description]
-	 * @param {string}   sourceType [description]
-	 * @param {string[]} key  [description]
+	 * Metoda mapująca, opis pól przy this._mapSource
+	 * @param {string}   name nazwa po której będziemy identyfikować mapowanie -pobieramy potem odpowiedź po ten nazwie
+	 * @param {string}   sourceType jakie żródło jest danych param,app,query, ale też poprzedni response node
+	 * @param {string[]} key  klucze jakie są brane pod uwagę w źródle - nie bierzemy całego źródła
 	 */
 	public addMapSource(name: string, sourceType: string, key?: string[]) {
 		if (!this._mapSource[name] || this._mapSourceDefault[name] === true) {
