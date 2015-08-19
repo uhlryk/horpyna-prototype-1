@@ -12,11 +12,11 @@ import ProcessModel = require("./../ProcessModel");
  * jeśli mamy tablicę elementów prostych a kluczem jest liczba to zwróci element tablicy pod tym kluczem
  * jeśli tablica tablic a kluczem jest liczba to zwróci tablicę elementów gdzie elementy były elementami tablicy wewnętrznej o danym kluczu
  */
-class ObjectElement extends BaseNode {
+class ObjectToElement extends BaseNode {
 	private _key: string;
 	constructor(processModel: ProcessModel) {
 		super(processModel);
-		this.initDebug("node:ObjectElement");
+		this.initDebug("node:ObjectToElement");
 	}
 	public elementKey(key: string) {
 		this._key = key;
@@ -62,4 +62,4 @@ class ObjectElement extends BaseNode {
 		return responseObject;
 	}
 }
-export = ObjectElement;
+export = ObjectToElement;

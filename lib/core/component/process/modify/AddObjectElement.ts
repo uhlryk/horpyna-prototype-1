@@ -16,6 +16,7 @@ class AddObjectElement extends BaseNode {
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve:(response)=>void) => {
+			this.debug("begin");
 			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
 			this.debug(entryMappedSource);
 			var processResponse;
