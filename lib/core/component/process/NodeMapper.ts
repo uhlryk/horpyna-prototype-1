@@ -219,6 +219,14 @@ class NodeMapper extends Element{
 							mappedSource[key] = value;
 						}
 					}
+				} else if (Util._.isArray(streamObj)) {
+					var arr = [];
+					for (var i = 0; i < streamObj.length; i++) {
+						var value = streamObj[i];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(String(i)) !== -1) {
+							mappedSource[i] = value;
+						}
+					}
 				}
 			}
 		} else if (Util._.isPlainObject(sourceData)) {

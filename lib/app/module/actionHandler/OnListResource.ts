@@ -95,7 +95,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		//O => Empty => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData(this);
 		addSecondaryActionLinksNode.addChildNode(navSendDataNode);
-		navSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+		navSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		navSendDataNode.setResponseKey("navigation");
 
 	}
