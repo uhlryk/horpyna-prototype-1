@@ -31,12 +31,14 @@ class OnListResource extends Core.Node.ProcessModel {
 
 		//O => Find	=> ObjectToElement => FileLinks
 		var fileLinksNode = new Core.Node.Modify.FileLinks(this);
+		fileLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		objectElementNode.addChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink
 		var addActionLinksNode = new Core.Node.Modify.ActionLink(this);
+		addActionLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		fileLinksNode.addChildNode(addActionLinksNode);
 		addActionLinksNode.addAction(this._module.updateAction.formAction);
 		addActionLinksNode.addAction(this._module.deleteAction.formAction);
@@ -44,8 +46,10 @@ class OnListResource extends Core.Node.ProcessModel {
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData(this);
+		sendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		// addActionLinksNode.addChildNode(sendDataNode);
 		fileLinksNode.addChildNode(sendDataNode);
+		addActionLinksNode.addChildNode(sendDataNode);
 		sendDataNode.setView("horpyna/jade/listAction");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject
