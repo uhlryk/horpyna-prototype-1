@@ -178,9 +178,9 @@ class NodeMapper extends Element{
 					mappedSource.push(element);
 				} else if (Util._.isArray(streamObj)) {
 					var arr = [];
-					for (var i = 0; i < streamObj.length; i++) {
-						var value = streamObj[i];
-						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(String(i)) !== -1) {
+					for (var j = 0; j < streamObj.length; j++) {
+						var value = streamObj[j];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(String(j)) !== -1) {
 							arr.push(value);
 						}
 					}

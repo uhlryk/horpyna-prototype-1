@@ -19,9 +19,11 @@ class BaseNode extends Element {
 	 */
 	private _nodeMapper: NodeMapper;
 	private _entryType: string;
+	private _content: (processEntryList: any[], request: Request, response: Response, processList: IProcessObject[])=> Util.Promise<any>;
 	constructor(processModel:ProcessModel){
 		super();
 		this.initDebug("node:");
+		this._content = this.content;
 		this._nodeMapper = new NodeMapper();
 		this._nodeMapper.addDefaultMapSource("entry_source", NodeMapper.RESPONSE_NODE);
 		this._childNodeList = [];
@@ -85,6 +87,9 @@ class BaseNode extends Element {
 	public get childNodes():BaseNode[]{
 		return this._childNodeList;
 	}
+	/**
+	 * Samo się ustawia w addChildNode. Po dodaniu child Node, ten ustawia sobie w danym Node ParentNode'a
+	 */
 	public addParentNode(node: BaseNode) {
 		this._parentNodeList.push(node);
 	}
@@ -132,7 +137,7 @@ class BaseNode extends Element {
 			}
 			//content odpali się tylko jeśli przynajmniej jeden rodzic jest allow
 			if (allowProcessResponseList.length > 0) {
-				return this.content(allowProcessResponseList, request, response, processList);
+				return this._content(allowProcessResponseList, request, response, processList);
 			} else{
 				//jeśli żaden rodzic nie jest allow to blokujemy wszystkie connection wychodzące od tego Node
 				this.onAllChildrenConnectionBlocked(processObject);
@@ -202,6 +207,12 @@ class BaseNode extends Element {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			resolve(null);
 		});
+	}
+	/**
+	 * pozwala nadpisać logikę danego node
+	 */
+	public setContent(v: (processEntryList: any[], request: Request, response: Response, processList: IProcessObject[])=>Util.Promise<any>){
+		this._content = v;
 	}
 }
 export = BaseNode;
