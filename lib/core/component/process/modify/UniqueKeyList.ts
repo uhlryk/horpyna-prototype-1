@@ -11,8 +11,10 @@ import ProcessModel = require("./../ProcessModel");
  * jeśli źródłem była lista wartości to weźmie unikaty; jeśli źródłem była wartość to wrzuci ją w listę
  */
 class UniqueKeyList extends BaseNode{
+	private _key: string;
 	constructor(processModel: ProcessModel) {
 		super(processModel);
+		this._key = "0";
 		this.initDebug("node:UniqueKeyList");
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
@@ -27,24 +29,24 @@ class UniqueKeyList extends BaseNode{
 						var row = entryMappedSource[i];
 						var newRow = [];
 						for (var key in row) {
-							if (newRow.indexOf(key) === -1) {
-								newRow.push(key);
-							}
+							var obj = new Object();
+							obj[this._key] = key;
+							newRow.push(obj);
 						}
 						responseArray.push(newRow);
 					}
 				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
 					for (var key in entryMappedSource) {
-						if (responseArray.indexOf(key) === -1) {
-							responseArray.push(key);
-						}
+						var obj = new Object();
+						obj[this._key] = key
+						responseArray.push(obj);
 					}
 				} else if (this.getEntryMapType() === NodeMapper.MAP_VALUE_ARRAY) {
 					for (var i = 0; i < entryMappedSource.length; i++) {
 						var val = entryMappedSource[i];
-						if (responseArray.indexOf(val) === -1) {
-							responseArray.push(val);
-						}
+						var obj = new Object();
+						obj[this._key] = key;
+						responseArray.push(obj);
 					}
 				} else if (this.getEntryMapType() === NodeMapper.MAP_VALUE) {
 					responseArray.push(entryMappedSource);
@@ -53,6 +55,9 @@ class UniqueKeyList extends BaseNode{
 			this.debug(responseArray);
 			resolve(responseArray);
 		});
+	}
+	public setKey(v: string){
+		this._key = v;
 	}
 }
 export = UniqueKeyList;

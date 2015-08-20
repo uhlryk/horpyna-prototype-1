@@ -69,17 +69,11 @@ class OnListResource extends Core.Node.ProcessModel {
 		//O => Find	=> ObjectToElement => UniqueKeyObject
 		var keyListNode = new Core.Node.Modify.UniqueKeyList(this);
 		objectElementNode.addChildNode(keyListNode);
-		// keyListNode.addDataSource(Core.Node.BaseNode.NODE_RESPONSE);
-
-		//O => Find	=> ObjectToElement => UniqueKeyObject => ElementToObject
-		var elementToObjectNode = new Core.Node.Modify.ElementToObject(this);
-		keyListNode.addChildNode(elementToObjectNode);
-		elementToObjectNode.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
-		elementToObjectNode.setKey("o");
+		keyListNode.setKey("o");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject => SendData => X
 		var orderSendDataNode = new Core.Node.Response.SendData(this);
-		elementToObjectNode.addChildNode(orderSendDataNode);
+		keyListNode.addChildNode(orderSendDataNode);
 		orderSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		orderSendDataNode.setResponseKey("order");
 
