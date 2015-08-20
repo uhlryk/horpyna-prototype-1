@@ -41,10 +41,25 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		addActionLinksNode.addAction(this._module.updateAction.formAction);
 		addActionLinksNode.addAction(this._module.deleteAction.formAction);
 
+		var actionNavNode = new Core.Node.Modify.ElementToObject(this);
+		addActionLinksNode.addChildNode(actionNavNode);
+		actionNavNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+		actionNavNode.setKey("nav");
+
+		var combineNode = new Core.Node.Modify.CombineObject(this);
+		fileLinksNode.addChildNode(combineNode);
+		actionNavNode.addChildNode(combineNode);
+		combineNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
+		combineNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+		combineNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
+		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+		combineNode.setCombineMethod(Core.Node.Modify.CombineObject.NTH_WITH_NTH);
+
 		//O => Find => If +> FileLinks => ActionLink => SendData	=> X
 		var sendDataNode = new Core.Node.Response.SendData(this);
 		// addActionLinksNode.addChildNode(sendDataNode);
-		fileLinksNode.addChildNode(sendDataNode);
+		// fileLinksNode.addChildNode(sendDataNode);
+		combineNode.addChildNode(sendDataNode);
 		sendDataNode.setView("horpyna/jade/detailAction");
 
 		//O => Empty

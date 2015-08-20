@@ -100,11 +100,17 @@ class CombineObject extends BaseNode{
 	public setSecondaryMapType(type: string){
 		this._secondaryType = type;
 	}
-	protected mergeObjects(responseObject: Object, modifyObject:Object) {
-		for(var key in modifyObject){
-			var value = modifyObject[key];
+	protected mergeObjects(object1: Object, object2:Object) {
+		var responseObject = new Object();
+		for (var key in object1) {
+			var value = object1[key];
 			responseObject[key] = value;
 		}
+		for (var key in object2) {
+			var value = object2[key];
+			responseObject[key] = value;
+		}
+		return responseObject;
 	}
 }
 export = CombineObject;

@@ -50,18 +50,24 @@ class ActionLink extends BaseNode {
 			if (entryMappedSource) {
 				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
 					for (var i = 0; i < entryMappedSource.length; i++) {
+						var element = [];
 						for (var j = 0; j < this._actionList.length; j++) {
-							processResponse.push(this.createUri(this._actionList[j], entryMappedSource, processEntryList, request));
+							element.push(this.createUri(this._actionList[j], entryMappedSource[i], processEntryList, request));
 						}
+						processResponse.push(element);
 					}
 				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
+					var element = [];
 					for (var j = 0; j < this._actionList.length; j++) {
-						processResponse.push(this.createUri(this._actionList[j], entryMappedSource, processEntryList, request));
+						element.push(this.createUri(this._actionList[j], entryMappedSource, processEntryList, request));
 					}
+					processResponse.push(element);
 				} else {
+					var element = [];
 					for (var j = 0; j < this._actionList.length; j++) {
-						processResponse.push(this.createUri(this._actionList[j], null, processEntryList, request));
+						element.push(this.createUri(this._actionList[j], null, processEntryList, request));
 					}
+					processResponse.push(element);
 				}
 				this.debug(processResponse);
 				resolve(processResponse);

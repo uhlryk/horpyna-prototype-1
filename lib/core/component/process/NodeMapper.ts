@@ -7,6 +7,11 @@ import Element = require("./../../Element");
  */
 class NodeMapper extends Element{
 	public static RESPONSE_NODE: string = "node_response_stream";
+	public static RESPONSE_NODE_1: string = "node_response_stream_1";
+	public static RESPONSE_NODE_2: string = "node_response_stream_2";
+	public static RESPONSE_NODE_3: string = "node_response_stream_3";
+	public static RESPONSE_NODE_4: string = "node_response_stream_4";
+	public static RESPONSE_NODE_5: string = "node_response_stream_5";
 	public static MAP_OBJECT_ARRAY: string = "object_array";
 	public static MAP_OBJECT: string = "object";
 	public static MAP_VALUE_ARRAY: string = "value_array";//tablica pojedyńczych wartości prostych number lub string
@@ -104,6 +109,15 @@ class NodeMapper extends Element{
 							var processEntry = processEntryList[i];
 							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntry);
 						}
+						break;
+					case NodeMapper.RESPONSE_NODE_1:
+							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntryList[0]);
+						break;
+					case NodeMapper.RESPONSE_NODE_2:
+							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntryList[1]);
+						break;
+					case NodeMapper.RESPONSE_NODE_3:
+							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntryList[2]);
 						break;
 					default:
 						mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, request.getFieldList(sourceType));
