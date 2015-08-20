@@ -44,12 +44,14 @@ class OnListResource extends Core.Node.ProcessModel {
 		addActionLinksNode.addAction(this._module.deleteAction.formAction);
 		addActionLinksNode.addAction(this._module.detailAction);
 
-				//O => Find	=> ObjectToElement => UniqueKeyObject => ElementToObject
+		//O => Find	=> ObjectToElement => FileLinks => ActionLink => ElementToObject
 		var actionNavNode = new Core.Node.Modify.ElementToObject(this);
 		addActionLinksNode.addChildNode(actionNavNode);
 		actionNavNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		actionNavNode.setKey("nav");
 
+		//O => Find	=> ObjectToElement => FileLinks => ActionLink => ElementToObject => CombineObject
+		//O => Find	=> ObjectToElement => FileLinks => CombineObject
 		var combineNode = new Core.Node.Modify.CombineObject(this);
 		fileLinksNode.addChildNode(combineNode);
 		actionNavNode.addChildNode(combineNode);
@@ -59,10 +61,9 @@ class OnListResource extends Core.Node.ProcessModel {
 		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		combineNode.setCombineMethod(Core.Node.Modify.CombineObject.NTH_WITH_NTH);
 
-		//O => Find	=> ObjectToElement => FileLinks => ActionLink => SendData => X
+		//combineNode => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData(this);
 		sendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
-		// addActionLinksNode.addChildNode(sendDataNode);
 		combineNode.addChildNode(sendDataNode);
 		sendDataNode.setView("horpyna/jade/listAction");
 

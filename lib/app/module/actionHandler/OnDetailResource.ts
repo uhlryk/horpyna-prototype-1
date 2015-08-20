@@ -41,11 +41,14 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		addActionLinksNode.addAction(this._module.updateAction.formAction);
 		addActionLinksNode.addAction(this._module.deleteAction.formAction);
 
+		//O => Find => If +> FileLinks => ActionLink => ElementToObject
 		var actionNavNode = new Core.Node.Modify.ElementToObject(this);
 		addActionLinksNode.addChildNode(actionNavNode);
 		actionNavNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		actionNavNode.setKey("nav");
 
+		//O => Find => If +> FileLinks => ActionLink => ElementToObject => CombineObject
+		//O => Find => If +> FileLinks => CombineObject
 		var combineNode = new Core.Node.Modify.CombineObject(this);
 		fileLinksNode.addChildNode(combineNode);
 		actionNavNode.addChildNode(combineNode);
@@ -55,10 +58,8 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		combineNode.setCombineMethod(Core.Node.Modify.CombineObject.NTH_WITH_NTH);
 
-		//O => Find => If +> FileLinks => ActionLink => SendData	=> X
+		//CombineObject => SendData	=> X
 		var sendDataNode = new Core.Node.Response.SendData(this);
-		// addActionLinksNode.addChildNode(sendDataNode);
-		// fileLinksNode.addChildNode(sendDataNode);
 		combineNode.addChildNode(sendDataNode);
 		sendDataNode.setView("horpyna/jade/detailAction");
 
