@@ -53,6 +53,7 @@ class BaseNode extends Element {
 		this._nodeMapper.setMapSource(name, sourceType, key);
 	}
 	/**
+	 * jeśli nie ustawiliśmy mapowania pod daną nazwą zwróci true
 	 * Mapowanie moze zwrócić null jeśli brak elementów lub gdy nie zostały ustawione, czasem chcemy
 	 * w zależności od sytuacji odpowiednio się zachować np jeśli nie ustawiliśmy w find where to używamy entry_source map
 	 */

@@ -221,10 +221,10 @@ class NodeMapper extends Element{
 					}
 				} else if (Util._.isArray(streamObj)) {
 					var arr = [];
-					for (var i = 0; i < streamObj.length; i++) {
-						var value = streamObj[i];
-						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(String(i)) !== -1) {
-							mappedSource[i] = value;
+					for (var j = 0; j < streamObj.length; j++) {
+						var value = streamObj[j];
+						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(String(j)) !== -1) {
+							mappedSource[String(j)] = value;
 						}
 					}
 				}
@@ -255,15 +255,18 @@ class NodeMapper extends Element{
 		if (Util._.isArray(sourceData)) {//source jest tablicą
 			for (var i = 0; i < sourceData['length']; i++) {
 				var streamObj = sourceData[i];
-				if (Util._.isPlainObject(streamObj)) {
-					for (var key in streamObj) {
-						var value = streamObj[key];
-						if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
-							mappedSource.push(value);
-						}
+				// if (Util._.isPlainObject(streamObj)) {
+				// 	for (var key in streamObj) {
+				// 		var value = streamObj[key];
+				// 		if (sourceTypeKeys.length === 0 || sourceTypeKeys.indexOf(key) !== -1) {
+				// 			mappedSource.push(value);
+				// 		}
+				// 	}
+				// } else
+				if (sourceTypeKeys.length === 0){
+					if (Util._.isNumber(streamObj) || Util._.isString(streamObj) || Util._.isBoolean(streamObj) || Util._.isDate(streamObj)) {
+						mappedSource.push(streamObj);
 					}
-				} else if (Util._.isNumber(streamObj) || Util._.isString(streamObj) || Util._.isBoolean(streamObj) || Util._.isDate(streamObj)){
-					mappedSource.push(streamObj);
 				}
 			}
 		} else if (Util._.isPlainObject(sourceData)) {
@@ -274,7 +277,9 @@ class NodeMapper extends Element{
 				}
 			}
 		} else if (Util._.isNumber(sourceData) || Util._.isString(sourceData) || Util._.isBoolean(sourceData) || Util._.isDate(sourceData)) {
-			mappedSource.push(sourceData);
+			if (sourceTypeKeys.length === 0) {
+				mappedSource.push(sourceData);
+			}
 		}
 		return mappedSource;
 	}
