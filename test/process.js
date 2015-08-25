@@ -474,6 +474,98 @@ describe("Funkcje ProcessModel Nodes", function() {
 					});
 			});
 		});
+		describe("Gdy mamy ustawiony typ mapowania MAP_VALUE", function () {
+			it('Powinien zwrócić null gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
+				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.null;
+						done();
+					});
+			});
+			it('Powinien zwrócić "val5" gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"]', function (done) {
+				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val5");
+						done();
+					});
+			});
+			it('Powinien zwrócić "val6" gdy podamy ["val5","val6"]', function (done) {
+				beforeMapping = ["val5","val6"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val6");
+						done();
+					});
+			});
+			it('Powinien zwrócić null gdy podamy ["val5","val6"] i entryMapSource ma jakikolwiek klucz', function (done) {
+				beforeMapping = ["val5","val6"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.null;
+						done();
+					});
+			});
+			it('Powinien zwrócić "val2" gdy podamy {key1:"val1",key2:"val2"}', function (done) {
+				beforeMapping = {key1:"val1",key2:"val2"};
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val2");
+						done();
+					});
+			});
+			it('Powinien zwrócić "val1" gdy podamy {key1:"val1",key2:"val2"} i entryMapSource ma klucz ["key1"]', function (done) {
+				beforeMapping = {key1:"val1",key2:"val2"};
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["key1"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val1");
+						done();
+					});
+			});
+			it('Powinien zwrócić null gdy podamy {key1:"val1",key2:"val2"} i entryMapSource ma klucz ["dummy"]', function (done) {
+				beforeMapping = {key1:"val1",key2:"val2"};
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.null;
+						done();
+					});
+			});
+			it('Powinien zwrócić "val1" gdy podamy "val1"', function (done) {
+				beforeMapping = "val1";
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val1");
+						done();
+					});
+			});
+			it('Powinien zwrócić null gdy podamy "val1" i entryMapSource ma jakikolwiek klucz', function (done) {
+				beforeMapping = "val1";
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.null;
+						done();
+					});
+			});
+		});
 	});
 	describe("Testowanie mapowania danych z dwóch źródeł", function () {
 		var myNode2, beforeMapping1, beforeMapping2, afterMapping;
@@ -868,6 +960,96 @@ describe("Funkcje ProcessModel Nodes", function() {
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
 						expect(afterMapping).to.be.length(0);
+						done();
+					});
+			});
+		});
+		describe("Gdy mamy ustawiony typ mapowania MAP_VALUE", function () {
+			it('Powinien zwrócić null gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"}]', function (done) {
+				beforeMapping1 = [{k1:"v1",k2:"v2"}];
+				beforeMapping2 = [{k3:"v1",k2:"v2"}];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.null;
+						done();
+					});
+			});
+			it('Powinien zwrócić "val5" gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"},"val5"]', function (done) {
+				beforeMapping1 = [{k1:"v1",k2:"v2"}];
+				beforeMapping2 = [{k3:"v1",k2:"v2"},"val5"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val5");
+						done();
+					});
+			});
+			it('Powinien zwrócić "val6" gdy podamy ["val5"] i ["val6"]', function (done) {
+				beforeMapping1 = ["val5"];
+				beforeMapping2 = ["val6"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val6");
+						done();
+					});
+			});
+			it('Powinien zwrócić null gdy podamy ["val5"] i ["val6"] i entryMapSource ma jakikolwiek klucz', function (done) {
+				beforeMapping1 = ["val5"];
+				beforeMapping2 = ["val6"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.null;
+						done();
+					});
+			});
+			it('Powinien zwrócić "val4" gdy podamy {key1:"val1",key2:"val2"} i {key1:"val3",key2:"val4"}', function (done) {
+				beforeMapping1 = {key1:"val1",key2:"val2"};
+				beforeMapping2 = {key1:"val3",key2:"val4"};
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val4");
+						done();
+					});
+			});
+			it('Powinien zwrócić "val3" gdy podamy {key1:"val1",key2:"val2"} {key1:"val3",key2:"val4"} i entryMapSource ma klucz ["key1"]', function (done) {
+				beforeMapping1 = {key1:"val1",key2:"val2"};
+				beforeMapping2 = {key1:"val3",key2:"val4"};
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["key1"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val3");
+						done();
+					});
+			});
+			it('Powinien zwrócić "val2" gdy podamy "val1" i "val2"', function (done) {
+				beforeMapping1 = "val1";
+				beforeMapping2 = "val2";
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val2");
+						done();
+					});
+			});
+			it('Powinien zwrócić null gdy podamy "val1" i "val2" i entryMapSource ma jakikolwiek klucz', function (done) {
+				beforeMapping1 = "val1";
+				beforeMapping2 = "val2";
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.null;
 						done();
 					});
 			});
