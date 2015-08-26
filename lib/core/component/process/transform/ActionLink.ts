@@ -9,37 +9,27 @@ import IProcessObject = require("./../IProcessObject");
 /**
  * Tworzy listę uri na podstawie podanej akcji i danych wejściowych które zrobią populację parametrów akcji
  * Dane wejściowe mogą również wypełnić query akcji
- * Możemy wskazać osobne źródło do query akcji lub nie wypełniać (query akcji zawiera parametry opcjonalne)
+ * Zawsze zwraca listę obiektów gdzie obiekt ma {uri:string; name:string}
+ * Jeśli damy dwie akcje a źródło ma dwa obiekty to otrzymamy dla każdego obiektu i każdej akcji link, a więc wynikowo
+ * będzie to tablica z 4 obiektami linków
  */
 class ActionLink extends BaseNode {
 	private _actionList: BaseAction[];
-	/**
-	 * Dane wejściowe wypełnią również query akcji
-	 * Domyślnie nie wypełniają
-	 * Możemy wskazać osobne źródło na populację Query - wtedy ten parametr jest nieużywany
-	 */
-	private _isEntryQueryMap: boolean;
-	private _nameFromEntry: string;
-	private _nameFromQuery: string;
-	private _isNameFromAction: boolean;
+	private _nameFromSource: string;
 	constructor(processModel: ProcessModel) {
 		super(processModel)
 		this._actionList = [];
-		this._isEntryQueryMap = false;
-		this._isNameFromAction = false;
 		this.initDebug("node:ActionLink");
 	}
 	public addAction(action: BaseAction) {
 		this._actionList.push(action);
 	}
+	/**
+	 * Domyślnie nazwy linków są z nazwy akcji. Możemy jednak wybrać z źródłowych danych pole które będzie nazwą
+	 * @param {string} v nazwa pola w enty object/array object
+	 */
 	public setNameFromEntrySource(v:string){
-		this._nameFromEntry = v;
-	}
-	public setNameFromQuerySource(v: string) {
-		this._nameFromQuery = v;
-	}
-	public setNameFromActionName() {
-		this._isNameFromAction = true;
+		this._nameFromSource = v;
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (response) => void) => {
@@ -50,18 +40,14 @@ class ActionLink extends BaseNode {
 			if (entryMappedSource) {
 				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
 					for (var i = 0; i < entryMappedSource.length; i++) {
-						var element = [];
 						for (var j = 0; j < this._actionList.length; j++) {
-							element.push(this.createUri(this._actionList[j], entryMappedSource[i], processEntryList, request));
+							processResponse.push(this.createUri(this._actionList[j], entryMappedSource[i], processEntryList, request));
 						}
-						processResponse.push(element);
 					}
 				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
-					var element = [];
 					for (var j = 0; j < this._actionList.length; j++) {
-						element.push(this.createUri(this._actionList[j], entryMappedSource, processEntryList, request));
+						processResponse.push(this.createUri(this._actionList[j], entryMappedSource, processEntryList, request));
 					}
-					processResponse.push(element);
 				} else {
 					var element = [];
 					for (var j = 0; j < this._actionList.length; j++) {
@@ -83,20 +69,18 @@ class ActionLink extends BaseNode {
 	protected createUri(action: BaseAction, dataObject: Object, processEntryList: any[], request: Request): Object {
 		var response = new Object();
 		if (dataObject) {
-			response['uri'] = action.populateRoutePath(dataObject);
+			response['uri'] = action.populateRoutePathWithQuery(dataObject, dataObject);
 		} else {
 			response['uri'] = action.getRoutePath(false);
 		}
-		if (this._isEntryQueryMap === true){
 
-		}
-		if (this._nameFromEntry && dataObject) {
-			if (dataObject[this._nameFromEntry]) {
-				response['name'] = dataObject[this._nameFromEntry];
+		if (this._nameFromSource && dataObject) {
+			if (dataObject[this._nameFromSource]) {
+				response['name'] = dataObject[this._nameFromSource];
 			} else{//nie chcemy by nazwa była undefined więc dajemy nazwę akcji
 				response['name'] = action.name;
 			}
-		} else if (this._isNameFromAction){
+		} else {
 			response['name'] = action.name;
 		}
 		return response;

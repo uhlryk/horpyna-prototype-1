@@ -123,7 +123,7 @@ class BaseAction extends RouteComponent {
 	 * Zwraca route path z parametrami których wartości są z routeData i z polami query z wartościami z queryData
 	 * @param  {Object} routeData dane do wypełnienia PARAM z adresu
 	 * @param  {Object} queryData dane do wypełnienia z QUERY z adresu
-	 * @return {string}           ścieżka do akcji z parametrami i query (nie muszą być wszystkie query)
+	 * @return {string}           ścieżka do akcji z parametrami i query (nie muszą być wszystkie query.)
 	 */
 	public populateRoutePathWithQuery(routeData:Object, queryData:Object):string{
 		var routePath = this.populateRoutePath(routeData);
