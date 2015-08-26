@@ -25,19 +25,19 @@ class OnListResource extends Core.Node.ProcessModel {
 		listNode.setSize(Core.Action.FieldType.QUERY_FIELD,"s");
 
 		//O => Find	=> ObjectToElement
-		var objectElementNode = new Core.Node.Modify.ObjectToElement(this);
+		var objectElementNode = new Core.Node.Transform.ObjectToElement(this);
 		listNode.addChildNode(objectElementNode);
 		objectElementNode.elementKey("list");
 
 		//O => Find	=> ObjectToElement => FileLinks
-		var fileLinksNode = new Core.Node.Modify.FileLinks(this);
+		var fileLinksNode = new Core.Node.Transform.FileLinks(this);
 		fileLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		objectElementNode.addChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink
-		var addActionLinksNode = new Core.Node.Modify.ActionLink(this);
+		var addActionLinksNode = new Core.Node.Transform.ActionLink(this);
 		addActionLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		fileLinksNode.addChildNode(addActionLinksNode);
 		addActionLinksNode.addAction(this._module.updateAction.formAction);
@@ -45,21 +45,21 @@ class OnListResource extends Core.Node.ProcessModel {
 		addActionLinksNode.addAction(this._module.detailAction);
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink => ElementToObject
-		var actionNavNode = new Core.Node.Modify.ElementToObject(this);
+		var actionNavNode = new Core.Node.Transform.ElementToObject(this);
 		addActionLinksNode.addChildNode(actionNavNode);
 		actionNavNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		actionNavNode.setKey("nav");
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink => ElementToObject => CombineObject
 		//O => Find	=> ObjectToElement => FileLinks => CombineObject
-		var combineNode = new Core.Node.Modify.CombineObject(this);
+		var combineNode = new Core.Node.Transform.CombineObject(this);
 		fileLinksNode.addChildNode(combineNode);
 		actionNavNode.addChildNode(combineNode);
 		combineNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		combineNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		combineNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
 		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
-		combineNode.setCombineMethod(Core.Node.Modify.CombineObject.NTH_WITH_NTH);
+		combineNode.setCombineMethod(Core.Node.Transform.CombineObject.NTH_WITH_NTH);
 
 		//combineNode => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData(this);
@@ -68,7 +68,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		sendDataNode.setView("horpyna/jade/listAction");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject
-		var keyListNode = new Core.Node.Modify.UniqueKeyList(this);
+		var keyListNode = new Core.Node.Transform.UniqueKeyList(this);
 		objectElementNode.addChildNode(keyListNode);
 		keyListNode.setKey("o");
 
@@ -79,11 +79,11 @@ class OnListResource extends Core.Node.ProcessModel {
 		orderSendDataNode.setResponseKey("order");
 
 		//O => Empty
-		var emptyNode = new Core.Node.Modify.Empty(this);
+		var emptyNode = new Core.Node.Transform.Empty(this);
 		this.addChildNode(emptyNode);
 
 		//O => Empty => ActionLink
-		var addSecondaryActionLinksNode = new Core.Node.Modify.ActionLink(this);
+		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink(this);
 		emptyNode.addChildNode(addSecondaryActionLinksNode);
 		addSecondaryActionLinksNode.addAction(this._module.createAction.formAction);
 

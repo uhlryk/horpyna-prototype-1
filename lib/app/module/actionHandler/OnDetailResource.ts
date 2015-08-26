@@ -29,34 +29,34 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		redirectNode.setTargetAction(this._module.listAction);
 
 		//O => Find => If +> FileLinks
-		var fileLinksNode = new Core.Node.Modify.FileLinks(this);
+		var fileLinksNode = new Core.Node.Transform.FileLinks(this);
 		// fileLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		ifNode.addPositiveChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
 		//O => Find => If +> FileLinks => ActionLink
-		var addActionLinksNode = new Core.Node.Modify.ActionLink(this);
+		var addActionLinksNode = new Core.Node.Transform.ActionLink(this);
 		fileLinksNode.addChildNode(addActionLinksNode);
 		addActionLinksNode.addAction(this._module.updateAction.formAction);
 		addActionLinksNode.addAction(this._module.deleteAction.formAction);
 
 		//O => Find => If +> FileLinks => ActionLink => ElementToObject
-		var actionNavNode = new Core.Node.Modify.ElementToObject(this);
+		var actionNavNode = new Core.Node.Transform.ElementToObject(this);
 		addActionLinksNode.addChildNode(actionNavNode);
 		actionNavNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		actionNavNode.setKey("nav");
 
 		//O => Find => If +> FileLinks => ActionLink => ElementToObject => CombineObject
 		//O => Find => If +> FileLinks => CombineObject
-		var combineNode = new Core.Node.Modify.CombineObject(this);
+		var combineNode = new Core.Node.Transform.CombineObject(this);
 		fileLinksNode.addChildNode(combineNode);
 		actionNavNode.addChildNode(combineNode);
 		combineNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		combineNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		combineNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
 		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		combineNode.setCombineMethod(Core.Node.Modify.CombineObject.NTH_WITH_NTH);
+		combineNode.setCombineMethod(Core.Node.Transform.CombineObject.NTH_WITH_NTH);
 
 		//CombineObject => SendData	=> X
 		var sendDataNode = new Core.Node.Response.SendData(this);
@@ -64,11 +64,11 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		sendDataNode.setView("horpyna/jade/detailAction");
 
 		//O => Empty
-		var emptyNode = new Core.Node.Modify.Empty(this);
+		var emptyNode = new Core.Node.Transform.Empty(this);
 		this.addChildNode(emptyNode);
 
 		//O => Empty => ActionLink
-		var addSecondaryActionLinksNode = new Core.Node.Modify.ActionLink(this);
+		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink(this);
 		emptyNode.addChildNode(addSecondaryActionLinksNode);
 		addSecondaryActionLinksNode.addAction(this._module.createAction.formAction);
 		addSecondaryActionLinksNode.addAction(this._module.listAction);
