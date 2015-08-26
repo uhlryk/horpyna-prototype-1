@@ -101,7 +101,7 @@ class BaseAction extends RouteComponent {
 		return routePath;
 	}
 	/**
-	 * Wraca routePath ale z parametrami które są zastąpione wartościami znajdującymi się w obiekcie 'data'
+	 * Zwraca routePath ale z parametrami które są zastąpione wartościami znajdującymi się w obiekcie 'data'
 	 * @param  {Object} data obiekt zawierający pary paramname:paramvalue
 	 * @return {string}      grandparentcomponent/parentcomponent/thiscomponent/val1/val2/val3
 	 */
@@ -117,6 +117,26 @@ class BaseAction extends RouteComponent {
 				routePath = routePath + "/" + value;
 			}
 		};
+		return routePath;
+	}
+	/**
+	 * Zwraca route path z parametrami których wartości są z routeData i z polami query z wartościami z queryData
+	 * @param  {Object} routeData dane do wypełnienia PARAM z adresu
+	 * @param  {Object} queryData dane do wypełnienia z QUERY z adresu
+	 * @return {string}           ścieżka do akcji z parametrami i query (nie muszą być wszystkie query)
+	 */
+	public populateRoutePathWithQuery(routeData:Object, queryData:Object):string{
+		var routePath = this.populateRoutePath(routeData);
+		for (var index in this.fieldList) {
+			var field: Field = this.fieldList[index];
+			if (field.getType() === FieldType.QUERY_FIELD) {
+				var value = queryData[field.getFieldName()];
+				//ponieważ query data powinna być opcjonalna to gdy brak wartości danego pola to go nie wypełniamy
+				if(value !== undefined){
+					routePath = Util.Uri.updateQuery(routePath, field.getFieldName(), value);
+				}
+			}
+		}
 		return routePath;
 	}
 	public getMethod():string {
