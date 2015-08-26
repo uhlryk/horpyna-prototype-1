@@ -1,6 +1,6 @@
 export import FileLinks = require("./FileLinks");
 export import ActionLink = require("./ActionLink");
-export import UniqueKeyList = require("./UniqueKeyList");
+export import UniqueKey = require("./UniqueKey");
 export import Empty = require("./Empty");
 export import ObjectToElement = require("./ObjectToElement");
 export import ElementToObject = require("./ElementToObject");

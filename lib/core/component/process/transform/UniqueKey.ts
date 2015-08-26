@@ -10,12 +10,12 @@ import ProcessModel = require("./../ProcessModel");
  * zwraca listę kluczy unikalnych; jeśli źródłem była lista obiektów to zwróci listę list unikalnych kluczy
  * jeśli źródłem była lista wartości to weźmie unikaty; jeśli źródłem była wartość to wrzuci ją w listę
  */
-class UniqueKeyList extends BaseNode{
+class UniqueKey extends BaseNode{
 	private _key: string;
 	constructor(processModel: ProcessModel) {
 		super(processModel);
 		this._key = "0";
-		this.initDebug("node:UniqueKeyList");
+		this.initDebug("node:UniqueKey");
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (response) => void) => {
@@ -60,4 +60,4 @@ class UniqueKeyList extends BaseNode{
 		this._key = v;
 	}
 }
-export = UniqueKeyList;
+export = UniqueKey;

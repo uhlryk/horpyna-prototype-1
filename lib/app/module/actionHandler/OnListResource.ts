@@ -68,7 +68,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		sendDataNode.setView("horpyna/jade/listAction");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject
-		var keyListNode = new Core.Node.Transform.UniqueKeyList(this);
+		var keyListNode = new Core.Node.Transform.UniqueKey(this);
 		objectElementNode.addChildNode(keyListNode);
 		keyListNode.setKey("o");
 
