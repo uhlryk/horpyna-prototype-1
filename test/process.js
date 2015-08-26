@@ -409,7 +409,18 @@ describe("Funkcje ProcessModel Nodes", function() {
 						done();
 					});
 			});
-			it('Powinien zwrócić [] gdy podamy ["val5","val6"] i entryMapSource ma jakikolwiek klucz', function (done) {
+			it('Powinien zwrócić ["val6"] gdy podamy ["val5","val6"] i entryMapSource ma klucz odpowiadający indexowi', function (done) {
+				beforeMapping = ["val5","val6"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["1"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.length(1);
+						expect(afterMapping[0]).to.be.equal("val6");
+						done();
+					});
+			});
+			it('Powinien zwrócić [] gdy podamy ["val5","val6"] i entryMapSource ma nieistniejący klucz', function (done) {
 				beforeMapping = ["val5","val6"];
 				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
@@ -505,7 +516,17 @@ describe("Funkcje ProcessModel Nodes", function() {
 						done();
 					});
 			});
-			it('Powinien zwrócić null gdy podamy ["val5","val6"] i entryMapSource ma jakikolwiek klucz', function (done) {
+			it('Powinien zwrócić "val6" gdy podamy ["val5","val6"] i entryMapSource ma klucz na podstawie istniejącego indexu', function (done) {
+				beforeMapping = ["val5","val6"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["1"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping).to.be.equal("val6");
+						done();
+					});
+			});
+			it('Powinien zwrócić null gdy podamy ["val5","val6"] i entryMapSource ma nieistniejący klucz', function (done) {
 				beforeMapping = ["val5","val6"];
 				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
@@ -889,7 +910,19 @@ describe("Funkcje ProcessModel Nodes", function() {
 						done();
 					});
 			});
-			it('Powinien zwrócić [] gdy podamy ["val5"] i ["val6"] i entryMapSource ma jakikolwiek klucz', function (done) {
+			it('Powinien zwrócić ["val5", "val6"] gdy podamy ["val5"] i ["val6"] i entryMapSource ma klucz będący indexem ["0"]', function (done) {
+				beforeMapping1 = ["val5"];
+				beforeMapping2 = ["val6"];
+				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["0"]);
+				request(app).get("/process/myAction")
+					.end(function (err, res) {
+						expect(afterMapping[0]).to.be.equal("val5");
+						expect(afterMapping[1]).to.be.equal("val6");
+						done();
+					});
+			});
+			it('Powinien zwrócić [] gdy podamy ["val5"] i ["val6"] i entryMapSource ma nieistniejący klucz', function (done) {
 				beforeMapping1 = ["val5"];
 				beforeMapping2 = ["val6"];
 				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
