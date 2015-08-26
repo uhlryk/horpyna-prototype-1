@@ -1,12 +1,10 @@
 run:
 	@DEBUG=server node js/index.js
 
-test:
-	@NODE_ENV=test ./node_modules/.bin/mocha --check-leaks --timeout 3000 test \
+cover:
+	./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test --print both --recursive
 
-#wywołuje pojedyńczy test
-#make testone file=<nazwapliku bez .js>
-testone:
-	@DEBUG=server NODE_ENV=test ./node_modules/.bin/mocha --check-leaks --timeout 17000 test/$(file) \
+complex:
+	./node_modules/.bin/plato -r -d plato js && open plato/index.html
 
 .PHONY: test

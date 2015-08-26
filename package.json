@@ -33,8 +33,10 @@
     "gulp": "^3.9.0",
     "gulp-todo": "^3.1.1",
     "gulp-typescript": "^2.7.8",
+    "istanbul": "^0.3.18",
     "merge2": "^0.3.6",
     "mocha": "^2.2.5",
+    "plato": "^1.5.0",
     "superagent": "^1.2.0",
     "supertest": "^1.0.1"
   }

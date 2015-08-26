@@ -8,3 +8,5 @@ typings
 *.sublime-project
 *.sublime-workspace
 log
+coverage
+plato
