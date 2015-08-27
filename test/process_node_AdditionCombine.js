@@ -17,30 +17,24 @@ describe("Testy Node transform.AdditionCombine", function() {
 		myModule.addAction(myAction);
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
-		var myNode1a = new Core.Node.BaseNode(myProcessModel);
-		myProcessModel.addChildNode(myNode1a);
+		var myNode1a = new Core.Node.BaseNode([myProcessModel]);
 		myNode1a.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
 				resolve(beforeMapping1);
 			});
 		});
-		var myNode1b = new Core.Node.BaseNode(myProcessModel);
-		myProcessModel.addChildNode(myNode1b);
+		var myNode1b = new Core.Node.BaseNode([myProcessModel]);
 		myNode1b.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
 				resolve(beforeMapping2);
 			});
 		});
 
-		testNode = new Core.Node.Transform.AdditionCombine(myProcessModel);
-		myNode1a.addChildNode(testNode);
-		myNode1b.addChildNode(testNode);
+		testNode = new Core.Node.Transform.AdditionCombine([myNode1a,myNode1b]);
 		testNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		testNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
 
-
-		myNode2 = new Core.Node.BaseNode(myProcessModel);
-		testNode.addChildNode(myNode2);
+		myNode2 = new Core.Node.BaseNode([testNode]);
 		myNode2.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
 				afterMapping = myNode2.getEntryMappedByType(processEntryList, request);

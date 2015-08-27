@@ -7,8 +7,8 @@ import Request = require("./../../routeComponent/module/action/Request");
 import ProcessModel = require("./../ProcessModel");
 class FileLinks extends ChangeObjectElement{
 	private _action: BaseAction;
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:FileLinks");
 	}
 	/**

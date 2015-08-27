@@ -7,8 +7,8 @@ import Util = require("./../../../util/Util");
  */
 class Combine extends BaseNode{
 	private _secondaryType: string;
-	constructor(processModel: ProcessModel) {
-		super(processModel)
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:Combine");
 	}
 	/**

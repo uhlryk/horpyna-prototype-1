@@ -6,8 +6,8 @@ import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
 import ProcessModel = require("./../ProcessModel");
 class List extends BaseDbNode {
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:List");
 	}
 	/**

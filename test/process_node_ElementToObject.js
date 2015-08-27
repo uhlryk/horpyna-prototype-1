@@ -17,17 +17,14 @@ describe("Testy Node transform.ElementToObject", function() {
 		myModule.addAction(myAction);
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
-		myNode1 = new Core.Node.BaseNode(myProcessModel);
-		myProcessModel.addChildNode(myNode1);
+		myNode1 = new Core.Node.BaseNode([myProcessModel]);
 		myNode1.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
 				resolve(beforeMapping);
 			});
 		});
-		testNode = new Core.Node.Transform.ElementToObject(myProcessModel);
-		myNode1.addChildNode(testNode);
-		myNode2 = new Core.Node.BaseNode(myProcessModel);
-		testNode.addChildNode(myNode2);
+		testNode = new Core.Node.Transform.ElementToObject([myNode1]);
+		myNode2 = new Core.Node.BaseNode([testNode]);
 		myNode2.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
 				afterMapping = myNode2.getEntryMappedByType(processEntryList, request);

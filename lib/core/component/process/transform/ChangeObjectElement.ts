@@ -10,8 +10,8 @@ import ProcessModel = require("./../ProcessModel");
  * Pozwala zmodyfikować pole w obiekcie lub w tablicy obiektów
  */
 class ChangeObjectElement extends BaseNode {
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:ChangeObjectElement");
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {

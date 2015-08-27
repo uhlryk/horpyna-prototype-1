@@ -4,8 +4,8 @@ import Util = require("./../../../util/Util");
 import ProcessModel = require("./../ProcessModel");
 class BaseDbNode extends BaseNode {
 	private model: Model;
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:BaseDbNode");
 	}
 	public setModel(model: Model) {

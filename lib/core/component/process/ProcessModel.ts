@@ -18,7 +18,8 @@ class ProcessModel extends BaseNode{
 	private _allNodeList: BaseNode[];
 	constructor(){
 		this._allNodeList = [];
-		super(this);
+		this.setProcessModel(this);
+		super();
 		this.initDebug("process");
 		this._actionHandler = this.actionHandler;
 	}

@@ -1,4 +1,5 @@
 import Combine = require("./Combine");
+import BaseNode = require("./../BaseNode");
 import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
 import ProcessModel = require("./../ProcessModel");
@@ -13,8 +14,8 @@ import IProcessObject = require("./../IProcessObject");
  * druga wartość z z każdą z drugiego kanału wartością
  */
 class MultiplicationCombine extends Combine {
-	constructor(processModel: ProcessModel) {
-		super(processModel)
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList)
 		this.initDebug("node:MultiplicationCombine");
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {

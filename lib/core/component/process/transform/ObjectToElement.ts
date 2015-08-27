@@ -14,8 +14,8 @@ import ProcessModel = require("./../ProcessModel");
  */
 class ObjectToElement extends BaseNode {
 	private _key: string;
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:ObjectToElement");
 	}
 	public elementKey(key: string) {

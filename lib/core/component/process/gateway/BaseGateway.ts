@@ -5,8 +5,8 @@ import IConnection = require("./../IConnection");
 class BaseGateway extends BaseNode {
 	private _positiveNode: BaseNode[];
 	private _negativeNode: BaseNode[];
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:BaseGatway");
 		this._positiveNode = []
 		this._negativeNode = []

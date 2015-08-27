@@ -20,15 +20,13 @@ describe("Funkcje ProcessModel Nodes", function() {
 			var myProcessModel = new Core.Node.ProcessModel();
 			myAction.setActionHandler(myProcessModel.getActionHandler());
 
-			var myNode1 = new Core.Node.BaseNode(myProcessModel);
-			myProcessModel.addChildNode(myNode1);
+			var myNode1 = new Core.Node.BaseNode([myProcessModel]);
 			myNode1.setContent(function(processEntryList, request, response, processList) {
 				return new Core.Util.Promise(function(resolve){
 					resolve(beforeMapping);
 				});
 			});
-			myNode2 = new Core.Node.BaseNode(myProcessModel);
-			myNode1.addChildNode(myNode2);
+			myNode2 = new Core.Node.BaseNode([myNode1]);
 			myNode2.setContent(function(processEntryList, request, response, processList) {
 				return new Core.Util.Promise(function(resolve){
 					afterMapping = myNode2.getEntryMappedByType(processEntryList, request);
@@ -601,23 +599,19 @@ describe("Funkcje ProcessModel Nodes", function() {
 			var myProcessModel = new Core.Node.ProcessModel();
 			myAction.setActionHandler(myProcessModel.getActionHandler());
 
-			var myNode1a = new Core.Node.BaseNode(myProcessModel);
-			myProcessModel.addChildNode(myNode1a);
+			var myNode1a = new Core.Node.BaseNode([myProcessModel]);
 			myNode1a.setContent(function(processEntryList, request, response, processList) {
 				return new Core.Util.Promise(function(resolve){
 					resolve(beforeMapping1);
 				});
 			});
-			var myNode1b = new Core.Node.BaseNode(myProcessModel);
-			myProcessModel.addChildNode(myNode1b);
+			var myNode1b = new Core.Node.BaseNode([myProcessModel]);
 			myNode1b.setContent(function(processEntryList, request, response, processList) {
 				return new Core.Util.Promise(function(resolve){
 					resolve(beforeMapping2);
 				});
 			});
-			myNode2 = new Core.Node.BaseNode(myProcessModel);
-			myNode1a.addChildNode(myNode2);
-			myNode1b.addChildNode(myNode2);
+			myNode2 = new Core.Node.BaseNode([myNode1a, myNode1b]);
 			myNode2.setContent(function(processEntryList, request, response, processList) {
 				return new Core.Util.Promise(function(resolve){
 					afterMapping = myNode2.getEntryMappedByType(processEntryList, request);

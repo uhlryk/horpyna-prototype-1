@@ -1,4 +1,5 @@
 import BaseGateway = require("./BaseGateway");
+import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
 import Query = require("./../../routeComponent/module/query/Query");
 import Response = require("./../../routeComponent/module/action/Response");
@@ -10,8 +11,8 @@ import ProcessModel = require("./../ProcessModel");
  * Node zwraca obiekt z danym wpisem w bazie danych
  */
 class IfExist extends BaseGateway {
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:IfExist");
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {

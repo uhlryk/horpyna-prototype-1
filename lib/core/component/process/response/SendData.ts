@@ -7,8 +7,8 @@ import ProcessModel = require("./../ProcessModel");
 class SendData extends BaseNode{
 	private _view: string;
 	private _key: string;
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:SendData");
 	}
 	public setView(v:string){

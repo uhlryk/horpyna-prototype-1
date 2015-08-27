@@ -16,8 +16,8 @@ import IProcessObject = require("./../IProcessObject");
 class ActionLink extends BaseNode {
 	private _actionList: BaseAction[];
 	private _nameFromSource: string;
-	constructor(processModel: ProcessModel) {
-		super(processModel)
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this._actionList = [];
 		this.initDebug("node:ActionLink");
 	}

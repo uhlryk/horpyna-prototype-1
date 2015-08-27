@@ -11,8 +11,8 @@ import ProcessModel = require("./../ProcessModel");
  */
 class Redirect extends BaseNode {
 	private _action: BaseAction;
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:Redirect");
 	}
 	/**

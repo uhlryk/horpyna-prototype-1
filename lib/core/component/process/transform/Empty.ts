@@ -9,8 +9,8 @@ import ProcessModel = require("./../ProcessModel");
  * Niezależnie co otrzyma zwraca null
  */
 class Empty extends BaseNode {
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:Empty");
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {

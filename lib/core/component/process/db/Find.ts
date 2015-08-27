@@ -9,8 +9,8 @@ import ProcessModel = require("./../ProcessModel");
  * Node zwraca obiekt z danym wpisem w bazie danych
  */
 class Find extends BaseDbNode {
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this.initDebug("node:Find");
 	}
 	/**

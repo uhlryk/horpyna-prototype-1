@@ -13,6 +13,7 @@ class BaseNode extends Element {
 	 * Index jaki node ma na liście w danym processModel
 	 */
 	private _processId: number;
+	private _processModel: ProcessModel;
 	/**
 	 * budując diagram musimy określić dla jakiego modelu jest ten element
 	 * @param {ProcessModel} processModel obiekt danego modelu dla któ®ego są te elementy
@@ -20,27 +21,35 @@ class BaseNode extends Element {
 	private _nodeMapper: NodeMapper;
 	private _entryType: string;
 	private _content: (processEntryList: any[], request: Request, response: Response, processList: IProcessObject[])=> Util.Promise<any>;
-	constructor(processModel:ProcessModel){
+	constructor(parentNodeList?:BaseNode[]){
 		super();
 		this.initDebug("node:");
 		this._content = this.content;
 		this._nodeMapper = new NodeMapper();
 		this._nodeMapper.addDefaultMapSource("entry_source", NodeMapper.RESPONSE_NODE);
 		this._childNodeList = [];
-		this._parentNodeList = [];
-		if (processModel) {
-			this._processId = processModel.addNode(this);
+		if (parentNodeList) {
+			this._parentNodeList = parentNodeList;
+			for (var i = 0; i < this._parentNodeList.length; i++) {
+				var parent = this._parentNodeList[i];
+				parent.addChildNode(this);
+			}
+			this.setProcessModel(this._parentNodeList[0].processModel);
 		}
+		this._processId = this.processModel.addNode(this);
 		this._entryType = NodeMapper.MAP_OBJECT;
+	}
+	protected setProcessModel(v:ProcessModel){
+		this._processModel = v;
+	}
+	public get processModel(): ProcessModel {
+		return this._processModel;
 	}
 	public get processId():number{
 		return this._processId;
 	}
 	/**
 	 * Metoda mapująca, opis pul przy this._mapSource
-	 * @param {string}   name [description]
-	 * @param {string}   sourceType [description]
-	 * @param {string[]} key  [description]
 	 */
 	public addMapSource(name:string, sourceType:string, key?:string[]){
 		this._nodeMapper.addMapSource(name, sourceType, key);
@@ -83,19 +92,9 @@ class BaseNode extends Element {
 	 */
 	public addChildNode(node:BaseNode){
 		this._childNodeList.push(node);
-		node.addParentNode(this);
 	}
 	public get childNodes():BaseNode[]{
 		return this._childNodeList;
-	}
-	/**
-	 * Samo się ustawia w addChildNode. Po dodaniu child Node, ten ustawia sobie w danym Node ParentNode'a
-	 */
-	public addParentNode(node: BaseNode) {
-		this._parentNodeList.push(node);
-	}
-	public get parentNodes():BaseNode[]{
-		return this._parentNodeList;
 	}
 	/**
 	 * Wywołania w request

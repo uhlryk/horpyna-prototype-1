@@ -14,8 +14,8 @@ class ObjectAddElement extends BaseNode {
 	private _keyValueMapBefore: string[];
 	private _keyValueAfter: Object;
 	private _keyValueMapAfter: string[];
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList: BaseNode[]) {
+		super(parentNodeList);
 		this._keyValueBefore = new Object();
 		this._keyValueAfter = new Object();
 		this._keyValueMapAfter = Object();

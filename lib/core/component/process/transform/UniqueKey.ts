@@ -12,8 +12,8 @@ import ProcessModel = require("./../ProcessModel");
  */
 class UniqueKey extends BaseNode{
 	private _key: string;
-	constructor(processModel: ProcessModel) {
-		super(processModel);
+	constructor(parentNodeList:BaseNode[]) {
+		super(parentNodeList);
 		this._key = "0";
 		this.initDebug("node:UniqueKey");
 	}
