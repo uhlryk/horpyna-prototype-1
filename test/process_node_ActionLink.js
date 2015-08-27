@@ -74,7 +74,7 @@ describe("Testy Node transform.ActionLink", function() {
 		testNode.addAction(testAction1);
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
-			.end(function (err, res) {
+			.end(function (err, res) {A
 				expect(afterMapping).to.be.length(1);
 				expect(afterMapping[0]).to.include.property("uri","/process/testAction1/0/0");
 				expect(afterMapping[0]).to.include.property("name","testAction1");
