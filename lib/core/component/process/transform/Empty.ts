@@ -6,7 +6,7 @@ import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 import ProcessModel = require("./../ProcessModel");
 /**
- * Niezależnie co otrzyma zwraca null
+ * Niezależnie co otrzyma zwraca []
  */
 class Empty extends BaseNode {
 	constructor(parentNodeList: BaseNode[]) {
@@ -16,7 +16,7 @@ class Empty extends BaseNode {
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (response) => void) => {
 			this.debug("begin");
-			resolve(null);
+			resolve([]);
 		});
 	}
 }

@@ -8,7 +8,7 @@ var myApp;
 
 describe("Funkcje ProcessModel Nodes", function() {
 	describe("Testowanie mapowania danych z jednego źródła", function () {
-		var myNode2, beforeMapping, afterMapping;
+		var myNode2, beforeMapping, afterMapping, mapType;
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
@@ -29,7 +29,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			myNode2 = new Core.Node.BaseNode([myNode1]);
 			myNode2.setContent(function(processEntryList, request, response, processList) {
 				return new Core.Util.Promise(function(resolve){
-					afterMapping = myNode2.getEntryMappedByType(processEntryList, request);
+					afterMapping = myNode2.getMappedSource("entry_source", mapType, processEntryList, request);
 					resolve(null);
 				});
 			});
@@ -40,7 +40,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 		describe("Gdy mamy ustawiony typ mapowania MAP_OBJECT_ARRAY", function () {
 			it('Powinien zwrócić [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -54,7 +54,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [{k2:"v2"},{k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i entryMapSource ma key ["k2"]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["k2"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -68,7 +68,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [["v1","v2"],["v1","v3"]] gdy podamy [["v1","v2"],["v1","v3"]]', function (done) {
 				beforeMapping = [["v1","v2"],["v1","v3"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -84,7 +84,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [["v2"],["v3"]] gdy podamy [["v1","v2"],["v1","v3"]] i entryMapSource ma key ["1"]', function (done) {
 				beforeMapping = [["v1","v2"],["v1","v3"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -98,7 +98,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [["v1","v2"],["v1","v3"]] gdy podamy [["v1","v2"],["v1","v3"]] i entryMapSource ma key ["0","1"]', function (done) {
 				beforeMapping = [["v1","v2"],["v1","v3"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["0","1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -114,7 +114,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [["v1","v2"],{k2:"v2",k3:"v1"}] gdy podamy [["v1","v2"],{k2:"v2",k3:"v1"}]', function (done) {
 				beforeMapping = [["v1","v2"],{k2:"v2",k3:"v1"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -129,7 +129,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [["v1"],{k3:"v1"}] gdy podamy [["v1","v2"],{k2:"v2",k3:"v1"}] i entryMapSource ma key ["k3","0"]', function (done) {
 				beforeMapping = [["v1","v2"],{k2:"v2",k3:"v1"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["k3", "0"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -143,7 +143,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [{k1:"v1",k2:"v2"}] gdy podamy {k1:"v1",k2:"v2"}', function (done) {
 				beforeMapping = {k1:"v1",k2:"v2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -155,7 +155,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [{k1:"v1"}] gdy podamy {k1:"v1",k2:"v2"} i określimy że entryMapSource ma key ["k1"]', function (done) {
 				beforeMapping = {k1:"v1",k2:"v2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["k1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -167,7 +167,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [{k1:"v1"}] gdy podamy {k1:"v1",k2:"v2"} i entryMapSource ma key ["dummyKey"]', function (done) {
 				beforeMapping = {k1:"v1",k2:"v2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummyKey"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -179,7 +179,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [] gdy podamy ["v1","v2"]', function (done) {
 				beforeMapping = ["v1","v2"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -189,7 +189,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [{k1:"v1",k2:"v2"}] gdy podamy ["v1","v2",{k1:"v1",k2:"v2"}]', function (done) {
 				beforeMapping = ["v1","v2",{k1:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -201,7 +201,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [{k1:"v1"}] gdy podamy ["v1","v2",{k1:"v1",k2:"v2"}] i entryMapSource ma key ["k1"]', function (done) {
 				beforeMapping = ["v1","v2",{k1:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["k1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -213,7 +213,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [] gdy podamy "v1"', function (done) {
 				beforeMapping = "v1";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -223,7 +223,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [] gdy podamy obiekt new Date', function (done) {
 				beforeMapping = new Date();
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -233,7 +233,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [] gdy podamy null', function (done) {
 				beforeMapping = null;
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -245,7 +245,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 		describe("Gdy mamy ustawiony typ mapowania MAP_OBJECT", function () {
 			it('Powinien zwrócić {k1:"v1",k2:"v4",k3:"v2"} gdy podamy [{k1:"v1",k2:"v2"},{k3:"v2",k2:"v4"}]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v2",k2:"v4"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -257,7 +257,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {k1:"v1"} gdy podamy [{k1:"v1",k2:"v2"},{k3:"v2",k2:"v4"}] i entryMapSource ma key ["k1"]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v2",k2:"v4"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["k1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -269,7 +269,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {0:"v1",1:"v3"} gdy podamy [["v1","v2"],["v1","v3"]]', function (done) {
 				beforeMapping = [["v1","v2"],["v1","v3"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -280,7 +280,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {0:"v1",1:"v3", k1:"v1"} gdy podamy typ mieszany [["v1","v3"],{k1:"v1"}]', function (done) {
 				beforeMapping = [["v1","v3"],{k1:"v1"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -292,7 +292,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {k1:"v1",k2:"v4"} gdy podamy {k1:"v1",k2:"v4"}', function (done) {
 				beforeMapping = {k1:"v1",k2:"v4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -303,7 +303,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {k1:"v1"} gdy podamy {k1:"v1",k2:"v4"} i entryMapSource ma key ["k1"]', function (done) {
 				beforeMapping = {k1:"v1",k2:"v4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["k1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -314,7 +314,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {} gdy podamy {k1:"v1",k2:"v4"} i entryMapSource ma key ["dummy"]', function (done) {
 				beforeMapping = {k1:"v1",k2:"v4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -325,7 +325,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {} gdy podamy ["v1","v2"] ', function (done) {
 				beforeMapping = ["v1","v2"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -335,7 +335,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {k1:"v1",k2:"v2"} gdy podamy ["v1","v2",{k1:"v1",k2:"v2"}]', function (done) {
 				beforeMapping = ["v1","v2",{k1:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -346,7 +346,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {} gdy podamy "v1" ', function (done) {
 				beforeMapping = "v1";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -356,7 +356,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {} gdy podamy new Date() ', function (done) {
 				beforeMapping = new Date();
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -366,7 +366,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić {} gdy podamy null ', function (done) {
 				beforeMapping = null;
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -378,7 +378,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 		describe("Gdy mamy ustawiony typ mapowania MAP_VALUE_ARRAY", function () {
 			it('Powinien zwrócić [] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -388,7 +388,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić ["val5"] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -398,7 +398,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić ["val5","val6"] gdy podamy ["val5","val6"]', function (done) {
 				beforeMapping = ["val5","val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -409,7 +409,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić ["val6"] gdy podamy ["val5","val6"] i entryMapSource ma klucz odpowiadający indexowi', function (done) {
 				beforeMapping = ["val5","val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -420,7 +420,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [] gdy podamy ["val5","val6"] i entryMapSource ma nieistniejący klucz', function (done) {
 				beforeMapping = ["val5","val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -430,7 +430,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić ["val1","val2"] gdy podamy {key1:"val1",key2:"val2"}', function (done) {
 				beforeMapping = {key1:"val1",key2:"val2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -442,7 +442,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić ["val1"] gdy podamy {key1:"val1",key2:"val2"} i entryMapSource ma klucz ["key1"]', function (done) {
 				beforeMapping = {key1:"val1",key2:"val2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["key1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -453,7 +453,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [] gdy podamy {key1:"val1",key2:"val2"} i entryMapSource ma klucz ["dummy"]', function (done) {
 				beforeMapping = {key1:"val1",key2:"val2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -463,7 +463,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić ["val1"] gdy podamy "val1"', function (done) {
 				beforeMapping = "val1";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -474,7 +474,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić [] gdy podamy "val1" i entryMapSource ma jakikolwiek klucz', function (done) {
 				beforeMapping = "val1";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -486,7 +486,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 		describe("Gdy mamy ustawiony typ mapowania MAP_VALUE", function () {
 			it('Powinien zwrócić null gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -496,7 +496,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić "val5" gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -506,7 +506,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić "val6" gdy podamy ["val5","val6"]', function (done) {
 				beforeMapping = ["val5","val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -516,7 +516,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić "val6" gdy podamy ["val5","val6"] i entryMapSource ma klucz na podstawie istniejącego indexu', function (done) {
 				beforeMapping = ["val5","val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -526,7 +526,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić null gdy podamy ["val5","val6"] i entryMapSource ma nieistniejący klucz', function (done) {
 				beforeMapping = ["val5","val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -536,7 +536,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić "val2" gdy podamy {key1:"val1",key2:"val2"}', function (done) {
 				beforeMapping = {key1:"val1",key2:"val2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -546,7 +546,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić "val1" gdy podamy {key1:"val1",key2:"val2"} i entryMapSource ma klucz ["key1"]', function (done) {
 				beforeMapping = {key1:"val1",key2:"val2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["key1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -556,7 +556,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić null gdy podamy {key1:"val1",key2:"val2"} i entryMapSource ma klucz ["dummy"]', function (done) {
 				beforeMapping = {key1:"val1",key2:"val2"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -566,7 +566,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić "val1" gdy podamy "val1"', function (done) {
 				beforeMapping = "val1";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -576,7 +576,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 			it('Powinien zwrócić null gdy podamy "val1" i entryMapSource ma jakikolwiek klucz', function (done) {
 				beforeMapping = "val1";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -587,7 +587,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 		});
 	});
 	describe("Testowanie mapowania danych z dwóch źródeł", function () {
-		var myNode2, beforeMapping1, beforeMapping2, afterMapping;
+		var myNode2, beforeMapping1, beforeMapping2, afterMapping, mapType;
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
@@ -614,7 +614,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			myNode2 = new Core.Node.BaseNode([myNode1a, myNode1b]);
 			myNode2.setContent(function(processEntryList, request, response, processList) {
 				return new Core.Util.Promise(function(resolve){
-					afterMapping = myNode2.getEntryMappedByType(processEntryList, request);
+					afterMapping = myNode2.getMappedSource("entry_source", mapType, processEntryList, request);
 					resolve(null);
 				});
 			});
@@ -626,7 +626,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"}]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -641,7 +641,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [{k2:"v2"},{k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"}] i entryMapSource ma key ["k2"]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["k2"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -656,7 +656,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [["v1","v2"],["v1","v3"]] gdy podamy [["v1","v2"]] i [["v1","v3"]]', function (done) {
 				beforeMapping1 = [["v1","v2"]];
 				beforeMapping2 = [["v1","v3"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -673,7 +673,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [["v2"],["v3"]] gdy podamy [["v1","v2"]] i [["v1","v3"]] i entryMapSource ma key ["1"]', function (done) {
 				beforeMapping1 = [["v1","v2"]];
 				beforeMapping2 = [["v1","v3"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -688,7 +688,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [["v1","v2"],{k2:"v2",k3:"v1"}] gdy podamy [["v1","v2"]] i [{k2:"v2",k3:"v1"}]', function (done) {
 				beforeMapping1 = [["v1","v2"]];
 				beforeMapping2 = [{k2:"v2",k3:"v1"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -704,7 +704,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [{k1:"v1",k2:"v2"}, {k1:"v1",k3:"v3"}] gdy podamy {k1:"v1",k2:"v2"} i {k1:"v1",k3:"v3"}', function (done) {
 				beforeMapping1 = {k1:"v1",k2:"v2"};
 				beforeMapping2 = {k1:"v1",k3:"v3"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -719,7 +719,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [] gdy podamy ["v1","v2"]i ["v3","v4"]', function (done) {
 				beforeMapping1 = ["v1","v2"];
 				beforeMapping2 = ["v3","v4"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -730,7 +730,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [] gdy podamy "v1" i "v2"', function (done) {
 				beforeMapping1 = "v1";
 				beforeMapping2 = "v2";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -743,7 +743,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {k1:"v1",k2:"v4",k3:"v2"} gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v2",k2:"v4"}]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v2",k2:"v4"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -756,7 +756,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {k1:"v1"} gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v2",k2:"v4"}] i entryMapSource ma key ["k1"]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v2",k2:"v4"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["k1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -769,7 +769,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {0:"v1",1:"v3"} gdy podamy [["v1","v2"]] i [["v1","v3"]]', function (done) {
 				beforeMapping1 = [["v1","v2"]];
 				beforeMapping2 = [["v1","v3"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -781,7 +781,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {0:"v1",1:"v3", k1:"v1"} gdy podamy typ mieszany [["v1","v3"],{k1:"v1"}]', function (done) {
 				beforeMapping1 = [["v1","v3"]];
 				beforeMapping2 = [{k1:"v1"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -794,7 +794,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {k1:"v1",k2:"v4",k3:"v2"} gdy podamy {k1:"v1",k2:"v2"} i {k3:"v2",k2:"v4"}', function (done) {
 				beforeMapping1 = {k1:"v1",k2:"v2"};
 				beforeMapping2 = {k3:"v2",k2:"v4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -807,7 +807,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {k1:"v1"} gdy podamy {k1:"v1",k2:"v2"} i {k3:"v2",k2:"v4"} i entryMapSource ma key ["k1"]', function (done) {
 				beforeMapping1 = {k1:"v1",k2:"v2"};
 				beforeMapping2 = {k3:"v2",k2:"v4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["k1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -820,7 +820,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {} gdy podamy ["v1"] i ["v2"] ', function (done) {
 				beforeMapping1 = ["v1"];
 				beforeMapping2 = ["v2"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -831,7 +831,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić {k1:"v1",k2:"v2","0":"v2","1":"v4"} gdy podamy {k1:"v1",k2:"v2"} i [["v2","v4"]]', function (done) {
 				beforeMapping1 = {k1:"v1",k2:"v2"};
 				beforeMapping2 = [["v2","v4"]];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+				mapType = Core.Node.NodeMapper.MAP_OBJECT;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -847,7 +847,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [] gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"}]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -858,7 +858,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["val5"] gdy podamy [{k1:"v1",k2:"v2"}] i {k3:"v1",k2:"v2"},"val5"]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v1",k2:"v2"},"val5"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -869,7 +869,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["v1","v2","v3"] gdy podamy ["v1"] i {k1:"v2",k2:"v3"}', function (done) {
 				beforeMapping1 = ["v1"];
 				beforeMapping2 = {k1:"v2",k2:"v3"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -883,7 +883,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["v3"] gdy podamy ["v1"] i {k1:"v2",k2:"v3"} i entryMapSource ma klucz ["k2"]', function (done) {
 				beforeMapping1 = ["v1"];
 				beforeMapping2 = {k1:"v2",k2:"v3"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["k2"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -895,7 +895,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["val5","val6"] gdy podamy ["val5"] i ["val6"]', function (done) {
 				beforeMapping1 = ["val5"];
 				beforeMapping2 = ["val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -907,7 +907,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["val5", "val6"] gdy podamy ["val5"] i ["val6"] i entryMapSource ma klucz będący indexem ["0"]', function (done) {
 				beforeMapping1 = ["val5"];
 				beforeMapping2 = ["val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["0"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -919,7 +919,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [] gdy podamy ["val5"] i ["val6"] i entryMapSource ma nieistniejący klucz', function (done) {
 				beforeMapping1 = ["val5"];
 				beforeMapping2 = ["val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -930,7 +930,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["val1","val2","val3","val4"] gdy podamy {key1:"val1",key2:"val2"} i {key1:"val3",key2:"val4"}', function (done) {
 				beforeMapping1 = {key1:"val1",key2:"val2"};
 				beforeMapping2 = {key1:"val3",key2:"val4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -945,7 +945,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["val1","val4"] gdy podamy {key1:"val1",key2:"val2"} i {key1:"val4",key2:"val3"} i entryMapSource ma klucz ["key1"]', function (done) {
 				beforeMapping1 = {key1:"val1",key2:"val2"};
 				beforeMapping2 = {key1:"val4",key2:"val3"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["key1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -958,7 +958,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [] gdy podamy {key1:"val1",key2:"val2"} i {key1:"val5",key2:"val3"} i entryMapSource ma klucz ["dummy"]', function (done) {
 				beforeMapping1 = {key1:"val1",key2:"val2"};
 				beforeMapping2 = {key1:"val5",key2:"val3"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -969,7 +969,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić ["val1", "val2"] gdy podamy "val1"i "val2"', function (done) {
 				beforeMapping1 = "val1";
 				beforeMapping2 = "val2";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -982,7 +982,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić [] gdy podamy "val1" i "val2" i entryMapSource ma jakikolwiek klucz', function (done) {
 				beforeMapping1 = "val1";
 				beforeMapping2 = "val2";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE_ARRAY);
+				mapType = Core.Node.NodeMapper.MAP_VALUE_ARRAY;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -995,7 +995,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić null gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"}]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v1",k2:"v2"}];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -1006,7 +1006,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić "val5" gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"},"val5"]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v1",k2:"v2"},"val5"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -1017,7 +1017,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić "val6" gdy podamy ["val5"] i ["val6"]', function (done) {
 				beforeMapping1 = ["val5"];
 				beforeMapping2 = ["val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -1028,7 +1028,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić null gdy podamy ["val5"] i ["val6"] i entryMapSource ma jakikolwiek klucz', function (done) {
 				beforeMapping1 = ["val5"];
 				beforeMapping2 = ["val6"];
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE, ["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -1039,7 +1039,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić "val4" gdy podamy {key1:"val1",key2:"val2"} i {key1:"val3",key2:"val4"}', function (done) {
 				beforeMapping1 = {key1:"val1",key2:"val2"};
 				beforeMapping2 = {key1:"val3",key2:"val4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -1050,7 +1050,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić "val3" gdy podamy {key1:"val1",key2:"val2"} {key1:"val3",key2:"val4"} i entryMapSource ma klucz ["key1"]', function (done) {
 				beforeMapping1 = {key1:"val1",key2:"val2"};
 				beforeMapping2 = {key1:"val3",key2:"val4"};
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["key1"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -1061,7 +1061,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić "val2" gdy podamy "val1" i "val2"', function (done) {
 				beforeMapping1 = "val1";
 				beforeMapping2 = "val2";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {
@@ -1072,7 +1072,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			it('Powinien zwrócić null gdy podamy "val1" i "val2" i entryMapSource ma jakikolwiek klucz', function (done) {
 				beforeMapping1 = "val1";
 				beforeMapping2 = "val2";
-				myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_VALUE);
+				mapType = Core.Node.NodeMapper.MAP_VALUE;
 				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE,["dummy"]);
 				request(app).get("/process/myAction")
 					.end(function (err, res) {

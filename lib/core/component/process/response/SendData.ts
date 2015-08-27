@@ -20,9 +20,9 @@ class SendData extends BaseNode{
 	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			this.debug("begin");
-			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
-			this.debug(entryMappedSource);
-			response.addValue(this._key || "content", entryMappedSource);
+			var mappedEntry = this.getMappedEntry(processEntryList, request);
+			this.debug(mappedEntry);
+			response.addValue(this._key || "content", mappedEntry);
 			response.view = this._view;
 			this.debug("null");
 			resolve(null);

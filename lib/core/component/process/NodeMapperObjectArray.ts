@@ -1,12 +1,9 @@
 import Util = require("./../../util/Util");
 	/**
-	 * sprawdza czy mamy tablicę wejściowa - mappedSource jeśli nie to ją tworzymy
-	 * Jeśli dane wejściwe -sourceData są tablicą to iterujemy po każdym elemencie
-	 * i interesują nas tylko te elementy które są obiektami, pozostałe ignorujemy
-	 * do obiektów zalicza się też array a więc tablica obiektów to też tablica tablic
-	 * dla każdego elementy tworzymy nowy obiekt z kluczamy tylko takimi jak są w - sourceTypeKeys - chyba że nie ustawione wtedy
-	 * bierzemy wszystkie
-	 * Jeśli dane wejściowe - sourceData to obiekt to tworzymy również nowy obiekt składający się z kluczy sourceTypeKeys
+	 * Dane źródłowe mapuje na tablicę.
+	 * Uwzględnia obiekty, i tablice, jeśli będą w tablicy elementy proste to zostaną pominięte
+	 * Jeśli podamy w filtrze klucz to z każdego elementu tablicy wyciągnie tylko dane o podanym kluczu
+	 * elementy będące tablicami klucze mają numeryczne
 	 * [{},{},"aa",[]] => [{},{},[]]
 	 *
 	 */

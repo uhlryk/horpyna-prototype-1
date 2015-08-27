@@ -30,7 +30,7 @@ describe("Testy Node response.SendData", function() {
 		myNode2 = new Core.Node.BaseNode([testNode]);
 		myNode2.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
-				afterMapping = myNode2.getEntryMappedByType(processEntryList, request);
+				afterMapping = myNode2.getMappedEntry(processEntryList, request);
 				responseNode = response;
 				resolve(null);
 			});
@@ -39,9 +39,8 @@ describe("Testy Node response.SendData", function() {
 			done();
 		});
 	});
-	it('Powinien w response "content" mieć [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i gdy mapujemy MAP_OBJECT_ARRAY', function (done) {
+	it('Powinien w response "content" mieć [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
 		beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				var data = responseNode.getData("content");
@@ -53,9 +52,8 @@ describe("Testy Node response.SendData", function() {
 				done();
 			});
 	});
-	it('Powinien w response "dummy" mieć [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i gdy mapujemy MAP_OBJECT_ARRAY', function (done) {
+	it('Powinien w response "dummy" mieć [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
 		beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		testNode.setResponseKey("dummy");
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
@@ -65,18 +63,6 @@ describe("Testy Node response.SendData", function() {
 				expect(data[0]).to.include.property("k2","v2");
 				expect(data[1]).to.include.property("k3","v1");
 				expect(data[1]).to.include.property("k2","v2");
-				done();
-			});
-	});
-	it('Powinien w response "content" mieć {k1:"v1",k2:"v2", k3:"v1"} gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i gdy mapujemy MAP_OBJECT', function (done) {
-		beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		request(app).get("/process/myAction")
-			.end(function (err, res) {
-				var data = responseNode.getData("content");
-				expect(data).to.include.property("k1","v1");
-				expect(data).to.include.property("k3","v1");
-				expect(data).to.include.property("k2","v2");
 				done();
 			});
 	});

@@ -3,12 +3,8 @@ import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
 import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
-import BaseAction = require("./../../routeComponent/module/action/BaseAction");
-import NodeMapper = require("./../NodeMapper");
-import ProcessModel = require("./../ProcessModel");
 /**
- * zwraca listę kluczy unikalnych; jeśli źródłem była lista obiektów to zwróci listę list unikalnych kluczy
- * jeśli źródłem była lista wartości to weźmie unikaty; jeśli źródłem była wartość to wrzuci ją w listę
+ * zwraca listę kluczy unikalnych;
  */
 class UniqueKey extends BaseNode{
 	private _key: string;
@@ -20,34 +16,15 @@ class UniqueKey extends BaseNode{
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (response) => void) => {
 			this.debug("begin");
-			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
-			this.debug(entryMappedSource);
+			var mappedEntry = this.getMappedEntry(processEntryList, request);
+			this.debug(mappedEntry);
 			var responseArray = [];
-			if (entryMappedSource) {
-				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
-					for (var i = 0; i < entryMappedSource.length; i++) {
-						var row = entryMappedSource[i];
-						for (var key in row) {
-							var obj = new Object();
-							obj[this._key] = key;
-							responseArray.push(obj);
-						}
-					}
-				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
-					for (var key in entryMappedSource) {
-						var obj = new Object();
-						obj[this._key] = key
-						responseArray.push(obj);
-					}
-				} else if (this.getEntryMapType() === NodeMapper.MAP_VALUE_ARRAY) {
-					for (var i = 0; i < entryMappedSource.length; i++) {
-						var val = entryMappedSource[i];
-						var obj = new Object();
-						obj[this._key] = key;
-						responseArray.push(obj);
-					}
-				} else if (this.getEntryMapType() === NodeMapper.MAP_VALUE) {
-					responseArray.push(entryMappedSource);
+			for (var i = 0; i < mappedEntry.length; i++) {
+				var row = mappedEntry[i];
+				for (var key in row) {
+					var obj = new Object();
+					obj[this._key] = key;
+					responseArray.push(obj);
 				}
 			}
 			this.debug(responseArray);

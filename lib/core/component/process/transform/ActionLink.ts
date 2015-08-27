@@ -2,9 +2,7 @@ import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 import Response = require("./../../routeComponent/module/action/Response");
 import Request = require("./../../routeComponent/module/action/Request");
-import ProcessModel = require("./../ProcessModel");
 import Util = require("./../../../util/Util");
-import NodeMapper = require("./../NodeMapper");
 import IProcessObject = require("./../IProcessObject");
 /**
  * Tworzy listę uri na podstawie podanej akcji i danych wejściowych które zrobią populację parametrów akcji
@@ -34,33 +32,16 @@ class ActionLink extends BaseNode {
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (response) => void) => {
 			this.debug("begin");
-			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
-			this.debug(entryMappedSource);
+			var mappedEntry = this.getMappedEntry(processEntryList, request);
+			this.debug(mappedEntry);
 			var processResponse = [];
-			if (entryMappedSource) {
-				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
-					for (var i = 0; i < entryMappedSource.length; i++) {
-						for (var j = 0; j < this._actionList.length; j++) {
-							processResponse.push(this.createUri(this._actionList[j], entryMappedSource[i], processEntryList, request));
-						}
-					}
-				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
-					for (var j = 0; j < this._actionList.length; j++) {
-						processResponse.push(this.createUri(this._actionList[j], entryMappedSource, processEntryList, request));
-					}
-				} else {
-					var element = [];
-					for (var j = 0; j < this._actionList.length; j++) {
-						element.push(this.createUri(this._actionList[j], null, processEntryList, request));
-					}
-					processResponse.push(element);
+			for (var i = 0; i < mappedEntry.length; i++) {
+				for (var j = 0; j < this._actionList.length; j++) {
+					processResponse.push(this.createUri(this._actionList[j], mappedEntry[i], processEntryList, request));
 				}
-				this.debug(processResponse);
-				resolve(processResponse);
-			} else {
-				this.debug("null");
-				resolve(null);
 			}
+			this.debug(processResponse);
+			resolve(processResponse);
 		});
 	}
 	/**

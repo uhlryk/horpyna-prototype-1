@@ -28,33 +28,27 @@ class OnListResource extends Core.Node.ProcessModel {
 
 		//O => Find	=> ObjectToElement => FileLinks
 		var fileLinksNode = new Core.Node.Transform.FileLinks([objectElementNode]);
-		fileLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink
 		var addActionLinksNode = new Core.Node.Transform.ActionLink([fileLinksNode]);
-		addActionLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		addActionLinksNode.addAction(this._module.updateAction.formAction);
 		addActionLinksNode.addAction(this._module.deleteAction.formAction);
 		addActionLinksNode.addAction(this._module.detailAction);
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink => ElementToObject
 		var actionNavNode = new Core.Node.Transform.ElementToObject([addActionLinksNode]);
-		actionNavNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		actionNavNode.setKey("nav");
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink => ElementToObject => CombineObject
 		//O => Find	=> ObjectToElement => FileLinks => CombineObject
 		var combineNode = new Core.Node.Transform.AdditionCombine([fileLinksNode, actionNavNode]);
-		combineNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
-		combineNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
-		combineNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
-		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+		combineNode.addFirstChannel(Core.Node.NodeMapper.RESPONSE_NODE_1);
+		combineNode.addSecondChannel(Core.Node.NodeMapper.RESPONSE_NODE_2);
 
 		//combineNode => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData([combineNode]);
-		sendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		sendDataNode.setView("horpyna/jade/listAction");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject
@@ -63,12 +57,10 @@ class OnListResource extends Core.Node.ProcessModel {
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject => SendData => X
 		var orderSendDataNode = new Core.Node.Response.SendData([keyListNode]);
-		orderSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		orderSendDataNode.setResponseKey("order");
 
 		//O => Empty
 		var emptyNode = new Core.Node.Transform.Empty([this]);
-		// this.addChildNode(emptyNode);
 
 		//O => Empty => ActionLink
 		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([emptyNode]);
@@ -76,7 +68,6 @@ class OnListResource extends Core.Node.ProcessModel {
 
 		//O => Empty => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
-		navSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		navSendDataNode.setResponseKey("navigation");
 	}
 }

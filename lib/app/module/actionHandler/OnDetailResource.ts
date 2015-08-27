@@ -14,7 +14,6 @@ class OnDetailResource extends Core.Node.ProcessModel {
 
 		//O => Find
 		var findNode = new Core.Node.Db.Find([this]);
-		// this.addChildNode(findNode);
 		findNode.setModel(this._module.model);
 		findNode.addWhere(Core.Action.FieldType.PARAM_FIELD);
 		findNode.addWhere(Core.Action.FieldType.APP_FIELD);
@@ -30,8 +29,6 @@ class OnDetailResource extends Core.Node.ProcessModel {
 
 		//O => Find => If +> FileLinks
 		var fileLinksNode = new Core.Node.Transform.FileLinks([findNode]);
-		// fileLinksNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		// ifNode.addPositiveChildNode(fileLinksNode);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
@@ -42,16 +39,13 @@ class OnDetailResource extends Core.Node.ProcessModel {
 
 		//O => Find => If +> FileLinks => ActionLink => ElementToObject
 		var actionNavNode = new Core.Node.Transform.ElementToObject([addActionLinksNode]);
-		actionNavNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		actionNavNode.setKey("nav");
 
 		//O => Find => If +> FileLinks => ActionLink => ElementToObject => CombineObject
 		//O => Find => If +> FileLinks => CombineObject
 		var combineNode = new Core.Node.Transform.AdditionCombine([fileLinksNode, actionNavNode]);
-		combineNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
-		combineNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		combineNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
-		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+		combineNode.addFirstChannel(Core.Node.NodeMapper.RESPONSE_NODE_1);
+		combineNode.addSecondChannel(Core.Node.NodeMapper.RESPONSE_NODE_2);
 
 		//CombineObject => SendData	=> X
 		var sendDataNode = new Core.Node.Response.SendData([combineNode]);
@@ -67,7 +61,6 @@ class OnDetailResource extends Core.Node.ProcessModel {
 
 		//O => Empty => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
-		navSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		navSendDataNode.setResponseKey("navigation");
 	}
 }

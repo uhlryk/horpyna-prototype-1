@@ -30,7 +30,7 @@ describe("Testy Node transform.ActionLink", function() {
 		myNode2 = new Core.Node.BaseNode([testNode]);
 		myNode2.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
-				afterMapping = myNode2.getEntryMappedByType(processEntryList, request);
+				afterMapping = myNode2.getMappedEntry(processEntryList, request);
 				resolve(null);
 			});
 		});
@@ -61,32 +61,12 @@ describe("Testy Node transform.ActionLink", function() {
 		});
 	});
 	/**
-	 * Zwróci jeden link ponieważ dla null mapowanie zwróci obiekt pusty {}
-	 * A obiekt pusty może utworzyć link, tylko parametry nieznane będą wynosiły 0
-	 */
-	it('Powinien zwrócić [{uri:"/process/testAction1/0/0",name:"testAction1"}] gdy podamy null i testAction1 dla mapowania MAP_OBJECT', function (done) {
-		beforeMapping = null;
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		testNode.addAction(testAction1);
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
-		request(app).get("/process/myAction")
-			.end(function (err, res) {
-				expect(afterMapping).to.be.length(1);
-				expect(afterMapping[0]).to.include.property("uri","/process/testAction1/0/0");
-				expect(afterMapping[0]).to.include.property("name","testAction1");
-				done();
-			});
-	});
-	/**
 	 * Ponieważ mapowanie dla null zwróci []. A więc Node uzna że brak jest obiektów, a liczba zwróconych linków
 	 * to liczba akcji * liczba obiektów
 	 */
-	it('Powinien zwrócić [] gdy podamy null i testAction1 dla mapowania MAP_OBJECT_ARRAY', function (done) {
+	it('Powinien zwrócić [] gdy podamy null i testAction1', function (done) {
 		beforeMapping = null;
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		testNode.addAction(testAction1);
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				expect(afterMapping).to.be.empty;
@@ -95,11 +75,8 @@ describe("Testy Node transform.ActionLink", function() {
 	});
 	it('Powinien zwrócić [{uri:"/process/testAction1/1/2",name:"dummy"}] gdy podamy {p1:1,p2:2,n:"dummy"} i testAction1 i name from source key "n"', function (done) {
 		beforeMapping = {p1:1,p2:2,n:"dummy"};
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		testNode.addAction(testAction1);
 		testNode.setNameFromEntrySource("n");
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				expect(afterMapping).to.be.length(1);
@@ -108,17 +85,10 @@ describe("Testy Node transform.ActionLink", function() {
 				done();
 			});
 	});
-/**
- * Przy mapowaniu na obiekt, dane wejściowe zostaną zamienione na jeden obiekt, a więc tworzymy link dla jednej akcji i jednego obiektu
- * dlatego mapować musimy na listę
- */
-	it('Powinien zwrócić listę z dwoma obiektami linków gdy podamy tablicę z dwoma obiektami danych i akcję testAction1 mapowanie musi być na MAP_OBJECT_ARRAY', function (done) {
+	it('Powinien zwrócić listę z dwoma obiektami linków gdy podamy tablicę z dwoma obiektami danych i akcję testAction1', function (done) {
 		beforeMapping = [{p1:1,p2:2,q1:3,q2:4,n:"dummy"},{p1:"a",p2:"b",q1:"c",q2:"d",n:"foo"}];
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		testNode.addAction(testAction1);
 		testNode.setNameFromEntrySource("n");
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				expect(afterMapping).to.be.length(2);
@@ -131,11 +101,8 @@ describe("Testy Node transform.ActionLink", function() {
 	});
 	it('Powinien zwrócić listę z dwoma obiektami linków gdy podamy jeden obiekt danych i dwie akcje testAction1,testAction2', function (done) {
 		beforeMapping = {p1:1,p2:2,q1:3,q2:4};
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		testNode.addAction(testAction1);
 		testNode.addAction(testAction2);
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				expect(afterMapping).to.be.length(2);
@@ -146,19 +113,11 @@ describe("Testy Node transform.ActionLink", function() {
 				done();
 			});
 	});
-	/**
-	 * Przy mapowaniu na obiekt, dane wejściowe zostaną zamienione na jeden obiekt, a więc tworzymy link dla jednej akcji i jednego obiektu
-	 * dlatego mapować musimy na listę
-	 * MAP_OBJECT_ARRAY
-	 */
 	it('Powinien zwrócić listę z czterema obiektami linków gdy podamy tablicę z dwoma obiektami danych i dwie akcje testAction1,testAction2', function (done) {
 		beforeMapping = [{p1:1,p2:2,q1:3,q2:4,n:"dummy"},{p1:"a",p2:"b",q1:"c",q2:"d",n:"foo"}];
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		testNode.addAction(testAction1);
 		testNode.addAction(testAction2);
 		testNode.setNameFromEntrySource("n");
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				expect(afterMapping).to.be.length(4);

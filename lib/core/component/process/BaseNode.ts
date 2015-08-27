@@ -19,7 +19,6 @@ class BaseNode extends Element {
 	 * @param {ProcessModel} processModel obiekt danego modelu dla któ®ego są te elementy
 	 */
 	private _nodeMapper: NodeMapper;
-	private _entryType: string;
 	private _content: (processEntryList: any[], request: Request, response: Response, processList: IProcessObject[])=> Util.Promise<any>;
 	constructor(parentNodeList?:BaseNode[]){
 		super();
@@ -37,7 +36,6 @@ class BaseNode extends Element {
 			this.setProcessModel(this._parentNodeList[0].processModel);
 		}
 		this._processId = this.processModel.addNode(this);
-		this._entryType = NodeMapper.MAP_OBJECT;
 	}
 	protected setProcessModel(v:ProcessModel){
 		this._processModel = v;
@@ -74,16 +72,6 @@ class BaseNode extends Element {
 	 */
 	public addEntryMapSource(sourceType: string, key?: string[]) {
 		this._nodeMapper.addMapSource("entry_source", sourceType, key);
-	}
-	/**
-	 * Możemy zmienić sposób w jaki będą mapowane dane źródłowe
-	 * domyślnie jest to tablica obiektów
-	 */
-	public setEntryMapType(type: string){
-		this._entryType = type;
-	}
-	public getEntryMapType():string{
-		return this._entryType;
 	}
 	/**
 	 * Dodaje listę innych nodów co zbuduje rozgałęzienie, te na liście mogą mieć kolejne rozgałęzienia
@@ -181,23 +169,8 @@ class BaseNode extends Element {
 	public getMappedValue(name: string, processEntryList: Object[], request: Request): any {
 		return this.getMappedSource(name, NodeMapper.MAP_VALUE, processEntryList, request);
 	}
-	public getEntryMappedSource(mapType: string, processEntryList: Object[], request: Request): any {
-		return this.getMappedSource("entry_source", mapType, processEntryList, request);
-	}
-	public getEntryMappedByType(processEntryList: Object[], request: Request): Object[] {
-		return this.getMappedSource("entry_source", this._entryType, processEntryList, request);
-	}
-	public getEntryMappedObjectArray(processEntryList: Object[], request: Request): Object[] {
-		return this.getMappedObjectArray("entry_source", processEntryList, request);
-	}
-	public getEntryMappedObject(processEntryList: Object[], request: Request): Object {
-		return this.getMappedObject("entry_source", processEntryList, request);
-	}
-	public getEntryMappedValueArray(processEntryList: Object[], request: Request): any[] {
-		return this.getMappedValueArray("entry_source", processEntryList, request);
-	}
-	public getEntryMappedValue(processEntryList: Object[], request: Request): any {
-		return this.getMappedValue("entry_source", processEntryList, request);
+	public getMappedEntry(processEntryList: Object[], request: Request): Object[] {
+		return this.getMappedSource("entry_source", NodeMapper.MAP_OBJECT_ARRAY, processEntryList, request);
 	}
 	/**
 	 * Tu logika danego node. Zwrócić musi obiekt odpowiedzi

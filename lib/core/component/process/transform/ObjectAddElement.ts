@@ -7,7 +7,8 @@ import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 import NodeMapper = require("./../NodeMapper");
 import ProcessModel = require("./../ProcessModel");
 /**
- * Pozwala dodać pole w obiekcie lub w każdym z obiektów tablicy
+ * Pozwala dodać pole w każdym z obiektów tablicy
+ * Pole może być dodane na początku tablicy lub na końcu - jeśli dodane będzie pole numeryczne to pojawi się zawsze na początku
  */
 class ObjectAddElement extends BaseNode {
 	private _keyValueBefore: Object;
@@ -25,24 +26,15 @@ class ObjectAddElement extends BaseNode {
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve:(response)=>void) => {
 			this.debug("begin");
-			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
-			this.debug(entryMappedSource);
+			var mappedEntry = this.getMappedEntry(processEntryList, request);
+			this.debug(mappedEntry);
 			var processResponse;
-			if (entryMappedSource) {
-				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
-					processResponse = [];
-					for (var i = 0; i < entryMappedSource.length; i++) {
-						processResponse.push(this.addElementToObject(entryMappedSource, processEntryList, request));
-					}
-				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
-					processResponse = this.addElementToObject(entryMappedSource, processEntryList, request);
-				}
-				this.debug(processResponse);
-				resolve(processResponse);
-			} else{
-				this.debug("null");
-				resolve(null);
+			processResponse = [];
+			for (var i = 0; i < mappedEntry.length; i++) {
+				processResponse.push(this.addElementToObject(mappedEntry, processEntryList, request));
 			}
+			this.debug(processResponse);
+			resolve(processResponse);
 		});
 	}
 	/**

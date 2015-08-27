@@ -14,15 +14,18 @@ class Combine extends BaseNode{
 	/**
 	 * Mapujemy jaki typ danych odpowiada za warunki listy
 	 */
-	public addSecondarySource(type: string, key?: string[]) {
-		this.addMapSource("secondary", type, key);
+	public addSecondChannel(type: string, key?: string[]) {
+		this.addMapSource("second_chanel", type, key);
 	}
-	public setSecondaryMapType(type: string){
-		this._secondaryType = type;
+	public addFirstChannel(type: string, key?: string[]) {
+		this.addEntryMapSource(type, key);
 	}
-	protected getSecondaryMapType():string{
-		return this._secondaryType;
-	}
+	// public setSecondaryMapType(type: string){
+	// 	this._secondaryType = type;
+	// }
+	// protected getSecondaryMapType():string{
+	// 	return this._secondaryType;
+	// }
 	protected mergeObjects(object1: Object, object2?:Object) {
 		var responseObject = new Object();
 		for (var key in object1) {

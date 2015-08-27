@@ -17,24 +17,14 @@ class ChangeObjectElement extends BaseNode {
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve:(response)=>void) => {
 			this.debug("begin");
-			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
-			this.debug(entryMappedSource);
-			var processResponse;
-			if (entryMappedSource) {
-				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
-					processResponse = [];
-					for (var i = 0; i < entryMappedSource.length; i++) {
-						processResponse.push(this.changeInObject(entryMappedSource[i], processEntryList, request, response));
-					}
-				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
-					processResponse = this.changeInObject(entryMappedSource, processEntryList, request, response);
-				}
-				this.debug(entryMappedSource);
-				resolve(entryMappedSource);
-			} else{
-				this.debug("null");
-				resolve(null);
+			var mappedEntry = this.getMappedEntry(processEntryList, request);
+			this.debug(mappedEntry);
+			var processResponse = [];
+			for (var i = 0; i < mappedEntry.length; i++) {
+				processResponse.push(this.changeInObject(mappedEntry[i], processEntryList, request, response));
 			}
+			this.debug(mappedEntry);
+			resolve(mappedEntry);
 		});
 	}
 	/**

@@ -30,7 +30,7 @@ describe("Testy Node transform.UniqueKey", function() {
 		myNode2 = new Core.Node.BaseNode([testNode]);
 		myNode2.setContent(function(processEntryList, request, response, processList) {
 			return new Core.Util.Promise(function(resolve){
-				afterMapping = myNode2.getEntryMappedByType(processEntryList, request);
+				afterMapping = myNode2.getMappedEntry(processEntryList, request);
 				resolve(null);
 			});
 		});
@@ -38,11 +38,8 @@ describe("Testy Node transform.UniqueKey", function() {
 			done();
 		});
 	});
-	it('Powinien zwrócić [{0:"k1"},{0:"k2"},{0:"k3"},{0:"k2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i gdy mapujemy MAP_OBJECT_ARRAY', function (done) {
+	it('Powinien zwrócić [{0:"k1"},{0:"k2"},{0:"k3"},{0:"k2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
 		beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				expect(afterMapping).to.be.length(4);
@@ -53,25 +50,8 @@ describe("Testy Node transform.UniqueKey", function() {
 				done();
 			});
 	});
-	it('Powinien zwrócić [{0:"k1"},{0:"k2"}{0:"k3"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i gdy mapujemy MAP_OBJECT', function (done) {
-		beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
-		request(app).get("/process/myAction")
-			.end(function (err, res) {
-				expect(afterMapping).to.be.length(3);
-				expect(afterMapping[0]).to.include.property("0","k1");
-				expect(afterMapping[1]).to.include.property("0","k2");
-				expect(afterMapping[2]).to.include.property("0","k3");
-				done();
-			});
-	});
-	it('Powinien zwrócić [{0:"k1"},{0:"k2"}] gdy podamy {k1:"v1",k2:"v2"} i gdy mapujemy MAP_OBJECT', function (done) {
+	it('Powinien zwrócić [{0:"k1"},{0:"k2"}] gdy podamy [{k1:"v1",k2:"v2"}]', function (done) {
 		beforeMapping = {k1:"v1",k2:"v2"};
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				expect(afterMapping).to.be.length(2);
@@ -80,18 +60,16 @@ describe("Testy Node transform.UniqueKey", function() {
 				done();
 			});
 	});
-	it('Powinien zwrócić [{key:"k1"},{key:"k2"}{key:"k3"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i gdy mapujemy MAP_OBJECT', function (done) {
+	it('Powinien zwrócić [{0:"k1"},{0:"k2"},{0:"k3"},{0:"k2"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
 		beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
-		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		testNode.setKey("key");
-		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				expect(afterMapping).to.be.length(3);
+				expect(afterMapping).to.be.length(4);
 				expect(afterMapping[0]).to.include.property("key","k1");
 				expect(afterMapping[1]).to.include.property("key","k2");
 				expect(afterMapping[2]).to.include.property("key","k3");
+				expect(afterMapping[3]).to.include.property("key","k2");
 				done();
 			});
 	});

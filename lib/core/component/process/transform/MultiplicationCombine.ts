@@ -21,70 +21,26 @@ class MultiplicationCombine extends Combine {
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (response) => void) => {
 			this.debug("begin");
-			var entryMappedSource = this.getEntryMappedByType(processEntryList, request);
-			var secondaryMappedSource = this.getMappedSource("secondary", this.getSecondaryMapType(), processEntryList, request);
-			this.debug("entryMappedSource:");
-			this.debug(entryMappedSource);
-			this.debug("secondaryMappedSource:");
-			this.debug(secondaryMappedSource);
+			var firstChanel = this.getMappedEntry(processEntryList, request);
+			var secondChanel = this.getMappedObjectArray("second_chanel", processEntryList, request);
+			this.debug("firstChanel:");
+			this.debug(firstChanel);
+			this.debug("secondChanel:");
+			this.debug(secondChanel);
 			var processResponse = [];
 			var entryMapped, secondaryMapped;
-			if ((this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY || this.getEntryMapType() === NodeMapper.MAP_VALUE_ARRAY) &&
-				(this.getSecondaryMapType() === NodeMapper.MAP_OBJECT_ARRAY || this.getSecondaryMapType() === NodeMapper.MAP_VALUE_ARRAY))
-			{
-				for (var i = 0; i < entryMappedSource.length; i++) {
-					for (var j = 0; j < secondaryMappedSource.length; j++) {
-						entryMapped = entryMappedSource[i];
-						if (Util._.isPlainObject(entryMapped) === false){
-							entryMapped = [entryMapped];
-						}
-						secondaryMapped = secondaryMappedSource[j];
-						if (Util._.isPlainObject(secondaryMapped) === false) {
-							secondaryMapped = [secondaryMapped];
-						}
-						processResponse.push(this.mergeObjects(entryMapped, secondaryMapped));
-					}
-				}
-			} else if ((this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY || this.getEntryMapType() === NodeMapper.MAP_VALUE_ARRAY) &&
-				(this.getSecondaryMapType() === NodeMapper.MAP_OBJECT || this.getSecondaryMapType() === NodeMapper.MAP_VALUE))
-			{
-				for (var i = 0; i < entryMappedSource.length; i++) {
-					entryMapped = entryMappedSource[i];
+			for (var i = 0; i < firstChanel.length; i++) {
+				for (var j = 0; j < secondChanel.length; j++) {
+					entryMapped = firstChanel[i];
 					if (Util._.isPlainObject(entryMapped) === false){
 						entryMapped = [entryMapped];
 					}
-					secondaryMapped = secondaryMappedSource;
+					secondaryMapped = secondChanel[j];
 					if (Util._.isPlainObject(secondaryMapped) === false) {
 						secondaryMapped = [secondaryMapped];
 					}
 					processResponse.push(this.mergeObjects(entryMapped, secondaryMapped));
 				}
-			} else if ((this.getEntryMapType() === NodeMapper.MAP_OBJECT || this.getEntryMapType() === NodeMapper.MAP_VALUE) &&
-				(this.getSecondaryMapType() === NodeMapper.MAP_OBJECT_ARRAY || this.getSecondaryMapType() === NodeMapper.MAP_VALUE_ARRAY))
-			{
-				for (var i = 0; i < secondaryMappedSource.length; i++) {
-					entryMapped = entryMappedSource;
-					if (Util._.isPlainObject(entryMapped) === false){
-						entryMapped = [entryMapped];
-					}
-					secondaryMapped = secondaryMappedSource[i];
-					if (Util._.isPlainObject(secondaryMapped) === false) {
-						secondaryMapped = [secondaryMapped];
-					}
-					processResponse.push(this.mergeObjects(entryMapped, secondaryMapped));
-				}
-			} else if ((this.getEntryMapType() === NodeMapper.MAP_OBJECT || this.getEntryMapType() === NodeMapper.MAP_VALUE) &&
-				(this.getSecondaryMapType() === NodeMapper.MAP_OBJECT || this.getSecondaryMapType() === NodeMapper.MAP_VALUE))
-			{
-				entryMapped = entryMappedSource;
-				if (Util._.isPlainObject(entryMapped) === false){
-					entryMapped = [entryMapped];
-				}
-				secondaryMapped = secondaryMappedSource;
-				if (Util._.isPlainObject(secondaryMapped) === false) {
-					secondaryMapped = [secondaryMapped];
-				}
-				processResponse.push(this.mergeObjects(entryMapped, secondaryMapped));
 			}
 			this.debug(processResponse);
 			resolve(processResponse);
