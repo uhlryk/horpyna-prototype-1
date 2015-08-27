@@ -14,7 +14,6 @@ class OnListResource extends Core.Node.ProcessModel {
 	protected onConstructor() {
 		//O => Find
 		var listNode = new Core.Node.Db.List([this]);
-		// this.addChildNode(listNode);
 		listNode.setModel(this._module.model);
 		listNode.addWhere(Core.Action.FieldType.PARAM_FIELD);
 		listNode.addWhere(Core.Action.FieldType.APP_FIELD);
