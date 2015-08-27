@@ -49,14 +49,13 @@ class OnDetailResource extends Core.Node.ProcessModel {
 
 		//O => Find => If +> FileLinks => ActionLink => ElementToObject => CombineObject
 		//O => Find => If +> FileLinks => CombineObject
-		var combineNode = new Core.Node.Transform.CombineObject(this);
+		var combineNode = new Core.Node.Transform.AdditionCombine(this);
 		fileLinksNode.addChildNode(combineNode);
 		actionNavNode.addChildNode(combineNode);
 		combineNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		combineNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		combineNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
 		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT);
-		combineNode.setCombineMethod(Core.Node.Transform.CombineObject.NTH_WITH_NTH);
 
 		//CombineObject => SendData	=> X
 		var sendDataNode = new Core.Node.Response.SendData(this);

@@ -52,14 +52,13 @@ class OnListResource extends Core.Node.ProcessModel {
 
 		//O => Find	=> ObjectToElement => FileLinks => ActionLink => ElementToObject => CombineObject
 		//O => Find	=> ObjectToElement => FileLinks => CombineObject
-		var combineNode = new Core.Node.Transform.CombineObject(this);
+		var combineNode = new Core.Node.Transform.AdditionCombine(this);
 		fileLinksNode.addChildNode(combineNode);
 		actionNavNode.addChildNode(combineNode);
 		combineNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		combineNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		combineNode.addSecondarySource(Core.Node.NodeMapper.RESPONSE_NODE_2);
 		combineNode.setSecondaryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
-		combineNode.setCombineMethod(Core.Node.Transform.CombineObject.NTH_WITH_NTH);
 
 		//combineNode => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData(this);
@@ -92,7 +91,6 @@ class OnListResource extends Core.Node.ProcessModel {
 		addSecondaryActionLinksNode.addChildNode(navSendDataNode);
 		navSendDataNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
 		navSendDataNode.setResponseKey("navigation");
-
 	}
 }
 export = OnListResource;

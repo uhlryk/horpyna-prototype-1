@@ -4,4 +4,5 @@ export import UniqueKey = require("./UniqueKey");
 export import Empty = require("./Empty");
 export import ObjectToElement = require("./ObjectToElement");
 export import ElementToObject = require("./ElementToObject");
-export import CombineObject = require("./CombineObject");
+export import AdditionCombine = require("./AdditionCombine");
+export import MultiplicationCombine = require("./MultiplicationCombine");
