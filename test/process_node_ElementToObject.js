@@ -46,7 +46,6 @@ describe("Testy Node transform.ElementToObject", function() {
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
 				expect(afterMapping).to.be.length(0);
 				done();
 			});
@@ -57,7 +56,6 @@ describe("Testy Node transform.ElementToObject", function() {
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
 				expect(afterMapping).to.be.length(1);
 				expect(afterMapping[0]).to.include.property("0","test");
 				done();
@@ -70,7 +68,6 @@ describe("Testy Node transform.ElementToObject", function() {
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
 				expect(afterMapping).to.be.length(1);
 				expect(afterMapping[0]).to.include.property("k1","test");
 				done();
@@ -83,7 +80,6 @@ describe("Testy Node transform.ElementToObject", function() {
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
 				expect(afterMapping).to.be.length(1);
 				expect(afterMapping[0]).to.include.property("0");
 				expect(afterMapping[0]["0"]).to.include.property("k1","v1");
@@ -97,7 +93,6 @@ describe("Testy Node transform.ElementToObject", function() {
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("0","v1");
 				expect(afterMapping[1]).to.include.property("0","v2");
@@ -111,7 +106,6 @@ describe("Testy Node transform.ElementToObject", function() {
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("0");
 				expect(afterMapping[0]["0"]).to.be.length(2);
@@ -131,7 +125,6 @@ describe("Testy Node transform.ElementToObject", function() {
 		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("0");
 				expect(afterMapping[0]["0"]).to.include.property("k1","v2");

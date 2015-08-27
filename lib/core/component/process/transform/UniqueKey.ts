@@ -27,13 +27,11 @@ class UniqueKey extends BaseNode{
 				if (this.getEntryMapType() === NodeMapper.MAP_OBJECT_ARRAY) {
 					for (var i = 0; i < entryMappedSource.length; i++) {
 						var row = entryMappedSource[i];
-						// var newRow = [];
 						for (var key in row) {
 							var obj = new Object();
 							obj[this._key] = key;
 							responseArray.push(obj);
 						}
-						// responseArray.push(newRow);
 					}
 				} else if (this.getEntryMapType() === NodeMapper.MAP_OBJECT) {
 					for (var key in entryMappedSource) {

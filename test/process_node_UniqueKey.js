@@ -70,6 +70,19 @@ describe("Testy Node transform.UniqueKey", function() {
 				done();
 			});
 	});
+	it('Powinien zwrócić [{0:"k1"},{0:"k2"}] gdy podamy {k1:"v1",k2:"v2"} i gdy mapujemy MAP_OBJECT', function (done) {
+		beforeMapping = {k1:"v1",k2:"v2"};
+		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
+		testNode.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT);
+		myNode2.setEntryMapType(Core.Node.NodeMapper.MAP_OBJECT_ARRAY);
+		request(app).get("/process/myAction")
+			.end(function (err, res) {
+				expect(afterMapping).to.be.length(2);
+				expect(afterMapping[0]).to.include.property("0","k1");
+				expect(afterMapping[1]).to.include.property("0","k2");
+				done();
+			});
+	});
 	it('Powinien zwrócić [{key:"k1"},{key:"k2"}{key:"k3"}] gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}] i gdy mapujemy MAP_OBJECT', function (done) {
 		beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
 		//UniqueKey przez mapowanie dostaje jeden obiekt z unikalnymi kluczami i wartościami
