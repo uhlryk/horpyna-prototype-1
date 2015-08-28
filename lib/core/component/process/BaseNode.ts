@@ -128,7 +128,7 @@ class BaseNode extends Element {
 				return this._content(allowProcessResponseList, request, response, processList);
 			} else{
 				//jeśli żaden rodzic nie jest allow to blokujemy wszystkie connection wychodzące od tego Node
-				this.onAllChildrenConnectionBlocked(processObject);
+				this.blockChildrenConnection(processObject);
 			}
 		})
 		.then((response) => {//odpowiedź z content
@@ -139,7 +139,7 @@ class BaseNode extends Element {
 	/**
 	 * Gdy wszyskie połączenia od rodziców są zablokowane to następuje blokada połączeń wychodzących od tego Node
 	 */
-	protected onAllChildrenConnectionBlocked(processObject: IProcessObject) {
+	protected blockChildrenConnection(processObject: IProcessObject) {
 		var connectionList: IConnection[] = processObject.childrenConnections;
 		for (var i = 0; i < connectionList.length; i++){
 			var connection = connectionList[i];

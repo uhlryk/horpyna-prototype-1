@@ -13,37 +13,37 @@ class OnDetailResource extends Core.Node.ProcessModel {
 	protected onConstructor() {
 
 		//O => Find
-		var findNode = new Core.Node.Db.Find([this]);
-		findNode.setModel(this._module.model);
-		findNode.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		findNode.addWhere(Core.Action.FieldType.APP_FIELD);
+		var findDbData = new Core.Node.Db.Find([this]);
+		findDbData.setModel(this._module.model);
+		findDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
+		findDbData.addWhere(Core.Action.FieldType.APP_FIELD);
 
-		//O => Find => If
-		// var ifNode = new Core.Node.Gateway.IfExist(this, [findNode]);
-		// findNode.addChildNode(ifNode);
+		// O => Find => If
+		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
+		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
+		ifDataNotExist.setNegation();
 
 		//O => Find => If -> Redirect
-		// var redirectNode = new Core.Node.Response.Redirect(this);
-		// ifNode.addNegativeChildNode(redirectNode);
-		// redirectNode.setTargetAction(this._module.listAction);
+		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
+		redirectAction.setTargetAction(this._module.listAction);
 
 		//O => Find => If +> FileLinks
-		var fileLinksNode = new Core.Node.Transform.FileLinks([findNode]);
-		fileLinksNode.setFileAction(this._module.fileAction);
-		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
+		var createFileLink = new Core.Node.Transform.FileLinks([ifDataExist]);
+		createFileLink.setFileAction(this._module.fileAction);
+		createFileLink.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
 		//O => Find => If +> FileLinks => ActionLink
-		var addActionLinksNode = new Core.Node.Transform.ActionLink([fileLinksNode]);
-		addActionLinksNode.addAction(this._module.updateAction.formAction);
-		addActionLinksNode.addAction(this._module.deleteAction.formAction);
+		var addActionsLinks = new Core.Node.Transform.ActionLink([createFileLink]);
+		addActionsLinks.addAction(this._module.updateAction.formAction);
+		addActionsLinks.addAction(this._module.deleteAction.formAction);
 
 		//O => Find => If +> FileLinks => ActionLink => ElementToObject
-		var actionNavNode = new Core.Node.Transform.ElementToObject([addActionLinksNode]);
+		var actionNavNode = new Core.Node.Transform.ElementToObject([addActionsLinks]);
 		actionNavNode.setKey("nav");
 
 		//O => Find => If +> FileLinks => ActionLink => ElementToObject => CombineObject
 		//O => Find => If +> FileLinks => CombineObject
-		var combineNode = new Core.Node.Transform.AdditionCombine([fileLinksNode, actionNavNode]);
+		var combineNode = new Core.Node.Transform.AdditionCombine([createFileLink, actionNavNode]);
 		combineNode.addFirstChannel(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		combineNode.addSecondChannel(Core.Node.NodeMapper.RESPONSE_NODE_2);
 

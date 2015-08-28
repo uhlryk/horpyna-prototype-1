@@ -37,16 +37,20 @@ class Redirect extends BaseNode {
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
+			this.debug("begin");
+			var uri;
 			if(this._action){
 				var params = this.getMappedObject("params", processEntryList, request);
 				if (params){
-					response.setRedirect(this._action.populateRoutePath(params));
+					uri = this._action.populateRoutePath(params);
 				} else {
-					response.setRedirect(this._action.getRoutePath(false));
+					uri = this._action.getRoutePath(false);
 				}
 			} else {
-				response.setRedirect(this._url || "/");
+				uri = this._url || "/";
 			}
+			response.setRedirect(uri);
+			this.debug("redirect: " + uri);
 			resolve(null);
 		});
 	}
