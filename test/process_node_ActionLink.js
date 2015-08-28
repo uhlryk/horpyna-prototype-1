@@ -62,14 +62,16 @@ describe("Testy Node transform.ActionLink", function() {
 	});
 	/**
 	 * Ponieważ mapowanie dla null zwróci []. A więc Node uzna że brak jest obiektów, a liczba zwróconych linków
-	 * to liczba akcji * liczba obiektów
+	 * to liczba akcji * liczba obiektów lub przy braku obiektów liczba akcji * 1
 	 */
 	it('Powinien zwrócić [] gdy podamy null i testAction1', function (done) {
 		beforeMapping = null;
 		testNode.addAction(testAction1);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				expect(afterMapping).to.be.empty;
+				expect(afterMapping).to.be.length(1);
+				expect(afterMapping[0]).to.include.property("uri","/process/testAction1/0/0");
+				expect(afterMapping[0]).to.include.property("name","testAction1");
 				done();
 			});
 	});
@@ -123,10 +125,10 @@ describe("Testy Node transform.ActionLink", function() {
 				expect(afterMapping).to.be.length(4);
 				expect(afterMapping[0]).to.include.property("uri","/process/testAction1/1/2?q1=3&q2=4");
 				expect(afterMapping[0]).to.include.property("name","dummy");
-				expect(afterMapping[1]).to.include.property("uri","/process/testAction2/1/0?q1=3");
-				expect(afterMapping[1]).to.include.property("name","dummy");
-				expect(afterMapping[2]).to.include.property("uri","/process/testAction1/a/b?q1=c&q2=d");
-				expect(afterMapping[2]).to.include.property("name","foo");
+				expect(afterMapping[1]).to.include.property("uri","/process/testAction1/a/b?q1=c&q2=d");
+				expect(afterMapping[1]).to.include.property("name","foo");
+				expect(afterMapping[2]).to.include.property("uri","/process/testAction2/1/0?q1=3");
+				expect(afterMapping[2]).to.include.property("name","dummy");
 				expect(afterMapping[3]).to.include.property("uri","/process/testAction2/a/0?q1=c");
 				expect(afterMapping[3]).to.include.property("name","foo");
 				done();

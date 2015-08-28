@@ -35,9 +35,13 @@ class ActionLink extends BaseNode {
 			var mappedEntry = this.getMappedEntry(processEntryList, request);
 			this.debug(mappedEntry);
 			var processResponse = [];
-			for (var i = 0; i < mappedEntry.length; i++) {
-				for (var j = 0; j < this._actionList.length; j++) {
-					processResponse.push(this.createUri(this._actionList[j], mappedEntry[i], processEntryList, request));
+			for (var j = 0; j < this._actionList.length; j++) {
+				if (mappedEntry.length > 0) {
+					for (var i = 0; i < mappedEntry.length; i++) {
+						processResponse.push(this.createUri(this._actionList[j], mappedEntry[i], processEntryList, request));
+					}
+				} else {
+					processResponse.push(this.createUri(this._actionList[j], {}, processEntryList, request));
 				}
 			}
 			this.debug(processResponse);
