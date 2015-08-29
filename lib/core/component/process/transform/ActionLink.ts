@@ -22,6 +22,9 @@ class ActionLink extends BaseNode {
 	public addAction(action: BaseAction) {
 		this._actionList.push(action);
 	}
+	public getActionList(): BaseAction[] {
+		return this._actionList;
+	}
 	/**
 	 * Domyślnie nazwy linków są z nazwy akcji. Możemy jednak wybrać z źródłowych danych pole które będzie nazwą
 	 * @param {string} v nazwa pola w enty object/array object
