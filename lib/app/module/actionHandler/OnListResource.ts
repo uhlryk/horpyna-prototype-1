@@ -22,12 +22,15 @@ class OnListResource extends Core.Node.ProcessModel {
 		listNode.setPage(Core.Action.FieldType.QUERY_FIELD,"p");
 		listNode.setSize(Core.Action.FieldType.QUERY_FIELD,"s");
 
+
 		//O => Find	=> ObjectToElement
 		var objectElementNode = new Core.Node.Transform.ObjectToElement([listNode]);
 		objectElementNode.elementKey("list");
 
+		var joinToOneList = new Core.Node.Transform.JoinArray([objectElementNode]);
+
 		//O => Find	=> ObjectToElement => FileLinks
-		var fileLinksNode = new Core.Node.Transform.FileLinks([objectElementNode]);
+		var fileLinksNode = new Core.Node.Transform.FileLinks([joinToOneList]);
 		fileLinksNode.setFileAction(this._module.fileAction);
 		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 
@@ -52,7 +55,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		sendDataNode.setView("horpyna/jade/listAction");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject
-		var keyListNode = new Core.Node.Transform.UniqueKey([objectElementNode]);
+		var keyListNode = new Core.Node.Transform.UniqueKey([joinToOneList]);
 		keyListNode.setKey("o");
 
 		//O => Find	=> ObjectToElement => UniqueKeyObject => SendData => X

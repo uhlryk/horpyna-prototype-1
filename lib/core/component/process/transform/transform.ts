@@ -6,3 +6,4 @@ export import ObjectToElement = require("./ObjectToElement");
 export import ElementToObject = require("./ElementToObject");
 export import AdditionCombine = require("./AdditionCombine");
 export import MultiplicationCombine = require("./MultiplicationCombine");
+export import JoinArray = require("./JoinArray");
