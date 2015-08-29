@@ -11,16 +11,12 @@ import ProcessModel = require("./../ProcessModel");
  * Pole może być dodane na początku tablicy lub na końcu - jeśli dodane będzie pole numeryczne to pojawi się zawsze na początku
  */
 class ObjectAddElement extends BaseNode {
-	private _keyValueBefore: Object;
-	private _keyValueMapBefore: string[];
-	private _keyValueAfter: Object;
-	private _keyValueMapAfter: string[];
+	private _keyValue: Object;
+	private _keyValueMapType: string[];
 	constructor(parentNodeList: BaseNode[]) {
 		super(parentNodeList);
-		this._keyValueBefore = new Object();
-		this._keyValueAfter = new Object();
-		this._keyValueMapAfter = Object();
-		this._keyValueMapBefore = Object();
+		this._keyValue = new Object();
+		this._keyValueMapType = Object();
 		this.initDebug("node:ObjectAddElement");
 	}
 	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
@@ -41,45 +37,40 @@ class ObjectAddElement extends BaseNode {
 	 * Node akceptuje listę obiektów lub obiekt, poniższa metoda obsługuje pojedyńćzy obiekt
 	 */
 	protected addElementToObject(dataObject: Object, processEntryList: any[], request: Request): Object {
-		var responseObject = new Object();
-		this.mergeObjects(responseObject, this._keyValueBefore);
-		for (var key in this._keyValueMapBefore) {
-			var type = this._keyValueMapBefore[key];
-			var beforeObj = new Object();
-			beforeObj[key] = this.getMappedSource("before_" + key, type, processEntryList, request);
-			this.mergeObjects(responseObject, beforeObj);
-		}
-		this.mergeObjects(responseObject, this._keyValueAfter);
-		for (var key in this._keyValueMapAfter) {
-			var type = this._keyValueMapAfter[key];
+		this.mergeObjects(dataObject, this._keyValue);
+		for (var key in this._keyValueMapType) {
+			var type = this._keyValueMapType[key];
 			var afterObj = new Object();
-			afterObj[key] = this.getMappedSource("after_" + key, type, processEntryList, request);
-			this.mergeObjects(responseObject, afterObj);
+			afterObj[key] = this.getMappedSource("add_" + key, type, processEntryList, request);
+			this.mergeObjects(dataObject, afterObj);
 		}
-		return responseObject;
+		return dataObject;
 	}
-	protected mergeObjects(responseObject: Object, modifyObject:Object) {
+	protected mergeObjects(dataObject: Object, modifyObject: Object) {
 		for(var key in modifyObject){
 			var value = modifyObject[key];
-			responseObject[key] = value;
+			dataObject[key] = value;
 		}
 	}
-	public addKeyValueBefore(key:string, value:any){
-		this._keyValueBefore[key] = value;
+	public setKeyValue(key:string, value:any){
+		this._keyValue[key] = value;
 	}
-	public addKeyValueAfter(key:string, value:any){
-		this._keyValueAfter[key] = value;
+	public setKeyValueMapObjectArray(key: string, mapList: { sourceType: string; sourceKey?: string[] }[]) {
+		this.setKeyValueMap(key, mapList, NodeMapper.MAP_OBJECT_ARRAY);
 	}
-	public addKeyValueMapBefore(key: string, mapList: { type: string; key?: string[] }[], mapType?: string) {
-		this._keyValueMapBefore[key] = mapType || NodeMapper.MAP_OBJECT;
+	public setKeyValueMapObject(key: string, mapList: { sourceType: string; sourceKey?: string[] }[]) {
+		this.setKeyValueMap(key, mapList, NodeMapper.MAP_OBJECT);
+	}
+	public setKeyValueMapValueArray(key: string, mapList: { sourceType: string; sourceKey?: string[] }[]) {
+		this.setKeyValueMap(key, mapList, NodeMapper.MAP_VALUE_ARRAY);
+	}
+	public setKeyValueMapValue(key: string, mapList: { sourceType: string; sourceKey?: string[] }[]) {
+		this.setKeyValueMap(key, mapList, NodeMapper.MAP_VALUE);
+	}
+	protected setKeyValueMap(key: string, mapList: { sourceType: string; sourceKey?: string[] }[],mapType:string) {
+		this._keyValueMapType[key] = mapType;
 		for (var i = 0; i < mapList.length; i++) {
-			this.addMapSource("before_" + key, mapList[i].type, mapList[i].key);
-		}
-	}
-	public addKeyValueMapAfter(key: string, mapList: { type: string; key?: string[] }[], mapType?: string) {
-		this._keyValueMapAfter[key] = mapType || NodeMapper.MAP_OBJECT;
-		for (var i = 0; i < mapList.length; i++) {
-			this.addMapSource("after_" + key, mapList[i].type, mapList[i].key);
+			this.addMapSource("add_" + key, mapList[i].sourceType, mapList[i].sourceKey);
 		}
 	}
 }

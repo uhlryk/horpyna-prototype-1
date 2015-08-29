@@ -70,7 +70,7 @@ class BaseNode extends Element {
 	/**
 	 * Określamy źródło danych wejściowych. Jeśli nie określimy to źródłem będzie tablica odpowiedzi node'ów poprzednich
 	 */
-	public addEntryMapSource(sourceType: string, key?: string[]) {
+	public setEntrySource(sourceType: string, key?: string[]) {
 		this._nodeMapper.addMapSource("entry_source", sourceType, key);
 	}
 	/**

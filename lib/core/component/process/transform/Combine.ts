@@ -18,7 +18,7 @@ class Combine extends BaseNode{
 		this.addMapSource("second_chanel", type, key);
 	}
 	public addFirstChannel(type: string, key?: string[]) {
-		this.addEntryMapSource(type, key);
+		this.setEntrySource(type, key);
 	}
 	// public setSecondaryMapType(type: string){
 	// 	this._secondaryType = type;
