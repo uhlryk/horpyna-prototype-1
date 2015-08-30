@@ -1,6 +1,7 @@
 import Core = require("../../../index");
 import ResourceModule = require("./../ResourceModule");
-import AddActionLinkToEach = require("./../../process/AddActionLinkToEach");
+import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
+import SortLinks = require("./../../node/SortLinks");
 /**
  * Obsługuje generowanie listy wartości z bazy danych
  * Obsługuje sortowanie i paginacje,
@@ -39,11 +40,11 @@ class OnListResource extends Core.Node.ProcessModel {
 //O => Find	=> ObjectToElement => JoinArray=> ileLinks => AddActionLinkToEach => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData([addActionLinkToListElement]);
 		sendDataNode.setView("horpyna/jade/listAction");
-//O => Find	=> ObjectToElement => UniqueKeyObject
-		var keyListNode = new Core.Node.Transform.UniqueKey([joinToOneList]);
-		keyListNode.setKey("o");
-//O => Find	=> ObjectToElement => UniqueKeyObject => SendData => X
-		var orderSendDataNode = new Core.Node.Response.SendData([keyListNode]);
+//O => Find	=> ObjectToElement => SortLinks
+		var sortNavigation = new SortLinks([joinToOneList]);
+		sortNavigation.setAction(this._module.listAction);
+//O => Find	=> ObjectToElement => SortLinks => SendData => X
+		var orderSendDataNode = new Core.Node.Response.SendData([sortNavigation]);
 		orderSendDataNode.setResponseKey("order");
 //O => ActionLink
 		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([this]);

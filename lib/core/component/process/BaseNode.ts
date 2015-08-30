@@ -19,11 +19,13 @@ class BaseNode extends Element {
 	 * @param {ProcessModel} processModel obiekt danego modelu dla któ®ego są te elementy
 	 */
 	private _nodeMapper: NodeMapper;
-	private _content: (processEntryList: any[], request: Request, response: Response, processList: IProcessObject[])=> Util.Promise<any>;
+	private _content: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=> Util.Promise<any>;
+	private _innerContent: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=>any;
 	constructor(parentNodeList?:BaseNode[]){
 		super();
 		this.initDebug("node:");
 		this._content = this.content;
+		this._innerContent = this.innerContent;
 		this._nodeMapper = new NodeMapper();
 		this._nodeMapper.addDefaultMapSource("entry_source", NodeMapper.RESPONSE_NODE);
 		this._childNodeList = [];
@@ -49,15 +51,15 @@ class BaseNode extends Element {
 	/**
 	 * Metoda mapująca, opis pul przy this._mapSource
 	 */
-	public addMapSource(name:string, sourceType:string, key?:string[]){
-		this._nodeMapper.addMapSource(name, sourceType, key);
+	public addMapSource(name:string, sourceType:string, sourceKey?:string[]){
+		this._nodeMapper.addMapSource(name, sourceType, sourceKey);
 	}
 	/**
 	 * Podobne do powyższego ale zamiast dodawać ustawia, jeśli więc jest wpis pod danym name to zostanie zastąpiony
-	 * key może być też tylko jednym wpisem
+	 * sourceKey może być też tylko jednym wpisem
 	 */
-	public setMapSource(name: string, sourceType: string, key: string) {
-		this._nodeMapper.setMapSource(name, sourceType, key);
+	public setMapSource(name: string, sourceType: string, sourceKey: string) {
+		this._nodeMapper.setMapSource(name, sourceType, sourceKey);
 	}
 	/**
 	 * jeśli nie ustawiliśmy mapowania pod daną nazwą zwróci true
@@ -70,8 +72,8 @@ class BaseNode extends Element {
 	/**
 	 * Określamy źródło danych wejściowych. Jeśli nie określimy to źródłem będzie tablica odpowiedzi node'ów poprzednich
 	 */
-	public setEntrySource(sourceType: string, key?: string[]) {
-		this._nodeMapper.addMapSource("entry_source", sourceType, key);
+	public setEntrySource(sourceType: string, sourceKey?: string[]) {
+		this._nodeMapper.addMapSource("entry_source", sourceType, sourceKey);
 	}
 	/**
 	 * Dodaje listę innych nodów co zbuduje rozgałęzienie, te na liście mogą mieć kolejne rozgałęzienia
@@ -106,7 +108,7 @@ class BaseNode extends Element {
 	 * @param {Request}  request  [description]
 	 * @param {Response} response [description]
 	 */
-	public getProcessHandler(processList: IProcessObject[], request: Request, response: Response) {
+	public getProcessHandler(processList: IProcessObject[], actionRequest: Request, actionResponse: Response) {
 		var parentPromiseList = this.getParentPromiseList(processList);
 		Util.Promise.all<void>(parentPromiseList)
 		/**
@@ -125,14 +127,14 @@ class BaseNode extends Element {
 			}
 			//content odpali się tylko jeśli przynajmniej jeden rodzic jest allow
 			if (allowProcessResponseList.length > 0) {
-				return this._content(allowProcessResponseList, request, response, processList);
+				return this._content(allowProcessResponseList, actionRequest, actionResponse, processList);
 			} else{
 				//jeśli żaden rodzic nie jest allow to blokujemy wszystkie connection wychodzące od tego Node
 				this.blockChildrenConnection(processObject);
 			}
 		})
-		.then((response) => {//odpowiedź z content
-			processList[this.processId].response = response || null;
+		.then((processResponse) => {//odpowiedź z content
+			processList[this.processId].response = processResponse || null;
 			processList[this.processId].resolver();
 		});
 	}
@@ -154,38 +156,44 @@ class BaseNode extends Element {
 	 * @param  {Request} request      actionRequest
 	 * @return {Object}               zwraca obiekt z key:value gdzie key to string a value:any
 	 */
-	public getMappedSource(name: string, mapType:string, processEntryList: Object[], request: Request): any {
-		return this._nodeMapper.getMappedSource(name, mapType, processEntryList, request);
+	public getMappedSource(name: string, mapType:string, processEntryList: Object[], actionRequest: Request): any {
+		return this._nodeMapper.getMappedSource(name, mapType, processEntryList, actionRequest);
 	}
-	public getMappedObjectArray(name: string, processEntryList: Object[], request: Request):Object[] {
-		return this.getMappedSource(name, NodeMapper.MAP_OBJECT_ARRAY, processEntryList, request);
+	public getMappedObjectArray(name: string, processEntryList: Object[], actionRequest: Request):Object[] {
+		return this.getMappedSource(name, NodeMapper.MAP_OBJECT_ARRAY, processEntryList, actionRequest);
 	}
-	public getMappedObject(name: string, processEntryList: Object[], request: Request):Object {
-		return this.getMappedSource(name, NodeMapper.MAP_OBJECT, processEntryList, request);
+	public getMappedObject(name: string, processEntryList: Object[], actionRequest: Request):Object {
+		return this.getMappedSource(name, NodeMapper.MAP_OBJECT, processEntryList, actionRequest);
 	}
-	public getMappedValueArray(name: string, processEntryList: Object[], request: Request): any[] {
-		return this.getMappedSource(name, NodeMapper.MAP_VALUE_ARRAY, processEntryList, request);
+	public getMappedValueArray(name: string, processEntryList: Object[], actionRequest: Request): any[] {
+		return this.getMappedSource(name, NodeMapper.MAP_VALUE_ARRAY, processEntryList, actionRequest);
 	}
-	public getMappedValue(name: string, processEntryList: Object[], request: Request): any {
-		return this.getMappedSource(name, NodeMapper.MAP_VALUE, processEntryList, request);
+	public getMappedValue(name: string, processEntryList: Object[], actionRequest: Request): any {
+		return this.getMappedSource(name, NodeMapper.MAP_VALUE, processEntryList, actionRequest);
 	}
-	public getMappedEntry(processEntryList: Object[], request: Request): Object[] {
-		return this.getMappedSource("entry_source", NodeMapper.MAP_OBJECT_ARRAY, processEntryList, request);
+	public getMappedEntry(processEntryList: Object[], actionRequest: Request): Object[] {
+		return this.getMappedSource("entry_source", NodeMapper.MAP_OBJECT_ARRAY, processEntryList, actionRequest);
 	}
 	/**
 	 * Tu logika danego node. Zwrócić musi obiekt odpowiedzi
 	 * @param  {IProcessObject} processObject obiekt pozwala zablokować strumień danych
 	 */
-	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
+	protected content(processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[]): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
-			resolve(null);
+			resolve(this._innerContent(processEntryList, actionRequest, actionResponse, processList));
 		});
+	}
+	protected innerContent(processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[]){
+		return null;
 	}
 	/**
 	 * pozwala nadpisać logikę danego node
 	 */
-	public setContent(v: (processEntryList: any[], request: Request, response: Response, processList: IProcessObject[])=>Util.Promise<any>){
+	public setContent(v: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=>Util.Promise<any>){
 		this._content = v;
+	}
+	public setInnerContent(v: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=>any){
+		this._innerContent = v;
 	}
 }
 export = BaseNode;

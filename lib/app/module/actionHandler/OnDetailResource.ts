@@ -1,6 +1,6 @@
 import Core = require("../../../index");
 import ResourceModule = require("./../ResourceModule");
-import AddActionLinkToEach = require("./../../process/AddActionLinkToEach");
+import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
 /**
  * Odpowiada za logikę akcji szczegółów
  */

@@ -39,14 +39,6 @@ class List extends BaseDbNode {
 	 * Przeszukuje zmapowane wartości dla numeru strony i wybiera jedną właściwą
 	 */
 	protected setPageValue(processEntryList: Object[], request): number {
-		// var mappedObject = this.mapResponse("page", processEntry, request);
-		// for (var key in mappedObject){
-		// 	var v = Number(mappedObject[key]);
-		// 	if (v > 0 && v < Query.List.MAX_DATA) {
-		// 		value = v;
-		// 		break;
-		// 	}
-		// }
 		var value = Number(this.getMappedValue("page", processEntryList, request));
 		if(!value){
 			value = 1;
@@ -57,15 +49,6 @@ class List extends BaseDbNode {
 	 * Przeszukuje zmapowane wartości dla ilości pozycji na stronie i wybiera jedną właściwą
 	 */
 	protected setPageSizeValue(processEntryList: Object[], request): number {
-		// var mappedObject = this.mapResponse("size", processEntry, request);
-		// var value;
-		// for (var key in mappedObject) {
-		// 	var v = Number(mappedObject[key]);
-		// 	if (v > 0 && v < Query.List.MAX_DATA) {
-		// 		value = v;
-		// 		break;
-		// 	}
-		// }
 		var value = Number(this.getMappedValue("size", processEntryList, request));
 		if (value > 0 && value < Query.List.MAX_DATA) {
 			value = 0;
@@ -75,6 +58,7 @@ class List extends BaseDbNode {
 		}
 		return value;
 	}
+
 	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<Object> {
 		var list = new Query.List();
 		list.setModel(this.getModel());
