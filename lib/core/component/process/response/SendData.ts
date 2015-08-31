@@ -1,9 +1,6 @@
 import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import IProcessObject = require("./../IProcessObject");
-import ProcessModel = require("./../ProcessModel");
+import NodeData = require("./../NodeData");
 class SendData extends BaseNode{
 	private _view: string;
 	private _key: string;
@@ -17,16 +14,14 @@ class SendData extends BaseNode{
 	public setResponseKey(v: string){
 		this._key = v;
 	}
-	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
-		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
-			this.debug("begin");
-			var mappedEntry = this.getMappedEntry(processEntryList, request);
-			this.debug(mappedEntry);
-			response.addValue(this._key || "content", mappedEntry);
-			response.view = this._view;
-			this.debug("null");
-			resolve(null);
-		});
+	protected content(data: NodeData): any {
+		this.debug("begin");
+		var mappedEntry = data.getMappedEntry();
+		this.debug(mappedEntry);
+		data.getActionResponse().addValue(this._key || "content", mappedEntry);
+		data.getActionResponse().view = this._view;
+		this.debug("null");
+		return null;
 	}
 }
 export = SendData;

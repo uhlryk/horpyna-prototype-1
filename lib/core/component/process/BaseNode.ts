@@ -6,6 +6,7 @@ import IConnection = require("./IConnection");
 import Response = require("./../routeComponent/module/action/Response");
 import Request = require("./../routeComponent/module/action/Request");
 import NodeMapper = require("./NodeMapper");
+import NodeData = require("./NodeData");
 class BaseNode extends Element {
 	private _childNodeList: BaseNode[];
 	private _parentNodeList: BaseNode[];
@@ -19,13 +20,13 @@ class BaseNode extends Element {
 	 * @param {ProcessModel} processModel obiekt danego modelu dla któ®ego są te elementy
 	 */
 	private _nodeMapper: NodeMapper;
-	private _content: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=> Util.Promise<any>;
-	private _innerContent: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=>any;
+	private _promiseContent: (data: NodeData) => Util.Promise<any>;
+	private _content: (data: NodeData) => any;
 	constructor(parentNodeList?:BaseNode[]){
 		super();
 		this.initDebug("node:");
+		this._promiseContent = this.promiseContent;
 		this._content = this.content;
-		this._innerContent = this.innerContent;
 		this._nodeMapper = new NodeMapper();
 		this._nodeMapper.addDefaultMapSource("entry_source", NodeMapper.RESPONSE_NODE);
 		this._childNodeList = [];
@@ -72,7 +73,7 @@ class BaseNode extends Element {
 	/**
 	 * Określamy źródło danych wejściowych. Jeśli nie określimy to źródłem będzie tablica odpowiedzi node'ów poprzednich
 	 */
-	public setEntrySource(sourceType: string, sourceKey?: string[]) {
+	public addEntryMapSource(sourceType: string, sourceKey?: string[]) {
 		this._nodeMapper.addMapSource("entry_source", sourceType, sourceKey);
 	}
 	/**
@@ -127,7 +128,8 @@ class BaseNode extends Element {
 			}
 			//content odpali się tylko jeśli przynajmniej jeden rodzic jest allow
 			if (allowProcessResponseList.length > 0) {
-				return this._content(allowProcessResponseList, actionRequest, actionResponse, processList);
+				var data = new NodeData(this._nodeMapper, allowProcessResponseList, actionRequest, actionResponse, processList);
+				return this._promiseContent(data);
 			} else{
 				//jeśli żaden rodzic nie jest allow to blokujemy wszystkie connection wychodzące od tego Node
 				this.blockChildrenConnection(processObject);
@@ -149,51 +151,25 @@ class BaseNode extends Element {
 		}
 	}
 	/**
-	 * Dla danego mapowania (po nazwie - name) budujemy mappedSource odpowiedź. jej forma zależy od mapType
-	 * @param  {string}  name         odpowiada name w _mapSource
-	 * @param  {string}  mapType  określa jak mają być zamapowane strumienie, aktualnie mamy ObjectArray, Object, PrimitiveArray, Primitive
-	 * @param  {any[]}   processEntry odpowiedź z poprzedniego Node
-	 * @param  {Request} request      actionRequest
-	 * @return {Object}               zwraca obiekt z key:value gdzie key to string a value:any
-	 */
-	public getMappedSource(name: string, mapType:string, processEntryList: Object[], actionRequest: Request): any {
-		return this._nodeMapper.getMappedSource(name, mapType, processEntryList, actionRequest);
-	}
-	public getMappedObjectArray(name: string, processEntryList: Object[], actionRequest: Request):Object[] {
-		return this.getMappedSource(name, NodeMapper.MAP_OBJECT_ARRAY, processEntryList, actionRequest);
-	}
-	public getMappedObject(name: string, processEntryList: Object[], actionRequest: Request):Object {
-		return this.getMappedSource(name, NodeMapper.MAP_OBJECT, processEntryList, actionRequest);
-	}
-	public getMappedValueArray(name: string, processEntryList: Object[], actionRequest: Request): any[] {
-		return this.getMappedSource(name, NodeMapper.MAP_VALUE_ARRAY, processEntryList, actionRequest);
-	}
-	public getMappedValue(name: string, processEntryList: Object[], actionRequest: Request): any {
-		return this.getMappedSource(name, NodeMapper.MAP_VALUE, processEntryList, actionRequest);
-	}
-	public getMappedEntry(processEntryList: Object[], actionRequest: Request): Object[] {
-		return this.getMappedSource("entry_source", NodeMapper.MAP_OBJECT_ARRAY, processEntryList, actionRequest);
-	}
-	/**
 	 * Tu logika danego node. Zwrócić musi obiekt odpowiedzi
 	 * @param  {IProcessObject} processObject obiekt pozwala zablokować strumień danych
 	 */
-	protected content(processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[]): Util.Promise<any> {
+	protected promiseContent(data: NodeData): Util.Promise<any> {
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
-			resolve(this._innerContent(processEntryList, actionRequest, actionResponse, processList));
+			resolve(this._content(data));
 		});
 	}
-	protected innerContent(processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[]){
+	protected content(data: NodeData): any {
 		return null;
 	}
 	/**
 	 * pozwala nadpisać logikę danego node
 	 */
-	public setContent(v: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=>Util.Promise<any>){
-		this._content = v;
+	public setPromiseContent(v: (data: NodeData) => Util.Promise<any>) {
+		this._promiseContent = v;
 	}
-	public setInnerContent(v: (processEntryList: any[], actionRequest: Request, actionResponse: Response, processList: IProcessObject[])=>any){
-		this._innerContent = v;
+	public setContent(v: (data: NodeData) => any) {
+		this._content = v;
 	}
 }
 export = BaseNode;

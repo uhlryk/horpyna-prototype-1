@@ -1,7 +1,6 @@
 import BaseNode = require("./../BaseNode");
 import Model = require("./../../routeComponent/module/model/Model");
 import Util = require("./../../../util/Util");
-import ProcessModel = require("./../ProcessModel");
 class BaseDbNode extends BaseNode {
 	private model: Model;
 	constructor(parentNodeList: BaseNode[]) {

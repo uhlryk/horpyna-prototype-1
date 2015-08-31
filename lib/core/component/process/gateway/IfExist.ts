@@ -1,8 +1,7 @@
 import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
 import IProcessObject = require("./../IProcessObject");
+import NodeData = require("./../NodeData");
 /**
  * Jeśli strumień wejściowy nie ma danych to output connection block
  * lub jeśli negation jest włączone to jeśli są dane wejściowe to output connection block
@@ -23,25 +22,23 @@ class IfExist extends BaseNode {
 	public setNegation(){
 		this._negation = true;
 	}
-	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
-		return new Util.Promise<any>((resolve:(response)=>void) => {
-			this.debug("begin");
-			var processObject: IProcessObject = processObjectList[this.processId];
-			var mappedEntry = this.getMappedEntry(processEntryList, request);
-			this.debug("isNegation: " + this._negation);
-			this.debug(mappedEntry);
-			if (mappedEntry.length > 0 && this._negation === true) {
-				this.debug("block connection");
-				this.blockChildrenConnection(processObject);
-			} else if(mappedEntry.length === 0 && this._negation === false) {
-				this.debug("block connection");
-				this.blockChildrenConnection(processObject);
-			} else {
-				this.debug("allow connection");
+	protected content(data: NodeData): any {
+		this.debug("begin");
+		var processObject: IProcessObject = data.getProcessList()[this.processId];
+		var mappedEntry = data.getMappedEntry();
+		this.debug("isNegation: " + this._negation);
+		this.debug(mappedEntry);
+		if (mappedEntry.length > 0 && this._negation === true) {
+			this.debug("block connection");
+			this.blockChildrenConnection(processObject);
+		} else if(mappedEntry.length === 0 && this._negation === false) {
+			this.debug("block connection");
+			this.blockChildrenConnection(processObject);
+		} else {
+			this.debug("allow connection");
 
-			}
-			resolve(mappedEntry);
-		});
+		}
+		return mappedEntry;
 	}
 }
 export = IfExist;

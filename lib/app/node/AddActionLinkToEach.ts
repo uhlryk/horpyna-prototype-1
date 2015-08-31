@@ -16,23 +16,21 @@ class AddActionLinkToEach extends Core.Node.Transform.ActionLink {
 	public setKey(v: string) {
 		this._key = v;
 	}
-	protected content(processEntryList: any[], actionRequest: Core.Action.Request, actionResponse: Core.Action.Response, processObjectList): Core.Util.Promise<any> {
-		return new Core.Util.Promise<any>((resolve: (response) => void) => {
-			this.debug("begin");
-			var mappedEntry = this.getMappedEntry(processEntryList, actionRequest);
-			this.debug(mappedEntry);
-			for (var i = 0; i < mappedEntry.length; i++) {
-				for (var j = 0; j < this.getActionList().length; j++) {
-					var oneEntry = mappedEntry[i];
-					if(oneEntry[this._key] === undefined){
-						oneEntry[this._key] = []
-					}
-					oneEntry[this._key].push(this.createUri(this.getActionList()[j], oneEntry, processEntryList, actionRequest));
+	protected content(data: Core.Node.NodeData): any {
+		this.debug("begin");
+		var mappedEntry = data.getMappedEntry();
+		this.debug(mappedEntry);
+		for (var i = 0; i < mappedEntry.length; i++) {
+			for (var j = 0; j < this.getActionList().length; j++) {
+				var oneEntry = mappedEntry[i];
+				if(oneEntry[this._key] === undefined){
+					oneEntry[this._key] = []
 				}
+				oneEntry[this._key].push(this.createUri(this.getActionList()[j], oneEntry, data));
 			}
-			this.debug(mappedEntry);
-			resolve(mappedEntry);
-		});
+		}
+		this.debug(mappedEntry);
+		return mappedEntry;
 	}
 }
 export = AddActionLinkToEach;

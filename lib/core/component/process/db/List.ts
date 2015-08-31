@@ -2,9 +2,7 @@ import BaseDbNode = require("./BaseDbNode");
 import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
 import Query = require("./../../routeComponent/module/query/Query");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import ProcessModel = require("./../ProcessModel");
+import NodeData = require("./../NodeData");
 class List extends BaseDbNode {
 	constructor(parentNodeList: BaseNode[]) {
 		super(parentNodeList);
@@ -38,8 +36,8 @@ class List extends BaseDbNode {
 	/**
 	 * Przeszukuje zmapowane wartości dla numeru strony i wybiera jedną właściwą
 	 */
-	protected getPageValue(processEntryList: Object[], request, limit: number): number {
-		var value = Number(this.getMappedValue("page", processEntryList, request));
+	protected getPageValue(data: NodeData, limit: number): number {
+		var value = Number(data.getMappedValue("page"));
 		if (value < 0 || value > limit) {
 			value = 0;
 		}
@@ -48,33 +46,33 @@ class List extends BaseDbNode {
 	/**
 	 * Przeszukuje zmapowane wartości dla ilości pozycji na stronie i wybiera jedną właściwą
 	 */
-	protected getPageSizeValue(processEntryList: Object[], request, limit:number): number {
-		var value = Number(this.getMappedValue("size", processEntryList, request));
+	protected getPageSizeValue(data: NodeData, limit: number): number {
+		var value = Number(data.getMappedValue("size"));
 		if (value < 1 || value > limit) {
 			value = 1;
 		}
 		return value;
 	}
 
-	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<Object> {
+	protected promiseContent(data: NodeData): Util.Promise<Object> {
 		var list = new Query.List();
 		list.setModel(this.getModel());
-		list.populateWhere(this.getMappedObject("where", processEntryList, request));
-		list.addOrder(this.getMappedValue("order", processEntryList, request), this.getMappedValue("direction", processEntryList, request));
+		list.populateWhere(data.getMappedObject("where"));
+		list.addOrder(data.getMappedValue("order"), data.getMappedValue("direction"));
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			this.debug("begin");
 			list.run()
 			.then((modelList) => {
-				var page = this.getPageValue(processEntryList, request, list.getLimit());
-				var pageSize = this.getPageSizeValue(processEntryList, request, list.getLimit());
+				var page = this.getPageValue(data, list.getLimit());
+				var pageSize = this.getPageSizeValue(data, list.getLimit());
 				var listResponse = [];
 				var count = 0;
 				for (var i = (page - 1) * pageSize; i < modelList.length; i++) {
 					if(!modelList[i]){
 						continue;
 					}
-					var data = modelList[i].toJSON();
-					listResponse.push(data);
+					var modelData = modelList[i].toJSON();
+					listResponse.push(modelData);
 					count++;
 					if (count > pageSize){
 						break;

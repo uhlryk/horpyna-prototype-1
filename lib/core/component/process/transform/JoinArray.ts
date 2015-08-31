@@ -1,8 +1,6 @@
 import Util = require("./../../../util/Util");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
+import NodeData = require("./../NodeData");
 /**
  * Jeśli wejściowa lista(A) ma tablice(B) które mają obiekty lub tablice. To możemy uprościć strukturę łącząc wszystkie tablice(B) z listy
  * i zawartiść wrzucając bezpośrednio do listy.
@@ -17,24 +15,22 @@ class JoinArray extends BaseNode {
 		super(parentNodeList);
 		this.initDebug("node:JoinArray");
 	}
-	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
-		return new Util.Promise<any>((resolve: (response) => void) => {
-			this.debug("begin");
-			var mappedEntry = this.getMappedEntry(processEntryList, request);
-			this.debug(mappedEntry);
-			var processResponse;
-			processResponse = [];
-			for (var i = 0; i < mappedEntry.length; i++) {
-				if (Util._.isArray(mappedEntry[i])){
-					var elem = mappedEntry[i];
-					for (var j = 0; j < elem['length']; j++) {
-						processResponse.push(elem[j]);
-					}
+	protected content(data: NodeData): any {
+		this.debug("begin");
+		var mappedEntry = data.getMappedEntry();
+		this.debug(mappedEntry);
+		var processResponse;
+		processResponse = [];
+		for (var i = 0; i < mappedEntry.length; i++) {
+			if (Util._.isArray(mappedEntry[i])){
+				var elem = mappedEntry[i];
+				for (var j = 0; j < elem['length']; j++) {
+					processResponse.push(elem[j]);
 				}
 			}
-			this.debug(processResponse);
-			resolve(processResponse);
-		});
+		}
+		this.debug(processResponse);
+		return processResponse;
 	}
 }
 export = JoinArray;

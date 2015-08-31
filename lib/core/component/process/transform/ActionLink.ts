@@ -1,9 +1,7 @@
 import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
 import Util = require("./../../../util/Util");
-import IProcessObject = require("./../IProcessObject");
+import NodeData = require("./../NodeData");
 /**
  * Tworzy listę uri na podstawie podanej akcji i danych wejściowych które zrobią populację parametrów akcji
  * Dane wejściowe mogą również wypełnić query akcji
@@ -32,39 +30,37 @@ class ActionLink extends BaseNode {
 	public setNameFromEntrySource(v:string){
 		this._nameFromSource = v;
 	}
-	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
-		return new Util.Promise<any>((resolve: (response) => void) => {
-			this.debug("begin");
-			var mappedEntry = this.getMappedEntry(processEntryList, request);
-			this.debug(mappedEntry);
-			var processResponse = [];
-			for (var j = 0; j < this._actionList.length; j++) {
-				if (mappedEntry.length > 0) {
-					for (var i = 0; i < mappedEntry.length; i++) {
-						processResponse.push(this.createUri(this._actionList[j], mappedEntry[i], processEntryList, request));
-					}
-				} else {
-					processResponse.push(this.createUri(this._actionList[j], {}, processEntryList, request));
+	protected content(data: NodeData): any {
+		this.debug("begin");
+		var mappedEntry = data.getMappedEntry();
+		this.debug(mappedEntry);
+		var processResponse = [];
+		for (var j = 0; j < this._actionList.length; j++) {
+			if (mappedEntry.length > 0) {
+				for (var i = 0; i < mappedEntry.length; i++) {
+					processResponse.push(this.createUri(this._actionList[j], mappedEntry[i], data));
 				}
+			} else {
+				processResponse.push(this.createUri(this._actionList[j], {}, data));
 			}
-			this.debug(processResponse);
-			resolve(processResponse);
-		});
+		}
+		this.debug(processResponse);
+		return processResponse;
 	}
 	/**
 	 * Wszystkie linki dodane zostaną jako jedna pozycja
 	 */
-	protected createUri(action: BaseAction, dataObject: Object, processEntryList: any[], request: Request): Object {
+	protected createUri(action: BaseAction, dataToPopulate: Object, data: NodeData): Object {
 		var response = new Object();
-		if (dataObject) {
-			response['uri'] = action.populateRoutePathWithQuery(dataObject, dataObject);
+		if (dataToPopulate) {
+			response['uri'] = action.populateRoutePathWithQuery(dataToPopulate, dataToPopulate);
 		} else {
 			response['uri'] = action.getRoutePath(false);
 		}
 
-		if (this._nameFromSource && dataObject) {
-			if (dataObject[this._nameFromSource]) {
-				response['name'] = dataObject[this._nameFromSource];
+		if (this._nameFromSource && dataToPopulate) {
+			if (dataToPopulate[this._nameFromSource]) {
+				response['name'] = dataToPopulate[this._nameFromSource];
 			} else{//nie chcemy by nazwa była undefined więc dajemy nazwę akcji
 				response['name'] = action.name;
 			}

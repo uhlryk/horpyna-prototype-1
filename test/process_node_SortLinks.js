@@ -30,19 +30,15 @@ describe("Testy Node transform.SortLinks", function() {
 		myAction.setActionHandler(myProcessModel.getActionHandler());
 
 		myNode1 = new Core.Node.BaseNode([myProcessModel]);
-		myNode1.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				resolve(beforeMapping);
-			});
+		myNode1.setContent(function(data) {
+			return beforeMapping;
 		});
 		testNode = new Core.App.Node.SortLinks([myNode1]);
 
 		myNode2 = new Core.Node.BaseNode([testNode]);
-		myNode2.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				afterMapping = myNode2.getMappedEntry(processEntryList, request);
-				resolve(null);
-			});
+		myNode2.setContent(function(data) {
+			afterMapping = data.getMappedEntry();
+			return null;
 		});
 		myApp.init().then(function () {
 			done();

@@ -15,10 +15,10 @@ class SortLinks extends Core.Node.BaseNode {
 	public setAction(action: Core.Action.BaseAction) {
 		this._action = action;
 	}
-	protected innerContent(processEntryList: any[], actionRequest: Core.Action.Request, actionResponse: Core.Action.Response, processObjectList): any {
+	protected content(data: Core.Node.NodeData): any {
 		this.debug("begin");
 		if (this._action) {
-			var mappedEntry = this.getMappedEntry(processEntryList, actionRequest);
+			var mappedEntry = data.getMappedEntry();
 			this.debug(mappedEntry);
 			var keyList = [];
 			for (var i = 0; i < mappedEntry.length; i++) {
@@ -30,8 +30,8 @@ class SortLinks extends Core.Node.BaseNode {
 				}
 			}
 			var processResponse = [];
-			var actionParam = this.getMappedObject("action_param", processEntryList, actionRequest);
-			var actionQuery = this.getMappedObject("action_query", processEntryList, actionRequest);
+			var actionParam = data.getMappedObject("action_param");
+			var actionQuery = data.getMappedObject("action_query");
 			var actDirection = actionQuery["d"];
 			var actKey = actionQuery["o"];
 			for (var i = 0; i < keyList.length; i++) {

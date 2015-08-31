@@ -18,24 +18,18 @@ describe("Testy Node transform.ObjectAddElement", function() {
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
 		myNode1a = new Core.Node.BaseNode([myProcessModel]);
-		myNode1a.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				resolve(beforeMapping1a);
-			});
+		myNode1a.setContent(function(data) {
+			return beforeMapping1a;
 		});
 		myNode1b = new Core.Node.BaseNode([myProcessModel]);
-		myNode1b.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				resolve(beforeMapping1b);
-			});
+		myNode1b.setContent(function(data) {
+			return beforeMapping1b;
 		});
 		testNode = new Core.Node.Transform.ObjectAddElement([myNode1a,myNode1b]);
 		myNode2 = new Core.Node.BaseNode([testNode]);
-		myNode2.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				afterMapping = myNode2.getMappedEntry(processEntryList, request);
-				resolve(null);
-			});
+		myNode2.setContent(function(data) {
+			afterMapping = data.getMappedEntry();
+			return null;
 		});
 		myApp.init().then(function () {
 			done();
@@ -105,7 +99,7 @@ describe("Testy Node transform.ObjectAddElement", function() {
 		beforeMapping1a = [{k1:"v1"},{k2:"v2"}];
 		beforeMapping1b = ["a1","a2"];
 		testNode.setKeyValueMapValueArray("t2",[{sourceType:Core.Node.NodeMapper.RESPONSE_NODE_2}]);
-		testNode.setEntrySource(Core.Node.NodeMapper.RESPONSE_NODE_1);
+		testNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
 				console.log(afterMapping);

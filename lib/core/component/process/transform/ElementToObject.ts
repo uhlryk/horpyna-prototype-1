@@ -1,11 +1,6 @@
 import Util = require("./../../../util/Util");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
-import BaseAction = require("./../../routeComponent/module/action/BaseAction");
-import NodeMapper = require("./../NodeMapper");
-import ProcessModel = require("./../ProcessModel");
+import NodeData = require("./../NodeData");
 /**
  * Źródłem będzie tablica to wynikiem będzie tablica obiektów mająca klucz o podanej nazwie i jako wartość
  * oryginalne elementy tablicy
@@ -24,21 +19,19 @@ class ElementToObject extends BaseNode {
 	public setKey(v: string) {
 		this._key = v;
 	}
-	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
-		return new Util.Promise<any>((resolve: (response) => void) => {
-			this.debug("begin");
-			var mappedEntry = this.getMappedEntry(processEntryList, request);
-			this.debug(mappedEntry);
-			var response = [];
-			for (var i = 0; i < mappedEntry.length; i++) {
-				var row = mappedEntry[i];
-				var newRow = new Object();
-				newRow[this._key] = row;
-				response.push(newRow);
-			}
-			this.debug(response);
-			resolve(response);
-		});
+	protected content(data: NodeData): any {
+		this.debug("begin");
+		var mappedEntry = data.getMappedEntry();
+		this.debug(mappedEntry);
+		var response = [];
+		for (var i = 0; i < mappedEntry.length; i++) {
+			var row = mappedEntry[i];
+			var newRow = new Object();
+			newRow[this._key] = row;
+			response.push(newRow);
+		}
+		this.debug(response);
+		return response;
 	}
 }
 export = ElementToObject;

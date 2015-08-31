@@ -21,17 +21,13 @@ describe("Funkcje ProcessModel Nodes", function() {
 			myAction.setActionHandler(myProcessModel.getActionHandler());
 
 			var myNode1 = new Core.Node.BaseNode([myProcessModel]);
-			myNode1.setContent(function(processEntryList, request, response, processList) {
-				return new Core.Util.Promise(function(resolve){
-					resolve(beforeMapping);
-				});
+			myNode1.setContent(function(data) {
+				return beforeMapping;
 			});
 			myNode2 = new Core.Node.BaseNode([myNode1]);
-			myNode2.setContent(function(processEntryList, request, response, processList) {
-				return new Core.Util.Promise(function(resolve){
-					afterMapping = myNode2.getMappedSource("entry_source", mapType, processEntryList, request);
-					resolve(null);
-				});
+			myNode2.setContent(function(data) {
+				afterMapping = data.getMappedSource("entry_source", mapType);
+				return null;
 			});
 			myApp.init().then(function () {
 				done();
@@ -484,16 +480,6 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 		});
 		describe("Gdy mamy ustawiony typ mapowania MAP_VALUE", function () {
-			it('Powinien zwrócić null gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}]', function (done) {
-				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"}];
-				mapType = Core.Node.NodeMapper.MAP_VALUE;
-				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
-				request(app).get("/process/myAction")
-					.end(function (err, res) {
-						expect(afterMapping).to.be.null;
-						done();
-					});
-			});
 			it('Powinien zwrócić "val5" gdy podamy [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"]', function (done) {
 				beforeMapping = [{k1:"v1",k2:"v2"},{k3:"v1",k2:"v2"},"val5"];
 				mapType = Core.Node.NodeMapper.MAP_VALUE;
@@ -600,23 +586,17 @@ describe("Funkcje ProcessModel Nodes", function() {
 			myAction.setActionHandler(myProcessModel.getActionHandler());
 
 			var myNode1a = new Core.Node.BaseNode([myProcessModel]);
-			myNode1a.setContent(function(processEntryList, request, response, processList) {
-				return new Core.Util.Promise(function(resolve){
-					resolve(beforeMapping1);
-				});
+			myNode1a.setContent(function(data) {
+				return beforeMapping1;
 			});
 			var myNode1b = new Core.Node.BaseNode([myProcessModel]);
-			myNode1b.setContent(function(processEntryList, request, response, processList) {
-				return new Core.Util.Promise(function(resolve){
-					resolve(beforeMapping2);
-				});
+			myNode1b.setContent(function(data) {
+				return beforeMapping2;
 			});
 			myNode2 = new Core.Node.BaseNode([myNode1a, myNode1b]);
-			myNode2.setContent(function(processEntryList, request, response, processList) {
-				return new Core.Util.Promise(function(resolve){
-					afterMapping = myNode2.getMappedSource("entry_source", mapType, processEntryList, request);
-					resolve(null);
-				});
+			myNode2.setContent(function(data) {
+					afterMapping = data.getMappedSource("entry_source", mapType);
+				return null;
 			});
 			myApp.init().then(function () {
 				done();
@@ -992,17 +972,6 @@ describe("Funkcje ProcessModel Nodes", function() {
 			});
 		});
 		describe("Gdy mamy ustawiony typ mapowania MAP_VALUE", function () {
-			it('Powinien zwrócić null gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"}]', function (done) {
-				beforeMapping1 = [{k1:"v1",k2:"v2"}];
-				beforeMapping2 = [{k3:"v1",k2:"v2"}];
-				mapType = Core.Node.NodeMapper.MAP_VALUE;
-				myNode2.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE);
-				request(app).get("/process/myAction")
-					.end(function (err, res) {
-						expect(afterMapping).to.be.null;
-						done();
-					});
-			});
 			it('Powinien zwrócić "val5" gdy podamy [{k1:"v1",k2:"v2"}] i [{k3:"v1",k2:"v2"},"val5"]', function (done) {
 				beforeMapping1 = [{k1:"v1",k2:"v2"}];
 				beforeMapping2 = [{k3:"v1",k2:"v2"},"val5"];

@@ -160,6 +160,8 @@ class NodeMapper extends Element{
 			case NodeMapper.MAP_VALUE:
 				this.debug("mapSource MAP_VALUE");
 				mappedSource = this._nodeMapperValue.map(mappedSource, sourceTypeKeys, sourceData);
+				console.log("Z1");
+				console.log(mappedSource);
 				break;
 		}
 		return mappedSource;

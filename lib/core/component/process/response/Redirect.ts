@@ -1,11 +1,7 @@
 import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import IProcessObject = require("./../IProcessObject");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
-import FieldType = require("./../../routeComponent/module/action/field/FieldType");
-import ProcessModel = require("./../ProcessModel");
+import NodeData = require("./../NodeData");
 /**
  * Ustawia w odpowiedzi przekierowanie
  */
@@ -35,24 +31,22 @@ class Redirect extends BaseNode {
 	public setTargetUrl(v: string) {
 		this._url = v;
 	}
-	protected content(processEntryList: any[], request: Request, response: Response, processList: IProcessObject[]): Util.Promise<any> {
-		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
-			this.debug("begin");
-			var uri;
-			if(this._action){
-				var params = this.getMappedObject("params", processEntryList, request);
-				if (params){
-					uri = this._action.populateRoutePath(params);
-				} else {
-					uri = this._action.getRoutePath(false);
-				}
+	protected content(data: NodeData): any {
+		this.debug("begin");
+		var uri;
+		if(this._action){
+			var params = data.getMappedObject("params");
+			if (params){
+				uri = this._action.populateRoutePath(params);
 			} else {
-				uri = this._url || "/";
+				uri = this._action.getRoutePath(false);
 			}
-			response.setRedirect(uri);
-			this.debug("redirect: " + uri);
-			resolve(null);
-		});
+		} else {
+			uri = this._url || "/";
+		}
+		data.getActionResponse().setRedirect(uri);
+		this.debug("redirect: " + uri);
+		return null;
 	}
 }
 export = Redirect;

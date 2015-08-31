@@ -29,15 +29,15 @@ class Pagination extends Core.Node.BaseNode {
 	public setAllSize(type: string, key: string) {
 		this.setMapSource("all_size", type, key);
 	}
-	protected innerContent(processEntryList: any[], actionRequest: Core.Action.Request, actionResponse: Core.Action.Response, processObjectList): any {
+	protected content(data: Core.Node.NodeData): any {
 		this.debug("begin");
 		var processResponse = [];
 		if (this._action) {
-			var actionParam = this.getMappedObject("action_param", processEntryList, actionRequest);
-			var actionQuery = this.getMappedObject("action_query", processEntryList, actionRequest);
-			var allSize = (this.getMappedValue("all_size", processEntryList, actionRequest));
-			var page = Number(this.getMappedValue("page", processEntryList, actionRequest));
-			var pageSize = Number(this.getMappedValue("size", processEntryList, actionRequest));
+			var actionParam = data.getMappedObject("action_param");
+			var actionQuery = data.getMappedObject("action_query");
+			var allSize = (data.getMappedValue("all_size"));
+			var page = Number(data.getMappedValue("page"));
+			var pageSize = Number(data.getMappedValue("size"));
 			var pagesNumber = Math.ceil(allSize / pageSize);
 			actionQuery['s'] = pageSize;
 			if(page > 0){//pojawi się link first i previous

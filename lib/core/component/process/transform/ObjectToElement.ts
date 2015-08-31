@@ -1,8 +1,6 @@
 import Util = require("./../../../util/Util");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import IProcessObject = require("./../IProcessObject");
 import BaseNode = require("./../BaseNode");
+import NodeData = require("./../NodeData");
 /**
  * Otrzymane źródło to tablica elementów. Z każdego elementu wyciąga określony element.
  * I zwraca tablicę wyciągniętych elementów
@@ -18,19 +16,17 @@ class ObjectToElement extends BaseNode {
 	public elementKey(key: string) {
 		this._key = key;
 	}
-	protected content(processEntryList: any[], request: Request, response: Response, processObjectList: IProcessObject[]): Util.Promise<any> {
-		return new Util.Promise<any>((resolve:(response)=>void) => {
-			this.debug("begin");
-			var mappedEntry = this.getMappedEntry(processEntryList, request);
-			this.debug(mappedEntry);
-			var processResponse;
-			processResponse = [];
-			for (var i = 0; i < mappedEntry.length; i++) {
-				processResponse.push(this.getFromObject(mappedEntry[i]));
-			}
-			this.debug(processResponse);
-			resolve(processResponse);
-		});
+	protected content(data: NodeData): any {
+		this.debug("begin");
+		var mappedEntry = data.getMappedEntry();
+		this.debug(mappedEntry);
+		var processResponse;
+		processResponse = [];
+		for (var i = 0; i < mappedEntry.length; i++) {
+			processResponse.push(this.getFromObject(mappedEntry[i]));
+		}
+		this.debug(processResponse);
+		return processResponse;
 	}
 	protected getFromObject(dataObject): Object {
 		var responseObject = new Object();

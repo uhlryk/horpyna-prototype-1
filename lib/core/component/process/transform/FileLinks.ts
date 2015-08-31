@@ -2,9 +2,7 @@ import ChangeObjectElement = require("./ChangeObjectElement");
 import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 import Util = require("./../../../util/Util");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import ProcessModel = require("./../ProcessModel");
+import NodeData = require("./../NodeData");
 class FileLinks extends ChangeObjectElement{
 	private _action: BaseAction;
 	constructor(parentNodeList: BaseNode[]) {
@@ -24,16 +22,16 @@ class FileLinks extends ChangeObjectElement{
 	public mapActionParams(type: string, key?: string[]) {
 		this.addMapSource("params", type, key);
 	}
-	protected checkIfValueModify(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): boolean {
+	protected checkIfValueModify(key: string, value: any, objectToModify: Object, data: NodeData): boolean {
 		if (value && value.files) {
 			return true;
 		}
 		return false;
 	}
-	protected modifyValue(key: string, value: any, dataObject: Object, processEntryList: any[], request: Request, response: Response): any {
+	protected modifyValue(key: string, value: any, objectToModify: Object, data: NodeData): any {
 		var uriFileAction = "/";
 		if (this._action) {
-			var params = this.getMappedObject("params", processEntryList, request);
+			var params = data.getMappedObject("params");
 			if (params) {
 				uriFileAction = this._action.populateRoutePath(params);
 			} else {

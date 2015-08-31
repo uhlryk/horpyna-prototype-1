@@ -18,26 +18,20 @@ describe("Testy Node transform.MultiplicationCombine", function() {
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
 		var myNode1a = new Core.Node.BaseNode([myProcessModel]);
-		myNode1a.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				resolve(beforeMapping1);
-			});
+		myNode1a.setContent(function(data) {
+			return beforeMapping1;
 		});
 		var myNode1b = new Core.Node.BaseNode([myProcessModel]);
-		myNode1b.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				resolve(beforeMapping2);
-			});
+		myNode1b.setContent(function(data) {
+			return beforeMapping2;
 		});
 		testNode = new Core.Node.Transform.MultiplicationCombine([myNode1a, myNode1b]);
 		testNode.addFirstChannel(Core.Node.NodeMapper.RESPONSE_NODE_1);
 		testNode.addSecondChannel(Core.Node.NodeMapper.RESPONSE_NODE_2);
 		myNode2 = new Core.Node.BaseNode([testNode]);
-		myNode2.setContent(function(processEntryList, request, response, processList) {
-			return new Core.Util.Promise(function(resolve){
-				afterMapping = myNode2.getMappedEntry(processEntryList, request);
-				resolve(null);
-			});
+		myNode2.setContent(function(data) {
+			afterMapping = data.getMappedEntry();
+			return null;
 		});
 		myApp.init().then(function () {
 			done();

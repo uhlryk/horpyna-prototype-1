@@ -2,9 +2,7 @@ import BaseDbNode = require("./BaseDbNode");
 import BaseNode = require("./../BaseNode");
 import Util = require("./../../../util/Util");
 import Query = require("./../../routeComponent/module/query/Query");
-import Response = require("./../../routeComponent/module/action/Response");
-import Request = require("./../../routeComponent/module/action/Request");
-import ProcessModel = require("./../ProcessModel");
+import NodeData = require("./../NodeData");
 /**
  * Node zwraca obiekt z danym wpisem w bazie danych
  */
@@ -19,17 +17,17 @@ class Find extends BaseDbNode {
 	public addWhere(type: string, key?: string[]) {
 		this.addMapSource("where", type, key);
 	}
-	protected content(processEntryList: Object[], request: Request, response: Response): Util.Promise<any> {
+	protected promiseContent(data: NodeData): Util.Promise<any> {
 		var find = new Query.Find();
 		find.setModel(this.getModel());
-		find.populateWhere(this.getMappedObject("where", processEntryList, request));
+		find.populateWhere(data.getMappedObject("where"));
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			this.debug("begin");
 			find.run()
 			.then((model) => {
 				if (model) {
-					var data = model.toJSON();
-					resolve(data);
+					var modelData = model.toJSON();
+					resolve(modelData);
 				} else {
 					resolve(null);
 				}

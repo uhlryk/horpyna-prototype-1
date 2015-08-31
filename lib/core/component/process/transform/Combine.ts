@@ -1,5 +1,4 @@
 import BaseNode = require("./../BaseNode");
-import ProcessModel = require("./../ProcessModel");
 import Util = require("./../../../util/Util");
 /**
  * Pozwala łączyć wiele odpowiedzi w jedną, łączy tylko obiekty i  tablice obiektów
@@ -18,14 +17,8 @@ class Combine extends BaseNode{
 		this.addMapSource("second_chanel", type, key);
 	}
 	public addFirstChannel(type: string, key?: string[]) {
-		this.setEntrySource(type, key);
+		this.addEntryMapSource(type, key);
 	}
-	// public setSecondaryMapType(type: string){
-	// 	this._secondaryType = type;
-	// }
-	// protected getSecondaryMapType():string{
-	// 	return this._secondaryType;
-	// }
 	protected mergeObjects(object1: Object, object2?:Object) {
 		var responseObject = new Object();
 		for (var key in object1) {
