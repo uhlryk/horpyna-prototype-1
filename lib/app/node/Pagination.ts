@@ -35,9 +35,9 @@ class Pagination extends Core.Node.BaseNode {
 		if (this._action) {
 			var actionParam = this.getMappedObject("action_param", processEntryList, actionRequest);
 			var actionQuery = this.getMappedObject("action_query", processEntryList, actionRequest);
-			var allSize = this.getMappedValue("all_size", processEntryList, actionRequest);
-			var page = this.getMappedValue("page", processEntryList, actionRequest);
-			var pageSize = this.getMappedValue("size", processEntryList, actionRequest);
+			var allSize = (this.getMappedValue("all_size", processEntryList, actionRequest));
+			var page = Number(this.getMappedValue("page", processEntryList, actionRequest));
+			var pageSize = Number(this.getMappedValue("size", processEntryList, actionRequest));
 			var pagesNumber = Math.ceil(allSize / pageSize);
 			actionQuery['s'] = pageSize;
 			if(page > 0){//pojawi się link first i previous
@@ -62,16 +62,18 @@ class Pagination extends Core.Node.BaseNode {
 			if (iEnd > pagesNumber){
 				iEnd = pagesNumber;
 			}
-			if (iEnd - iStart > 1) {
+
 				for (; iStart < iEnd; iStart++) {
-					var numElement = new Object();
-					actionQuery['p'] = iStart;
-					numElement["uri"] = this._action.populateRoutePathWithQuery(actionParam, actionQuery);
-					numElement["name"] = iStart + 1;
-					numElement["type"] = "num";
-					processResponse.push(numElement);
+					if (iStart !== page) {
+						var numElement = new Object();
+						actionQuery['p'] = iStart;
+						numElement["uri"] = this._action.populateRoutePathWithQuery(actionParam, actionQuery);
+						numElement["name"] = iStart + 1;
+						numElement["type"] = "num";
+						processResponse.push(numElement);
+					}
 				}
-			}
+
 			if (page < pagesNumber-1){
 				var previousElement = new Object();
 				actionQuery['p'] = page + 1;

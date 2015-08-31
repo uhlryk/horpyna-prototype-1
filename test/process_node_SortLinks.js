@@ -6,7 +6,7 @@ var Core = require('./../js/index');
 var app;
 var myApp;
 
-describe("Testy Node transform.ActionLink", function() {
+describe("Testy Node transform.SortLinks", function() {
 	var myProcessModel, myNode2, myNode1, testNode, beforeMapping, afterMapping, myAction;
 	beforeEach(function (done) {
 		app = require('./core/app')();
