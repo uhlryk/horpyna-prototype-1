@@ -38,23 +38,20 @@ class List extends BaseDbNode {
 	/**
 	 * Przeszukuje zmapowane wartości dla numeru strony i wybiera jedną właściwą
 	 */
-	protected setPageValue(processEntryList: Object[], request): number {
+	protected getPageValue(processEntryList: Object[], request, limit: number): number {
 		var value = Number(this.getMappedValue("page", processEntryList, request));
-		if(!value){
-			value = 1;
+		if (value < 0 || value > limit) {
+			value = 0;
 		}
 		return value
 	}
 	/**
 	 * Przeszukuje zmapowane wartości dla ilości pozycji na stronie i wybiera jedną właściwą
 	 */
-	protected setPageSizeValue(processEntryList: Object[], request): number {
+	protected getPageSizeValue(processEntryList: Object[], request, limit:number): number {
 		var value = Number(this.getMappedValue("size", processEntryList, request));
-		if (value > 0 && value < Query.List.MAX_DATA) {
-			value = 0;
-		}
-		if (!value) {
-			value = Query.List.DEFAULT_PAGE_SIZE;
+		if (value < 1 || value > limit) {
+			value = 1;
 		}
 		return value;
 	}
@@ -63,16 +60,19 @@ class List extends BaseDbNode {
 		var list = new Query.List();
 		list.setModel(this.getModel());
 		list.populateWhere(this.getMappedObject("where", processEntryList, request));
-		list.setOrder([[this.getMappedValue("order", processEntryList, request), this.getMappedValue("order", processEntryList, request)]]);
+		list.addOrder(this.getMappedValue("order", processEntryList, request), this.getMappedValue("direction", processEntryList, request));
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			this.debug("begin");
 			list.run()
 			.then((modelList) => {
-				var page = this.setPageValue(processEntryList, request);
-				var pageSize = this.setPageSizeValue(processEntryList, request);
+				var page = this.getPageValue(processEntryList, request, list.getLimit());
+				var pageSize = this.getPageSizeValue(processEntryList, request, list.getLimit());
 				var listResponse = [];
 				var count = 0;
 				for (var i = (page - 1) * pageSize; i < modelList.length; i++) {
+					if(!modelList[i]){
+						continue;
+					}
 					var data = modelList[i].toJSON();
 					listResponse.push(data);
 					count++;
@@ -84,7 +84,8 @@ class List extends BaseDbNode {
 					list: listResponse,
 					page: page,
 					size: pageSize,
-					maxList: modelList.length
+					allSize: modelList.length,
+					maxSize: list.getLimit()
 				});
 			})
 		});

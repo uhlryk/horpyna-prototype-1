@@ -2,6 +2,7 @@ import Core = require("../../../index");
 import ResourceModule = require("./../ResourceModule");
 import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
 import SortLinks = require("./../../node/SortLinks");
+import Pagination = require("./../../node/Pagination");
 /**
  * Obsługuje generowanie listy wartości z bazy danych
  * Obsługuje sortowanie i paginacje,
@@ -52,6 +53,15 @@ class OnListResource extends Core.Node.ProcessModel {
 //O => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
 		navSendDataNode.setResponseKey("navigation");
+//O => Find => pagination
+		var pagination = new Pagination([listNode]);
+		pagination.setAction(this._module.listAction);
+		pagination.setPage(Core.Node.NodeMapper.RESPONSE_NODE, "page");
+		pagination.setSize(Core.Node.NodeMapper.RESPONSE_NODE, "size");
+		pagination.setAllSize(Core.Node.NodeMapper.RESPONSE_NODE, "allSize");
+//O => Find => pagination => SendData => X
+		var paginationSendData = new Core.Node.Response.SendData([pagination]);
+		paginationSendData.setResponseKey("pagination");
 	}
 }
 export = OnListResource;
