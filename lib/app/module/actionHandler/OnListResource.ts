@@ -30,11 +30,11 @@ class OnListResource extends Core.Node.ProcessModel {
 //O => Find	=> ObjectToElement => JoinArray
 		var joinToOneList = new Core.Node.Transform.JoinArray([objectElementNode]);
 //O => Find	=> ObjectToElement => JoinArray=> FileLinks
-		var fileLinksNode = new Core.Node.Transform.FileLinks([joinToOneList]);
-		fileLinksNode.setFileAction(this._module.fileAction);
-		fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
+		// var fileLinksNode = new Core.Node.Transform.FileLinks([joinToOneList]);
+		// fileLinksNode.setFileAction(this._module.fileAction);
+		// fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 //O => Find	=> ObjectToElement => JoinArray=> FileLinks => AddActionLinkToEach
-		var addActionLinkToListElement = new AddActionLinkToEach([fileLinksNode]);
+		var addActionLinkToListElement = new AddActionLinkToEach([joinToOneList]);
 		addActionLinkToListElement.addAction(this._module.updateAction.formAction);
 		addActionLinkToListElement.addAction(this._module.deleteAction.formAction);
 		addActionLinkToListElement.addAction(this._module.detailAction);

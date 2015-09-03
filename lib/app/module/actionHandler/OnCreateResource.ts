@@ -1,48 +1,32 @@
 import Core = require("../../../index");
+import ResourceModule = require("./../ResourceModule");
+import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
 /**
- * Akceptuje dane z formularze wysłane przez post.
- * I dodaje je do tabeli w bazie danych
+ * Odpowiada za logikę akcji szczegółów
  */
-class OnCreateResource extends Core.Action.ActionHandlerController {
-	private _model: Core.Model;
-	private _targetAction: Core.Action.BaseAction;
-	constructor(model: Core.Model, targetAction: Core.Action.BaseAction) {
+class OnCreateResource extends Core.Node.ProcessModel {
+	private _module: ResourceModule;
+	constructor(module: ResourceModule) {
 		super();
-		this._model = model;
-		this._targetAction = targetAction;
-		this.setActionHandler((request, response, action) => { return this.actionHandler(request, response, action); });
+		this._module = module;
+		this.onConstructor();
 	}
-	protected actionHandler(request: Core.Action.Request, response: Core.Action.Response, action: Core.Action.BaseAction): Core.Util.Promise<void> {
-		return Core.Util.Promise.resolve()
-		.then(() => {
-			var create = new Core.Query.Create();
-			create.setModel(this._model);
-			create.populate(request.getFieldList(Core.Action.FieldType.BODY_FIELD));
-			/**
-			 * w danych o pliku zostawiamy tylko istotne informacje originalname, mimetype, size, destination, filename, path
-			 */
-			var fileList = request.getFieldList(Core.Action.FieldType.FILE_FIELD);
-			/**
-			 * w danych o pliku zostawiamy tylko istotne informacje originalname, mimetype, size, destination, filename, path
-			 */
-			for (var fieldName in fileList) {
-				var fieldFileList = fileList[fieldName];
-				if (fieldFileList) {
-					for (var i = 0; i < fieldFileList.length; i++) {
-						var singleFile = fieldFileList[i];
-						delete singleFile['fieldname'];
-						delete singleFile['encoding'];
-					}
-					fileList[fieldName] = { files: fieldFileList }
-				}
-			}
-			create.populate(fileList);
-			return create.run();
-		})
-		.then((model) => {
-			response.content = model.toJSON();
-			response.setRedirect(this._targetAction.getRoutePath());
-		});
+	protected onConstructor() {
+		var fileSavePrepare = new Core.App.Node.FileToSave([this]);
+		fileSavePrepare.setAction(this._module.fileAction);
+		fileSavePrepare.setFileSource(Core.Action.FieldType.FILE_FIELD);
+
+		var createDbData = new Core.Node.Db.Create([fileSavePrepare]);
+		createDbData.setModel(this._module.model);
+		createDbData.addData(Core.Action.FieldType.BODY_FIELD);
+		createDbData.addData(Core.Node.NodeMapper.RESPONSE_NODE);
+		createDbData.addData(Core.Action.FieldType.PARAM_FIELD);
+		createDbData.addData(Core.Action.FieldType.APP_FIELD);
+
+		var redirectAction = new Core.Node.Response.Redirect([createDbData]);
+		redirectAction.setTargetAction(this._module.listAction);
+
+		var navSendDataNode = new Core.Node.Response.SendData([createDbData]);
 	}
 }
 export = OnCreateResource;

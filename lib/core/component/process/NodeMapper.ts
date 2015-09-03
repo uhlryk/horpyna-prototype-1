@@ -42,7 +42,7 @@ class NodeMapper extends Element{
 	private _nodeMapperValue: NodeMapperValue;
 	constructor() {
 		super();
-		this.initDebug("nodemapper");
+		this.initDebug("mapper");
 		this._mapSource = new Object();
 		this._mapSourceDefault = new Object();
 
@@ -160,10 +160,14 @@ class NodeMapper extends Element{
 			case NodeMapper.MAP_VALUE:
 				this.debug("mapSource MAP_VALUE");
 				mappedSource = this._nodeMapperValue.map(mappedSource, sourceTypeKeys, sourceData);
-				console.log("Z1");
-				console.log(mappedSource);
 				break;
 		}
+		this.debug("entry:");
+		this.debug(sourceData);
+		this.debug("key:");
+		this.debug(sourceTypeKeys);
+		this.debug("response:");
+		this.debug(mappedSource);
 		return mappedSource;
 	}
 }

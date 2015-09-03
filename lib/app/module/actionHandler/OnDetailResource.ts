@@ -25,11 +25,11 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
 		redirectAction.setTargetAction(this._module.listAction);
 //O => Find => If +> FileLinks
-		var createFileLink = new Core.Node.Transform.FileLinks([ifDataExist]);
-		createFileLink.setFileAction(this._module.fileAction);
-		createFileLink.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
+		// var createFileLink = new Core.Node.Transform.FileLinks([ifDataExist]);
+		// createFileLink.setFileAction(this._module.fileAction);
+		// createFileLink.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
 //O => Find => If +> FileLinks => AddActionLinkToEach
-		var addActionLinkToListElement = new AddActionLinkToEach([createFileLink]);
+		var addActionLinkToListElement = new AddActionLinkToEach([ifDataExist]);
 		addActionLinkToListElement.addAction(this._module.updateAction.formAction);
 		addActionLinkToListElement.addAction(this._module.deleteAction.formAction);
 //O => Find => If +> FileLinks => AddActionLinkToEach => SendData	=> X

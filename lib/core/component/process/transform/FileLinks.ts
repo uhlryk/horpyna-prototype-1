@@ -3,6 +3,10 @@ import BaseNode = require("./../BaseNode");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
 import Util = require("./../../../util/Util");
 import NodeData = require("./../NodeData");
+/**
+ * zwraca listę kluczy unikalnych;
+ * @Deprecated nie używać tego bo jest niepotrzebne a może mieć błędy
+ */
 class FileLinks extends ChangeObjectElement{
 	private _action: BaseAction;
 	constructor(parentNodeList: BaseNode[]) {

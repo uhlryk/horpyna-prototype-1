@@ -15,7 +15,7 @@ class Connection extends Element{
 	private connectionName:string;
 	constructor(dbType: string, host: string, port: number, dbName: string, userName: string, userPassword: string, connectionName: string) {
 		super();
-		this.initDebug("connection:");
+		this.initDebug("connection");
 		this.sequelize = new Sequelize(dbName, userName, userPassword, {
 			host : host,
 			dialect : dbType,

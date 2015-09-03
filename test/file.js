@@ -245,7 +245,7 @@ describe("Test uploadu: ", function(){
 					done();
 				});
 		});
-		it("pobieramy plik", function (done) {
+		it("Wyświetlamy plik", function (done) {
 			request(app).get("/res1/file/1?column=field1&count=0")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
