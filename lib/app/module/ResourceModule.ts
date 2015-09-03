@@ -67,8 +67,6 @@ class ResourceModule extends Core.Module {
 		this._detailAction.addField(idField);
 	}
 	protected onConstructActionHandlers(){
-		var onFile = new OnFileResource(this.model);
-		this.fileAction.setActionHandler(onFile.getActionHandler());
 		var onFormCreate = new OnFormCreateResource("horpyna/jade/createFormAction");
 		this.createAction.setFormActionHandler(onFormCreate.getActionHandler());
 		var onFormUpdate = new OnFormUpdateResource(this.model, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
@@ -79,6 +77,8 @@ class ResourceModule extends Core.Module {
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
 
 
+		var onFile = new OnFileResource(this);
+		this.fileAction.setActionHandler(onFile.getActionHandler());
 		var onDelete = new OnDeleteResource(this);
 		this.deleteAction.setActionHandler(onDelete.getActionHandler());
 		var onDetail = new OnDetailResource(this);
