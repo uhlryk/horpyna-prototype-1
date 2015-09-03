@@ -55,6 +55,7 @@ class ResourceModule extends Core.Module {
 		this._updateAction = new Core.Action.DualAction("update");
 		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._updateAction);
+
 		this._deleteAction = new Core.Action.DualAction("delete");
 		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteAction);
@@ -74,13 +75,12 @@ class ResourceModule extends Core.Module {
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
 		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
-		// var onCreate = new OnCreateResource(this.model, this.listAction);
-		// this.createAction.setActionHandler(onCreate.getActionHandler());
 		var onUpdate = new OnUpdateResource(this.model, this.listAction, this.listAction);
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
-		var onDelete = new OnDeleteResource(this.model, this.listAction, this.listAction);
-		this.deleteAction.setActionHandler(onDelete.getActionHandler());
 
+
+		var onDelete = new OnDeleteResource(this);
+		this.deleteAction.setActionHandler(onDelete.getActionHandler());
 		var onDetail = new OnDetailResource(this);
 		this.detailAction.setActionHandler(onDetail.getActionHandler());
 		var onList = new OnListResource(this);

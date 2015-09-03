@@ -1,57 +1,40 @@
 import Core = require("../../../index");
+import ResourceModule = require("./../ResourceModule");
+import RemoveFile = require("./../../node/RemoveFile");
 /**
- * Akceptuje dane z POST i id danego wpisu w bazie. Pozwala dokonać zmiany w tym wpisie
+ * Odpowiada za logikę akcji szczegółów
  */
-class OnDeleteResource extends Core.Action.ActionHandlerController {
-	private _model: Core.Model;
-	private _targetAction: Core.Action.BaseAction;
-	private _onEmptyAction: Core.Action.BaseAction;
-	constructor(model: Core.Model, targetAction: Core.Action.BaseAction, onEmptyAction: Core.Action.BaseAction) {
+class OnDeleteResource extends Core.Node.ProcessModel {
+	private _module: ResourceModule;
+	constructor(module: ResourceModule) {
 		super();
-		this._model = model;
-		this._targetAction = targetAction;
-		this._onEmptyAction = onEmptyAction;
-		this.setActionHandler((request, response, action) => { return this.actionHandler(request, response, action); });
+		this._module = module;
+		this.onConstructor();
 	}
-	protected actionHandler(request: Core.Action.Request, response: Core.Action.Response, action: Core.Action.BaseAction): Core.Util.Promise<void> {
-		return Core.Util.Promise.resolve()
-		.then(() => {
-			var find = new Core.Query.Find();
-			find.setModel(this._model);
-			var paramAppList = request.getParamAppFieldList();
-			find.populateWhere(paramAppList);
-			return find.run();
-		})
-		.then((model) => {
-			if (!model) {
-				response.setRedirect(this._onEmptyAction.getRoutePath());
-			} else {
-				var oldModelData = model.toJSON();
-				for(var colName in oldModelData){
-					var colValue = oldModelData[colName];
-					if(colValue && colValue.files){
-						this.removeOldFiles(colValue);
-					}
-				}
-				var deleteQuery = new Core.Query.Delete();
-				deleteQuery.setModel(this._model);
-				var paramAppList = request.getParamAppFieldList();
-				deleteQuery.populateWhere(paramAppList);
-				return deleteQuery.run();
-			}
-		})
-		.then(()=>{
-			response.setRedirect(this._targetAction.getRoutePath());
-		});
-	}
-	protected removeOldFiles(fileDbObjects: {files:{path: string}[]}){
-		if (fileDbObjects && fileDbObjects.files) {
-			for (var i = 0; i < fileDbObjects.files.length; i++){
-				var file = fileDbObjects.files[i];
-				this.debug("rm file " + file.path);
-				Core.Util.FS.unlinkSync(file.path)
-			}
-		}
+	protected onConstructor() {
+		var findDbData = new Core.Node.Db.Find([this]);
+		findDbData.setModel(this._module.model);
+		findDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
+		findDbData.addWhere(Core.Action.FieldType.APP_FIELD);
+
+		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
+		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
+		ifDataNotExist.setNegation();
+
+		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
+		redirectAction.setTargetAction(this._module.listAction);
+
+		var deleteDbData = new Core.Node.Db.Delete([ifDataExist]);
+		deleteDbData.setModel(this._module.model);
+		deleteDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
+		deleteDbData.addWhere(Core.Action.FieldType.APP_FIELD);
+
+		var removeFiles = new RemoveFile([ifDataExist]);
+
+		var redirectAction = new Core.Node.Response.Redirect([findDbData]);
+		redirectAction.setTargetAction(this._module.listAction);
+
+		var navSendDataNode = new Core.Node.Response.SendData([findDbData]);
 	}
 }
 export = OnDeleteResource;

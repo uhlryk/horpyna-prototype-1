@@ -1,6 +1,7 @@
 import Core = require("../../index");
 /**
- * Generuje Linki nawigacyjne
+ * Przeszukuje źródło plików od użycia multera i je normalizuje czyli dodaje link do akcji obsługującej
+ * i usuwa pole fieldname i encoding
  */
 class FileToSave extends Core.Node.BaseNode {
 	private _action: Core.Action.BaseAction;
