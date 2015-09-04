@@ -1,0 +1,1 @@
+export import Generate = require("./Generate");

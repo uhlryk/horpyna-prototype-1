@@ -63,9 +63,8 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 			});
 		});
 		it("kod 200 createform,", function (done) {
-			request(app).get("/res1/createform")
+			request(app).get("/res1/create")
 				.end(function (err, res) {
-					// console.log(res.text);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -83,7 +82,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 		it("kod 200 list", function (done) {
 			request(app).get("/res1/list")
 				.end(function (err, res) {
-					//console.log(res.text);
+					// console.log(res.text);
 					expect(res.status).to.be.equal(200);
 					done();
 				});
@@ -97,7 +96,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				});
 		});
 		it("kod 200 updateform,", function (done) {
-			request(app).get("/res1/updateform/1")
+			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					done();
@@ -109,7 +108,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				.send({name: "ala"})
 				.send({pass: "doda"})
 				.end(function (err, res) {
-					//console.log(res.text);
+					// console.log(res.text);
 					expect(res.status).to.be.equal(302);
 					done();
 				});
@@ -117,7 +116,7 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 		it("kod 302 delete", function (done) {
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
-					//console.log(res.text);
+					// console.log(res.text);
 					expect(res.status).to.be.equal(302);
 					done();
 				});

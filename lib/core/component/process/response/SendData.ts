@@ -19,7 +19,9 @@ class SendData extends BaseNode{
 		var mappedEntry = data.getMappedEntry();
 		this.debug(mappedEntry);
 		data.getActionResponse().addValue(this._key || "content", mappedEntry);
-		data.getActionResponse().view = this._view;
+		if (this._view) {
+			data.getActionResponse().view = this._view;
+		}
 		this.debug("null");
 		return null;
 	}

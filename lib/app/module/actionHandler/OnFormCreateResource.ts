@@ -1,39 +1,22 @@
 import Core = require("../../../index");
+import ResourceModule = require("./../ResourceModule");
+import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
 /**
- * Wyświetla formularz do dodania nowego wpisu. Formularz generowany jest przez specjalną akcję FormAction
+ * Odpowiada za logikę tworzenia danych
  */
-class OnFormCreateResource extends Core.Action.ActionHandlerController {
-	private _viewPath: string;
-	constructor(viewPath: string) {
+class OnFormCreateResource extends Core.Node.ProcessModel {
+	private _module: ResourceModule;
+	constructor(module: ResourceModule) {
 		super();
-		this._viewPath = viewPath;
-		this.setActionHandler((request, response, action) => { return this.actionHandler(request, response, action); });
+		this._module = module;
+		this.onConstructor();
 	}
-	protected actionHandler(request: Core.Action.Request, response: Core.Action.Response, action: Core.Action.BaseAction): Core.Util.Promise<void> {
-		return Core.Util.Promise.resolve()
-		.then(() => {
-			var content = response.content;
-			var form: Core.Action.IForm = content["form"];
-			var fieldList: Core.Action.IInputForm[] = form.fields;
-			var validationResponse: Core.Action.ValidationResponse = <Core.Action.ValidationResponse>response.getData("validationError");
-			if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
-				form.valid = false;
-				for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
-					var validatorResponse: Core.Validator.ValidatorResponse = validationResponse.responseValidatorList[i];
-					for (var j = 0; j < fieldList.length; j++) {
-						var field: Core.Action.IInputForm = fieldList[j];
-						if (field.name === validatorResponse.field) {
-							field.value = validatorResponse.value;
-							field.valid = validatorResponse.valid;
-							if (validatorResponse.valid === false) {
-								field.errorList = field.errorList.concat(validatorResponse.errorList);
-							}
-						}
-					}
-				}
-			}
-			response.view = this._viewPath;
-		});
+	protected onConstructor() {
+		var formGenerator = new Core.Node.Form.Generate([this]);
+		formGenerator.addFormAction(this._module.createAction);
+		formGenerator.addFormAction(this._module.createFormAction);
+
+		var sendForm = new Core.Node.Response.SendData([formGenerator]);
 	}
 }
 export = OnFormCreateResource;

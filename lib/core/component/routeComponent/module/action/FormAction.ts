@@ -4,8 +4,8 @@ import RouteComponent = require("../../RouteComponent");
 import Field = require("./field/Field");
 import FieldType = require("./field/FieldType");
 import FormInputType = require("./field/FormInputType");
-import IInputForm = require("./IInputForm");
-import IForm = require("./IForm");
+import IInputForm = require("./../form/IInputForm");
+import IForm = require("./../form/IForm");
 import IActionHandler = require("./IActionHandler");
 import Util = require("./../../../../util/Util");
 

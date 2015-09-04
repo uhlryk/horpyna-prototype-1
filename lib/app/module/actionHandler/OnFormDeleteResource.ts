@@ -34,10 +34,10 @@ class OnFormDeleteResource extends Core.Action.ActionHandlerController {
 			} else {
 				model = model.toJSON();
 				var content = response.content;
-				var form: Core.Action.IForm = content["form"];
-				var fieldList: Core.Action.IInputForm[] = form.fields;
+				var form: Core.Form.IForm = content["form"];
+				var fieldList: Core.Form.IInputForm[] = form.fields;
 				for (var i = 0; i < fieldList.length; i++) {
-					var field: Core.Action.IInputForm = fieldList[i];
+					var field: Core.Form.IInputForm = fieldList[i];
 					var name = field.name;
 					var value = model[name];
 					if (value) {

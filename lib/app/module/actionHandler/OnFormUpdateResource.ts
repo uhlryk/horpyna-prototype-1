@@ -34,15 +34,15 @@ class OnFormUpdateResource extends Core.Action.ActionHandlerController {
 			} else {
 				model = model.toJSON();
 				var content = response.content;
-				var form: Core.Action.IForm = content["form"];
-				var fieldList: Core.Action.IInputForm[] = form.fields;
+				var form: Core.Form.IForm = content["form"];
+				var fieldList: Core.Form.IInputForm[] = form.fields;
 				var validationResponse: Core.Action.ValidationResponse = <Core.Action.ValidationResponse>response.getData("validationError");
 				if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
 					form.valid = false;
 					for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
 						var validatorResponse: Core.Validator.ValidatorResponse = validationResponse.responseValidatorList[i];
 						for (var j = 0; j < fieldList.length; j++) {
-							var field: Core.Action.IInputForm = fieldList[j];
+							var field: Core.Form.IInputForm = fieldList[j];
 							if (field.name === validatorResponse.field) {
 								field.value = validatorResponse.value;
 								field.valid = validatorResponse.valid;
@@ -54,7 +54,7 @@ class OnFormUpdateResource extends Core.Action.ActionHandlerController {
 					}
 				} else {
 					for (var i = 0; i < fieldList.length; i++) {
-						var field: Core.Action.IInputForm = fieldList[i];
+						var field: Core.Form.IInputForm = fieldList[i];
 						var name = field.name;
 						var value = model[name];
 						if (value) {
@@ -69,13 +69,13 @@ class OnFormUpdateResource extends Core.Action.ActionHandlerController {
 				 */
 				var fileFieldList: string[] = [];
 				for (var i = 0; i < fieldList.length; i++) {
-					var field: Core.Action.IInputForm = fieldList[i];
+					var field: Core.Form.IInputForm = fieldList[i];
 					if (field.type === Core.Action.FormInputType.FILE) {
 						fileFieldList.push(field.name);
 					}
 				}
 				for (var i = 0; i < fieldList.length; i++) {
-					var field: Core.Action.IInputForm = fieldList[i];
+					var field: Core.Form.IInputForm = fieldList[i];
 					if (field.type === Core.Action.FormInputType.CHECKBOX && fileFieldList.indexOf(field.name) !== -1) {
 						field.value = "1";
 						field.label = "Delete file";

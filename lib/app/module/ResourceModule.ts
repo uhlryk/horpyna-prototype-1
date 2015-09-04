@@ -67,8 +67,10 @@ class ResourceModule extends Core.Module {
 		this._detailAction.addField(idField);
 	}
 	protected onConstructActionHandlers(){
-		var onFormCreate = new OnFormCreateResource("horpyna/jade/createFormAction");
+		// var onFormCreate = new OnFormCreateResource("horpyna/jade/createFormAction");
+		var onFormCreate = new OnFormCreateResource(this);
 		this.createAction.setFormActionHandler(onFormCreate.getActionHandler());
+
 		var onFormUpdate = new OnFormUpdateResource(this.model, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
 		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
@@ -91,9 +93,12 @@ class ResourceModule extends Core.Module {
 	public get model(): Core.Model{return this._model; }
 	public get listAction(): Core.Action.BaseAction{return this._listAction; }
 	public get createAction(): Core.Action.DualAction{return this._createAction; }
+	public get createFormAction(): Core.Action.BaseAction{ return this._createAction.formAction; }
 	public get updateAction(): Core.Action.DualAction {return this._updateAction; }
+	public get updateFormAction(): Core.Action.BaseAction { return this._updateAction.formAction; }
 	public get detailAction(): Core.Action.BaseAction {return this._detailAction; }
 	public get deleteAction(): Core.Action.DualAction {return this._deleteAction; }
+	public get deleteFormAction(): Core.Action.BaseAction { return this._deleteAction.formAction; }
 	public get fileAction(): Core.Action.BaseAction {return this._fileAction; }
 	/**
  * przyśpiesza dodawanie pól body do CRUD.

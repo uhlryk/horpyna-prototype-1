@@ -29,7 +29,7 @@ class ViewManager extends Element{
 			} else {
 				var view = response.view;
 				this.debug("render %s %s", view, JSON.stringify(response.getData()));
-				res.render(view || this._defaultView, response.getData());
+				res.status(response.status).render(view || this._defaultView, response.getData());
 			}
 		} else{
 			if (response.isRedirect()) {

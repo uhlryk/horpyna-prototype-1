@@ -25,11 +25,6 @@ class Update extends BaseDbNode {
 		update.setModel(this.getModel());
 		var popuplateData = data.getMappedObject("data");
 		var whereData = data.getMappedObject("where");
-		console.log("Z1 popuplateData");
-		console.log(popuplateData);
-		console.log("Z2 whereData");
-		console.log(whereData);
-		console.log("Z3");
 		update.populate(popuplateData);
 		update.populateWhere(whereData);
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {

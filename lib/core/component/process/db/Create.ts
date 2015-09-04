@@ -21,7 +21,6 @@ class Create extends BaseDbNode {
 		var create = new Query.Create();
 		create.setModel(this.getModel());
 		var popuplateData = data.getMappedObject("data");
-		console.log(popuplateData);
 		create.populate(popuplateData);
 		return new Util.Promise<any>((resolve: (processResponse: any) => void) => {
 			this.debug("begin");

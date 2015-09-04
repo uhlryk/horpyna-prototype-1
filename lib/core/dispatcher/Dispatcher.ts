@@ -101,6 +101,7 @@ class Dispatcher extends Element{
 			res['horpynaResponse'] = response;
 			response.allow = true;
 			handler(request, response, next);
+			request.action = null;
 		});
 	}
 	private homeRoute(){
@@ -113,6 +114,7 @@ class Dispatcher extends Element{
 				response.allow = true;
 				response.routePath = "/";
 				handler(request, response, next);
+				request.action = null;
 			});
 		} else {
 			this.debug('home route empty');
@@ -125,8 +127,9 @@ class Dispatcher extends Element{
 			var request: Action.Request = Action.Request.ExpressToRequest(req);
 			var response: Action.Response = Action.Response.ExpressToResponse(res);
 			response.allow = true;
-			this.debug('final action');
+			this.debug('final action ' + this.finalAction.name);
 			handler(request, response, next);
+			request.action = null;
 		});
 		this.router.use((req, res) => {
 			this.debug('final render');
