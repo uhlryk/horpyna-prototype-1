@@ -2,10 +2,11 @@
 import express = require("express");
 import Util = require("./../../../../util/Util");
 import FieldType = require("./field/FieldType");
+import BaseAction = require("./BaseAction");
 class Request{
 	public allFieldList:Object;
 	private expressRequest:express.Request;
-	// private _action:BaseAction;
+	private _action:BaseAction;
 	private _logger: Util.Logger;
 	/**
 	 * dane systemowe przenoszone między modułami systemowymi
@@ -22,6 +23,12 @@ class Request{
 		this.allFieldList[FieldType.FILE_FIELD] = new Object();
 
 		this._data = new Object();
+	}
+	public set action(v:BaseAction){
+		this._action = v;
+	}
+	public get action():BaseAction{
+		return this._action;
 	}
 	/**
 	 * Na podstawie express requesta wyciąga Horpyna request

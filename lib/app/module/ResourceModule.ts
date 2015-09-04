@@ -73,7 +73,7 @@ class ResourceModule extends Core.Module {
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
 		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
-		var onUpdate = new OnUpdateResource(this.model, this.listAction, this.listAction);
+		var onUpdate = new OnUpdateResource(this);
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
 
 

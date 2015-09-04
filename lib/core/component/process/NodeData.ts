@@ -25,6 +25,9 @@ class NodeData{
 	public getActionResponse(): Response {
 		return this._actionResponse;
 	}
+	public getActionRequest(): Request {
+		return this._actionRequest;
+	}
 	public getProcessList(): IProcessObject[] {
 		return this._processList;
 	}

@@ -148,6 +148,7 @@ class BaseAction extends RouteComponent {
 	public requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
 		this.debug("action:publish():OnBegin");
+		request.action = this;
 		var uploadValidationResponse: ValidationResponse = request.getValue("validationError");
 		request.removeValue("validationError");
 		var requestPromise = Util.Promise.resolve()

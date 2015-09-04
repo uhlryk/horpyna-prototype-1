@@ -2,7 +2,7 @@ import Core = require("../../../index");
 import ResourceModule = require("./../ResourceModule");
 import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
 /**
- * Odpowiada za logikę akcji szczegółów
+ * Odpowiada za logikę tworzenia danych
  */
 class OnCreateResource extends Core.Node.ProcessModel {
 	private _module: ResourceModule;
@@ -14,7 +14,6 @@ class OnCreateResource extends Core.Node.ProcessModel {
 	protected onConstructor() {
 		var fileSavePrepare = new Core.App.Node.FileToSave([this]);
 		fileSavePrepare.setAction(this._module.fileAction);
-		fileSavePrepare.setFileSource(Core.Action.FieldType.FILE_FIELD);
 
 		var createDbData = new Core.Node.Db.Create([fileSavePrepare]);
 		createDbData.setModel(this._module.model);
