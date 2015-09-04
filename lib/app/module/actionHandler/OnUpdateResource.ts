@@ -14,8 +14,8 @@ class OnUpdateResource extends Core.Node.ProcessModel {
 	protected onConstructor() {
 		var findDbData = new Core.Node.Db.Find([this]);
 		findDbData.setModel(this._module.model);
-		findDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		findDbData.addWhere(Core.Action.FieldType.APP_FIELD);
+		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
+		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 
 		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
 		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
@@ -28,16 +28,16 @@ class OnUpdateResource extends Core.Node.ProcessModel {
 		fileSavePrepare.setAction(this._module.fileAction);
 
 		var fileUpdatePrepare = new Core.App.Node.FileToUpdate([ifDataExist, fileSavePrepare]);
-		fileUpdatePrepare.setNewData(Core.Action.FieldType.BODY_FIELD);
-		fileUpdatePrepare.setExistingSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
-		fileUpdatePrepare.setNewFileSource(Core.Node.NodeMapper.RESPONSE_NODE_2);
+		fileUpdatePrepare.setNewData(Core.Node.SourceType.BODY_FIELD);
+		fileUpdatePrepare.setExistingSource(Core.Node.SourceType.RESPONSE_NODE_1);
+		fileUpdatePrepare.setNewFileSource(Core.Node.SourceType.RESPONSE_NODE_2);
 
 		var updateDbData = new Core.Node.Db.Update([fileUpdatePrepare]);
 		updateDbData.setModel(this._module.model);
-		updateDbData.addData(Core.Action.FieldType.BODY_FIELD);
-		updateDbData.addData(Core.Node.NodeMapper.RESPONSE_NODE);
-		updateDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		updateDbData.addWhere(Core.Action.FieldType.APP_FIELD);
+		updateDbData.addData(Core.Node.SourceType.BODY_FIELD);
+		updateDbData.addData(Core.Node.SourceType.RESPONSE_NODE);
+		updateDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
+		updateDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 
 		var redirectAction = new Core.Node.Response.Redirect([updateDbData]);
 		redirectAction.setTargetAction(this._module.listAction);

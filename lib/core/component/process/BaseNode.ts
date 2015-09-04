@@ -6,6 +6,7 @@ import IConnection = require("./IConnection");
 import Response = require("./../routeComponent/module/action/Response");
 import Request = require("./../routeComponent/module/action/Request");
 import NodeMapper = require("./NodeMapper");
+import SourceType = require("./SourceType");
 import NodeData = require("./NodeData");
 class BaseNode extends Element {
 	private _childNodeList: BaseNode[];
@@ -28,7 +29,7 @@ class BaseNode extends Element {
 		this._promiseContent = this.promiseContent;
 		this._content = this.content;
 		this._nodeMapper = new NodeMapper();
-		this._nodeMapper.addDefaultMapSource("entry_source", NodeMapper.RESPONSE_NODE);
+		this._nodeMapper.addDefaultMapSource("entry_source", SourceType.RESPONSE_NODE);
 		this._childNodeList = [];
 		if (parentNodeList) {
 			this._parentNodeList = parentNodeList;

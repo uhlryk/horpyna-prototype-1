@@ -15,8 +15,8 @@ class OnDetailResource extends Core.Node.ProcessModel {
 //O => Find
 		var findDbData = new Core.Node.Db.Find([this]);
 		findDbData.setModel(this._module.model);
-		findDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		findDbData.addWhere(Core.Action.FieldType.APP_FIELD);
+		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
+		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 // O => Find => If
 		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
 		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
@@ -27,7 +27,7 @@ class OnDetailResource extends Core.Node.ProcessModel {
 //O => Find => If +> FileLinks
 		// var createFileLink = new Core.Node.Transform.FileLinks([ifDataExist]);
 		// createFileLink.setFileAction(this._module.fileAction);
-		// createFileLink.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
+		// createFileLink.mapActionParams(Core.Node.SourceType.PARAM_FIELD);
 //O => Find => If +> FileLinks => AddActionLinkToEach
 		var addActionLinkToListElement = new AddActionLinkToEach([ifDataExist]);
 		addActionLinkToListElement.addAction(this._module.updateAction.formAction);

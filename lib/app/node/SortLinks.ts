@@ -8,8 +8,8 @@ class SortLinks extends Core.Node.BaseNode {
 	private static REVERSE_DIRECTION: string = "desc";
 	constructor(parentNodeList:Core.Node.BaseNode[]) {
 		super(parentNodeList);
-		this.addMapSource("action_param", Core.Action.FieldType.PARAM_FIELD);
-		this.addMapSource("action_query", Core.Action.FieldType.QUERY_FIELD);
+		this.addMapSource("action_param", Core.Node.SourceType.PARAM_FIELD);
+		this.addMapSource("action_query", Core.Node.SourceType.QUERY_FIELD);
 		this.initDebug("node:SortLinks");
 	}
 	public setAction(action: Core.Action.BaseAction) {

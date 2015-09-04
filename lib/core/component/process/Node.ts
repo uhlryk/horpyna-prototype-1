@@ -7,3 +7,4 @@ export import ProcessModel = require("./ProcessModel");
 export import NodeMapper = require("./NodeMapper");
 export import NodeData = require("./NodeData");
 export import Form = require("./form/Form");
+export import SourceType = require("./SourceType");

@@ -29,9 +29,9 @@ describe("Testy Node transform.Pagination", function() {
 			return beforeMapping;
 		});
 		testNode = new Core.App.Node.Pagination([myNode1]);
-		testNode.setPage(Core.Node.NodeMapper.RESPONSE_NODE, "page");
-		testNode.setSize(Core.Node.NodeMapper.RESPONSE_NODE, "size");
-		testNode.setAllSize(Core.Node.NodeMapper.RESPONSE_NODE, "allSize");
+		testNode.setPage(Core.Node.SourceType.RESPONSE_NODE, "page");
+		testNode.setSize(Core.Node.SourceType.RESPONSE_NODE, "size");
+		testNode.setAllSize(Core.Node.SourceType.RESPONSE_NODE, "allSize");
 		testNode.setAction(myAction);
 
 		myNode2 = new Core.Node.BaseNode([testNode]);
@@ -47,7 +47,7 @@ describe("Testy Node transform.Pagination", function() {
 		beforeMapping = [{page:0, size:5, allSize:5}];
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(0);
 				done();
 			});
@@ -56,7 +56,7 @@ describe("Testy Node transform.Pagination", function() {
 		beforeMapping = [{page:0, size:5, allSize:6}];
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.to.include.property("uri","/process/myAction?p=1&s=5");
 				expect(afterMapping[0]).to.to.include.property("name",2);
@@ -71,7 +71,7 @@ describe("Testy Node transform.Pagination", function() {
 		beforeMapping = [{page:1, size:5, allSize:6}];
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(3);
 				expect(afterMapping[0]).to.to.include.property("uri","/process/myAction?p=0&s=5");
 				expect(afterMapping[0]).to.to.include.property("name","first");
@@ -91,7 +91,7 @@ describe("Testy Node transform.Pagination", function() {
 		beforeMapping = [{page:1, size:5, allSize:11}];
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(5);
 				expect(afterMapping[0]).to.to.include.property("uri","/process/myAction?p=0&s=5");
 				expect(afterMapping[0]).to.to.include.property("name","first");

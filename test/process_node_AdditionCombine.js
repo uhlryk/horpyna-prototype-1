@@ -26,8 +26,8 @@ describe("Testy Node transform.AdditionCombine", function() {
 			return beforeMapping2;
 		});
 		testNode = new Core.Node.Transform.AdditionCombine([myNode1a,myNode1b]);
-		testNode.addFirstChannel(Core.Node.NodeMapper.RESPONSE_NODE_1);
-		testNode.addSecondChannel(Core.Node.NodeMapper.RESPONSE_NODE_2);
+		testNode.addFirstChannel(Core.Node.SourceType.RESPONSE_NODE_1);
+		testNode.addSecondChannel(Core.Node.SourceType.RESPONSE_NODE_2);
 		myNode2 = new Core.Node.BaseNode([testNode]);
 		myNode2.setContent(function(data) {
 			afterMapping = data.getMappedEntry();

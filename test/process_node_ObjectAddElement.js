@@ -40,7 +40,7 @@ describe("Testy Node transform.ObjectAddElement", function() {
 		testNode.setKeyValue("t1","a1");
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("k1","v1");
 				expect(afterMapping[0]).to.include.property("t1","a1");
@@ -55,7 +55,7 @@ describe("Testy Node transform.ObjectAddElement", function() {
 		testNode.setKeyValue("t1","a2");
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("k1","v1");
 				expect(afterMapping[0]).to.include.property("t1","a2");
@@ -70,7 +70,7 @@ describe("Testy Node transform.ObjectAddElement", function() {
 		testNode.setKeyValue("t1","a2");
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("k1","v1");
 				expect(afterMapping[0]).to.include.property("t1","a2");
@@ -84,7 +84,7 @@ describe("Testy Node transform.ObjectAddElement", function() {
 		testNode.setKeyValue("t1",["a1","a2"]);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("k1","v1");
 				expect(afterMapping[0]).to.include.property("t1");
@@ -98,11 +98,11 @@ describe("Testy Node transform.ObjectAddElement", function() {
 	it('Powinien zwrócić [{k1:"v1", t2:["a1","a2"]},{k2:"v2", t2:["a1","a2"]}] gdy na wejściu podamy [{k1:"v1"},{k2:"v2"}] i drugie źródło z "t2" i ["a1","a2"]', function (done) {
 		beforeMapping1a = [{k1:"v1"},{k2:"v2"}];
 		beforeMapping1b = ["a1","a2"];
-		testNode.setKeyValueMapValueArray("t2",[{sourceType:Core.Node.NodeMapper.RESPONSE_NODE_2}]);
-		testNode.addEntryMapSource(Core.Node.NodeMapper.RESPONSE_NODE_1);
+		testNode.setKeyValueMapValueArray("t2",[{sourceType:Core.Node.SourceType.RESPONSE_NODE_2}]);
+		testNode.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
 		request(app).get("/process/myAction")
 			.end(function (err, res) {
-				console.log(afterMapping);
+				// console.log(afterMapping);
 				expect(afterMapping).to.be.length(2);
 				expect(afterMapping[0]).to.include.property("k1","v1");
 				expect(afterMapping[0]).to.include.property("t2");

@@ -14,8 +14,8 @@ class OnDeleteResource extends Core.Node.ProcessModel {
 	protected onConstructor() {
 		var findDbData = new Core.Node.Db.Find([this]);
 		findDbData.setModel(this._module.model);
-		findDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		findDbData.addWhere(Core.Action.FieldType.APP_FIELD);
+		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
+		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 
 		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
 		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
@@ -26,8 +26,8 @@ class OnDeleteResource extends Core.Node.ProcessModel {
 
 		var deleteDbData = new Core.Node.Db.Delete([ifDataExist]);
 		deleteDbData.setModel(this._module.model);
-		deleteDbData.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		deleteDbData.addWhere(Core.Action.FieldType.APP_FIELD);
+		deleteDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
+		deleteDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 
 		var removeFiles = new RemoveFile([ifDataExist]);
 

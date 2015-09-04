@@ -17,10 +17,10 @@ class OnCreateResource extends Core.Node.ProcessModel {
 
 		var createDbData = new Core.Node.Db.Create([fileSavePrepare]);
 		createDbData.setModel(this._module.model);
-		createDbData.addData(Core.Action.FieldType.BODY_FIELD);
-		createDbData.addData(Core.Node.NodeMapper.RESPONSE_NODE);
-		createDbData.addData(Core.Action.FieldType.PARAM_FIELD);
-		createDbData.addData(Core.Action.FieldType.APP_FIELD);
+		createDbData.addData(Core.Node.SourceType.BODY_FIELD);
+		createDbData.addData(Core.Node.SourceType.RESPONSE_NODE);
+		createDbData.addData(Core.Node.SourceType.PARAM_FIELD);
+		createDbData.addData(Core.Node.SourceType.APP_FIELD);
 
 		var redirectAction = new Core.Node.Response.Redirect([createDbData]);
 		redirectAction.setTargetAction(this._module.listAction);

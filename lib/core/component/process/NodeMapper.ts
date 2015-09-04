@@ -5,17 +5,12 @@ import NodeMapperObjectArray = require("./NodeMapperObjectArray");
 import NodeMapperObject = require("./NodeMapperObject");
 import NodeMapperValueArray = require("./NodeMapperValueArray");
 import NodeMapperValue = require("./NodeMapperValue");
+import SourceType = require("./SourceType");
 /**
  * Odpowiada za mapowanie danych source (PARAM_FIELD, QUERY_FIELD, BODY_FILED itp) na określony obiekt używany
  * w Node
  */
 class NodeMapper extends Element{
-	public static RESPONSE_NODE: string = "node_response_stream";
-	public static RESPONSE_NODE_1: string = "node_response_stream_1";
-	public static RESPONSE_NODE_2: string = "node_response_stream_2";
-	public static RESPONSE_NODE_3: string = "node_response_stream_3";
-	public static RESPONSE_NODE_4: string = "node_response_stream_4";
-	public static RESPONSE_NODE_5: string = "node_response_stream_5";
 	public static MAP_OBJECT_ARRAY: string = "object_array";
 	public static MAP_OBJECT: string = "object";
 	public static MAP_VALUE_ARRAY: string = "value_array";//tablica pojedyńczych wartości prostych number lub string
@@ -117,19 +112,19 @@ class NodeMapper extends Element{
 			for (var sourceType in this._mapSource[name]) {
 				var sourceTypeKeys = this._mapSource[name][sourceType];
 				switch(sourceType){
-					case NodeMapper.RESPONSE_NODE:
+					case SourceType.RESPONSE_NODE:
 						for (var i = 0; i < processEntryList.length; i++) {
 							var processEntry = processEntryList[i];
 							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntry);
 						}
 						break;
-					case NodeMapper.RESPONSE_NODE_1:
+					case SourceType.RESPONSE_NODE_1:
 							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntryList[0]);
 						break;
-					case NodeMapper.RESPONSE_NODE_2:
+					case SourceType.RESPONSE_NODE_2:
 							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntryList[1]);
 						break;
-					case NodeMapper.RESPONSE_NODE_3:
+					case SourceType.RESPONSE_NODE_3:
 							mappedSource = this.mapSource(mappedSource, mapType, sourceTypeKeys, processEntryList[2]);
 						break;
 					default:

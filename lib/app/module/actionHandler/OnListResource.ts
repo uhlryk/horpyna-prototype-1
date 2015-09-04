@@ -18,12 +18,12 @@ class OnListResource extends Core.Node.ProcessModel {
 //O => Find
 		var listNode = new Core.Node.Db.List([this]);
 		listNode.setModel(this._module.model);
-		listNode.addWhere(Core.Action.FieldType.PARAM_FIELD);
-		listNode.addWhere(Core.Action.FieldType.APP_FIELD);
-		listNode.setOrder(Core.Action.FieldType.QUERY_FIELD,"o");
-		listNode.setDirection(Core.Action.FieldType.QUERY_FIELD,"d");
-		listNode.setPage(Core.Action.FieldType.QUERY_FIELD,"p");
-		listNode.setSize(Core.Action.FieldType.QUERY_FIELD,"s");
+		listNode.addWhere(Core.Node.SourceType.PARAM_FIELD);
+		listNode.addWhere(Core.Node.SourceType.APP_FIELD);
+		listNode.setOrder(Core.Node.SourceType.QUERY_FIELD, "o");
+		listNode.setDirection(Core.Node.SourceType.QUERY_FIELD, "d");
+		listNode.setPage(Core.Node.SourceType.QUERY_FIELD, "p");
+		listNode.setSize(Core.Node.SourceType.QUERY_FIELD, "s");
 //O => Find	=> ObjectToElement
 		var objectElementNode = new Core.Node.Transform.ObjectToElement([listNode]);
 		objectElementNode.elementKey("list");
@@ -32,7 +32,7 @@ class OnListResource extends Core.Node.ProcessModel {
 //O => Find	=> ObjectToElement => JoinArray=> FileLinks
 		// var fileLinksNode = new Core.Node.Transform.FileLinks([joinToOneList]);
 		// fileLinksNode.setFileAction(this._module.fileAction);
-		// fileLinksNode.mapActionParams(Core.Action.FieldType.PARAM_FIELD);
+		// fileLinksNode.mapActionParams(Core.Node.SourceType.PARAM_FIELD);
 //O => Find	=> ObjectToElement => JoinArray=> FileLinks => AddActionLinkToEach
 		var addActionLinkToListElement = new AddActionLinkToEach([joinToOneList]);
 		addActionLinkToListElement.addAction(this._module.updateAction.formAction);
@@ -56,9 +56,9 @@ class OnListResource extends Core.Node.ProcessModel {
 //O => Find => pagination
 		var pagination = new Pagination([listNode]);
 		pagination.setAction(this._module.listAction);
-		pagination.setPage(Core.Node.NodeMapper.RESPONSE_NODE, "page");
-		pagination.setSize(Core.Node.NodeMapper.RESPONSE_NODE, "size");
-		pagination.setAllSize(Core.Node.NodeMapper.RESPONSE_NODE, "allSize");
+		pagination.setPage(Core.Node.SourceType.RESPONSE_NODE, "page");
+		pagination.setSize(Core.Node.SourceType.RESPONSE_NODE, "size");
+		pagination.setAllSize(Core.Node.SourceType.RESPONSE_NODE, "allSize");
 //O => Find => pagination => SendData => X
 		var paginationSendData = new Core.Node.Response.SendData([pagination]);
 		paginationSendData.setResponseKey("pagination");

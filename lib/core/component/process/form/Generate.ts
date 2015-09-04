@@ -3,7 +3,7 @@ import Util = require("./../../../util/Util");
 import IProcessObject = require("./../IProcessObject");
 import NodeData = require("./../NodeData");
 import BaseAction = require("./../../routeComponent/module/action/BaseAction");
-import FieldType = require("./../../routeComponent/module/action/field/FieldType");
+import SourceType = require("./../SourceType");
 import FormGenerator = require("./../../routeComponent/module/form/FormGenerator");
 import IForm = require("./../../routeComponent/module/form/IForm");
 
@@ -15,8 +15,8 @@ class Generate extends BaseNode {
 	private _action: BaseAction;
 	constructor(parentNodeList: BaseNode[]) {
 		super(parentNodeList);
-		this.addMapSource("action_param", FieldType.PARAM_FIELD);
-		this.addMapSource("action_query", FieldType.QUERY_FIELD);
+		this.addMapSource("action_param", SourceType.PARAM_FIELD);
+		this.addMapSource("action_query", SourceType.QUERY_FIELD);
 		this.initDebug("node:Generate");
 		this._actionList = [];
 	}
