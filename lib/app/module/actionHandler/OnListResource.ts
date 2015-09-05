@@ -15,8 +15,14 @@ class OnListResource extends Core.Node.ProcessModel {
 		this.onConstructor();
 	}
 	protected onConstructor() {
+		var isUnvalid = new Core.Node.Request.IsValid([this]);
+		isUnvalid.setNegation();
+		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
+		errorResponseCode.setStatus(422);
+
+		var isValid = new Core.Node.Request.IsValid([this]);
 //O => Find
-		var listNode = new Core.Node.Db.List([this]);
+		var listNode = new Core.Node.Db.List([isValid]);
 		listNode.setModel(this._module.model);
 		listNode.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		listNode.addWhere(Core.Node.SourceType.APP_FIELD);
@@ -48,7 +54,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		var orderSendDataNode = new Core.Node.Response.SendData([sortNavigation]);
 		orderSendDataNode.setResponseKey("order");
 //O => ActionLink
-		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([this]);
+		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([isValid]);
 		addSecondaryActionLinksNode.addAction(this._module.createAction.formAction);
 //O => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);

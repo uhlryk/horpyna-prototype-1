@@ -41,7 +41,7 @@ class DualAction extends BaseAction {
 				this.requestHandler(request, response, resolve);
 			})
 			.then(()=>{
-				if(response.valid === true){
+				if(request.isActionValid() === true){
 					this.debug("DualAction.getRequestHandler: after requestHandler finish");
 					next();
 				} else{

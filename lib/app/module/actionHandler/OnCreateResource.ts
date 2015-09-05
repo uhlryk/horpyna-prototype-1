@@ -12,7 +12,14 @@ class OnCreateResource extends Core.Node.ProcessModel {
 		this.onConstructor();
 	}
 	protected onConstructor() {
-		var fileSavePrepare = new Core.App.Node.FileToSave([this]);
+		var isUnvalid = new Core.Node.Request.IsValid([this]);
+		isUnvalid.setNegation();
+		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
+		errorResponseCode.setStatus(422);
+
+		var isValid = new Core.Node.Request.IsValid([this]);
+
+		var fileSavePrepare = new Core.App.Node.FileToSave([isValid]);
 		fileSavePrepare.setAction(this._module.fileAction);
 
 		var createDbData = new Core.Node.Db.Create([fileSavePrepare]);

@@ -52,8 +52,28 @@ describe("Test uploadu: ", function(){
 			var myModule = new Core.Module("mod1");
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myModule.addAction(myAction);
 			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
+			fileAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myModule.addAction(fileAction);
 			myField1 = new Core.Field("field1", Core.Action.FieldType.FILE_FIELD);
 			fileAction.addField(myField1);
@@ -91,7 +111,15 @@ describe("Test uploadu: ", function(){
 			myApp.addModule(myModule);
 			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
 			fileAction.setActionHandler(function(request, response, action){
-				var v = request.getField(Core.Action.FieldType.FILE_FIELD,"field1");
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						var v = request.getField(Core.Action.FieldType.FILE_FIELD,"field1");
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
 				// console.log(v);
 			});
 			myModule.addAction(fileAction);
@@ -172,7 +200,15 @@ describe("Test uploadu: ", function(){
 			myApp.addModule(myModule);
 			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
 			fileAction.setActionHandler(function(request, response, action){
-				var v = request.getField(Core.Action.FieldType.FILE_FIELD,"field1");
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						var v = request.getField(Core.Action.FieldType.FILE_FIELD,"field1");
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
 				// console.log(v);
 			});
 			myModule.addAction(fileAction);

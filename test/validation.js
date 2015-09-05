@@ -17,6 +17,16 @@ describe("Walidacja", function() {
 			var myModule = new Core.Module("mod1");
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myModule.addAction(myAction);
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.BaseValidator("val1", false));
@@ -68,6 +78,16 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.ContainsValidator("valtest", "seed"));
 			myAction.addField(myField1);
@@ -109,6 +129,16 @@ describe("Walidacja", function() {
 			var myModule = new Core.Module("mod1");
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myModule.addAction(myAction);
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.EqualsValidator("valtest", "dummy"));
@@ -147,7 +177,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.MatchesValidator("valtest",'a+'));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -181,7 +220,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsAlphaValidator("valtest"));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -215,7 +263,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsAlnumValidator("valtest"));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -249,7 +306,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsNumericValidator("valtest"));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -283,7 +349,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsBooleanValidator("valtest"));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -317,7 +392,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsStringLengthValidator("valtest",5,10));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -359,7 +443,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsDateValidator("valtest"));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -393,7 +486,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsEmailValidator("valtest"));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -427,7 +529,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsFloatValidator("valtest",5,10));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -477,7 +588,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsIntValidator("valtest",5 , 10));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});
@@ -527,7 +647,16 @@ describe("Walidacja", function() {
 			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
 			myField1.addValidator(new Core.Validator.Standard.IsInValidator("valtest", ["ala", "kot"]));
 			myAction.addField(myField1);
-
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					if(request.isActionValid()){
+						response.setStatus(200);
+					}else{
+						response.setStatus(422);
+					}
+				});
+			});
 			myApp.init().then(function () {
 				done();
 			});

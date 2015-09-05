@@ -1,0 +1,1 @@
+export import IsValid = require("./IsValid");

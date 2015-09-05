@@ -50,7 +50,6 @@ class BaseAction extends RouteComponent {
 	}
 	public initFields(): Util.Promise<any> {
 		return Util.Promise.map(this.fieldList, (field: Field) => {
-			// field.logger = this.logger;
 			return field.init();
 		});
 	}
@@ -149,8 +148,8 @@ class BaseAction extends RouteComponent {
 		this.debug("action:requestHandler:");
 		this.debug("action:publish():OnBegin");
 		request.action = this;
-		var uploadValidationResponse: ValidationResponse = request.getValue("validationError");
-		request.removeValue("validationError");
+		var uploadValidationResponse: ValidationResponse = request.getValue("fileValidationError");
+		request.removeValue("fileValidationError");
 		var requestPromise = Util.Promise.resolve()
 		.then(() => {
 			if (response.allow === false) return;
@@ -169,21 +168,13 @@ class BaseAction extends RouteComponent {
 					validationResponse.responseValidatorList.concat(uploadValidationResponse.responseValidatorList);
 				}
 				validationResponse.valid = false;
-				response.addValue("validationError",validationResponse);
-				response.setStatus(422);
- 				response.allow = false;
-				response.valid = false;
+				//błąd walidacji jest wartością requesta, bo o tym co zrobić z błędem decyduje akcja
+				request.addValue("validationError",validationResponse);
+				request.setActionValid(false);
 				/**
 				 * był błąd więc usuwamy wszystkie pliki które się zuploadowały
 				 */
 				var uploadFileList = request.getExpressRequest().files;
-				// if (uploadFileList && uploadFileList.length) {
-				// 	return Util.Promise.map(uploadFileList, (fileList: any[]) => {
-				// 		return Util.Promise.map(fileList, (file: any) => {
-				// 			Util.FS.unlink(file.path);
-				// 		});
-				// 	});
-				// }
 				for (var fieldName in uploadFileList) {
 					var fileList:any[] = uploadFileList[fieldName];
 					for (var i = 0; i < fileList.length; i++) {
@@ -191,13 +182,19 @@ class BaseAction extends RouteComponent {
 						Util.FS.unlinkSync(file.path);
 					}
 				}
-
+			} else {
+				request.setActionValid(true);
 			}
 		})
 		.then(() => {
 			if (response.allow === false) return;
-			this.debug("action:publish():OnReady");
-			return this.publish(request, response, Event.Action.OnReady.EVENT_NAME);
+			if (request.isActionValid()) {
+				this.debug("action:publish():OnReady");
+				return this.publish(request, response, Event.Action.OnReady.EVENT_NAME);
+			} else{
+				this.debug("action:publish():OnUnvalid");
+				return this.publish(request, response, Event.Action.OnUnvalid.EVENT_NAME);
+			}
 		})
 		.then(() => {
 			if (response.allow === false) return;
@@ -239,22 +236,17 @@ class BaseAction extends RouteComponent {
 	 * -PROBLEM ZEWNĘTRZNEGO MODUŁU - MULTER
 	 */
 	protected fileFilterHandler(request:Request, file, done){
-		// var requestPromise = Util.Promise.resolve()
-		// .then(() => {
-			this.debug("action:validate UploadFile " + file['fieldname']);
-			var validation = new UploadValidation(this, file, file['fieldname']);
-			var validationResponse: ValidationResponse = validation.validate();
-		// })
-		// .then((validationResponse:ValidationResponse)=>{
-			if (validationResponse.valid === false){
-				this.debug("validation false");
-				this.debug(validationResponse);
-				request.addValue("validationError", validationResponse);
-				done(false);
-			}
-			this.debug("validation true");
-			done(true);
-		// })
+		this.debug("action:validate UploadFile " + file['fieldname']);
+		var validation = new UploadValidation(this, file, file['fieldname']);
+		var validationResponse: ValidationResponse = validation.validate();
+		if (validationResponse.valid === false){
+			this.debug("validation false");
+			this.debug(validationResponse);
+			request.addValue("fileValidationError", validationResponse);
+			done(false);
+		}
+		this.debug("validation true");
+		done(true);
 	}
 	/**
 	 * Zwraca middleware do obsługi plików (multer)
@@ -275,12 +267,12 @@ class BaseAction extends RouteComponent {
 				fileUpload.createRoute(fileFields)(req, res, function(err){
 					if (err) {
 						var request: Request = Request.ExpressToRequest(req);
-						var validationResponse: ValidationResponse = request.getValue("validationError");
+						var validationResponse: ValidationResponse = request.getValue("fileValidationError");
 						if(!validationResponse){
 							validationResponse = <ValidationResponse>{};
 							validationResponse.valid = false;
 							validationResponse.responseValidatorList = [];
-							request.addValue("validationError", validationResponse);
+							request.addValue("fileValidationError", validationResponse);
 						}
 						validationResponse.responseValidatorList.push({
 							valid:false,

@@ -19,7 +19,7 @@ class Response{
 	private expressResponse:express.Response;
 	private _logger: Util.Logger;
 	private _allow: boolean;
-	private _valid: boolean;
+	// private _valid: boolean;
 	private _redirect: string;
 	private _routePath: string;
 	private _download: { path: string; filename?: string; fn?:(err)=>void };
@@ -30,7 +30,7 @@ class Response{
 		this.viewParam = new Object();
 		this.expressResponse = expressResponse;
 		this._routePath = null;
-		this._valid = true;
+		// this._valid = true;
 	}
 	/**
 	 * Na podstawie express requesta wyciąga Horpyna request
@@ -99,12 +99,12 @@ class Response{
 	public get allow():boolean{
 		return this._allow;
 	}
-	public set valid(v:boolean){
-		this._valid = v;
-	}
-	public get valid():boolean{
-		return this._valid;
-	}
+	// public set valid(v:boolean){
+	// 	this._valid = v;
+	// }
+	// public get valid():boolean{
+	// 	return this._valid;
+	// }
 	public set view(name:string){
 		this.viewParam['view'] = name;
 	}

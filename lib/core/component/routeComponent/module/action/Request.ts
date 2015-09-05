@@ -9,6 +9,11 @@ class Request{
 	private _action:BaseAction;
 	private _logger: Util.Logger;
 	/**
+	 * normalnie jest false, jeśli walidacja się powiedzie to zamieni się na true
+	 * @type {boolean}
+	 */
+	private _valid: boolean;
+	/**
 	 * dane systemowe przenoszone między modułami systemowymi
 	 */
 	private _data:Object;
@@ -29,6 +34,15 @@ class Request{
 	}
 	public get action():BaseAction{
 		return this._action;
+	}
+	/**
+	 * odpowaiada za określenie walidacji danej akcji
+	 */
+	public setActionValid(v:boolean){
+		this._valid = v;
+	}
+	public isActionValid():boolean{
+		return this._valid;
 	}
 	/**
 	 * Na podstawie express requesta wyciąga Horpyna request
