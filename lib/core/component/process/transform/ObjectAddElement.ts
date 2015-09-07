@@ -19,8 +19,7 @@ class ObjectAddElement extends BaseNode {
 		this.debug("begin");
 		var mappedEntry = data.getMappedEntry();
 		this.debug(mappedEntry);
-		var processResponse;
-		processResponse = [];
+		var processResponse = [];
 		for (var i = 0; i < mappedEntry.length; i++) {
 			processResponse.push(this.addElementToObject(mappedEntry[i], data));
 		}

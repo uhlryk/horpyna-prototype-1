@@ -12,18 +12,24 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 		this.onConstructor();
 	}
 	protected onConstructor() {
-		var isUnvalid = new Core.Node.Request.IsValid([this]);
-		isUnvalid.setNegation();
-		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
+		var getValidationMessage = new Core.Node.Request.GetData([this]);
+		getValidationMessage.setKey("validationError");
+
+		var ifValidationErrorDataExist = new Core.Node.Gateway.IfExist([getValidationMessage]);
+
+		var errorResponseCode = new Core.Node.Response.SendData([ifValidationErrorDataExist]);
 		errorResponseCode.setStatus(422);
 
-		var isValid = new Core.Node.Request.IsValid([this]);
-
-		var formGenerator = new Core.Node.Form.Generate([isValid]);
+		var formGenerator = new Core.Node.Form.Generate([this]);
 		formGenerator.addFormAction(this._module.createAction);
 		formGenerator.addFormAction(this._module.createFormAction);
 
-		var sendForm = new Core.Node.Response.SendData([formGenerator]);
+		var populateValidationMessage = new Core.Node.Form.PopulateValidation([formGenerator, ifValidationErrorDataExist]);
+		populateValidationMessage.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
+		populateValidationMessage.setValidationMessage(Core.Node.SourceType.RESPONSE_NODE_2);
+
+		var sendForm = new Core.Node.Response.SendData([populateValidationMessage]);
+		sendForm.setView("horpyna/jade/createFormAction");
 	}
 }
 export = OnFormCreateResource;

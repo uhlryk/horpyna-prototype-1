@@ -55,13 +55,13 @@ describe("Testy formularzy", function() {
 					var formList = res.body.content;
 					expect(formList).to.be.length(1);
 					var form = formList[0];
-					expect(form.valid).to.be.true;
+					expect(form.valid).to.be.false;
 					expect(form.fields).to.be.length(4);
 					expect(form.fields).to.include.some.property("name","model");
 					expect(form.fields).to.include.some.property("name","marka");
 					expect(form.fields).to.include.some.property("name","_submit");
 					expect(form.fields).to.include.some.property("name","_source");
-					expect(res.status).to.be.equal(200);
+					expect(res.status).to.be.equal(422);
 					done();
 				});
 		});

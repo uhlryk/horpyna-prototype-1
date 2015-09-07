@@ -28,6 +28,7 @@ class Generate extends BaseNode {
 	}
 	protected content(data: NodeData): any {
 		this.debug("begin");
+		var processResponse = [];
 		var formGenerator = new FormGenerator();
 		for (var i = 0; i < this._actionList.length; i++){
 			var action = this._actionList[i];
@@ -45,9 +46,9 @@ class Generate extends BaseNode {
 		var sourceAction = data.getActionRequest().action;
 		url = sourceAction.populateRoutePathWithQuery(actionParam, actionQuery);
 		formGenerator.setSourceHiddenField(form, url);
-
-		this.debug(form);
-		return form;
+		processResponse.push(form);
+		this.debug(processResponse);
+		return processResponse;
 	}
 }
 export = Generate;

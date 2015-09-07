@@ -121,10 +121,20 @@ class BaseNode extends Element {
 			//do content dodamy tylko te response, dla których connection jest otwarte
 			var allowProcessResponseList = [];
 			var processObject = processList[this.processId];
-			for (var i = 0; i < processObject.parentConnections.length; i++) {
-				var connection : IConnection = processObject.parentConnections[i];
-				if (connection.open === true) {
-					allowProcessResponseList.push(connection.parent.response);
+			// for (var i = 0; i < processObject.parentConnections.length; i++) {
+			// 	var connection : IConnection = processObject.parentConnections[i];
+			// 	if (connection.open === true) {
+			// 		allowProcessResponseList.push(connection.parent.response);
+			// 	}
+			// }
+			for (var j = 0; j < this._parentNodeList.length; j++){
+				var parentNode: BaseNode = this._parentNodeList[j];
+				for (var i = 0; i < processObject.parentConnections.length; i++) {
+					var connection : IConnection = processObject.parentConnections[i];
+					if (connection.parent.node === parentNode && connection.open == true) {
+						allowProcessResponseList.push(connection.parent.response);
+						break;
+					}
 				}
 			}
 			//content odpali się tylko jeśli przynajmniej jeden rodzic jest allow

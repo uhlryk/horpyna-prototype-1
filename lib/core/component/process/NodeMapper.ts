@@ -111,6 +111,8 @@ class NodeMapper extends Element{
 		if (this._mapSource[name]) {
 			for (var sourceType in this._mapSource[name]) {
 				var sourceTypeKeys = this._mapSource[name][sourceType];
+				this.debug("sourceType " + sourceType);
+				this.debug(processEntryList);
 				switch(sourceType){
 					case SourceType.RESPONSE_NODE:
 						for (var i = 0; i < processEntryList.length; i++) {

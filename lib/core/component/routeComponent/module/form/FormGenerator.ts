@@ -2,6 +2,8 @@ import IForm = require("./IForm");
 import IInputForm = require("./IInputForm");
 import Field = require("./../action/field/Field");
 import FieldType = require("./../action/field/FieldType");
+import ValidationResponse = require("./../action/ValidationResponse");
+import ValidatorResponse = require("./../action/field/ValidatorResponse");
 import FormInputType = require("./../action/field/FormInputType");
 class FormGenerator{
 	private _fieldList: Field[];
@@ -30,6 +32,25 @@ class FormGenerator{
 				}
 			}
 			this._fieldList = newList;
+		}
+	}
+	public populateValidation(form: IForm, validationResponse: ValidationResponse) {
+		if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
+			form.valid = false;
+			var fieldList: IInputForm[] = form.fields;
+			for (var i = 0; i < validationResponse.responseValidatorList.length; i++) {
+				var validatorResponse: ValidatorResponse = validationResponse.responseValidatorList[i];
+				for (var j = 0; j < fieldList.length; j++) {
+					var field: IInputForm = fieldList[j];
+					if (field.name === validatorResponse.field) {
+						field.value = validatorResponse.value;
+						field.valid = validatorResponse.valid;
+						if (validatorResponse.valid === false) {
+							field.errorList = field.errorList.concat(validatorResponse.errorList);
+						}
+					}
+				}
+			}
 		}
 	}
 	public setTarget(form :IForm, url:string){
