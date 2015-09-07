@@ -16,7 +16,7 @@ describe("Testy formularzy", function() {
 		myApp.addModule(moduleResource);
 		done();
 	});
-	it("powinien zwrócić json z formularzem", function(done){
+	it("powinien zwrócić json z formularzem tworzenia", function(done){
 		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
 			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
@@ -26,7 +26,7 @@ describe("Testy formularzy", function() {
 		myApp.init().then(function () {
 			request(app).get("/res1/create")
 				.end(function (err, res) {
-					// console.log(res.text);
+					console.log(res.text);
 					var formList = res.body.content;
 					expect(formList).to.be.length(1);
 					var form = formList[0];
@@ -41,7 +41,7 @@ describe("Testy formularzy", function() {
 				});
 		});
 	});
-	it("powinien zwrócić json z formularzem który ma błąd walidacji", function(done){
+	it("powinien zwrócić json z formularzem tworzenia który ma błąd walidacji", function(done){
 		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
 			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
@@ -51,7 +51,7 @@ describe("Testy formularzy", function() {
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
 				.end(function (err, res) {
-					// console.log(res.text);
+					console.log(res.text);
 					var formList = res.body.content;
 					expect(formList).to.be.length(1);
 					var form = formList[0];
@@ -64,6 +64,67 @@ describe("Testy formularzy", function() {
 					expect(res.status).to.be.equal(422);
 					done();
 				});
+		});
+	});
+	it("powinien zwrócić json z formularzem edycji", function(done){
+		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
+			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		}], {length:50});
+		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
+			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		}], {length:50});
+		myApp.init().then(function () {
+			request(app).post("/res1/create")
+			.send({model: "olek"})
+			.send({marka: "bolek"})
+			.end(function (err, res) {
+				request(app).get("/res1/update/1")
+				.end(function (err, res) {
+					console.log(res.text);
+					var formList = res.body.content;
+					expect(formList).to.be.length(1);
+					var form = formList[0];
+					expect(form.valid).to.be.true;
+					expect(form.fields).to.be.length(4);
+					expect(form.fields).to.include.some.property("name","model");
+					expect(form.fields).to.include.some.property("name","marka");
+					expect(form.fields).to.include.some.property("name","_submit");
+					expect(form.fields).to.include.some.property("name","_source");
+					expect(res.status).to.be.equal(200);
+					done();
+				});
+			});
+		});
+	});
+	it("powinien zwrócić json z formularzem edycji który ma błąd walidacji", function(done){
+		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
+			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		}], {length:50});
+		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
+			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		}], {length:50});
+		myApp.init().then(function () {
+			request(app).post("/res1/create")
+			.send({model: "olek"})
+			.send({marka: "bolek"})
+			.end(function (err, res) {
+				request(app).post("/res1/update/1")
+				.send({model: "olefsfddsffdsk"})
+				.end(function (err, res) {
+					console.log(res.text);
+					var formList = res.body.content;
+					expect(formList).to.be.length(1);
+					var form = formList[0];
+					expect(form.valid).to.be.false;
+					expect(form.fields).to.be.length(4);
+					expect(form.fields).to.include.some.property("name","model");
+					expect(form.fields).to.include.some.property("name","marka");
+					expect(form.fields).to.include.some.property("name","_submit");
+					expect(form.fields).to.include.some.property("name","_source");
+					expect(res.status).to.be.equal(422);
+					done();
+				});
+			});
 		});
 	});
 });

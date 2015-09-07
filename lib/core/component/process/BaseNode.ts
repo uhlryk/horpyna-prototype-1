@@ -121,12 +121,15 @@ class BaseNode extends Element {
 			//do content dodamy tylko te response, dla których connection jest otwarte
 			var allowProcessResponseList = [];
 			var processObject = processList[this.processId];
-			// for (var i = 0; i < processObject.parentConnections.length; i++) {
-			// 	var connection : IConnection = processObject.parentConnections[i];
-			// 	if (connection.open === true) {
-			// 		allowProcessResponseList.push(connection.parent.response);
-			// 	}
-			// }
+			//wystarczy że jedno connection będzie zablokowane to całość się zablokuje
+			var allow = true;
+			for (var i = 0; i < processObject.parentConnections.length; i++) {
+				var connection : IConnection = processObject.parentConnections[i];
+				if (connection.open === false) {
+					allow = false;
+				}
+			}
+
 			for (var j = 0; j < this._parentNodeList.length; j++){
 				var parentNode: BaseNode = this._parentNodeList[j];
 				for (var i = 0; i < processObject.parentConnections.length; i++) {
@@ -138,7 +141,7 @@ class BaseNode extends Element {
 				}
 			}
 			//content odpali się tylko jeśli przynajmniej jeden rodzic jest allow
-			if (allowProcessResponseList.length > 0) {
+			if (allowProcessResponseList.length > 0 && allow === true) {
 				var data = new NodeData(this._nodeMapper, allowProcessResponseList, actionRequest, actionResponse, processList);
 				return this._promiseContent(data);
 			} else{

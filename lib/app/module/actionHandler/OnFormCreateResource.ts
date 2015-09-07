@@ -17,6 +17,9 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 
 		var ifValidationErrorDataExist = new Core.Node.Gateway.IfExist([getValidationMessage]);
 
+		var ifNoValidationError = new Core.Node.Gateway.IfExist([getValidationMessage]);
+		ifNoValidationError.setNegation();
+
 		var errorResponseCode = new Core.Node.Response.SendData([ifValidationErrorDataExist]);
 		errorResponseCode.setStatus(422);
 
@@ -29,6 +32,10 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 		populateValidationMessage.setValidationMessage(Core.Node.SourceType.RESPONSE_NODE_2);
 
 		var sendForm = new Core.Node.Response.SendData([populateValidationMessage]);
+		sendForm.setView("horpyna/jade/createFormAction");
+
+		var sendForm = new Core.Node.Response.SendData([formGenerator, ifNoValidationError]);
+		populateValidationMessage.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
 		sendForm.setView("horpyna/jade/createFormAction");
 	}
 }

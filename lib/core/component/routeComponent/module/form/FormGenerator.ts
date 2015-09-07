@@ -34,6 +34,13 @@ class FormGenerator{
 			this._fieldList = newList;
 		}
 	}
+	public populateData(form: IForm, data: Object) {
+		var fieldList: IInputForm[] = form.fields;
+		for (var j = 0; j < fieldList.length; j++) {
+			var field: IInputForm = fieldList[j];
+			field.value = data[field.name];
+		}
+	}
 	public populateValidation(form: IForm, validationResponse: ValidationResponse) {
 		if (validationResponse && validationResponse.valid === false && validationResponse.responseValidatorList.length > 0) {
 			form.valid = false;
