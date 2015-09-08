@@ -83,26 +83,35 @@ class Validation extends Element {
 			 * albo fieldetr jest opcjonalny więc dla null nie sprawdzamy pozostałych walidatorów
 			 */
 			if (value !== null) {
-				return Util.Promise.map(validatorList, (validator: BaseValidator) => {
-					if(validator.validationPhase !== BaseValidator.POSTUPLOAD_PHASE){
-						return;
-					}
-					return new Util.Promise<ValidatorResponse>((resolve: (ValidatorResponse) => void) => {
-						validator.validate(value, this.valueByTypeList, resolve);
-					})
-					.then((response:ValidatorResponse)=>{
-						this.debug("validator name: %s", validator.name);
-						if (response.valid === false) {
-							this.debug(response.valid);
-							this.validationResponse.valid = false;
+				if (validatorList.length) {
+					return Util.Promise.map(validatorList, (validator: BaseValidator) => {
+						if (validator.validationPhase !== BaseValidator.POSTUPLOAD_PHASE) {
+							return;
 						}
-						/**
-						 * nawet jeśli nie ma błędów przy danej walidacji, to mogą być przy innych, a wtedy informacja
-						 * co zwalidowane dla jakich pól będzie ważna, dlatego nawet poprawne walidacje zapisuję
-						 */
-						this.validationResponse.responseValidatorList.push(response);
+						return new Util.Promise<ValidatorResponse>((resolve: (ValidatorResponse) => void) => {
+							validator.validate(value, this.valueByTypeList, resolve);
+						})
+							.then((response: ValidatorResponse) => {
+								this.debug("validator name: %s", validator.name);
+								if (response.valid === false) {
+									this.debug(response.valid);
+									this.validationResponse.valid = false;
+								}
+								/**
+								 * nawet jeśli nie ma błędów przy danej walidacji, to mogą być przy innych, a wtedy informacja
+								 * co zwalidowane dla jakich pól będzie ważna, dlatego nawet poprawne walidacje zapisuję
+								 */
+								this.validationResponse.responseValidatorList.push(response);
+							});
 					});
-				});
+				} else {//znaczy że pole nie ma walidatora ale chcemy mieć jego dane w odpowiedzi walidacji
+					this.validationResponse.responseValidatorList.push({
+						valid:true,
+						validator:"Null",
+						value: value,
+						field: field.getFieldName()
+					});
+				}
 			}
 		});
 	}

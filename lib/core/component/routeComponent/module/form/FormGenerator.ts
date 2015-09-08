@@ -16,7 +16,7 @@ class FormGenerator{
 		} else {
 			var newList = this._fieldList.slice();
 			for (var j = 0; j < fieldList.length; j++){
-				var checkField = fieldList[i];
+				var checkField = fieldList[j];
 				var index: number = -1;
 				for (var i = 0; i < this._fieldList.length; i++){
 					var oldField = this._fieldList[i];
@@ -38,7 +38,14 @@ class FormGenerator{
 		var fieldList: IInputForm[] = form.fields;
 		for (var j = 0; j < fieldList.length; j++) {
 			var field: IInputForm = fieldList[j];
-			field.value = data[field.name];
+			var value = data[field.name];
+			if (value && value['files']) {
+				if (field.type === "file") {
+					field.value = value;
+				}
+			} else {
+				field.value = value;
+			}
 		}
 	}
 	public populateValidation(form: IForm, validationResponse: ValidationResponse) {
@@ -49,7 +56,7 @@ class FormGenerator{
 				var validatorResponse: ValidatorResponse = validationResponse.responseValidatorList[i];
 				for (var j = 0; j < fieldList.length; j++) {
 					var field: IInputForm = fieldList[j];
-					if (field.name === validatorResponse.field) {
+					if (field.name === validatorResponse.field && field.type !== "file") {
 						field.value = validatorResponse.value;
 						field.valid = validatorResponse.valid;
 						if (validatorResponse.valid === false) {

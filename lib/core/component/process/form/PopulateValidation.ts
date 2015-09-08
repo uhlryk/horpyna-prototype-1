@@ -24,13 +24,13 @@ class PopulateValidation extends BaseNode {
 		var processResponse = [];
 		var formGenerator = new FormGenerator();
 		var formObject = data.getMappedObject("entry_source");
-		var validationMessage = data.getMappedObject("validation_message");
+		var validationMessage = data.getMappedObjectArray("validation_message");
 		this.debug("formObject");
 		this.debug(formObject);
 		this.debug("validationMessage");
-		this.debug(validationMessage);
+		this.debug(JSON.stringify(validationMessage));
 		if (validationMessage){
-			formGenerator.populateValidation(<IForm>formObject, <ValidationResponse>validationMessage);
+			formGenerator.populateValidation(<IForm>formObject, <ValidationResponse>validationMessage[0]);
 		}
 		processResponse.push(formObject);
 		this.debug(processResponse);

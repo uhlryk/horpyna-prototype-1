@@ -22,7 +22,7 @@ class GetData extends BaseNode {
 			if (responseData) {
 				nodeResponse.push(responseData);
 			}
-			this.debug(nodeResponse);
+			this.debug(JSON.stringify(nodeResponse));
 			return nodeResponse;
 		}
 		return [];

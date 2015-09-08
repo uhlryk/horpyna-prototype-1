@@ -17,17 +17,14 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 
 		var ifValidationErrorDataExist = new Core.Node.Gateway.IfExist([getValidationMessage]);
 
-		var errorResponseCode = new Core.Node.Response.SendData([ifValidationErrorDataExist]);
-		errorResponseCode.setStatus(422);
-
 		var ifNoValidationError = new Core.Node.Gateway.IfExist([getValidationMessage]);
 		ifNoValidationError.setNegation();
 
 		var formGenerator = new Core.Node.Form.Generate([this]);
-		formGenerator.addFormAction(this._module.createAction);
-		formGenerator.addFormAction(this._module.createFormAction);
+		formGenerator.addFormAction(this._module.updateAction);
+		formGenerator.addFormAction(this._module.updateFormAction);
 
-		var findDbData = new Core.Node.Db.Find([ifNoValidationError]);
+		var findDbData = new Core.Node.Db.Find([this]);
 		findDbData.setModel(this._module.model);
 		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
@@ -39,17 +36,21 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
 		redirectAction.setTargetAction(this._module.listAction);
 
-		//wypełniamy formularz danymi które błędnie były wysłane
-		var populateValidationMessage = new Core.Node.Form.PopulateValidation([formGenerator, ifValidationErrorDataExist]);
-		populateValidationMessage.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
-		populateValidationMessage.setValidationMessage(Core.Node.SourceType.RESPONSE_NODE_2);
-		var sendValidationForm = new Core.Node.Response.SendData([populateValidationMessage]);
-		sendValidationForm.setView("horpyna/jade/createFormAction");
-		//wypełniamy formularz danymi z bazy
 		var populateData = new Core.Node.Form.PopulateData([formGenerator, ifDataExist]);
 		populateData.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
 		populateData.setFormData(Core.Node.SourceType.RESPONSE_NODE_2);
-		var sendPopulateDataForm = new Core.Node.Response.SendData([populateData]);
+
+		//wypełniamy formularz danymi które błędnie były wysłane
+		var populateValidationMessage = new Core.Node.Form.PopulateValidation([populateData, ifValidationErrorDataExist]);
+		populateValidationMessage.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
+		populateValidationMessage.setValidationMessage(Core.Node.SourceType.RESPONSE_NODE_2);
+		var sendValidationForm = new Core.Node.Response.SendData([populateValidationMessage]);
+		sendValidationForm.setStatus(422);
+		sendValidationForm.setView("horpyna/jade/createFormAction");
+
+		var sendPopulateDataForm = new Core.Node.Response.SendData([populateData, ifNoValidationError]);
+		sendPopulateDataForm.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
+		sendPopulateDataForm.setStatus(200);
 		sendPopulateDataForm.setView("horpyna/jade/createFormAction");
 	}
 }
