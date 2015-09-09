@@ -59,7 +59,6 @@ describe("Testy formularzy", function() {
 		myApp.init().then(function () {
 			request(app).get("/res1/create")
 				.end(function (err, res) {
-					console.log(res.text);
 					var formList = res.body.content;
 					expect(formList).to.be.length(1);
 					var form = formList[0];
@@ -84,7 +83,6 @@ describe("Testy formularzy", function() {
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
 				.end(function (err, res) {
-					console.log(res.text);
 					var formList = res.body.content;
 					expect(formList).to.be.length(1);
 					var form = formList[0];
@@ -115,7 +113,6 @@ describe("Testy formularzy", function() {
 			.end(function (err, res) {
 				request(app).get("/res1/update/1")
 				.end(function (err, res) {
-					console.log(res.text);
 					var formList = res.body.content;
 					expect(formList).to.be.length(1);
 					var form = formList[0];
@@ -149,7 +146,6 @@ describe("Testy formularzy", function() {
 				.field("model","olefsfddsffdsk")
 				.field("field", "1")
 				.end(function (err, res) {
-					console.log(res.text);
 					var formList = res.body.content;
 					expect(formList).to.be.length(1);
 					var form = formList[0];
@@ -161,6 +157,40 @@ describe("Testy formularzy", function() {
 					expect(form.fields).to.include.some.property("name","_submit");
 					expect(form.fields).to.include.some.property("name","_source");
 					expect(res.status).to.be.equal(422);
+					done();
+				});
+			});
+		});
+	});
+	it("powinien zwrócić json z formularzem usunięcia", function(done){
+		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
+			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		}], {length:50});
+		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
+			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		}], {length:50});
+		moduleResource.addField("field", Core.Action.FormInputType.FILE, [], {optional:true});
+		myApp.init().then(function () {
+			request(app).post("/res1/create")
+			.field("model", "olek")
+			.field("marka", "bolek")
+			.attach("field",sourceDir+"/textBig.txt")
+			.end(function (err, res) {
+				request(app).get("/res1/delete/1")
+				.end(function (err, res) {
+					var formList = res.body.content;
+					expect(formList).to.be.length(1);
+					var form = formList[0];
+					expect(form.valid).to.be.true;
+					expect(form.fields).to.be.length(2);
+					expect(form.fields).to.include.some.property("name","_submit");
+					expect(form.fields).to.include.some.property("name","_source");
+					expect(res.body.detail).to.be.length(1);
+					expect(res.body.detail).to.include.some.property("id",1);
+					expect(res.body.detail).to.include.some.property("model","olek");
+					expect(res.body.detail).to.include.some.property("marka","bolek");
+					expect(res.body.detail).to.include.some.property("field");
+					expect(res.status).to.be.equal(200);
 					done();
 				});
 			});

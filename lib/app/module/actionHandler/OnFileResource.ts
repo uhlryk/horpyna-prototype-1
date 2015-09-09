@@ -12,11 +12,6 @@ class OnFileResource extends Core.Node.ProcessModel {
 		this.onConstructor();
 	}
 	protected onConstructor() {
-		var isUnvalid = new Core.Node.Request.IsValid([this]);
-		isUnvalid.setNegation();
-		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
-		errorResponseCode.setStatus(422);
-
 		var isValid = new Core.Node.Request.IsValid([this]);
 
 		var findDbData = new Core.Node.Db.Find([isValid]);

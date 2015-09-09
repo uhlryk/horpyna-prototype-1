@@ -12,14 +12,8 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		this.onConstructor();
 	}
 	protected onConstructor() {
-		var isUnvalid = new Core.Node.Request.IsValid([this]);
-		isUnvalid.setNegation();
-		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
-		errorResponseCode.setStatus(422);
-
-		var isValid = new Core.Node.Request.IsValid([this]);
 //O => Find
-		var findDbData = new Core.Node.Db.Find([isValid]);
+		var findDbData = new Core.Node.Db.Find([this]);
 		findDbData.setModel(this._module.model);
 		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
@@ -38,7 +32,7 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		var sendDataNode = new Core.Node.Response.SendData([addActionLinkToListElement]);
 		sendDataNode.setView("horpyna/jade/detailAction");
 //O => ActionLink
-		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([isValid]);
+		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([this]);
 		addSecondaryActionLinksNode.addAction(this._module.createAction.formAction);
 		addSecondaryActionLinksNode.addAction(this._module.listAction);
 //O => ActionLink => SendData => X

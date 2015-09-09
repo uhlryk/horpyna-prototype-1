@@ -1,70 +1,44 @@
 import Core = require("../../../index");
+import ResourceModule = require("./../ResourceModule");
+import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
 /**
- * Obsługuje formularz usunięcia pola. Formularz zawiera wypełnione pola danymi które będą usunięte. Pola te są readonly
- * ponieważ tylko chcemy pokazać pola jakie są do usunięcia
+ * Odpowiada za wyświetlanie formularza z danymi które zostaną usunięte
  */
-class OnFormDeleteResource extends Core.Action.ActionHandlerController {
-	private _model: Core.Model;
-	/**
-	 * Jeśli nie znajdzie danych do update to przekieruje na tą akcję
-	 */
-	private _onEmptyAction: Core.Action.BaseAction;
-	private _fileAction: Core.Action.BaseAction;
-	private _viewPath: string;
-	constructor(model: Core.Model, viewPath: string, onEmptyAction: Core.Action.BaseAction, fileAction?: Core.Action.BaseAction) {
+class OnFormDelete extends Core.Node.ProcessModel {
+	private _module: ResourceModule;
+	constructor(module: ResourceModule) {
 		super();
-		this._model = model;
-		this._onEmptyAction = onEmptyAction;
-		this._fileAction = fileAction;
-		this._viewPath = viewPath;
-		this.setActionHandler((request, response, action) => { return this.actionHandler(request, response, action); });
+		this._module = module;
+		this.onConstructor();
 	}
-	protected actionHandler(request: Core.Action.Request, response: Core.Action.Response, action: Core.Action.BaseAction): Core.Util.Promise<void> {
-		return Core.Util.Promise.resolve()
-		.then(() => {
-			var find = new Core.Query.Find();
-			find.setModel(this._model);
-			var paramAppList = request.getParamAppFieldList();
-			find.populateWhere(paramAppList);
-			return find.run();
-		})
-		.then((model) => {
-			if (!model) {
-				response.setRedirect(this._onEmptyAction.getRoutePath());
-			} else {
-				model = model.toJSON();
-				var content = response.content;
-				var form: Core.Form.IForm = content["form"];
-				var fieldList: Core.Form.IInputForm[] = form.fields;
-				for (var i = 0; i < fieldList.length; i++) {
-					var field: Core.Form.IInputForm = fieldList[i];
-					var name = field.name;
-					var value = model[name];
-					if (value) {
-						field.value = value;
-					}
-				}
-				/**
-				 * do każdego pliku do jego parametrów dodaje pole uri które jest linkiem na akcję obsługującą ten plik
-				 */
-				var uriFileAction = "/";
-				if (this._fileAction) {
-					uriFileAction = this._fileAction.populateRoutePath(model);
-				}
-				for (var colName in model) {
-					var val = model[colName];
-					if (val && val.files) {
-						for (var j in val.files) {
-							var file = val.files[j];
-							var uri = Core.Util.Uri.updateQuery(uriFileAction, "column", colName);
-							uri = Core.Util.Uri.updateQuery(uri, "count", j);
-							file['uri'] = uri;
-						}
-					}
-				}
-			}
-			response.view = this._viewPath;
-		});
+	protected onConstructor() {
+		var formGenerator = new Core.Node.Form.Generate([this]);
+		formGenerator.addFormAction(this._module.deleteAction);
+		formGenerator.addFormAction(this._module.deleteFormAction);
+
+		var findDbData = new Core.Node.Db.Find([this]);
+		findDbData.setModel(this._module.model);
+		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
+		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
+
+		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
+		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
+		ifDataNotExist.setNegation();
+
+		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
+		redirectAction.setTargetAction(this._module.listAction);
+
+		var navSendDataNode = new Core.Node.Response.SendData([ifDataExist]);
+		navSendDataNode.setResponseKey("detail");
+
+		var populateData = new Core.Node.Form.PopulateData([formGenerator, ifDataExist]);
+		populateData.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
+		populateData.setFormData(Core.Node.SourceType.RESPONSE_NODE_2);
+
+		var sendPopulateDataForm = new Core.Node.Response.SendData([populateData]);
+		sendPopulateDataForm.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE);
+		sendPopulateDataForm.setStatus(200);
+		sendPopulateDataForm.setView("horpyna/jade/createFormAction");
 	}
 }
-export = OnFormDeleteResource;
+export = OnFormDelete;

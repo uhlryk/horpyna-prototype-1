@@ -74,7 +74,8 @@ class ResourceModule extends Core.Module {
 		// var onFormUpdate = new OnFormUpdateResource(this.model, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
 		var onFormUpdate = new OnFormUpdateResource(this);
 		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
-		var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
+		// var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
+		var onFormDelete = new OnFormDeleteResource(this);
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
 		var onUpdate = new OnUpdateResource(this);
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
@@ -133,11 +134,11 @@ class ResourceModule extends Core.Module {
 			fileHelperField.optional = true;
 			this.updateAction.addField(fileHelperField);
 		}
-		var deleteField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
-		deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
-		deleteField.formInputType = formInputType;
-		var deleteFormAction = this.deleteAction.formAction;
-		deleteFormAction.addField(deleteField);
+		// var deleteField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
+		// deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
+		// deleteField.formInputType = formInputType;
+		// var deleteFormAction = this.deleteAction.formAction;
+		// deleteFormAction.addField(deleteField);
 
 		for(var validationName in validationNameList){
 			var data = validationNameList[validationName];
