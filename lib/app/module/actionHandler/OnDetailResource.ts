@@ -26,14 +26,14 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		redirectAction.setTargetAction(this._module.listAction);
 //O => Find => If +> FileLinks => AddActionLinkToEach
 		var addActionLinkToListElement = new AddActionLinkToEach([ifDataExist]);
-		addActionLinkToListElement.addAction(this._module.updateAction.formAction);
-		addActionLinkToListElement.addAction(this._module.deleteAction.formAction);
+		addActionLinkToListElement.addAction(this._module.updateFormAction);
+		addActionLinkToListElement.addAction(this._module.deleteFormAction);
 //O => Find => If +> FileLinks => AddActionLinkToEach => SendData	=> X
 		var sendDataNode = new Core.Node.Response.SendData([addActionLinkToListElement]);
 		sendDataNode.setView("horpyna/jade/detailAction");
 //O => ActionLink
 		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([this]);
-		addSecondaryActionLinksNode.addAction(this._module.createAction.formAction);
+		addSecondaryActionLinksNode.addAction(this._module.createFormAction);
 		addSecondaryActionLinksNode.addAction(this._module.listAction);
 //O => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);

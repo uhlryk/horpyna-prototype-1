@@ -2,6 +2,7 @@
 // import View = require("../../../../view/View");
 import express = require("express");
 import Util = require("./../../../../util/Util");
+import BaseAction = require("./BaseAction");
 /**
  * Obiekt z odpowiedzią na requesta. Jest to wrapper na express.Response
  */
@@ -19,7 +20,7 @@ class Response{
 	private expressResponse:express.Response;
 	private _logger: Util.Logger;
 	private _allow: boolean;
-	// private _valid: boolean;
+	private _forward: BaseAction;
 	private _redirect: string;
 	private _routePath: string;
 	private _download: { path: string; filename?: string; fn?:(err)=>void };
@@ -99,12 +100,12 @@ class Response{
 	public get allow():boolean{
 		return this._allow;
 	}
-	// public set valid(v:boolean){
-	// 	this._valid = v;
-	// }
-	// public get valid():boolean{
-	// 	return this._valid;
-	// }
+	public setForwardAction(action: BaseAction) {
+		this._forward = action;
+	}
+	public getForwardAction():BaseAction{
+		return this._forward;
+	}
 	public set view(name:string){
 		this.viewParam['view'] = name;
 	}

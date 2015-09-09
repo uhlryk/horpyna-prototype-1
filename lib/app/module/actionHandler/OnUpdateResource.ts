@@ -16,6 +16,8 @@ class OnUpdateResource extends Core.Node.ProcessModel {
 		isUnvalid.setNegation();
 		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
 		errorResponseCode.setStatus(422);
+		var forwardToForm = new Core.Node.Response.Forward([this]);
+		forwardToForm.setTargetAction(this._module.updateFormAction);
 
 		var isValid = new Core.Node.Request.IsValid([this]);
 

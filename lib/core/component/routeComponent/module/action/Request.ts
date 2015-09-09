@@ -26,7 +26,6 @@ class Request{
 		this.allFieldList[FieldType.APP_FIELD] = new Object();
 		this.allFieldList[FieldType.HEADER_FIELD] = new Object();
 		this.allFieldList[FieldType.FILE_FIELD] = new Object();
-
 		this._data = new Object();
 	}
 	public set action(v:BaseAction){

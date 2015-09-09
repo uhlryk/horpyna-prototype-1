@@ -154,7 +154,25 @@ class Dispatcher extends Element{
 			var response: Action.Response = Action.Response.ExpressToResponse(res);
 			response.allow = true;
 			response.routePath = routePath;
-			handler(request, response, next);
+			this.runActionHandler(request, response, handler, next);
+		});
+	}
+	/**
+	 * dla danej akcji odpala w Promise jej handler,
+	 * jeśli akcja zwróci w response rządanie forwarda to rekurencyjnie funkcja odpali się ponownie
+	 */
+	private runActionHandler(actionRequest: Action.Request, actionResponse: Action.Response, handler: Function, next: () => void): Promise<void> {
+		return new Promise<void>((resolve: () => void) => {
+			handler(actionRequest, actionResponse, resolve);
+		})
+		.then(() => {
+			var forwardAction = actionResponse.getForwardAction();
+			if (forwardAction) {
+				actionResponse.setForwardAction(null);
+				return this.runActionHandler(actionRequest, actionResponse, forwardAction.getRequestHandler(), next);
+			} else {
+				next();
+			}
 		});
 	}
 	public init():void{

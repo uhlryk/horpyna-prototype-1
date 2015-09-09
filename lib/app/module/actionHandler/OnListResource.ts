@@ -36,8 +36,8 @@ class OnListResource extends Core.Node.ProcessModel {
 		// fileLinksNode.mapActionParams(Core.Node.SourceType.PARAM_FIELD);
 //O => Find	=> ObjectToElement => JoinArray=> FileLinks => AddActionLinkToEach
 		var addActionLinkToListElement = new AddActionLinkToEach([joinToOneList]);
-		addActionLinkToListElement.addAction(this._module.updateAction.formAction);
-		addActionLinkToListElement.addAction(this._module.deleteAction.formAction);
+		addActionLinkToListElement.addAction(this._module.updateFormAction);
+		addActionLinkToListElement.addAction(this._module.deleteFormAction);
 		addActionLinkToListElement.addAction(this._module.detailAction);
 //O => Find	=> ObjectToElement => JoinArray=> ileLinks => AddActionLinkToEach => SendData => X
 		var sendDataNode = new Core.Node.Response.SendData([addActionLinkToListElement]);
@@ -50,7 +50,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		orderSendDataNode.setResponseKey("order");
 //O => ActionLink
 		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([isValid]);
-		addSecondaryActionLinksNode.addAction(this._module.createAction.formAction);
+		addSecondaryActionLinksNode.addAction(this._module.createFormAction);
 //O => ActionLink => SendData => X
 		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
 		navSendDataNode.setResponseKey("navigation");

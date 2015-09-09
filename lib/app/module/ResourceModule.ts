@@ -12,10 +12,13 @@ import Core = require("../../index");
 class ResourceModule extends Core.Module {
 	private _model: Core.Model;
 	private _listAction: Core.Action.BaseAction;
-	private _createAction: Core.Action.DualAction;
-	private _updateAction: Core.Action.DualAction;
+	private _createAction: Core.Action.BaseAction;
+	private _createFormAction: Core.Action.BaseAction;
+	private _updateAction: Core.Action.BaseAction;
+	private _updateFormAction: Core.Action.BaseAction;
 	private _detailAction: Core.Action.BaseAction;
-	private _deleteAction: Core.Action.DualAction;
+	private _deleteAction: Core.Action.BaseAction;
+	private _deleteFormAction: Core.Action.BaseAction;
 	private _fileAction: Core.Action.BaseAction;
 
 	public onConstructor() {
@@ -47,21 +50,27 @@ class ResourceModule extends Core.Module {
 		this._listAction.addField(new Core.Field("s", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._listAction, true);
 
-		this._createAction = new Core.Action.DualAction("create");
+		this._createAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "create");
 		this.addAction(this._createAction);
+		this._createFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "create");
+		this.addAction(this._createFormAction);
 
 		this.onConstructDetailAction();
 
-		this._updateAction = new Core.Action.DualAction("update");
+		this._updateAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "update");
 		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
-		this._updateAction.formAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._updateAction);
+		this._updateFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "update");
+		this._updateFormAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this.addAction(this._updateFormAction);
 
 
-		this._deleteAction = new Core.Action.DualAction("delete");
+		this._deleteAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "delete");
 		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
-		this._deleteAction.formAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteAction);
+		this._deleteFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "delete");
+		this._deleteFormAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this.addAction(this._deleteFormAction);
 	}
 	protected onConstructDetailAction(){
 		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "detail");
@@ -72,14 +81,14 @@ class ResourceModule extends Core.Module {
 	protected onConstructActionHandlers(){
 		// var onFormCreate = new OnFormCreateResource("horpyna/jade/createFormAction");
 		var onFormCreate = new OnFormCreateResource(this);
-		this.createAction.setFormActionHandler(onFormCreate.getActionHandler());
+		this.createFormAction.setActionHandler(onFormCreate.getActionHandler());
 
 		// var onFormUpdate = new OnFormUpdateResource(this.model, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
 		var onFormUpdate = new OnFormUpdateResource(this);
-		this.updateAction.setFormActionHandler(onFormUpdate.getActionHandler());
+		this.updateFormAction.setActionHandler(onFormUpdate.getActionHandler());
 		// var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		var onFormDelete = new OnFormDeleteResource(this);
-		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
+		this.deleteFormAction.setActionHandler(onFormDelete.getActionHandler());
 		var onUpdate = new OnUpdateResource(this);
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
 
@@ -96,13 +105,13 @@ class ResourceModule extends Core.Module {
 	}
 	public get model(): Core.Model{return this._model; }
 	public get listAction(): Core.Action.BaseAction{return this._listAction; }
-	public get createAction(): Core.Action.DualAction{return this._createAction; }
-	public get createFormAction(): Core.Action.BaseAction{ return this._createAction.formAction; }
-	public get updateAction(): Core.Action.DualAction {return this._updateAction; }
-	public get updateFormAction(): Core.Action.BaseAction { return this._updateAction.formAction; }
+	public get createAction(): Core.Action.BaseAction { return this._createAction; }
+	public get createFormAction(): Core.Action.BaseAction{ return this._createFormAction; }
+	public get updateAction(): Core.Action.BaseAction { return this._updateAction; }
+	public get updateFormAction(): Core.Action.BaseAction { return this._updateFormAction; }
 	public get detailAction(): Core.Action.BaseAction {return this._detailAction; }
-	public get deleteAction(): Core.Action.DualAction {return this._deleteAction; }
-	public get deleteFormAction(): Core.Action.BaseAction { return this._deleteAction.formAction; }
+	public get deleteAction(): Core.Action.BaseAction { return this._deleteAction; }
+	public get deleteFormAction(): Core.Action.BaseAction { return this._deleteFormAction; }
 	public get fileAction(): Core.Action.BaseAction {return this._fileAction; }
 	/**
  * przyśpiesza dodawanie pól body do CRUD.
