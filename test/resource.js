@@ -21,11 +21,11 @@ describe("Funkcje Modułu ResourceModule", function() {
 			var passCol = new Core.Column.StringColumn("pass", 50);
 			resModel.addColumn(passCol);
 			var createAction = moduleResource1.createAction;
-			createAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
-			createAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
+			createAction.addField(new Core.Field.BaseField("name", Core.Field.FieldType.BODY_FIELD));
+			createAction.addField(new Core.Field.BaseField("pass", Core.Field.FieldType.BODY_FIELD));
 			var updateAction = moduleResource1.updateAction;
-			updateAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
-			updateAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
+			updateAction.addField(new Core.Field.BaseField("name", Core.Field.FieldType.BODY_FIELD));
+			updateAction.addField(new Core.Field.BaseField("pass", Core.Field.FieldType.BODY_FIELD));
 			myApp.init().then(function () {
 				done();
 			});
@@ -119,11 +119,11 @@ describe("Funkcje Modułu ResourceModule", function() {
 				var passCol = new Core.Column.StringColumn("pass", 50);
 				resModel.addColumn(passCol);
 				var createAction = moduleResource1.createAction;
-				createAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
-				createAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
+				createAction.addField(new Core.Field.BaseField("name", Core.Field.FieldType.BODY_FIELD));
+				createAction.addField(new Core.Field.BaseField("pass", Core.Field.FieldType.BODY_FIELD));
 				var updateAction = moduleResource1.updateAction;
-				updateAction.addField(new Core.Field("name", Core.Action.FieldType.BODY_FIELD));
-				updateAction.addField(new Core.Field("pass", Core.Action.FieldType.BODY_FIELD));
+				updateAction.addField(new Core.Field.BaseField("name", Core.Field.FieldType.BODY_FIELD));
+				updateAction.addField(new Core.Field.BaseField("pass", Core.Field.FieldType.BODY_FIELD));
 				myApp.addModule(moduleResource1)
 				.then(function(){
 					done();

@@ -1,6 +1,5 @@
 import Action = require("./Action");
 import Field = require("./field/Field");
-import BaseValidator = require("./field/BaseValidator");
 import ValidationResponse = require("./ValidationResponse");
 import ValidatorResponse = require("./field/ValidatorResponse");
 import FieldType = require("./field/FieldType");
@@ -26,13 +25,13 @@ class UploadValidation extends Element {
 	}
 	private validateValidators(): void {
 		this.debug('validateValidators');
-		var field: Field = this.action.getField(FieldType.FILE_FIELD, this._field);
-		var validatorList: BaseValidator[] = field.getValidatorList();
+		var field: Field.BaseField = this.action.getField(FieldType.FILE_FIELD, this._field);
+		var validatorList: Field.BaseValidator[] = field.getValidatorList();
 		this.debug("field name: %s, value: %s", field.name, this._file);
 		for (var i = 0; i < validatorList.length; i++){
-			var validator: BaseValidator = validatorList[i];
-		// return Util.Promise.map(validatorList, (validator: BaseValidator) => {
-			if(validator.validationPhase !== BaseValidator.PREUPLOAD_PHASE){
+			var validator: Field.BaseValidator = validatorList[i];
+		// return Util.Promise.map(validatorList, (validator: Field.BaseValidator) => {
+			if (validator.validationPhase !== Field.BaseValidator.PREUPLOAD_PHASE) {
 				// console.log("nie jest to preupload");
 				continue;
 			}

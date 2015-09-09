@@ -75,7 +75,7 @@ describe("Test uploadu: ", function(){
 				});
 			});
 			myModule.addAction(fileAction);
-			myField1 = new Core.Field("field1", Core.Action.FieldType.FILE_FIELD);
+			myField1 = new Core.Field.BaseField("field1", Core.Field.FieldType.FILE_FIELD);
 			fileAction.addField(myField1);
 
 			myApp.init().then(function () {
@@ -114,7 +114,7 @@ describe("Test uploadu: ", function(){
 				return Core.Util.Promise.resolve()
 				.then(function(){
 					if(request.isActionValid()){
-						var v = request.getField(Core.Action.FieldType.FILE_FIELD,"field1");
+						var v = request.getField(Core.Field.FieldType.FILE_FIELD,"field1");
 						response.setStatus(200);
 					}else{
 						response.setStatus(422);
@@ -123,15 +123,15 @@ describe("Test uploadu: ", function(){
 				// console.log(v);
 			});
 			myModule.addAction(fileAction);
-			myField1 = new Core.Field("field1", Core.Action.FieldType.FILE_FIELD);
+			myField1 = new Core.Field.BaseField("field1", Core.Field.FieldType.FILE_FIELD);
 			fileAction.addField(myField1);
-			// var myField2 = new Core.Field("field2", Core.Action.FieldType.FILE_FIELD);
+			// var myField2 = new Core.Field.BaseField("field2", Core.Field.FieldType.FILE_FIELD);
 			// fileAction.addField(myField2);
 			done();
 		});
 		it("zwraca 200 gdy wyślemy plik o właściwym mime, a walidacja w fazie preupload'", function (done) {
-			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Validator.BaseValidator.PREUPLOAD_PHASE);
+			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Field.BaseValidator.PREUPLOAD_PHASE);
 			myField1.addValidator(val);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
@@ -148,8 +148,8 @@ describe("Test uploadu: ", function(){
 		 * błąd jest w metodzie fileFilter która powinna jeśli callback (null,false) usunąć plik a tego nie robi
 		 */
 		it("TEST NIEUDANY BO MULTER ŹLE DZIAŁA zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie preupload'", function (done) {
-			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Validator.BaseValidator.PREUPLOAD_PHASE);
+			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Field.BaseValidator.PREUPLOAD_PHASE);
 			myField1.addValidator(val);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
@@ -162,8 +162,8 @@ describe("Test uploadu: ", function(){
 			});
 		});
 		it("zwraca 200 gdy wyślemy plik o właściwym mime, a walidacja w fazie postupload'", function (done) {
-			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Validator.BaseValidator.POSTUPLOAD_PHASE);
+			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Field.BaseValidator.POSTUPLOAD_PHASE);
 			myField1.addValidator(val);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
@@ -176,8 +176,8 @@ describe("Test uploadu: ", function(){
 			});
 		});
 		it("zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie postupload'", function (done) {
-			var MimeTypeValidator = Core.Validator.File.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Validator.BaseValidator.POSTUPLOAD_PHASE);
+			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
+			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Field.BaseValidator.POSTUPLOAD_PHASE);
 			myField1.addValidator(val);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
@@ -203,7 +203,7 @@ describe("Test uploadu: ", function(){
 				return Core.Util.Promise.resolve()
 				.then(function(){
 					if(request.isActionValid()){
-						var v = request.getField(Core.Action.FieldType.FILE_FIELD,"field1");
+						var v = request.getField(Core.Field.FieldType.FILE_FIELD,"field1");
 						response.setStatus(200);
 					}else{
 						response.setStatus(422);
@@ -212,14 +212,14 @@ describe("Test uploadu: ", function(){
 				// console.log(v);
 			});
 			myModule.addAction(fileAction);
-			myField1 = new Core.Field("field1", Core.Action.FieldType.FILE_FIELD);
+			myField1 = new Core.Field.BaseField("field1", Core.Field.FieldType.FILE_FIELD);
 			fileAction.addField(myField1);
-			// var myField2 = new Core.Field("field2", Core.Action.FieldType.FILE_FIELD);
+			// var myField2 = new Core.Field.BaseField("field2", Core.Field.FieldType.FILE_FIELD);
 			// fileAction.addField(myField2);
 			done();
 		});
 		it("zwraca 200 gdy wyślemy plik o właściwym rozmiarze'", function (done) {
-			var SizeValidator = Core.Validator.File.SizeValidator;
+			var SizeValidator = Core.Field.ValidatorFile.SizeValidator;
 			var val = new SizeValidator("mime", 3, 10);
 			myField1.addValidator(val);
 			myApp.init().then(function () {
@@ -233,7 +233,7 @@ describe("Test uploadu: ", function(){
 			});
 		});
 		it("zwraca 422 gdy wyślemy plik o za dużym rozmiarze'", function (done) {
-			var SizeValidator = Core.Validator.File.SizeValidator;
+			var SizeValidator = Core.Field.ValidatorFile.SizeValidator;
 			var val = new SizeValidator("mime", 3, 10);
 			myField1.addValidator(val);
 			myApp.init().then(function () {
@@ -257,8 +257,8 @@ describe("Test uploadu: ", function(){
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.addModule(moduleResource1);
-			moduleResource1.addField("sometext", Core.Action.FormInputType.TEXT, [], {length:50});
-			moduleResource1.addField("field1", Core.Action.FormInputType.FILE, []);
+			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
+			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);
 			myApp.init().then(function () {
 				done();
 			});
@@ -345,8 +345,8 @@ describe("Test uploadu: ", function(){
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.addModule(moduleResource1);
-			moduleResource1.addField("sometext", Core.Action.FormInputType.TEXT, [], {length:50});
-			moduleResource1.addField("field1", Core.Action.FormInputType.FILE, [], {optional:true});
+			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
+			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, [], {optional:true});
 			myApp.init().then(function () {
 				done();
 			});
@@ -442,8 +442,8 @@ describe("Test uploadu: ", function(){
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.ResourceModule("res1");
 			myApp.addModule(moduleResource1);
-			moduleResource1.addField("sometext", Core.Action.FormInputType.TEXT, [], {length:50});
-			moduleResource1.addField("field1", Core.Action.FormInputType.FILE, []);
+			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
+			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);
 			myApp.init().then(function () {
 				done();
 			});

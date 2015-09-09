@@ -1,8 +1,8 @@
 import Component = require("../../../../Component");
 import ValidatorResponse = require("./ValidatorResponse");
-import Field = require("./Field");
+import BaseField = require("./BaseField");
 /**
- * Pojedyńczy walidator. podpina się jego instancję pod Field
+ * Pojedyńczy walidator. podpina się jego instancję pod BaseField
  */
 class BaseValidator extends Component {
 	public static PREUPLOAD_PHASE: string = "preupload";
@@ -30,13 +30,13 @@ class BaseValidator extends Component {
 		return template || this.message;
 	}
 	/**
-	 * Sam validator nie posiada informacji o nazwie parametru który waliduje, ale jako komponent ma powiązanie do Field
+	 * Sam validator nie posiada informacji o nazwie parametru który waliduje, ale jako komponent ma powiązanie do BaseField
 	 * A ten ma informacje o nazwie pola.
 	 * Możliwe że lepiej jak instancja walidatora również sama przechowuje wiedzę o nazwie pola
 	 */
 	public getFieldName():string{
 		if(this.parent){
-			var parent: Field = <Field>this.parent;
+			var parent: BaseField = <BaseField>this.parent;
 			return parent.getFieldName();
 		}
 		return null;

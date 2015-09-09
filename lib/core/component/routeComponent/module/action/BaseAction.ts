@@ -6,6 +6,7 @@ import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
 import Validation = require("./Validation");
+import Filtration = require("./Filtration");
 import UploadValidation = require("./UploadValidation");
 import ValidationResponse = require("./ValidationResponse");
 import FieldType = require("./field/FieldType");
@@ -14,7 +15,7 @@ import IActionHandler = require("./IActionHandler");
 
 class BaseAction extends RouteComponent {
 	private actionHandler:IActionHandler;
-	private fieldList:Field[];
+	private fieldList:Field.BaseField[];
 	private method:string;
 	public static ALL:string = "all";
 	public static POST:string = "post";
@@ -49,33 +50,33 @@ class BaseAction extends RouteComponent {
 		this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getFileHandler(), this.getRequestHandler());
 	}
 	public initFields(): Util.Promise<any> {
-		return Util.Promise.map(this.fieldList, (field: Field) => {
+		return Util.Promise.map(this.fieldList, (field: Field.BaseField) => {
 			return field.init();
 		});
 	}
-	public addField(field: Field): Util.Promise<void> {
+	public addField(field: Field.BaseField): Util.Promise<void> {
 		this.fieldList.push(field);
 		if (this.isInit === true) {
 			throw SyntaxError(Component.ADD_INIT_CANT);
 		}
 		return field.prepare(this);
 	}
-	public getFieldList(): Field[] {
+	public getFieldList(): Field.BaseField[] {
 		return this.fieldList;
 	}
-	public getFieldListByType(type:string): Field[] {
+	public getFieldListByType(type: string): Field.BaseField[] {
 		var typeFieldList = [];
 		for (var index in this.fieldList) {
-			var field: Field = this.fieldList[index];
+			var field: Field.BaseField = this.fieldList[index];
 			if(field.getType() === type){
 				typeFieldList.push(field);
 			}
 		};
 		return typeFieldList;
 	}
-	public getField(type: string, name: string): Field {
+	public getField(type: string, name: string): Field.BaseField {
 		for (var index in this.fieldList) {
-			var field: Field = this.fieldList[index];
+			var field: Field.BaseField = this.fieldList[index];
 			if (field.name === name && field.getType() === type) {
 				return field;
 			}
@@ -91,7 +92,7 @@ class BaseAction extends RouteComponent {
 		var routePath = super.getRoutePath();
 		if (paramInPath === true) {
 			for (var index in this.fieldList) {
-				var field: Field = this.fieldList[index];
+				var field: Field.BaseField = this.fieldList[index];
 				if (field.getType() === FieldType.PARAM_FIELD) {
 					routePath = routePath + "/:" + field.getFieldName();
 				}
@@ -107,7 +108,7 @@ class BaseAction extends RouteComponent {
 	public populateRoutePath(data:Object):string{
 		var routePath = this.getRoutePath();
 		for (var index in this.fieldList) {
-			var field: Field = this.fieldList[index];
+			var field: Field.BaseField = this.fieldList[index];
 			if (field.getType() === FieldType.PARAM_FIELD) {
 				var value = data[field.getFieldName()];
 				if(value === undefined){
@@ -127,7 +128,7 @@ class BaseAction extends RouteComponent {
 	public populateRoutePathWithQuery(routeData:Object, queryData:Object):string{
 		var routePath = this.populateRoutePath(routeData);
 		for (var index in this.fieldList) {
-			var field: Field = this.fieldList[index];
+			var field: Field.BaseField = this.fieldList[index];
 			if (field.getType() === FieldType.QUERY_FIELD) {
 				var value = queryData[field.getFieldName()];
 				//ponieważ query data powinna być opcjonalna to gdy brak wartości danego pola to go nie wypełniamy
@@ -184,6 +185,9 @@ class BaseAction extends RouteComponent {
 				}
 			} else {
 				request.setActionValid(true);
+				this.debug("action:fitration");
+				var filtration = new Filtration(this, request);
+				return filtration.filter();
 			}
 		})
 		.then(() => {
@@ -298,9 +302,9 @@ class BaseAction extends RouteComponent {
 	protected populateFileFields():Object[]{
 		this.debug("action:populateFileFields()");
 		var fileFields: Object[] = [];
-		var fieldList: Field[] = this.getFieldList();
+		var fieldList: Field.BaseField[] = this.getFieldList();
 		for (var index in this.fieldList) {
-			var field: Field = this.fieldList[index];
+			var field: Field.BaseField = this.fieldList[index];
 			if (field.getType() === FieldType.FILE_FIELD) {
 				fileFields.push({
 					name: field.getFieldName(),

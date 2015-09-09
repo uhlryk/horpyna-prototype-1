@@ -1,9 +1,7 @@
 import Action = require("./Action");
 import Field = require("./field/Field");
-import BaseValidator = require("./field/BaseValidator");
 import ValidationResponse = require("./ValidationResponse");
 import ValidatorResponse = require("./field/ValidatorResponse");
-import FieldType = require("./field/FieldType");
 import Util = require("./../../../../util/Util");
 import Element = require("./../../../../Element");
 /**
@@ -25,19 +23,19 @@ class Validation extends Element {
 		this.initDebug("validation");
 	}
 	private checkFields() {
-		this.checkTypeFields(FieldType.PARAM_FIELD, this.request.getExpressRequest().params);
-		this.checkTypeFields(FieldType.QUERY_FIELD, this.request.getExpressRequest().query);
-		this.checkTypeFields(FieldType.BODY_FIELD, this.request.getExpressRequest().body);
-		this.checkTypeFields(FieldType.HEADER_FIELD, this.request.getExpressRequest().headers);
-		this.checkTypeFields(FieldType.FILE_FIELD, this.request.getExpressRequest().files);
-		this.checkTypeFields(FieldType.APP_FIELD, null);
+		this.checkTypeFields(Field.FieldType.PARAM_FIELD, this.request.getExpressRequest().params);
+		this.checkTypeFields(Field.FieldType.QUERY_FIELD, this.request.getExpressRequest().query);
+		this.checkTypeFields(Field.FieldType.BODY_FIELD, this.request.getExpressRequest().body);
+		this.checkTypeFields(Field.FieldType.HEADER_FIELD, this.request.getExpressRequest().headers);
+		this.checkTypeFields(Field.FieldType.FILE_FIELD, this.request.getExpressRequest().files);
+		this.checkTypeFields(Field.FieldType.APP_FIELD, null);
 	}
 	private checkTypeFields(type: string, expressFieldList: Object) {
 		this.debug('checkTypeFields type: %s', type);
-		var fieldList: Field[] = this.action.getFieldListByType(type);
+		var fieldList: Field.BaseField[] = this.action.getFieldListByType(type);
 		var requestFieldList: Object = this.request.getFieldList(type);
 		for (var indexField in fieldList) {
-			var field: Field = fieldList[indexField];
+			var field: Field.BaseField = fieldList[indexField];
 			/**
 			 * dany parametr może znajdować się już w requescie, dodany przez poprzednie akcje czy eventy. Używamy wtedy tego
 			 */
@@ -68,15 +66,15 @@ class Validation extends Element {
 	}
 	private validateValidators(): Util.Promise<any> {
 		this.debug('validateValidators');
-		var fieldList: Field[] = this.action.getFieldList();
-		return Util.Promise.map(fieldList, (field: Field) => {
+		var fieldList: Field.BaseField[] = this.action.getFieldList();
+		return Util.Promise.map(fieldList, (field: Field.BaseField) => {
 			//na liście wartości może nie być określonego typu - np FILE_FIELD
 			var valueList = this.valueByTypeList[field.getType()];
 			if (!valueList){
 				return;
 			}
 			var value = valueList[field.getFieldName()];
-			var validatorList: BaseValidator[] = field.getValidatorList();
+			var validatorList: Field.BaseValidator[] = field.getValidatorList();
 			this.debug("field name: %s, value: %s", field.name, value);
 			/**
 			 * Jeśli wartość byłaby równa null to znaczy że albo już jest błąd walidatora NotEmpty
@@ -84,8 +82,8 @@ class Validation extends Element {
 			 */
 			if (value !== null) {
 				if (validatorList.length) {
-					return Util.Promise.map(validatorList, (validator: BaseValidator) => {
-						if (validator.validationPhase !== BaseValidator.POSTUPLOAD_PHASE) {
+					return Util.Promise.map(validatorList, (validator: Field.BaseValidator) => {
+						if (validator.validationPhase !== Field.BaseValidator.POSTUPLOAD_PHASE) {
 							return;
 						}
 						return new Util.Promise<ValidatorResponse>((resolve: (ValidatorResponse) => void) => {
@@ -117,9 +115,9 @@ class Validation extends Element {
 	}
 	private populateRequest(){
 		this.debug('populateRequest');
-		var fieldList: Field[] = this.action.getFieldList();
+		var fieldList: Field.BaseField[] = this.action.getFieldList();
 		for (var i = 0; i < fieldList.length; i++) {
-			var field: Field = fieldList[i];
+			var field: Field.BaseField = fieldList[i];
 			var valueList = this.valueByTypeList[field.getType()];
 			if (!valueList){
 				return;

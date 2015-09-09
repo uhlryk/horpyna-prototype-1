@@ -50,11 +50,11 @@ describe("Testy formularzy", function() {
 		done();
 	});
 	it("powinien zwrócić json z formularzem tworzenia", function(done){
-		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("marka", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
 		myApp.init().then(function () {
 			request(app).get("/res1/create")
@@ -74,11 +74,11 @@ describe("Testy formularzy", function() {
 		});
 	});
 	it("powinien zwrócić json z formularzem tworzenia który ma błąd walidacji", function(done){
-		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("marka", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
@@ -98,13 +98,13 @@ describe("Testy formularzy", function() {
 		});
 	});
 	it("powinien zwrócić json z formularzem edycji", function(done){
-		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("marka", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("field", Core.Action.FormInputType.FILE, [], {optional:true});
+		moduleResource.addField("field", Core.Form.FormInputType.FILE, [], {optional:true});
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
 			.field("model", "olek")
@@ -130,13 +130,13 @@ describe("Testy formularzy", function() {
 		});
 	});
 	it("powinien zwrócić json z formularzem edycji który ma błąd walidacji", function(done){
-		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("marka", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("field", Core.Action.FormInputType.FILE, [], {optional:true});
+		moduleResource.addField("field", Core.Form.FormInputType.FILE, [], {optional:true});
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
 			.field("model", "olek")
@@ -163,13 +163,13 @@ describe("Testy formularzy", function() {
 		});
 	});
 	it("powinien zwrócić json z formularzem usunięcia", function(done){
-		moduleResource.addField("model", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("marka", Core.Action.FormInputType.TEXT, [{
-			name:"size", class: Core.Validator.Standard.IsStringLengthValidator,params:[3,6]
+		moduleResource.addField("marka", Core.Form.FormInputType.TEXT, [{
+			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
 		}], {length:50});
-		moduleResource.addField("field", Core.Action.FormInputType.FILE, [], {optional:true});
+		moduleResource.addField("field", Core.Form.FormInputType.FILE, [], {optional:true});
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
 			.field("model", "olek")

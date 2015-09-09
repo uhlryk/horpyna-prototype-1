@@ -9,7 +9,7 @@ class FileToSave extends Core.Node.BaseNode {
 		super(parentNodeList);
 		this.addMapSource("action_param", Core.Node.SourceType.PARAM_FIELD);
 		this.addMapSource("action_query", Core.Node.SourceType.QUERY_FIELD);
-		this.addMapSource("file", Core.Action.FieldType.FILE_FIELD);
+		this.addMapSource("file", Core.Field.FieldType.FILE_FIELD);
 		this.initDebug("node:FileToSave");
 	}
 	public setAction(action: Core.Action.BaseAction) {

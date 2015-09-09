@@ -35,7 +35,7 @@ class FileToUpdate extends Core.Node.BaseNode {
 			var newDataVal = newData[key];
 			processResponse[key] = newFileVal || existVal || newDataVal;
 		}
-		var fileFieldList: Core.Field[] = action.getFieldListByType(Core.Action.FieldType.FILE_FIELD);
+		var fileFieldList: Core.Field.BaseField[] = action.getFieldListByType(Core.Field.FieldType.FILE_FIELD);
 		for (var i = 0; i < fileFieldList.length; i++) {
 			var field = fileFieldList[i];
 			var name = field.name;

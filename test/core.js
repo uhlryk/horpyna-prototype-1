@@ -158,8 +158,8 @@ describe("Funkcje podstawowe", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			var myField1 = new Core.Field("test", Core.Action.FieldType.PARAM_FIELD);
-			var myField2 = new Core.Field("par2", Core.Action.FieldType.PARAM_FIELD);
+			var myField1 = new Core.Field.BaseField("test", Core.Field.FieldType.PARAM_FIELD);
+			var myField2 = new Core.Field.BaseField("par2", Core.Field.FieldType.PARAM_FIELD);
 			myAction.addField(myField1);
 			myAction.addField(myField2);
 

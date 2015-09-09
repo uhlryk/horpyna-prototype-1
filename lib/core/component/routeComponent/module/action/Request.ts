@@ -61,6 +61,13 @@ class Request{
 	public addField(type: string, name: string, value: any) {
 		this.allFieldList[type][name] = value;
 	}
+	/**
+	 * Zwraca wartość przekazaną z express request. Wartość jest pod typem takim jakim występuje w
+	 * expres. Możliwe typy to field.FieldTyle (np"param","query","body")
+	 * @param  {string} type field.FieldTyle
+	 * @param  {string} name nazwa zmiennej
+	 * @return {any}         wartość
+	 */
 	public getField(type: string, name: string): any {
 		return this.allFieldList[type][name];
 	}

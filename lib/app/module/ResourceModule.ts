@@ -7,6 +7,7 @@ import OnDetailResource = require("./actionHandler/OnDetailResource");
 import OnCreateResource = require("./actionHandler/OnCreateResource");
 import OnUpdateResource = require("./actionHandler/OnUpdateResource");
 import OnDeleteResource = require("./actionHandler/OnDeleteResource");
+import IValidationFilterData = require("./IValidationFilterData");
 import Core = require("../../index");
 
 class ResourceModule extends Core.Module {
@@ -33,21 +34,21 @@ class ResourceModule extends Core.Module {
 	}
 	protected onConstructActions(){
 		this._fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "file");
-		this._fileAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
-		this._fileAction.addField(new Core.Field("column", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
-		this._fileAction.addField(new Core.Field("count", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._fileAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
+		this._fileAction.addField(new Core.Field.BaseField("column", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
+		this._fileAction.addField(new Core.Field.BaseField("count", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._fileAction);
 
 		this._listAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "list");
 
 		//order
-		this._listAction.addField(new Core.Field("o", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field.BaseField("o", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
 		//direction asc | desc
-		this._listAction.addField(new Core.Field("d", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field.BaseField("d", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
 		//page num
-		this._listAction.addField(new Core.Field("p", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field.BaseField("p", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
 		//page size
-		this._listAction.addField(new Core.Field("s", Core.Action.FieldType.QUERY_FIELD, { optional: true }));
+		this._listAction.addField(new Core.Field.BaseField("s", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._listAction, true);
 
 		this._createAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "create");
@@ -58,24 +59,24 @@ class ResourceModule extends Core.Module {
 		this.onConstructDetailAction();
 
 		this._updateAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "update");
-		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._updateAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
 		this.addAction(this._updateAction);
 		this._updateFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "update");
-		this._updateFormAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._updateFormAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
 		this.addAction(this._updateFormAction);
 
 
 		this._deleteAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "delete");
-		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._deleteAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteAction);
 		this._deleteFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "delete");
-		this._deleteFormAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._deleteFormAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteFormAction);
 	}
 	protected onConstructDetailAction(){
 		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "detail");
 		this.addAction(this._detailAction);
-		var idField: Core.Field = new Core.Field("id", Core.Action.FieldType.PARAM_FIELD);
+		var idField: Core.Field.BaseField = new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD);
 		this._detailAction.addField(idField);
 	}
 	protected onConstructActionHandlers(){
@@ -116,21 +117,21 @@ class ResourceModule extends Core.Module {
 	/**
  * przyśpiesza dodawanie pól body do CRUD.
  */
-	public addField(name: string, formInputType: string, validationNameList: Object, options?: Object) {
+	public addField(name: string, formInputType: string, validatorFilterDataList: IValidationFilterData[], options?: Object) {
 		options = options || {};
 		var optional: boolean = options['optional'] || false;
 		var fieldOptions = {};
-		var fieldType = Core.Action.FieldType.BODY_FIELD;
-		if(formInputType === Core.Action.FormInputType.FILE){
-			fieldType = Core.Action.FieldType.FILE_FIELD;
+		var fieldType = Core.Field.FieldType.BODY_FIELD;
+		if(formInputType === Core.Form.FormInputType.FILE){
+			fieldType = Core.Field.FieldType.FILE_FIELD;
 			fieldOptions['maxFiles'] = options['fieldMaxFiles'] || 1;
 		}
-		var createField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
+		var createField: Core.Field.BaseField = new Core.Field.BaseField(name, fieldType, fieldOptions);
 		createField.optional = optional;
 		createField.formInputType = formInputType;
 		this.createAction.addField(createField);
 
-		var updateField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
+		var updateField: Core.Field.BaseField = new Core.Field.BaseField(name, fieldType, fieldOptions);
 		updateField.optional = optional;
 		updateField.formInputType = formInputType;
 		this.updateAction.addField(updateField);
@@ -139,27 +140,33 @@ class ResourceModule extends Core.Module {
 		 * to tworzymy dodatkowe pole tekstowe - docelowo będzie to checkbox który pozwala oznaczyć by usunąć stary plik
 		 * bez dodania nowego
 		 */
-		if (formInputType === Core.Action.FormInputType.FILE && optional === true) {
-			var fileHelperField: Core.Field = new Core.Field(name, Core.Action.FieldType.BODY_FIELD, fieldOptions);
-			fileHelperField.formInputType = Core.Action.FormInputType.CHECKBOX;
+		if (formInputType === Core.Form.FormInputType.FILE && optional === true) {
+			var fileHelperField: Core.Field.BaseField = new Core.Field.BaseField(name, Core.Field.FieldType.BODY_FIELD, fieldOptions);
+			fileHelperField.formInputType = Core.Form.FormInputType.CHECKBOX;
 			fileHelperField.optional = true;
 			this.updateAction.addField(fileHelperField);
 		}
-		for(var validationName in validationNameList){
-			var data = validationNameList[validationName];
-			if(data.class){
-				data.params.unshift(data.name);
-				var createValidator = Object.create(data.class.prototype);
-				createValidator.constructor.apply(createValidator, data.params);
-				createField.addValidator(createValidator);
-				var updateValidator = Object.create(data.class.prototype);
-				updateValidator.constructor.apply(updateValidator, data.params);
-				updateField.addValidator(updateValidator);
+		for (var i = 0; i < validatorFilterDataList.length; i++) {
+			var validatorFilterData = validatorFilterDataList[i];
+			if (validatorFilterData.class) {
+				validatorFilterData.params.unshift(validatorFilterData.name);
+				var createValidatorFilter = Object.create(validatorFilterData.class.prototype);
+				createValidatorFilter.constructor.apply(createValidatorFilter, validatorFilterData.params);
+				var updateValidatorFilter = Object.create(validatorFilterData.class.prototype);
+				updateValidatorFilter.constructor.apply(updateValidatorFilter, validatorFilterData.params);
+				if (createValidatorFilter instanceof Core.Field.BaseValidator) {
+					createField.addValidator(createValidatorFilter);
+					updateField.addValidator(updateValidatorFilter);
+				} else if (createValidatorFilter instanceof Core.Field.BaseFilter) {
+					createField.addFilter(createValidatorFilter);
+					updateField.addFilter(updateValidatorFilter);
+				}
 			}
 		}
+
 		//na razie nie rozbudowujemy tego tak że system ma zamapowane typ forma a typy kolumn
 		switch (formInputType){
-			case Core.Action.FormInputType.FILE:
+			case Core.Form.FormInputType.FILE:
 				if (options['db_file'] === true) {//znaczy że plik ma być zapisywany w bazie danych a nie na dysku
 					this.model.addColumn(new Core.Column.BlobColumn(name));
 				} else {

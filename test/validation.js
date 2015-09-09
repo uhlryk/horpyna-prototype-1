@@ -28,8 +28,8 @@ describe("Walidacja", function() {
 				});
 			});
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.BaseValidator("val1", false));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.BaseValidator("val1", false));
 			myAction.addField(myField1);
 
 			myApp.init().then(function () {
@@ -88,8 +88,8 @@ describe("Walidacja", function() {
 					}
 				});
 			});
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.ContainsValidator("valtest", "seed"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.ContainsValidator("valtest", "seed"));
 			myAction.addField(myField1);
 
 			myApp.init().then(function () {
@@ -140,8 +140,8 @@ describe("Walidacja", function() {
 				});
 			});
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.EqualsValidator("valtest", "dummy"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.EqualsValidator("valtest", "dummy"));
 			myAction.addField(myField1);
 
 			myApp.init().then(function () {
@@ -174,8 +174,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.MatchesValidator("valtest",'a+'));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.MatchesValidator("valtest",'a+'));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -217,8 +217,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsAlphaValidator("valtest"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsAlphaValidator("valtest"));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -260,8 +260,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsAlnumValidator("valtest"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsAlnumValidator("valtest"));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -303,8 +303,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsNumericValidator("valtest"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsNumericValidator("valtest"));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -346,8 +346,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsBooleanValidator("valtest"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsBooleanValidator("valtest"));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -389,8 +389,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsStringLengthValidator("valtest",5,10));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsStringLengthValidator("valtest",5,10));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -440,8 +440,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsDateValidator("valtest"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsDateValidator("valtest"));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -483,8 +483,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsEmailValidator("valtest"));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsEmailValidator("valtest"));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -526,8 +526,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsFloatValidator("valtest",5,10));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsFloatValidator("valtest",5,10));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -585,8 +585,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsIntValidator("valtest",5 , 10));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsIntValidator("valtest",5 , 10));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
@@ -644,8 +644,8 @@ describe("Walidacja", function() {
 			myApp.addModule(myModule);
 			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
 			myModule.addAction(myAction);
-			myField1 = new Core.Field("param1", Core.Action.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Validator.Standard.IsInValidator("valtest", ["ala", "kot"]));
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myField1.addValidator(new Core.Field.ValidatorStandard.IsInValidator("valtest", ["ala", "kot"]));
 			myAction.addField(myField1);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()

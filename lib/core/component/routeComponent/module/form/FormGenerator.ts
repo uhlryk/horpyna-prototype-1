@@ -1,16 +1,16 @@
 import IForm = require("./IForm");
 import IInputForm = require("./IInputForm");
-import Field = require("./../action/field/Field");
+import BaseField = require("./../action/field/BaseField");
 import FieldType = require("./../action/field/FieldType");
 import ValidationResponse = require("./../action/ValidationResponse");
 import ValidatorResponse = require("./../action/field/ValidatorResponse");
-import FormInputType = require("./../action/field/FormInputType");
+import FormInputType = require("./FormInputType");
 class FormGenerator{
-	private _fieldList: Field[];
+	private _fieldList: BaseField[];
 	constructor(){
 		this._fieldList = [];
 	}
-	public addFieldList(fieldList:Field[]){
+	public addFieldList(fieldList:BaseField[]){
 		if(this._fieldList.length === 0 ){
 			this._fieldList = fieldList;
 		} else {
@@ -85,7 +85,7 @@ class FormGenerator{
 		form.fields = [];
 		form.isMultipart = false;
 		for (var i = 0; i < this._fieldList.length; i++) {
-			var field: Field = this._fieldList[i];
+			var field: BaseField = this._fieldList[i];
 			if (field.getType() === FieldType.BODY_FIELD || field.getType() === FieldType.FILE_FIELD) {
 				var inputField: IInputForm = this.createInputField(true, field.getFieldName(), field.formInputType, field.labelForm);
 				form.fields.push(inputField);
