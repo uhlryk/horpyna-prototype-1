@@ -9,7 +9,7 @@ var app;
 var myApp;
 
 describe("Filtracja", function() {
-	describe("Sprawdzenie akcji z filtracją BaseFilter", function () {
+	describe("filtracja BaseFilter", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
 			app = require('./core/app')();
@@ -62,7 +62,7 @@ describe("Filtracja", function() {
 				});
 		});
 	});
-	describe("Sprawdzenie akcji z dwiema filtracjami BaseFilter", function () {
+	describe("filtracja z dwoma BaseFilter", function () {
 		var myField1, finalValue, filter1, filter2;
 		beforeEach(function (done) {
 			app = require('./core/app')();
@@ -103,7 +103,7 @@ describe("Filtracja", function() {
 				});
 		});
 	});
-	describe("Sprawdzenie akcji z filtracją BlacklistFilter", function () {
+	describe("filtracja Blacklist", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
 			app = require('./core/app')();
@@ -124,7 +124,7 @@ describe("Filtracja", function() {
 			done();
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek' i nic nie mamy na czarnej liście", function (done) {
-			filter = new Core.Field.FilterStandard.BlacklistFilter("filter1", "");
+			filter = new Core.Field.FilterStandard.Blacklist("filter1", "");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
@@ -136,7 +136,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek1' i mamy na czarnej liście '1'", function (done) {
-			filter = new Core.Field.FilterStandard.BlacklistFilter("filter1", "1");
+			filter = new Core.Field.FilterStandard.Blacklist("filter1", "1");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
@@ -148,7 +148,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'ol12ek1' i mamy na czarnej liście '12' - każdy znak osobno sprawdzany", function (done) {
-			filter = new Core.Field.FilterStandard.BlacklistFilter("filter1", "12");
+			filter = new Core.Field.FilterStandard.Blacklist("filter1", "12");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
@@ -160,7 +160,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'olążźćŃ™€ßį§¶•Ľ[]ek' i mamy na czarnej liście 'ążźćŃ™€ßį§¶•Ľ[]'", function (done) {
-			filter = new Core.Field.FilterStandard.BlacklistFilter("filter1", "ążźćŃ™€ßį§¶•Ľ\\[\\]");
+			filter = new Core.Field.FilterStandard.Blacklist("filter1", "ążźćŃ™€ßį§¶•Ľ\\[\\]");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
@@ -172,7 +172,7 @@ describe("Filtracja", function() {
 			});
 		});
 	});
-	describe("Sprawdzenie akcji z filtracją EscapeFilter", function () {
+	describe("filtracja Escape", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
 			app = require('./core/app')();
@@ -193,7 +193,7 @@ describe("Filtracja", function() {
 			done();
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek'", function (done) {
-			filter = new Core.Field.FilterStandard.EscapeFilter("filter1");
+			filter = new Core.Field.FilterStandard.Escape("filter1");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
@@ -205,13 +205,174 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek<>&'", function (done) {
-			filter = new Core.Field.FilterStandard.EscapeFilter("filter1");
+			filter = new Core.Field.FilterStandard.Escape("filter1");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olek<>&"})
 					.end(function (err, res) {
 						expect(finalValue).to.be.equal("olek&lt;&gt;&amp;");
+						done();
+					});
+			});
+		});
+	});
+	describe("filtracja LeftTrim", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca 'bca' gdy przekażemy 'aabca' i trim char - 'a'", function (done) {
+			filter = new Core.Field.FilterStandard.LeftTrim("filter1","a");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "aabca"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("bca");
+						done();
+					});
+			});
+		});
+		it("zwraca 'abc ' gdy przekażemy '  abc '", function (done) {
+			filter = new Core.Field.FilterStandard.LeftTrim("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "  abc "})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("abc ");
+						done();
+					});
+			});
+		});
+	});
+	describe("filtracja RightTrim", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca 'abc' gdy przekażemy 'abcaa' i trim char - 'a'", function (done) {
+			filter = new Core.Field.FilterStandard.RightTrim("filter1","a");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "abcaa"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("abc");
+						done();
+					});
+			});
+		});
+		it("zwraca ' abc' gdy przekażemy ' abc  '", function (done) {
+			filter = new Core.Field.FilterStandard.RightTrim("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: " abc  "})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal(" abc");
+						done();
+					});
+			});
+		});
+	});
+
+
+	describe("filtracja ToBoolean", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca true gdy przekażemy 'cos'", function (done) {
+			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "cos"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.true;
+						done();
+					});
+			});
+		});
+		it("zwraca false gdy przekazemy 'false'", function (done) {
+			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "false"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.false;
+						done();
+					});
+			});
+		});
+		it("zwraca false gdy przekazemy ''", function (done) {
+			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: ""})
+					.end(function (err, res) {
+						expect(finalValue).to.be.false;
+						done();
+					});
+			});
+		});
+		it("zwraca false gdy przekazemy '0'", function (done) {
+			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "0"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.false;
 						done();
 					});
 			});

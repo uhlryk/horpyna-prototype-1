@@ -6,8 +6,8 @@ import BaseFilter = require("./../BaseFilter");
  * w bebechach jest to pregmach dlatego jeśli używane są znaki specjalne pregmatch to muszą być
  * zaznaczone np znak [  oznaczymy \\[
  */
-class BlacklistFilter extends BaseFilter {
-	public FILTER_NAME = "BlacklistFilter";
+class Blacklist extends BaseFilter {
+	public FILTER_NAME = "Blacklist";
 	private _chars: string;
 	constructor(name: string, chars: string) {
 		super(name, false);
@@ -18,4 +18,4 @@ class BlacklistFilter extends BaseFilter {
 		return Util.ValidatorList.blacklist(value, this._chars);
 	}
 }
-export = BlacklistFilter;
+export = Blacklist;
