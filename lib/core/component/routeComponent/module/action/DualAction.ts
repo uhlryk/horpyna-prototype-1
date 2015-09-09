@@ -1,6 +1,6 @@
 import Component = require("../../../Component");
 import BaseAction = require("./BaseAction");
-import FormAction = require("./FormAction");
+// import FormAction = require("./FormAction");
 import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
@@ -11,14 +11,14 @@ import IActionHandler = require("./IActionHandler");
  * a jeśli był post i przeszło walidację to obsłuży ActionHandler walidacji
  */
 class DualAction extends BaseAction {
-	private _formAction: FormAction;
+	private _formAction: BaseAction;
 	constructor(name:string){
 		super(BaseAction.POST, name);
-		this._formAction = new FormAction(this, name);
+		this._formAction = new BaseAction(BaseAction.GET, name);
 		this._formAction.disableRouteName = true;
 		this._formAction.prepare(this);
 	}
-	public get formAction():FormAction{
+	public get formAction(): BaseAction {
 		return this._formAction;
 	}
 	public init(): Util.Promise<void> {
@@ -31,7 +31,7 @@ class DualAction extends BaseAction {
 		this._formAction.setActionHandler(actionHandler);
 	}
 	/**
-	 * Obsługuje POST, jeśli jednak walidacja będzie błędna, to obsłuży subakcję FormAction
+	 * Obsługuje POST, jeśli jednak walidacja będzie błędna, to obsłuży subakcję BaseAction
 	 */
 	public getRequestHandler(){
 		this.debug("action:getRequestHandler()");

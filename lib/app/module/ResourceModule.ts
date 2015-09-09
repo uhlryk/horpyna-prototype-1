@@ -54,10 +54,13 @@ class ResourceModule extends Core.Module {
 
 		this._updateAction = new Core.Action.DualAction("update");
 		this._updateAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._updateAction.formAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._updateAction);
+
 
 		this._deleteAction = new Core.Action.DualAction("delete");
 		this._deleteAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
+		this._deleteAction.formAction.addField(new Core.Field("id", Core.Action.FieldType.PARAM_FIELD));
 		this.addAction(this._deleteAction);
 	}
 	protected onConstructDetailAction(){
@@ -79,7 +82,6 @@ class ResourceModule extends Core.Module {
 		this.deleteAction.setFormActionHandler(onFormDelete.getActionHandler());
 		var onUpdate = new OnUpdateResource(this);
 		this.updateAction.setActionHandler(onUpdate.getActionHandler());
-
 
 		var onFile = new OnFileResource(this);
 		this.fileAction.setActionHandler(onFile.getActionHandler());
@@ -134,12 +136,6 @@ class ResourceModule extends Core.Module {
 			fileHelperField.optional = true;
 			this.updateAction.addField(fileHelperField);
 		}
-		// var deleteField: Core.Field = new Core.Field(name, fieldType, fieldOptions);
-		// deleteField.optional = true;//to jest do formularza nie jest więc obowiązkowe
-		// deleteField.formInputType = formInputType;
-		// var deleteFormAction = this.deleteAction.formAction;
-		// deleteFormAction.addField(deleteField);
-
 		for(var validationName in validationNameList){
 			var data = validationNameList[validationName];
 			if(data.class){
