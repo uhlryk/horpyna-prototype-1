@@ -16,7 +16,7 @@ class OnCreateResource extends Core.Node.ProcessModel {
 		isUnvalid.setNegation();
 		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
 		errorResponseCode.setStatus(422);
-		var forwardToForm = new Core.Node.Response.Forward([this]);
+		var forwardToForm = new Core.Node.Response.Forward([isUnvalid]);
 		forwardToForm.setTargetAction(this._module.createFormAction);
 
 		var isValid = new Core.Node.Request.IsValid([this]);
