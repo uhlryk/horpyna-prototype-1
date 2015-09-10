@@ -307,8 +307,51 @@ describe("Filtracja", function() {
 			});
 		});
 	});
-
-
+	describe("filtracja Trim", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca 'bc' gdy przekażemy 'abcaa' i trim char - 'a'", function (done) {
+			filter = new Core.Field.FilterStandard.Trim("filter1","a");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "abcaa"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("bc");
+						done();
+					});
+			});
+		});
+		it("zwraca 'abc' gdy przekażemy ' abc  '", function (done) {
+			filter = new Core.Field.FilterStandard.Trim("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "abc"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("abc");
+						done();
+					});
+			});
+		});
+	});
 	describe("filtracja ToBoolean", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
@@ -373,6 +416,79 @@ describe("Filtracja", function() {
 					.send({param1: "0"})
 					.end(function (err, res) {
 						expect(finalValue).to.be.false;
+						done();
+					});
+			});
+		});
+	});
+	describe("filtracja ToDate", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca null gdy przekażemy 'notdate'", function (done) {
+			filter = new Core.Field.FilterStandard.ToDate("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "notdate"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.null;
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+		it("zwraca false gdy przekazemy 'March 21, 2012'", function (done) {
+			filter = new Core.Field.FilterStandard.ToDate("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "March 21, 2012"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.date;
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+		it("zwraca false gdy przekazemy 'Marzec 21, 2012'", function (done) {
+			filter = new Core.Field.FilterStandard.ToDate("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "Marzec 21, 2012"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.date;
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+		it("zwraca false gdy przekazemy '1995-12-17'", function (done) {
+			filter = new Core.Field.FilterStandard.ToDate("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "1995-12-17"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.date;
+						console.log(finalValue);
 						done();
 					});
 			});
