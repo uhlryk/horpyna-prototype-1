@@ -454,7 +454,7 @@ describe("Filtracja", function() {
 					});
 			});
 		});
-		it("zwraca false gdy przekazemy 'March 21, 2012'", function (done) {
+		it("zwraca datę gdy przekazemy 'March 21, 2012'", function (done) {
 			filter = new Core.Field.FilterStandard.ToDate("filter1");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
@@ -467,7 +467,7 @@ describe("Filtracja", function() {
 					});
 			});
 		});
-		it("zwraca false gdy przekazemy 'Marzec 21, 2012'", function (done) {
+		it("zwraca datę gdy przekazemy 'Marzec 21, 2012'", function (done) {
 			filter = new Core.Field.FilterStandard.ToDate("filter1");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
@@ -480,7 +480,7 @@ describe("Filtracja", function() {
 					});
 			});
 		});
-		it("zwraca false gdy przekazemy '1995-12-17'", function (done) {
+		it("zwraca datę gdy przekazemy '1995-12-17'", function (done) {
 			filter = new Core.Field.FilterStandard.ToDate("filter1");
 			myField1.addFilter(filter);
 			myApp.init().then(function () {
@@ -488,6 +488,126 @@ describe("Filtracja", function() {
 					.send({param1: "1995-12-17"})
 					.end(function (err, res) {
 						expect(finalValue).to.be.date;
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+	});
+	describe("filtracja ToFloat", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca 0 gdy przekażemy 'notnumber'", function (done) {
+			filter = new Core.Field.FilterStandard.ToFloat("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "notnumber"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal(0);
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+		it("zwraca liczbę gdy przekazemy '22.12'", function (done) {
+			filter = new Core.Field.FilterStandard.ToFloat("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "22.12"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal(22.12);
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+		it("zwraca 22 gdy przekazemy '22,12'", function (done) {
+			filter = new Core.Field.FilterStandard.ToFloat("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "22,12"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal(22);
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+	});
+	describe("filtracja ToInt", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca 0 gdy przekażemy 'notnumber'", function (done) {
+			filter = new Core.Field.FilterStandard.ToInt("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "notnumber"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal(0);
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+		it("zwraca liczbę 22 gdy przekazemy '22.12'", function (done) {
+			filter = new Core.Field.FilterStandard.ToInt("filter1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "22.12"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal(22);
+						console.log(finalValue);
+						done();
+					});
+			});
+		});
+		it("zwraca 0xa gdy przekazemy 'a'", function (done) {
+			filter = new Core.Field.FilterStandard.ToInt("filter1",16);
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "a"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal(0xa);
 						console.log(finalValue);
 						done();
 					});
