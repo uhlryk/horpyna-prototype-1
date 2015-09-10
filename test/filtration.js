@@ -172,6 +172,75 @@ describe("Filtracja", function() {
 			});
 		});
 	});
+	describe("filtracja Whitelist", function () {
+		var myField1, finalValue, filter;
+		beforeEach(function (done) {
+			app = require('./core/app')();
+			myApp = new Core.Application(app);
+			var myModule = new Core.Module("mod1");
+			myApp.addModule(myModule);
+			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			myAction.setActionHandler(function(request, response, action){
+				return Core.Util.Promise.resolve()
+				.then(function(){
+					finalValue = request.getField(Core.Field.FieldType.BODY_FIELD, "param1");
+					response.setStatus(200);
+				});
+			});
+			myModule.addAction(myAction);
+			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
+			myAction.addField(myField1);
+			done();
+		});
+		it("zwraca 'olek' gdy przekażemy 'olek' i nic nie mamy na czarnej liście", function (done) {
+			filter = new Core.Field.FilterStandard.Whitelist("filter1", "kelo");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "olek"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("olek");
+						done();
+					});
+			});
+		});
+		it("zwraca 'k1' gdy przekażemy 'olek1' i mamy na czarnej liście 'k1'", function (done) {
+			filter = new Core.Field.FilterStandard.Whitelist("filter1", "k1");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "olek1"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("k1");
+						done();
+					});
+			});
+		});
+		it("zwraca '121' gdy przekażemy 'ol12ek1' i mamy na czarnej liście '12' - każdy znak osobno sprawdzany", function (done) {
+			filter = new Core.Field.FilterStandard.Whitelist("filter1", "12");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "ol12ek1"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("121");
+						done();
+					});
+			});
+		});
+		it("zwraca 'ążź[]' gdy przekażemy 'olążźćŃ™€ßį§¶•Ľ[]ek' i mamy na czarnej liście 'ążźćŃ™€ßį§¶•Ľ[]'", function (done) {
+			filter = new Core.Field.FilterStandard.Whitelist("filter1", "ążź\\[\\]");
+			myField1.addFilter(filter);
+			myApp.init().then(function () {
+				request(app).post("/mod1/act1/")
+					.send({param1: "olążźćŃ™€ßį§¶•Ľ[]ek"})
+					.end(function (err, res) {
+						expect(finalValue).to.be.equal("ążź[]");
+						done();
+					});
+			});
+		});
+	});
 	describe("filtracja Escape", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {

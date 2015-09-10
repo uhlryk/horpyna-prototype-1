@@ -1,4 +1,5 @@
 export import Blacklist = require("./Blacklist");
+export import Whitelist = require("./Whitelist");
 export import ToDate = require("./ToDate");
 export import ToFloat = require("./ToFloat");
 export import ToInt = require("./ToInt");
