@@ -6,14 +6,14 @@ var Core = require('./../js/index');
 var app;
 var myApp;
 
-describe("Funkcje Modułu ResourceModule", function() {
-	describe("podstawowe ResourceModule", function () {
+describe("Funkcje Modułu Core.App.Module.Resource", function() {
+	describe("podstawowe Core.App.Module.Resource", function () {
 		var moduleResource1;
 		before(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.ResourceModule("res1");
+			moduleResource1 = new Core.App.Module.Resource("res1");
 			myApp.addModule(moduleResource1);
 			var resModel = moduleResource1.getDefaultModel();
 			var nameCol = new Core.Column.StringColumn("name", 50);
@@ -111,7 +111,7 @@ describe("Funkcje Modułu ResourceModule", function() {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.ResourceModule("res1");
+			moduleResource1 = new Core.App.Module.Resource("res1");
 			myApp.init().then(function () {
 				var resModel = moduleResource1.getDefaultModel();
 				var nameCol = new Core.Column.StringColumn("name", 50);

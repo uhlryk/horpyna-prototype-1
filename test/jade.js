@@ -8,7 +8,7 @@ var myApp;
 /**
  * test gdy aplikacja jest skonfigurowana z jade view engine
  */
-describe("Funkcje Modułu JadeResourceModule", function() {
+describe("Funkcje Modułu JadeCore.App.Module.Resource", function() {
 	describe("sprawdza działanie widoku wygenerowanego przez jade", function () {
 		var module1;
 		before(function (done) {
@@ -38,13 +38,13 @@ describe("Funkcje Modułu JadeResourceModule", function() {
 				});
 		});
 	});
-	describe("sprawdza działanie JadeResourceModule", function () {
+	describe("sprawdza działanie JadeCore.App.Module.Resource", function () {
 		var moduleResource1;
 		before(function (done) {
 			app = require('./jade/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.ResourceModule("res1");
+			moduleResource1 = new Core.App.Module.Resource("res1");
 			myApp.addModule(moduleResource1);
 			var resModel = moduleResource1.getDefaultModel();
 			var nameCol = new Core.Column.StringColumn("name", 50);

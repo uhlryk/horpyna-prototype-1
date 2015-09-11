@@ -5,13 +5,13 @@ var request = require('supertest');
 var Core = require('./../js/index');
 var app;
 var myApp;
-describe("Testy filtrów i walidacji przy szybkim tworzeniu przez ResourceModule", function() {
+describe("Testy filtrów i walidacji przy szybkim tworzeniu przez Core.App.Module.Resource", function() {
 	var moduleResource;
 	beforeEach(function (done) {
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
 		myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-		moduleResource = new Core.ResourceModule("res1");
+		moduleResource = new Core.App.Module.Resource("res1");
 		myApp.addModule(moduleResource);
 		done();
 	});

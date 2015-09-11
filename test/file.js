@@ -247,7 +247,7 @@ describe("Test uploadu: ", function(){
 			});
 		});
 	});
-	describe("Sprawdzenie uploadu pliku przez ResourceModule gdy plik jest obowiązkowy", function (done) {
+	describe("Sprawdzenie uploadu pliku przez Core.App.Module.Resource gdy plik jest obowiązkowy", function (done) {
 		var moduleResource1;
 		var filePath;
 		before(function (done) {
@@ -255,7 +255,7 @@ describe("Test uploadu: ", function(){
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.ResourceModule("res1");
+			moduleResource1 = new Core.App.Module.Resource("res1");
 			myApp.addModule(moduleResource1);
 			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
 			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);
@@ -335,7 +335,7 @@ describe("Test uploadu: ", function(){
 				});
 		});
 	});
-	describe("Sprawdzenie uploadu pliku przez ResourceModule gdy plik jest opcjonalny", function (done) {
+	describe("Sprawdzenie uploadu pliku przez Core.App.Module.Resource gdy plik jest opcjonalny", function (done) {
 		var moduleResource1;
 		var filePath;
 		before(function (done) {
@@ -343,7 +343,7 @@ describe("Test uploadu: ", function(){
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.ResourceModule("res1");
+			moduleResource1 = new Core.App.Module.Resource("res1");
 			myApp.addModule(moduleResource1);
 			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
 			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, [], {optional:true});
@@ -440,7 +440,7 @@ describe("Test uploadu: ", function(){
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.ResourceModule("res1");
+			moduleResource1 = new Core.App.Module.Resource("res1");
 			myApp.addModule(moduleResource1);
 			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
 			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);

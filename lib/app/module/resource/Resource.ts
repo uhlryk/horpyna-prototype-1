@@ -7,10 +7,10 @@ import OnDetailResource = require("./actionHandler/OnDetailResource");
 import OnCreateResource = require("./actionHandler/OnCreateResource");
 import OnUpdateResource = require("./actionHandler/OnUpdateResource");
 import OnDeleteResource = require("./actionHandler/OnDeleteResource");
-import IValidationFilterData = require("./IValidationFilterData");
-import Core = require("../../index");
+import IValidationFilterData = require("./../IValidationFilterData");
+import Core = require("../../../index");
 
-class ResourceModule extends Core.Module {
+class Resource extends Core.Module {
 	private _model: Core.Model;
 	private _listAction: Core.Action.BaseAction;
 	private _createAction: Core.Action.BaseAction;
@@ -35,7 +35,9 @@ class ResourceModule extends Core.Module {
 	protected onConstructActions(){
 		this._fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "file");
 		this._fileAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
-		this._fileAction.addField(new Core.Field.BaseField("column", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
+		var columntField = new Core.Field.BaseField("column", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		this._fileAction.addField(columntField);
+
 		this._fileAction.addField(new Core.Field.BaseField("count", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
 		this.addAction(this._fileAction);
 
@@ -178,4 +180,4 @@ class ResourceModule extends Core.Module {
 		}
 	}
 }
-export = ResourceModule;
+export = Resource;

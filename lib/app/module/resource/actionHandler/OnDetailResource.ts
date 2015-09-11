@@ -1,12 +1,10 @@
-import Core = require("../../../index");
-import ResourceModule = require("./../ResourceModule");
-import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
+import Core = require("../../../../index");
 /**
  * Odpowiada za logikę akcji szczegółów
  */
 class OnDetailResource extends Core.Node.ProcessModel {
-	private _module: ResourceModule;
-	constructor(module: ResourceModule) {
+	private _module: Core.App.Module.Resource;
+	constructor(module: Core.App.Module.Resource) {
 		super();
 		this._module = module;
 		this.onConstructor();
@@ -25,7 +23,7 @@ class OnDetailResource extends Core.Node.ProcessModel {
 		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
 		redirectAction.setTargetAction(this._module.listAction);
 //O => Find => If +> FileLinks => AddActionLinkToEach
-		var addActionLinkToListElement = new AddActionLinkToEach([ifDataExist]);
+		var addActionLinkToListElement = new Core.App.Node.AddActionLinkToEach([ifDataExist]);
 		addActionLinkToListElement.addAction(this._module.updateFormAction);
 		addActionLinkToListElement.addAction(this._module.deleteFormAction);
 //O => Find => If +> FileLinks => AddActionLinkToEach => SendData	=> X

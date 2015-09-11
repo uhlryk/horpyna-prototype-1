@@ -1,12 +1,10 @@
-import Core = require("../../../index");
-import ResourceModule = require("./../ResourceModule");
-import RemoveFile = require("./../../node/RemoveFile");
+import Core = require("../../../../index");
 /**
  * Odpowiada za logikę akcji szczegółów
  */
 class OnDeleteResource extends Core.Node.ProcessModel {
-	private _module: ResourceModule;
-	constructor(module: ResourceModule) {
+	private _module: Core.App.Module.Resource
+	constructor(module: Core.App.Module.Resource) {
 		super();
 		this._module = module;
 		this.onConstructor();
@@ -38,7 +36,7 @@ class OnDeleteResource extends Core.Node.ProcessModel {
 		deleteDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		deleteDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 
-		var removeFiles = new RemoveFile([ifDataExist]);
+		var removeFiles = new Core.App.Node.RemoveFile([ifDataExist]);
 
 		var redirectAction = new Core.Node.Response.Redirect([findDbData]);
 		redirectAction.setTargetAction(this._module.listAction);

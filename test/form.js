@@ -45,7 +45,7 @@ describe("Testy formularzy", function() {
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
 		myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-		moduleResource = new Core.ResourceModule("res1");
+		moduleResource = new Core.App.Module.Resource("res1");
 		myApp.addModule(moduleResource);
 		done();
 	});

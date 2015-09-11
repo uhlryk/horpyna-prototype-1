@@ -1,12 +1,11 @@
-import Core = require("../../../index");
-import ResourceModule = require("./../ResourceModule");
-import FileToData = require("./../../node/FileToData");
+import Core = require("../../../../index");
+/**
 /**
  * Odpowiada za logikę akcji szczegółów
  */
 class OnFileResource extends Core.Node.ProcessModel {
-	private _module: ResourceModule;
-	constructor(module: ResourceModule) {
+	private _module: Core.App.Module.Resource;
+	constructor(module: Core.App.Module.Resource) {
 		super();
 		this._module = module;
 		this.onConstructor();
@@ -26,7 +25,7 @@ class OnFileResource extends Core.Node.ProcessModel {
 		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
 		redirectAction.setTargetAction(this._module.listAction);
 
-		var fileToShow = new FileToData([ifDataExist]);
+		var fileToShow = new Core.App.Node.FileToData([ifDataExist]);
 		fileToShow.setColumn(Core.Node.SourceType.QUERY_FIELD, "column");
 		fileToShow.setCount(Core.Node.SourceType.QUERY_FIELD, "count");
 		fileToShow.setFileSource(Core.Node.SourceType.RESPONSE_NODE);

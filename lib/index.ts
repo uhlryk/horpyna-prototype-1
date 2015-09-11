@@ -12,6 +12,5 @@ export import ActionResponse = require("./core/component/routeComponent/module/a
 export import Field = require("./core/component/routeComponent/module/action/field/Field");
 export import Form = require("./core/component/routeComponent/module/form/Form");
 export import Query = require("./core/component/routeComponent/module/query/Query");
-export import ResourceModule = require("./app/module/ResourceModule");
 export import App = require("./app/App");
 

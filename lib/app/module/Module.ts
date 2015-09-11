@@ -1,0 +1,1 @@
+export import Resource = require("./resource/Resource");

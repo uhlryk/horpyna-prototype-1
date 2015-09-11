@@ -1,15 +1,11 @@
-import Core = require("../../../index");
-import ResourceModule = require("./../ResourceModule");
-import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
-import SortLinks = require("./../../node/SortLinks");
-import Pagination = require("./../../node/Pagination");
+import Core = require("../../../../index");
 /**
  * Obsługuje generowanie listy wartości z bazy danych
  * Obsługuje sortowanie i paginacje,
  */
 class OnListResource extends Core.Node.ProcessModel {
-	private _module: ResourceModule;
-	constructor(module: ResourceModule) {
+	private _module: Core.App.Module.Resource;
+	constructor(module: Core.App.Module.Resource) {
 		super();
 		this._module = module;
 		this.onConstructor();
@@ -35,7 +31,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		// fileLinksNode.setFileAction(this._module.fileAction);
 		// fileLinksNode.mapActionParams(Core.Node.SourceType.PARAM_FIELD);
 //O => Find	=> ObjectToElement => JoinArray=> FileLinks => AddActionLinkToEach
-		var addActionLinkToListElement = new AddActionLinkToEach([joinToOneList]);
+		var addActionLinkToListElement = new Core.App.Node.AddActionLinkToEach([joinToOneList]);
 		addActionLinkToListElement.addAction(this._module.updateFormAction);
 		addActionLinkToListElement.addAction(this._module.deleteFormAction);
 		addActionLinkToListElement.addAction(this._module.detailAction);
@@ -43,7 +39,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		var sendDataNode = new Core.Node.Response.SendData([addActionLinkToListElement]);
 		sendDataNode.setView("horpyna/jade/listAction");
 //O => Find	=> ObjectToElement => SortLinks
-		var sortNavigation = new SortLinks([joinToOneList]);
+		var sortNavigation = new Core.App.Node.SortLinks([joinToOneList]);
 		sortNavigation.setAction(this._module.listAction);
 //O => Find	=> ObjectToElement => SortLinks => SendData => X
 		var orderSendDataNode = new Core.Node.Response.SendData([sortNavigation]);
@@ -55,7 +51,7 @@ class OnListResource extends Core.Node.ProcessModel {
 		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
 		navSendDataNode.setResponseKey("navigation");
 //O => Find => pagination
-		var pagination = new Pagination([listNode]);
+		var pagination = new Core.App.Node.Pagination([listNode]);
 		pagination.setAction(this._module.listAction);
 		pagination.setPage(Core.Node.SourceType.RESPONSE_NODE, "page");
 		pagination.setSize(Core.Node.SourceType.RESPONSE_NODE, "size");

@@ -1,12 +1,10 @@
-import Core = require("../../../index");
-import ResourceModule = require("./../ResourceModule");
-import AddActionLinkToEach = require("./../../node/AddActionLinkToEach");
+import Core = require("../../../../index");
 /**
  * Odpowiada za logikę akcji edycji danych
  */
 class OnUpdateResource extends Core.Node.ProcessModel {
-	private _module: ResourceModule;
-	constructor(module: ResourceModule) {
+	private _module: Core.App.Module.Resource;
+	constructor(module: Core.App.Module.Resource) {
 		super();
 		this._module = module;
 		this.onConstructor();
