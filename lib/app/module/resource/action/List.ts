@@ -39,8 +39,7 @@ class List extends Core.Action.BaseAction {
 		});
 	}
 	public configProcessModel() {
-		var processModel = new Core.Node.ProcessModel();
-		this.setActionHandler(processModel.getActionHandler());
+		var processModel = new Core.Node.ProcessModel(this);
 
 		var isValid = new Core.Node.Request.IsValid([processModel]);
 

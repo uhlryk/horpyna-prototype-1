@@ -11,8 +11,7 @@ class CreateForm extends Core.Action.BaseAction {
 	public onConstructor() {
 	}
 	public configProcessModel(){
-		var processModel = new Core.Node.ProcessModel();
-		this.setActionHandler(processModel.getActionHandler());
+		var processModel = new Core.Node.ProcessModel(this);
 
 		var getValidationMessage = new Core.Node.Request.GetData([processModel]);
 		getValidationMessage.setKey("validationError");

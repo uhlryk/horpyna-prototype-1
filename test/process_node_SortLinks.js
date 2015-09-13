@@ -19,8 +19,7 @@ describe("Testy Node transform.SortLinks", function() {
 		var q2 = new Core.Field.BaseField(myAction,"d", Core.Field.FieldType.QUERY_FIELD, {optional:true});
 		var q3 = new Core.Field.BaseField(myAction,"q3", Core.Field.FieldType.QUERY_FIELD, {optional:true});
 
-		myProcessModel = new Core.Node.ProcessModel();
-		myAction.setActionHandler(myProcessModel.getActionHandler());
+		myProcessModel = new Core.Node.ProcessModel(myAction);
 
 		myNode1 = new Core.Node.BaseNode([myProcessModel]);
 		myNode1.setContent(function(data) {

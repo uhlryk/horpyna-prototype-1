@@ -14,8 +14,7 @@ class File extends Core.Action.BaseAction {
 		new Core.Field.BaseField(this, "count", Core.Field.FieldType.QUERY_FIELD, { optional: true });
 	}
 	public configProcessModel(){
-		var processModel = new Core.Node.ProcessModel();
-		this.setActionHandler(processModel.getActionHandler());
+		var processModel = new Core.Node.ProcessModel(this);
 
 		var isValid = new Core.Node.Request.IsValid([processModel]);
 

@@ -12,8 +12,7 @@ class Detail extends Core.Action.BaseAction {
 		var idField: Core.Field.BaseField = new Core.Field.BaseField(this, "id", Core.Field.FieldType.PARAM_FIELD);
 	}
 	public configProcessModel(){
-		var processModel = new Core.Node.ProcessModel();
-		this.setActionHandler(processModel.getActionHandler());
+		var processModel = new Core.Node.ProcessModel(this);
 
 		var findDbData = new Core.Node.Db.Find([processModel]);
 		findDbData.setModel(this._module.model);

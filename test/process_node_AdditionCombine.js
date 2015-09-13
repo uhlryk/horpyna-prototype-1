@@ -13,8 +13,7 @@ describe("Testy Node transform.AdditionCombine", function() {
 		myApp = new Core.Application(app);
 		var myModule = new Core.Module(myApp.root, "process");
 		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
-		myProcessModel = new Core.Node.ProcessModel();
-		myAction.setActionHandler(myProcessModel.getActionHandler());
+		myProcessModel = new Core.Node.ProcessModel(myAction);
 		var myNode1a = new Core.Node.BaseNode([myProcessModel]);
 		myNode1a.setContent(function(data) {
 			return beforeMapping1;

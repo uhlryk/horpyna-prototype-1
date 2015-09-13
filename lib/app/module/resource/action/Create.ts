@@ -11,8 +11,7 @@ class Create extends Core.Action.BaseAction {
 	public onConstructor() {
 	}
 	public configProcessModel(){
-		var processModel = new Core.Node.ProcessModel();
-		this.setActionHandler(processModel.getActionHandler());
+		var processModel = new Core.Node.ProcessModel(this);
 
 		var isUnvalid = new Core.Node.Request.IsValid([processModel]);
 		isUnvalid.setNegation();

@@ -14,8 +14,7 @@ describe("Testy Node transform.ActionLink", function() {
 		var myModule = new Core.Module(myApp.root, "process");
 		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 
-		myProcessModel = new Core.Node.ProcessModel();
-		myAction.setActionHandler(myProcessModel.getActionHandler());
+		myProcessModel = new Core.Node.ProcessModel(myAction);
 
 		myNode1 = new Core.Node.BaseNode([myProcessModel]);
 		myNode1.setContent(function(data) {

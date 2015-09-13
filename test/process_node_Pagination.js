@@ -16,8 +16,7 @@ describe("Testy Node transform.Pagination", function() {
 		var q1 = new Core.Field.BaseField(myAction, "test", Core.Field.FieldType.QUERY_FIELD, {optional:true});
 		var q2 = new Core.Field.BaseField(myAction, "p", Core.Field.FieldType.QUERY_FIELD, {optional:true});
 		var q3 = new Core.Field.BaseField(myAction, "s", Core.Field.FieldType.QUERY_FIELD, {optional:true});
-		myProcessModel = new Core.Node.ProcessModel();
-		myAction.setActionHandler(myProcessModel.getActionHandler());
+		myProcessModel = new Core.Node.ProcessModel(myAction);
 
 		myNode1 = new Core.Node.BaseNode([myProcessModel]);
 		myNode1.setContent(function(data) {

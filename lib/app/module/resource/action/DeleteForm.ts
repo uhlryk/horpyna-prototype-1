@@ -12,8 +12,7 @@ class DeleteForm extends Core.Action.BaseAction {
 		var idField: Core.Field.BaseField = new Core.Field.BaseField(this, "id", Core.Field.FieldType.PARAM_FIELD);
 	}
 	public configProcessModel(){
-		var processModel = new Core.Node.ProcessModel();
-		this.setActionHandler(processModel.getActionHandler());
+		var processModel = new Core.Node.ProcessModel(this);
 
 		var formGenerator = new Core.Node.Form.Generate([processModel]);
 		formGenerator.addFormAction(this._module.deleteAction);

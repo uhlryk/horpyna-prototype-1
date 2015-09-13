@@ -14,8 +14,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			myApp = new Core.Application(app);
 			var myModule = new Core.Module(myApp.root, "process");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
-			var myProcessModel = new Core.Node.ProcessModel();
-			myAction.setActionHandler(myProcessModel.getActionHandler());
+			var myProcessModel = new Core.Node.ProcessModel(myAction);
 			var myNode1 = new Core.Node.BaseNode([myProcessModel]);
 			myNode1.setContent(function(data) {
 				return beforeMapping;
@@ -576,8 +575,7 @@ describe("Funkcje ProcessModel Nodes", function() {
 			var myModule = new Core.Module(myApp.root, "process");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 
-			var myProcessModel = new Core.Node.ProcessModel();
-			myAction.setActionHandler(myProcessModel.getActionHandler());
+			var myProcessModel = new Core.Node.ProcessModel(myAction);
 
 			var myNode1a = new Core.Node.BaseNode([myProcessModel]);
 			myNode1a.setContent(function(data) {
