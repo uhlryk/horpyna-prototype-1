@@ -9,30 +9,30 @@ import Connection = require("./connection/Connection");
 class DbManager extends Element{
 	public static DEFAULT_CONNECTION_EMPTY: string = "Default connection must be defined";
 	public static NO_CONNECTION_NAME: string = "Connection not found";
-	private defaultConnection:Connection;
-	private connectionList:Connection[];
+	private _defaultConnection:Connection;
+	private _connectionList:Connection[];
 	constructor() {
 		super();
-		this.connectionList=[];
+		this._connectionList=[];
 		this.initDebug("core");
 		this.debug("dbManager:constructor:");
 	}
 	public addConnection(connection:Connection, isDefault?:boolean):void{
 		this.debug("dbManager:addConnection:"+connection.getConnectionName());
-		this.connectionList.push(connection);
+		this._connectionList.push(connection);
 		if(isDefault === true){
-			this.defaultConnection = connection;
+			this._defaultConnection = connection;
 		}
 	}
 	public getConnection(name?:string):Connection{
 		if(!name){//zwracamy defaultowe
-			if(!this.defaultConnection){
+			if(!this._defaultConnection){
 				throw new SyntaxError(DbManager.DEFAULT_CONNECTION_EMPTY);
 			}
-			return this.defaultConnection;
+			return this._defaultConnection;
 		} else{
-			for(var index in this.connectionList){
-				var connection:Connection = this.connectionList[index];
+			for(var index in this._connectionList){
+				var connection:Connection = this._connectionList[index];
 				if(connection.getConnectionName() === name){
 					return connection;
 				}

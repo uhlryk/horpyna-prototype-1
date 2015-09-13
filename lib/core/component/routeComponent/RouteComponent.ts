@@ -23,17 +23,17 @@ class RouteComponent extends Component{
 	 */
 	// private _baseRoute: string;
 	// private viewClass;
-	constructor(name:string){
-		super(name);
+	constructor(parent:Component, name:string){
+		super(parent, name);
 		this.routeName = this.name;
 		this.disableRouteName = false;
 	}
 	/**
 	 * Nadpisuje init Component i dodaje w nim pobranie baseRoute od parent
 	 */
-	public init(): Util.Promise<void> {
-		return super.init();
-	}
+	// public init(): Util.Promise<void> {
+	// 	return super.init();
+	// }
 	public set disableRouteName(v:boolean){
 		this._disableRouteName = v;
 	}
@@ -60,39 +60,11 @@ class RouteComponent extends Component{
 		if(this.disableRouteName === true){
 			tempRouteName = "";
 		}
-		if (this.isInit === false) {
-			throw SyntaxError(Component.COMPONENT_INIT_NEED);
-		}
 		if (this.parent instanceof RouteComponent === false) {
 			return tempRouteName;
 		} else {
 			return (<RouteComponent>this.parent).getRoutePath() + tempRouteName;
 		}
 	}
-	// public setViewClass(viewClass, force?:boolean){
-	// 	if(!this.viewClass || force) {
-	// 		this.viewClass = viewClass;
-	// 	}
-	// }
-	// public getViewClass(){
-	// 	return this.viewClass;
-	// }
-	/**
-	 * Na podstawie bazowego członu i nowego partiala buduje route path
-	 * np mamy baseRoute = 'car/user/dummy/'
-	 * i partRoute = 'list'
-	 * to system zbuduje 'car/user/dummy/list'
-	 * Metoda dba o wstawianie '/'
-	 */
-	// public static buildRoute(baseRoute: string, partRoute: string): string {
-	// 	if (baseRoute.slice(-1) !== "/") {
-	// 		baseRoute = baseRoute + "/";
-	// 	}
-	// 	if (partRoute) {
-	// 		return baseRoute + partRoute + "/";
-	// 	} else {
-	// 		return baseRoute;
-	// 	}
-	// }
 }
 export = RouteComponent;

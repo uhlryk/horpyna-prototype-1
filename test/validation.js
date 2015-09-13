@@ -14,9 +14,8 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -27,11 +26,8 @@ describe("Walidacja", function() {
 					}
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.BaseValidator("val1", false));
-			myAction.addField(myField1);
-
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.BaseValidator(myField1, "val1", false);
 			myApp.init().then(function () {
 				done();
 			});
@@ -74,10 +70,9 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -88,9 +83,8 @@ describe("Walidacja", function() {
 					}
 				});
 			});
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.ContainsValidator("valtest", "seed"));
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.ContainsValidator(myField1, "valtest", "seed");
 
 			myApp.init().then(function () {
 				done();
@@ -126,9 +120,9 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -139,10 +133,8 @@ describe("Walidacja", function() {
 					}
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.EqualsValidator("valtest", "dummy"));
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.EqualsValidator(myField1, "valtest", "dummy");
 
 			myApp.init().then(function () {
 				done();
@@ -170,13 +162,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.MatchesValidator("valtest",'a+'));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.MatchesValidator(myField1, "valtest",'a+');
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -213,13 +203,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsAlphaValidator("valtest"));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsAlphaValidator(myField1, "valtest");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -256,13 +244,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsAlnumValidator("valtest"));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsAlnumValidator(myField1, "valtest");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -299,13 +285,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsNumericValidator("valtest"));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsNumericValidator(myField1, "valtest");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -342,13 +326,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsBooleanValidator("valtest"));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsBooleanValidator(myField1, "valtest");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -385,13 +367,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsStringLengthValidator("valtest",5,10));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsStringLengthValidator(myField1, "valtest",5,10);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -436,13 +416,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsDateValidator("valtest"));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsDateValidator(myField1, "valtest");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -479,13 +457,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsEmailValidator("valtest"));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsEmailValidator(myField1, "valtest");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -522,13 +498,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsFloatValidator("valtest",5,10));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsFloatValidator(myField1, "valtest",5,10);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -581,13 +555,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsIntValidator("valtest",5 , 10));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsIntValidator(myField1, "valtest",5 , 10);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -640,13 +612,11 @@ describe("Walidacja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myField1.addValidator(new Core.Field.ValidatorStandard.IsInValidator("valtest", ["ala", "kot"]));
-			myAction.addField(myField1);
+			var myModule = new Core.Module(myApp.root, "mod1");
+
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.ValidatorStandard.IsInValidator(myField1, "valtest", ["ala", "kot"]);
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){

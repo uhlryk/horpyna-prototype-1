@@ -11,6 +11,7 @@ import Dispatcher = require("./dispatcher/Dispatcher");
 import DbManager = require("./dbManager/DbManager");
 import Connection = require("./dbManager/connection/Connection");
 import ComponentManager = require("./component/ComponentManager");
+import Component = require("./component/Component");
 import Util = require("./util/Util");
 import Module = require("./component/routeComponent/module/Module");
 import ViewManager = require("./view/ViewManager");
@@ -22,17 +23,17 @@ class Application extends Element {
 		this._frontController = new FrontController();
 		this._frontController.debug("application:constructor:");
 		this._frontController.dispatcher = new Dispatcher(router);
-		this._frontController.componentManager = new ComponentManager();
 		this._frontController.dbManager = new DbManager();
+		this._frontController.componentManager = new ComponentManager(this._frontController.dispatcher, this._frontController.dbManager);
 		this._frontController.viewManager = new ViewManager();
 		this._bootstrap = new Bootstrap(this, router);
 	}
 	/**
 	 * dpdaje nowy moduł
 	 */
-	public addModule(moduleInstance: Module): Util.Promise<void> {
-		return this._frontController.componentManager.addModule(moduleInstance);
-	}
+	// public addModule(moduleInstance: Module): Util.Promise<void> {
+	// 	return this._frontController.componentManager.addModule(moduleInstance);
+	// }
 	/**
 	 * zwraca moduł po nazwie
 	 */
@@ -49,6 +50,9 @@ class Application extends Element {
 		return this._frontController;
 	}
 	public get componentManager():ComponentManager{
+		return this._frontController.componentManager;
+	}
+	public get root(): ComponentManager {
 		return this._frontController.componentManager;
 	}
 	public get viewManager(): ViewManager {

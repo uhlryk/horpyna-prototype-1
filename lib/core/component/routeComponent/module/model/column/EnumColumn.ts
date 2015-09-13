@@ -1,7 +1,7 @@
 import BaseColumn = require("./BaseColumn");
 class EnumColumn extends BaseColumn{
 	private list:Array<string>;
-	constructor(name:string, list?:Array<string>){
+	constructor(name: string, list?:Array<string>){
 		super(name);
 		this.debug("Enum constructor list:"+list);
 		this.list =list || [];

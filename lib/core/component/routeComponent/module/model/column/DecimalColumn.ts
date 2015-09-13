@@ -2,7 +2,7 @@ import BaseColumn = require("./BaseColumn");
 class DecimalColumn extends BaseColumn{
 	private total:number;
 	private decimal:number;
-	constructor(name:string, total?:number, decimal?:number){
+	constructor(name: string, total?:number, decimal?: number) {
 		super(name);
 		this.debug("Decimal constuctor total:" + total + " decimal:" + decimal);
 		this.total = total;

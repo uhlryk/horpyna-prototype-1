@@ -11,11 +11,8 @@ describe("Testy Node response.SendData", function() {
 	beforeEach(function (done) {
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
-		var myModule = new Core.Module("process");
-		myApp.addModule(myModule);
-		var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "myAction");
-
-		myModule.addAction(myAction);
+		var myModule = new Core.Module(myApp.root, "process");
+		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
 

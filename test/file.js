@@ -49,9 +49,8 @@ describe("Test uploadu: ", function(){
 			deleteFolderRecursive(uploadDir);
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -62,8 +61,7 @@ describe("Test uploadu: ", function(){
 					}
 				});
 			});
-			myModule.addAction(myAction);
-			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
+			var fileAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "file");
 			fileAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -74,10 +72,7 @@ describe("Test uploadu: ", function(){
 					}
 				});
 			});
-			myModule.addAction(fileAction);
-			myField1 = new Core.Field.BaseField("field1", Core.Field.FieldType.FILE_FIELD);
-			fileAction.addField(myField1);
-
+			myField1 = new Core.Field.BaseField(fileAction, "field1", Core.Field.FieldType.FILE_FIELD);
 			myApp.init().then(function () {
 				done();
 			});
@@ -107,9 +102,8 @@ describe("Test uploadu: ", function(){
 			deleteFolderRecursive(uploadDir);
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var fileAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "file");
 			fileAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -120,19 +114,13 @@ describe("Test uploadu: ", function(){
 						response.setStatus(422);
 					}
 				});
-				// console.log(v);
 			});
-			myModule.addAction(fileAction);
-			myField1 = new Core.Field.BaseField("field1", Core.Field.FieldType.FILE_FIELD);
-			fileAction.addField(myField1);
-			// var myField2 = new Core.Field.BaseField("field2", Core.Field.FieldType.FILE_FIELD);
-			// fileAction.addField(myField2);
+			myField1 = new Core.Field.BaseField(fileAction, "field1", Core.Field.FieldType.FILE_FIELD);
 			done();
 		});
 		it("zwraca 200 gdy wyślemy plik o właściwym mime, a walidacja w fazie preupload'", function (done) {
 			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Field.BaseValidator.PREUPLOAD_PHASE);
-			myField1.addValidator(val);
+			var val = new MimeTypeValidator(myField1, "mime", MimeTypeValidator.TEXT_MIME, Core.Field.BaseValidator.PREUPLOAD_PHASE);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
 				.attach("field1",sourceDir+"/text.txt")
@@ -149,8 +137,7 @@ describe("Test uploadu: ", function(){
 		 */
 		it("TEST NIEUDANY BO MULTER ŹLE DZIAŁA zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie preupload'", function (done) {
 			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Field.BaseValidator.PREUPLOAD_PHASE);
-			myField1.addValidator(val);
+			var val = new MimeTypeValidator(myField1, "mime", MimeTypeValidator.JPEG_MIME, Core.Field.BaseValidator.PREUPLOAD_PHASE);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
 				.attach("field1",sourceDir+"/text.txt")
@@ -163,8 +150,7 @@ describe("Test uploadu: ", function(){
 		});
 		it("zwraca 200 gdy wyślemy plik o właściwym mime, a walidacja w fazie postupload'", function (done) {
 			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.TEXT_MIME, Core.Field.BaseValidator.POSTUPLOAD_PHASE);
-			myField1.addValidator(val);
+			var val = new MimeTypeValidator(myField1, "mime", MimeTypeValidator.TEXT_MIME, Core.Field.BaseValidator.POSTUPLOAD_PHASE);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
 				.attach("field1",sourceDir+"/text.txt")
@@ -177,8 +163,7 @@ describe("Test uploadu: ", function(){
 		});
 		it("zwraca 422 gdy wyślemy plik o NIE właściwym mime, a walidacja w fazie postupload'", function (done) {
 			var MimeTypeValidator = Core.Field.ValidatorFile.MimeTypeValidator;
-			var val = new MimeTypeValidator("mime", MimeTypeValidator.JPEG_MIME, Core.Field.BaseValidator.POSTUPLOAD_PHASE);
-			myField1.addValidator(val);
+			var val = new MimeTypeValidator(myField1, "mime", MimeTypeValidator.JPEG_MIME, Core.Field.BaseValidator.POSTUPLOAD_PHASE);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
 				.attach("field1",sourceDir+"/text.txt")
@@ -196,9 +181,8 @@ describe("Test uploadu: ", function(){
 			deleteFolderRecursive(uploadDir);
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "file");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var fileAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "file");
 			fileAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -209,19 +193,13 @@ describe("Test uploadu: ", function(){
 						response.setStatus(422);
 					}
 				});
-				// console.log(v);
 			});
-			myModule.addAction(fileAction);
-			myField1 = new Core.Field.BaseField("field1", Core.Field.FieldType.FILE_FIELD);
-			fileAction.addField(myField1);
-			// var myField2 = new Core.Field.BaseField("field2", Core.Field.FieldType.FILE_FIELD);
-			// fileAction.addField(myField2);
+			myField1 = new Core.Field.BaseField(fileAction, "field1", Core.Field.FieldType.FILE_FIELD);
 			done();
 		});
 		it("zwraca 200 gdy wyślemy plik o właściwym rozmiarze'", function (done) {
 			var SizeValidator = Core.Field.ValidatorFile.SizeValidator;
-			var val = new SizeValidator("mime", 3, 10);
-			myField1.addValidator(val);
+			var val = new SizeValidator(myField1, "mime", 3, 10);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
 				.attach("field1",sourceDir+"/text.txt")
@@ -234,8 +212,7 @@ describe("Test uploadu: ", function(){
 		});
 		it("zwraca 422 gdy wyślemy plik o za dużym rozmiarze'", function (done) {
 			var SizeValidator = Core.Field.ValidatorFile.SizeValidator;
-			var val = new SizeValidator("mime", 3, 10);
-			myField1.addValidator(val);
+			var val = new SizeValidator(myField1, "mime", 3, 10);
 			myApp.init().then(function () {
 				request(app).post("/mod1/file/")
 				.attach("field1",sourceDir+"/textBig.txt")
@@ -255,8 +232,7 @@ describe("Test uploadu: ", function(){
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.App.Module.Resource("res1");
-			myApp.addModule(moduleResource1);
+			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
 			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);
 			myApp.init().then(function () {
@@ -343,8 +319,7 @@ describe("Test uploadu: ", function(){
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.App.Module.Resource("res1");
-			myApp.addModule(moduleResource1);
+			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
 			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, [], {optional:true});
 			myApp.init().then(function () {
@@ -440,8 +415,7 @@ describe("Test uploadu: ", function(){
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.App.Module.Resource("res1");
-			myApp.addModule(moduleResource1);
+			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
 			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);
 			myApp.init().then(function () {

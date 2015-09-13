@@ -1,6 +1,8 @@
 import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./../ValidatorResponse");
 import BaseValidator = require("./../BaseValidator");
+import Field = require("./../Field");
+import Component = require("./../../../../../Component");
 /**
  * Waliduje rozmiar pliku, jeśli
  */
@@ -11,8 +13,8 @@ class SizeValidator extends BaseValidator {
 	public messageMin = "The input is less than %s bytes size"
 	public messageMax = "The input is more than %s bytes size";
 
-	constructor(name: string, min: number, max: number, validationPhase?: string) {
-		super(name, true, validationPhase);
+	constructor(parent: Field.BaseField, name: string, min: number, max: number, validationPhase?: string) {
+		super(parent, name, true, validationPhase);
 		if (!validationPhase){
 			validationPhase = BaseValidator.POSTUPLOAD_PHASE;
 		}

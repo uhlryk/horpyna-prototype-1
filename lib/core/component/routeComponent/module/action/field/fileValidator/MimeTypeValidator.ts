@@ -1,6 +1,8 @@
 import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./../ValidatorResponse");
 import BaseValidator = require("./../BaseValidator");
+import Field = require("./../Field");
+import Component = require("./../../../../../Component");
 /**
  * sprawdza czy mime danego pliku jest poprawne
  * listę mime przekazujemy w acceptedMimeTypes. Jest to lista w której mamy mime, ale może też dany element listy być też listą
@@ -14,8 +16,8 @@ class MimeTypeValidator extends BaseValidator {
 	public VALIDATOR_NAME = "MimeTypeValidator";
 	public message = "File %s has wrong mime type %s";
 	private _mimeTypes: string[];
-	constructor(name: string, acceptedMimeTypes, validationPhase?:string) {
-		super(name, true, validationPhase);
+	constructor(parent: Field.BaseField, name: string, acceptedMimeTypes, validationPhase?:string) {
+		super(parent, name, true, validationPhase);
 		if (!validationPhase){
 			validationPhase = BaseValidator.POSTUPLOAD_PHASE;
 		}

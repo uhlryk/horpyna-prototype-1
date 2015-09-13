@@ -11,14 +11,10 @@ describe("Testy Node transform.UniqueKey", function() {
 	beforeEach(function (done) {
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
-		var myModule = new Core.Module("process");
-		myApp.addModule(myModule);
-		var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "myAction");
-
-		myModule.addAction(myAction);
+		var myModule = new Core.Module(myApp.root, "process");
+		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
-
 		myNode1 = new Core.Node.BaseNode([myProcessModel]);
 		myNode1.setContent(function(data) {
 			return beforeMapping;

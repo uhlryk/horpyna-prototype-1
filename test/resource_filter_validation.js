@@ -11,8 +11,7 @@ describe("Testy filtrów i walidacji przy szybkim tworzeniu przez Core.App.Modul
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
 		myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-		moduleResource = new Core.App.Module.Resource("res1");
-		myApp.addModule(moduleResource);
+		moduleResource = new Core.App.Module.Resource(myApp.root, "res1");
 		done();
 	});
 	it("powinien zwrócić błąd walidacji gdy damy validator rozmiaru i za dużą wartość", function(done){

@@ -11,9 +11,10 @@ import Action = require("./routeComponent/module/action/Action");
 class Component extends Element {
 	public static WRONG_NAME: string = "Name can contain only a-zA-Z0-9-";
 	public static EMPTY_NAME: string = "Name can't be null";
-	public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
-	public static INIT_NULL_PARENT: string = "Component can init only when parent Component is set";
-	public static INIT_ALREADY: string = "Component is initialized already";
+	public static WRONG_PARENT: string = "Child Component parent is wrong";
+	// public static MULTIPLE_PARENT: string = "Component can have only one parent Component";
+	// public static INIT_NULL_PARENT: string = "Component can init only when parent Component is set";
+	// public static INIT_ALREADY: string = "Component is initialized already";
 	public static COMPONENT_INIT_NEED: string = "Component must be initialized before this method";
 	public static ADD_INIT_CANT: string = "Cant add element if object is initialized";
 	private _name:string;
@@ -21,6 +22,7 @@ class Component extends Element {
 	private _parent:Component;
 	public static count = 0;
 	public static componentList:Component[] = [];
+	private _childComponentList:Component[];
 	private _componentManager: ComponentManager;
 	/**
 	 * wywoływane przez moduły podrzędne sprawdzające czy dany moduł
@@ -30,7 +32,7 @@ class Component extends Element {
 	 * i zainicjuje podrzędne.
 	 */
 	private _isInit: boolean;
-	constructor(name:string){
+	constructor(parent:Component, name:string){
 		super();
 		this._name = name;
 		this.checkName(name);
@@ -39,8 +41,13 @@ class Component extends Element {
 		this._id = Component.count;
 		this.initDebug("component:" + this.name);
 		this.debug('constructor %s a', this.name);
-		this._componentManager = null;
-		this.isInit = false;
+		this._isInit = false;
+		this._childComponentList = [];
+		this._parent = parent;
+		this._componentManager = parent.componentManager;
+		if (this._parent !== this) {
+			this._parent.addChild(this);
+		}
 		this.onConstructor();
 	}
 	/**
@@ -51,6 +58,21 @@ class Component extends Element {
 		return Component.componentList[id];
 	}
 	public onConstructor(){}
+	/**
+	 * Wywoływane tylko przez child Component
+	 */
+	public addChild(child: Component) {
+		if(child.parent !== this){
+			throw SyntaxError(Component.WRONG_PARENT);
+		}
+		this._childComponentList.push(child);
+	}
+	public getChild(name:string){
+		return this._childComponentList[name];
+	}
+	public getChildList(): Component[] {
+		return this._childComponentList;
+	}
 		/**
 	 * Każdy komponent ma refenercję Na component root czyli ComponentManager
 	 * @param {ComponentManager} v pierwszy komponent
@@ -58,16 +80,16 @@ class Component extends Element {
 	public set componentManager(v: ComponentManager) {
 		this._componentManager = v;
 	}
+	// public static initComponentManager(v: ComponentManager) {
+	// 	Component._componentManager = v;
+	// }
 	public get componentManager() : ComponentManager {
 		return this._componentManager;
 	}
-	public set isInit(v : boolean) {
-		if (this.isInit === true) {
-			throw SyntaxError(Component.INIT_ALREADY);
-		}
-		this._isInit = v;
+	public setInit() {
+		this._isInit = true;
 	}
-	public get isInit() : boolean {
+	public isInit() : boolean {
 		return this._isInit;
 	}
 	/**
@@ -75,17 +97,48 @@ class Component extends Element {
 	 * Komponent jest inicjowany przez rodzica gdy tamten ma swoją inicjację
 	 * Komponent w init się inicjuje i inicjuje swoje podrzędne komponenty
 	 */
-	public init(): Util.Promise<void> {
+	// public init(): Util.Promise<void> {
 		/**
 		 * Brak rodzica przy inicjacji to błąd. komponent może być inicjowany tylko względem rodzica
 		 * A wiec zainicjowany komponent zawsze ma rodzica
 		 */
-		if(!this.parent){
-			throw SyntaxError(Component.INIT_NULL_PARENT);
+	// 	if(!this.parent){
+	// 		throw SyntaxError(Component.INIT_NULL_PARENT);
+	// 	}
+	// 	this.isInit = true;
+	// 	this.componentManager = this.parent.componentManager;
+	// 	return Util.Promise.resolve();
+	// }
+
+	/**
+	 * Każdy komponent musi zostać zainicjowany.
+	 * Inicjacja składa się z dwóch etapów:
+	 * 1)onInit - inicjujemy logikę danego komponentu - może być pusta - wywowływana tylko za pierwszą inicjacją, drugi raz będzie pominięta
+	 * 2)childInit- inicjujemy child komponenty za każdym wywołaniem sprawdza wszystkie childy
+	 * jeśli parent jest tym samym modułem to nie sprawdzamy czy parent jest init
+	 */
+	public init(): Util.Promise<void> {
+		if (this.parent === this || this.parent.isInit()) {
+			if(this.isInit() === false){
+				return this.onInit().then(()=>{
+					return this.childInit();
+				});
+			} else{
+				return this.childInit();
+			}
 		}
-		this.isInit = true;
-		this.componentManager = this.parent.componentManager;
 		return Util.Promise.resolve();
+	}
+	protected onInit(): Util.Promise<void> {
+		this.setInit();
+		return Util.Promise.resolve();
+	}
+	protected childInit(): Util.Promise<void> {
+		return Util.Promise.map(this._childComponentList, (childComponent: Component) => {
+			return childComponent.init();
+		}).then(()=>{
+			return;
+		});
 	}
 	// protected onInit():void{}
 	/**
@@ -94,21 +147,21 @@ class Component extends Element {
 	 * nie ma już parenta. Dana instancja komponentu może mieć tylko jeden parent.
 	 * @param parent
 	 */
-	public prepare(v: Component): Util.Promise<void> {
-		if(this._parent){
-			throw SyntaxError(Component.MULTIPLE_PARENT);
-		}
-		this._parent = v;
+	// public prepare(v: Component): Util.Promise<void> {
+	// 	if(this._parent){
+	// 		throw SyntaxError(Component.MULTIPLE_PARENT);
+	// 	}
+	// 	this._parent = v;
 		/**
 		 * znaczy że rodzic jest już zainicjowany, więc może się ten moduł sam zainicjować
 		 */
-		if(this.parent.isInit === true){
-			var initPromise = this.init();
-			initPromise = this.componentManager.initCatchPromiseManager.catchToPromise(initPromise);
-			return initPromise;
-		}
-		return Util.Promise.resolve();
-	}
+	// 	if(this.parent.isInit === true){
+	// 		var initPromise = this.init();
+	// 		initPromise = this.componentManager.initCatchPromiseManager.catchToPromise(initPromise);
+	// 		return initPromise;
+	// 	}
+	// 	return Util.Promise.resolve();
+	// }
 	public get parent():Component{
 		return this._parent;
 	}
@@ -136,10 +189,10 @@ class Component extends Element {
 	 * @return {string}           zwraca ścieżkę na grandparentcomponent/parentcomponent/thiscomponent
 	 */
 	public getNamePath(separator: string): string {
-		if (this.isInit === false) {
-			throw SyntaxError(Component.COMPONENT_INIT_NEED);
-		}
-		if (this.parent === this.componentManager) {
+		// if (this.isInit === false) {
+		// 	throw SyntaxError(Component.COMPONENT_INIT_NEED);
+		// }
+		if (this.parent === this) {
 			return this.name;
 		} else {
 			return this.parent.getNamePath(separator) + separator + this.name;
@@ -161,7 +214,7 @@ class Component extends Element {
 			this.callSubscribers(request, response, type, subtype, emiterPath, false, resolve);
 		})
 		.then(() => {
-			if (this.parent) {
+			if (this.parent !== this) {
 				return this.parent.emitPublisher(request, response, type, subtype, emiterPath);
 			}
 		});

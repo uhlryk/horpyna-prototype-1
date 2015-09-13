@@ -1,5 +1,6 @@
 import Util = require("../../../../../../util/Util");
 import BaseFilter = require("./../BaseFilter");
+import Field = require("./../Field");
 /**
  * z przekazanej wartości usuwa znaki które nie są w chars
  * znaki w chars dajemy jako string ale każdy jest osobno traktowany
@@ -9,8 +10,8 @@ import BaseFilter = require("./../BaseFilter");
 class Whitelist extends BaseFilter {
 	public FILTER_NAME = "Whitelist";
 	private _chars: string;
-	constructor(name: string, chars: string) {
-		super(name, false);
+	constructor(parent: Field.BaseField, name: string, chars: string) {
+		super(parent, name, false);
 		this.initDebug("filter:" + this.FILTER_NAME);
 		this._chars = chars;
 	}

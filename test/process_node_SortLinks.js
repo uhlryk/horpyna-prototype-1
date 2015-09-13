@@ -11,20 +11,13 @@ describe("Testy Node transform.SortLinks", function() {
 	beforeEach(function (done) {
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
-		var myModule = new Core.Module("process");
-		myApp.addModule(myModule);
-		myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "myAction");
-		myModule.addAction(myAction);
-		var p1 = new Core.Field.BaseField("p1", Core.Field.FieldType.PARAM_FIELD);
-		var p2 = new Core.Field.BaseField("p2", Core.Field.FieldType.PARAM_FIELD);
-		myAction.addField(p1);
-		myAction.addField(p2);
-		var q1 = new Core.Field.BaseField("o", Core.Field.FieldType.QUERY_FIELD, {optional:true});
-		var q2 = new Core.Field.BaseField("d", Core.Field.FieldType.QUERY_FIELD, {optional:true});
-		var q3 = new Core.Field.BaseField("q3", Core.Field.FieldType.QUERY_FIELD, {optional:true});
-		myAction.addField(q1);
-		myAction.addField(q2);
-		myAction.addField(q3);
+		var myModule = new Core.Module(myApp.root, "process");
+		myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
+		var p1 = new Core.Field.BaseField(myAction,"p1", Core.Field.FieldType.PARAM_FIELD);
+		var p2 = new Core.Field.BaseField(myAction,"p2", Core.Field.FieldType.PARAM_FIELD);
+		var q1 = new Core.Field.BaseField(myAction,"o", Core.Field.FieldType.QUERY_FIELD, {optional:true});
+		var q2 = new Core.Field.BaseField(myAction,"d", Core.Field.FieldType.QUERY_FIELD, {optional:true});
+		var q3 = new Core.Field.BaseField(myAction,"q3", Core.Field.FieldType.QUERY_FIELD, {optional:true});
 
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());

@@ -14,9 +14,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -24,12 +23,8 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			filter = new Core.Field.BaseFilter("filter1", false);
-			myField1.addFilter(filter);
-			myAction.addField(myField1);
-
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			filter = new Core.Field.BaseFilter(myField1, "filter1", false);
 			myApp.init().then(function () {
 				done();
 			});
@@ -67,9 +62,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -77,13 +71,9 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
-			filter1 = new Core.Field.BaseFilter("filter1", false);
-			myField1.addFilter(filter1);
-			filter2 = new Core.Field.BaseFilter("filter2", false);
-			myField1.addFilter(filter2);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
+			filter1 = new Core.Field.BaseFilter(myField1, "filter1", false);
+			filter2 = new Core.Field.BaseFilter(myField1, "filter2", false);
 			myApp.init().then(function () {
 				done();
 			});
@@ -108,9 +98,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -118,14 +107,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek' i nic nie mamy na czarnej liście", function (done) {
-			filter = new Core.Field.FilterStandard.Blacklist("filter1", "");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Blacklist(myField1, "filter1", "");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olek"})
@@ -136,8 +122,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek1' i mamy na czarnej liście '1'", function (done) {
-			filter = new Core.Field.FilterStandard.Blacklist("filter1", "1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Blacklist(myField1, "filter1", "1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olek1"})
@@ -148,8 +133,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'ol12ek1' i mamy na czarnej liście '12' - każdy znak osobno sprawdzany", function (done) {
-			filter = new Core.Field.FilterStandard.Blacklist("filter1", "12");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Blacklist(myField1, "filter1", "12");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "ol12ek1"})
@@ -160,8 +144,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'olążźćŃ™€ßį§¶•Ľ[]ek' i mamy na czarnej liście 'ążźćŃ™€ßį§¶•Ľ[]'", function (done) {
-			filter = new Core.Field.FilterStandard.Blacklist("filter1", "ążźćŃ™€ßį§¶•Ľ\\[\\]");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Blacklist(myField1, "filter1", "ążźćŃ™€ßį§¶•Ľ\\[\\]");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olążźćŃ™€ßį§¶•Ľ[]ek"})
@@ -177,9 +160,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -187,14 +169,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek' i nic nie mamy na czarnej liście", function (done) {
-			filter = new Core.Field.FilterStandard.Whitelist("filter1", "kelo");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Whitelist(myField1, "filter1", "kelo");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olek"})
@@ -205,8 +184,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'k1' gdy przekażemy 'olek1' i mamy na czarnej liście 'k1'", function (done) {
-			filter = new Core.Field.FilterStandard.Whitelist("filter1", "k1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Whitelist(myField1, "filter1", "k1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olek1"})
@@ -217,8 +195,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca '121' gdy przekażemy 'ol12ek1' i mamy na czarnej liście '12' - każdy znak osobno sprawdzany", function (done) {
-			filter = new Core.Field.FilterStandard.Whitelist("filter1", "12");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Whitelist(myField1, "filter1", "12");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "ol12ek1"})
@@ -229,8 +206,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'ążź[]' gdy przekażemy 'olążźćŃ™€ßį§¶•Ľ[]ek' i mamy na czarnej liście 'ążźćŃ™€ßį§¶•Ľ[]'", function (done) {
-			filter = new Core.Field.FilterStandard.Whitelist("filter1", "ążź\\[\\]");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Whitelist(myField1, "filter1", "ążź\\[\\]");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olążźćŃ™€ßį§¶•Ľ[]ek"})
@@ -246,9 +222,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -256,14 +231,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek'", function (done) {
-			filter = new Core.Field.FilterStandard.Escape("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Escape(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olek"})
@@ -274,8 +246,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'olek' gdy przekażemy 'olek<>&'", function (done) {
-			filter = new Core.Field.FilterStandard.Escape("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Escape(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "olek<>&"})
@@ -291,9 +262,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -301,14 +271,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 'bca' gdy przekażemy 'aabca' i trim char - 'a'", function (done) {
-			filter = new Core.Field.FilterStandard.LeftTrim("filter1","a");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.LeftTrim(myField1, "filter1","a");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "aabca"})
@@ -319,8 +286,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'abc ' gdy przekażemy '  abc '", function (done) {
-			filter = new Core.Field.FilterStandard.LeftTrim("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.LeftTrim(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "  abc "})
@@ -336,9 +302,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -346,14 +311,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 'abc' gdy przekażemy 'abcaa' i trim char - 'a'", function (done) {
-			filter = new Core.Field.FilterStandard.RightTrim("filter1","a");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.RightTrim(myField1, "filter1","a");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "abcaa"})
@@ -364,8 +326,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca ' abc' gdy przekażemy ' abc  '", function (done) {
-			filter = new Core.Field.FilterStandard.RightTrim("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.RightTrim(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: " abc  "})
@@ -381,9 +342,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -391,14 +351,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 'bc' gdy przekażemy 'abcaa' i trim char - 'a'", function (done) {
-			filter = new Core.Field.FilterStandard.Trim("filter1","a");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Trim(myField1, "filter1","a");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "abcaa"})
@@ -409,8 +366,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 'abc' gdy przekażemy ' abc  '", function (done) {
-			filter = new Core.Field.FilterStandard.Trim("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.Trim(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "abc"})
@@ -426,9 +382,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -436,14 +391,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca true gdy przekażemy 'cos'", function (done) {
-			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToBoolean(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "cos"})
@@ -454,8 +406,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca false gdy przekazemy 'false'", function (done) {
-			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToBoolean(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "false"})
@@ -466,8 +417,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca false gdy przekazemy ''", function (done) {
-			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToBoolean(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: ""})
@@ -478,8 +428,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca false gdy przekazemy '0'", function (done) {
-			filter = new Core.Field.FilterStandard.ToBoolean("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToBoolean(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "0"})
@@ -495,9 +444,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -505,14 +453,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca null gdy przekażemy 'notdate'", function (done) {
-			filter = new Core.Field.FilterStandard.ToDate("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToDate(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "notdate"})
@@ -524,8 +469,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca datę gdy przekazemy 'March 21, 2012'", function (done) {
-			filter = new Core.Field.FilterStandard.ToDate("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToDate(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "March 21, 2012"})
@@ -537,8 +481,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca datę gdy przekazemy 'Marzec 21, 2012'", function (done) {
-			filter = new Core.Field.FilterStandard.ToDate("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToDate(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "Marzec 21, 2012"})
@@ -550,8 +493,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca datę gdy przekazemy '1995-12-17'", function (done) {
-			filter = new Core.Field.FilterStandard.ToDate("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToDate(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "1995-12-17"})
@@ -568,9 +510,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -578,14 +519,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 0 gdy przekażemy 'notnumber'", function (done) {
-			filter = new Core.Field.FilterStandard.ToFloat("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToFloat(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "notnumber"})
@@ -597,8 +535,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca liczbę gdy przekazemy '22.12'", function (done) {
-			filter = new Core.Field.FilterStandard.ToFloat("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToFloat(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "22.12"})
@@ -610,8 +547,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 22 gdy przekazemy '22,12'", function (done) {
-			filter = new Core.Field.FilterStandard.ToFloat("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToFloat(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "22,12"})
@@ -628,9 +564,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -638,14 +573,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 0 gdy przekażemy 'notnumber'", function (done) {
-			filter = new Core.Field.FilterStandard.ToInt("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToInt(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "notnumber"})
@@ -657,8 +589,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca liczbę 22 gdy przekazemy '22.12'", function (done) {
-			filter = new Core.Field.FilterStandard.ToInt("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToInt(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "22.12"})
@@ -670,8 +601,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 0xa gdy przekazemy 'a'", function (done) {
-			filter = new Core.Field.FilterStandard.ToInt("filter1",16);
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToInt(myField1, "filter1",16);
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "a"})
@@ -688,9 +618,8 @@ describe("Filtracja", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "act1");
+			var myModule = new Core.Module(myApp.root, "mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
 			myAction.setActionHandler(function(request, response, action){
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -698,14 +627,11 @@ describe("Filtracja", function() {
 					response.setStatus(200);
 				});
 			});
-			myModule.addAction(myAction);
-			myField1 = new Core.Field.BaseField("param1", Core.Field.FieldType.BODY_FIELD);
-			myAction.addField(myField1);
+			myField1 = new Core.Field.BaseField(myAction, "param1", Core.Field.FieldType.BODY_FIELD);
 			done();
 		});
 		it("zwraca 0 gdy przekażemy 'notnumber'", function (done) {
-			filter = new Core.Field.FilterStandard.ToString("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToString(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: "notnumber"})
@@ -717,8 +643,7 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca liczbę 22 gdy przekazemy '22.12'", function (done) {
-			filter = new Core.Field.FilterStandard.ToString("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToString(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: 22.12})
@@ -730,14 +655,12 @@ describe("Filtracja", function() {
 			});
 		});
 		it("zwraca 0xa gdy przekazemy 'a'", function (done) {
-			filter = new Core.Field.FilterStandard.ToString("filter1");
-			myField1.addFilter(filter);
+			filter = new Core.Field.FilterStandard.ToString(myField1, "filter1");
 			myApp.init().then(function () {
 				request(app).post("/mod1/act1/")
 					.send({param1: true})
 					.end(function (err, res) {
 						expect(finalValue).to.be.equal("true");
-						console.log(finalValue);
 						done();
 					});
 			});

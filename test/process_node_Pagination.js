@@ -11,16 +11,11 @@ describe("Testy Node transform.Pagination", function() {
 	beforeEach(function (done) {
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
-		var myModule = new Core.Module("process");
-		myApp.addModule(myModule);
-		myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "myAction");
-		myModule.addAction(myAction);
-		var q1 = new Core.Field.BaseField("test", Core.Field.FieldType.QUERY_FIELD, {optional:true});
-		myAction.addField(q1);
-		var q2 = new Core.Field.BaseField("p", Core.Field.FieldType.QUERY_FIELD, {optional:true});
-		myAction.addField(q2);
-		var q3 = new Core.Field.BaseField("s", Core.Field.FieldType.QUERY_FIELD, {optional:true});
-		myAction.addField(q3);
+		var myModule = new Core.Module(myApp.root, "process");
+		myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
+		var q1 = new Core.Field.BaseField(myAction, "test", Core.Field.FieldType.QUERY_FIELD, {optional:true});
+		var q2 = new Core.Field.BaseField(myAction, "p", Core.Field.FieldType.QUERY_FIELD, {optional:true});
+		var q3 = new Core.Field.BaseField(myAction, "s", Core.Field.FieldType.QUERY_FIELD, {optional:true});
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
 

@@ -40,8 +40,8 @@ class FrontController extends Element {
 	}
 	public init():Promise<any>{
 		this.debug("front:init:");
-		this.componentManager.dispatcher = this.dispatcher;
-		this.componentManager.dbManager = this.dbManager;
+		// this.componentManager.dispatcher = this.dispatcher;
+		// this.componentManager.dbManager = this.dbManager;
 		this.dispatcher.viewManager = this.viewManager;
 		this.dispatcher.init();
 		this.debug("front:dbManager.init()");

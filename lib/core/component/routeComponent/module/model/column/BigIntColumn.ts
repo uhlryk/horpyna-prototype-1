@@ -1,6 +1,6 @@
 import BaseColumn = require("./BaseColumn");
 class BigIntColumn extends BaseColumn{
-	constructor(name:string, length?:number){
+	constructor(name: string, length?:number) {
 		super(name);
 		this.debug("BigInt constructor length:"+length);
 		var type;

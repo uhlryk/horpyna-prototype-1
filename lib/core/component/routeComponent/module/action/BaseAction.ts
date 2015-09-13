@@ -5,6 +5,7 @@ import Field = require("./field/Field");
 import Util = require("./../../../../util/Util");
 import Response = require("./Response");
 import Request = require("./Request");
+import Module = require("./../Module");
 import Validation = require("./Validation");
 import Filtration = require("./Filtration");
 import UploadValidation = require("./UploadValidation");
@@ -14,9 +15,9 @@ import BaseValidator = require("./field/BaseValidator");
 import IActionHandler = require("./IActionHandler");
 
 class BaseAction extends RouteComponent {
-	private actionHandler:IActionHandler;
-	private fieldList:Field.BaseField[];
-	private method:string;
+	private _actionHandler:IActionHandler;
+	private _fieldList:Field.BaseField[];
+	private _method:string;
 	public static ALL:string = "all";
 	public static POST:string = "post";
 	public static GET:string = "get";
@@ -29,45 +30,59 @@ class BaseAction extends RouteComponent {
 	 * options.maxFiles - maksymalna liczba plików wysyłanych do akcji na raz
 	 */
 	private _options: Object;
-	constructor(method:string, name:string, options?:Object){
-		super(name);
+	constructor(parent: Module, method: string, name: string, options?: Object) {
 		this._options = options || {};
+		this._method = method;
+		this._fieldList = [];
+		super(<Component>parent, name);
 		this.initDebug("action:" + this.name);
-		this.method = method;
-		this.fieldList = [];
 	}
-	public init(): Util.Promise<void> {
-		return super.init()
-		.then(()=>{
+	// public init(): Util.Promise<void> {
+	// 	return super.init()
+	// 	.then(()=>{
+	// 		this.addRoute();
+	// 		return this.initFields();
+	// 	});
+	// }
+	protected onInit(): Util.Promise<void> {
+		return super.onInit().then(()=>{
 			this.addRoute();
-			return this.initFields();
 		});
 	}
 	/**
 	 * Buduje route
 	 */
 	protected addRoute(){
-		this.componentManager.dispatcher.addRoute(this.method, this.getRoutePath(true), this.getFileHandler(), this.getRequestHandler());
+		this.componentManager.dispatcher.addRoute(this._method, this.getRoutePath(true), this.getFileHandler(), this.getRequestHandler());
 	}
-	public initFields(): Util.Promise<any> {
-		return Util.Promise.map(this.fieldList, (field: Field.BaseField) => {
-			return field.init();
-		});
-	}
-	public addField(field: Field.BaseField): Util.Promise<void> {
-		this.fieldList.push(field);
-		if (this.isInit === true) {
+	// public initFields(): Util.Promise<any> {
+	// 	return Util.Promise.map(this._fieldList, (field: Field.BaseField) => {
+	// 		return field.init();
+	// 	});
+	// }
+	public addChild(child: Component) {
+		if (this.isInit()) {
 			throw SyntaxError(Component.ADD_INIT_CANT);
 		}
-		return field.prepare(this);
+		super.addChild(child);
+		if (child instanceof Field.BaseField) {
+			this._fieldList.push(child);
+		}
 	}
+	// public addField(field: Field.BaseField): Util.Promise<void> {
+	// 	this._fieldList.push(field);
+	// 	if (this.isInit === true) {
+	// 		throw SyntaxError(Component.ADD_INIT_CANT);
+	// 	}
+	// 	return field.prepare(this);
+	// }
 	public getFieldList(): Field.BaseField[] {
-		return this.fieldList;
+		return this._fieldList;
 	}
 	public getFieldListByType(type: string): Field.BaseField[] {
 		var typeFieldList = [];
-		for (var index in this.fieldList) {
-			var field: Field.BaseField = this.fieldList[index];
+		for (var index in this._fieldList) {
+			var field: Field.BaseField = this._fieldList[index];
 			if(field.getType() === type){
 				typeFieldList.push(field);
 			}
@@ -75,8 +90,8 @@ class BaseAction extends RouteComponent {
 		return typeFieldList;
 	}
 	public getField(type: string, name: string): Field.BaseField {
-		for (var index in this.fieldList) {
-			var field: Field.BaseField = this.fieldList[index];
+		for (var index in this._fieldList) {
+			var field: Field.BaseField = this._fieldList[index];
 			if (field.name === name && field.getType() === type) {
 				return field;
 			}
@@ -91,8 +106,8 @@ class BaseAction extends RouteComponent {
 	public getRoutePath(paramInPath?:boolean): string {
 		var routePath = super.getRoutePath();
 		if (paramInPath === true) {
-			for (var index in this.fieldList) {
-				var field: Field.BaseField = this.fieldList[index];
+			for (var index in this._fieldList) {
+				var field: Field.BaseField = this._fieldList[index];
 				if (field.getType() === FieldType.PARAM_FIELD) {
 					routePath = routePath + "/:" + field.getFieldName();
 				}
@@ -107,8 +122,8 @@ class BaseAction extends RouteComponent {
 	 */
 	public populateRoutePath(data:Object):string{
 		var routePath = this.getRoutePath();
-		for (var index in this.fieldList) {
-			var field: Field.BaseField = this.fieldList[index];
+		for (var index in this._fieldList) {
+			var field: Field.BaseField = this._fieldList[index];
 			if (field.getType() === FieldType.PARAM_FIELD) {
 				var value = data[field.getFieldName()];
 				if(value === undefined){
@@ -127,8 +142,8 @@ class BaseAction extends RouteComponent {
 	 */
 	public populateRoutePathWithQuery(routeData:Object, queryData:Object):string{
 		var routePath = this.populateRoutePath(routeData);
-		for (var index in this.fieldList) {
-			var field: Field.BaseField = this.fieldList[index];
+		for (var index in this._fieldList) {
+			var field: Field.BaseField = this._fieldList[index];
 			if (field.getType() === FieldType.QUERY_FIELD) {
 				var value = queryData[field.getFieldName()];
 				//ponieważ query data powinna być opcjonalna to gdy brak wartości danego pola to go nie wypełniamy
@@ -140,14 +155,13 @@ class BaseAction extends RouteComponent {
 		return routePath;
 	}
 	public getMethod():string {
-		return this.method;
+		return this._method;
 	}
-	public setActionHandler(actionHandler:IActionHandler){
-		this.actionHandler = actionHandler;
+	public setActionHandler(_actionHandler:IActionHandler){
+		this._actionHandler = _actionHandler;
 	}
 	public requestHandler(request: Request, response: Response, doneAction) {
 		this.debug("action:requestHandler:");
-		this.debug("action:publish():OnBegin");
 		request.action = this;
 		var uploadValidationResponse: ValidationResponse = request.getValue("fileValidationError");
 		request.removeValue("fileValidationError");
@@ -202,12 +216,12 @@ class BaseAction extends RouteComponent {
 		})
 		.then(() => {
 			if (response.allow === false) return;
-			this.debug("action: check actionHandler if exist");
-			if (this.actionHandler) {
-				this.debug("action: actionHandler exist");
-				return this.actionHandler(request, response, this);
+			this.debug("action: check _actionHandler if exist");
+			if (this._actionHandler) {
+				this.debug("action: _actionHandler exist");
+				return this._actionHandler(request, response, this);
 			} else {
-				this.debug("action: actionHandler not exist");
+				this.debug("action: _actionHandler not exist");
 			}
 		})
 		.then(() => {
@@ -302,9 +316,9 @@ class BaseAction extends RouteComponent {
 	protected populateFileFields():Object[]{
 		this.debug("action:populateFileFields()");
 		var fileFields: Object[] = [];
-		var fieldList: Field.BaseField[] = this.getFieldList();
-		for (var index in this.fieldList) {
-			var field: Field.BaseField = this.fieldList[index];
+		// var fieldList: Field.BaseField[] = this.getFieldList();
+		for (var index in this._fieldList) {
+			var field: Field.BaseField = this._fieldList[index];
 			if (field.getType() === FieldType.FILE_FIELD) {
 				fileFields.push({
 					name: field.getFieldName(),

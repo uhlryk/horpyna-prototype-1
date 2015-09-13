@@ -12,14 +12,10 @@ describe("Funkcje ProcessModel Nodes", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("process");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "myAction");
-
-			myModule.addAction(myAction);
+			var myModule = new Core.Module(myApp.root, "process");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 			var myProcessModel = new Core.Node.ProcessModel();
 			myAction.setActionHandler(myProcessModel.getActionHandler());
-
 			var myNode1 = new Core.Node.BaseNode([myProcessModel]);
 			myNode1.setContent(function(data) {
 				return beforeMapping;
@@ -577,11 +573,9 @@ describe("Funkcje ProcessModel Nodes", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("process");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "myAction");
+			var myModule = new Core.Module(myApp.root, "process");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 
-			myModule.addAction(myAction);
 			var myProcessModel = new Core.Node.ProcessModel();
 			myAction.setActionHandler(myProcessModel.getActionHandler());
 

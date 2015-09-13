@@ -11,8 +11,8 @@ class BaseValidator extends Component {
 	public message = "";
 	private _isFileValidator:boolean;
 	private _validatorPhase:string;
-	constructor(name:string, isFileValidator:boolean, validationPhase?:string){
-		super(name);
+	constructor(parent: BaseField, name: string, isFileValidator: boolean, validationPhase?: string) {
+		super(<Component>parent, name);
 		this._isFileValidator = isFileValidator;
 		this._validatorPhase = validationPhase ? validationPhase : BaseValidator.POSTUPLOAD_PHASE;
 	}

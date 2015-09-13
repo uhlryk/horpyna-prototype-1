@@ -7,8 +7,8 @@ class BaseFilter extends Component {
 	public FILTER_NAME = "BaseFilter";
 	private _isFileFilter:boolean;
 	private _logic: (value: any) => any;
-	constructor(name:string, isFileFilter:boolean){
-		super(name);
+	constructor(parent: Field.BaseField, name:string, isFileFilter:boolean){
+		super(<Component>parent, name);
 		this.initDebug("filter:"+this.FILTER_NAME);
 		this._isFileFilter = isFileFilter;
 		this._logic = this.logic;

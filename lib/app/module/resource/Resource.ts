@@ -29,67 +29,49 @@ class Resource extends Core.Module {
 		this.onConstructActionHandlers();
 	}
 	protected onConstructModels(){
-		this._model = new Core.Model("model");
-		this.addModel(this._model, true);
+		this._model = new Core.Model(this, "default");
 	}
 	protected onConstructActions(){
-		this._fileAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "file");
-		this._fileAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
-		var columntField = new Core.Field.BaseField("column", Core.Field.FieldType.QUERY_FIELD, { optional: true });
-		this._fileAction.addField(columntField);
+		this._fileAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.GET, "file");
+		new Core.Field.BaseField(this._fileAction, "id", Core.Field.FieldType.PARAM_FIELD);
+		new Core.Field.BaseField(this._fileAction, "column", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		new Core.Field.BaseField(this._fileAction, "count", Core.Field.FieldType.QUERY_FIELD, { optional: true });
 
-		this._fileAction.addField(new Core.Field.BaseField("count", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
-		this.addAction(this._fileAction);
-
-		this._listAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "list");
-
+		this._listAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.GET, "list");
 		//order
-		this._listAction.addField(new Core.Field.BaseField("o", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
+		new Core.Field.BaseField(this._listAction, "o", Core.Field.FieldType.QUERY_FIELD, { optional: true });
 		//direction asc | desc
-		this._listAction.addField(new Core.Field.BaseField("d", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
+		new Core.Field.BaseField(this._listAction, "d", Core.Field.FieldType.QUERY_FIELD, { optional: true });
 		//page num
-		this._listAction.addField(new Core.Field.BaseField("p", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
+		new Core.Field.BaseField(this._listAction, "p", Core.Field.FieldType.QUERY_FIELD, { optional: true });
 		//page size
-		this._listAction.addField(new Core.Field.BaseField("s", Core.Field.FieldType.QUERY_FIELD, { optional: true }));
-		this.addAction(this._listAction, true);
+		new Core.Field.BaseField(this._listAction, "s", Core.Field.FieldType.QUERY_FIELD, { optional: true });
 
-		this._createAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "create");
-		this.addAction(this._createAction);
-		this._createFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "create");
-		this.addAction(this._createFormAction);
+		this._createAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.POST, "create");
+		this._createFormAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.GET, "create");
 
 		this.onConstructDetailAction();
 
-		this._updateAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "update");
-		this._updateAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
-		this.addAction(this._updateAction);
-		this._updateFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "update");
-		this._updateFormAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
-		this.addAction(this._updateFormAction);
+		this._updateAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.POST, "update");
+		new Core.Field.BaseField(this._updateAction, "id", Core.Field.FieldType.PARAM_FIELD);
+		this._updateFormAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.GET, "update");
+		new Core.Field.BaseField(this._updateFormAction, "id", Core.Field.FieldType.PARAM_FIELD);
 
-
-		this._deleteAction = new Core.Action.BaseAction(Core.Action.BaseAction.POST, "delete");
-		this._deleteAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
-		this.addAction(this._deleteAction);
-		this._deleteFormAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "delete");
-		this._deleteFormAction.addField(new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD));
-		this.addAction(this._deleteFormAction);
+		this._deleteAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.POST, "delete");
+		new Core.Field.BaseField(this._deleteAction, "id", Core.Field.FieldType.PARAM_FIELD);
+		this._deleteFormAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.GET, "delete");
+		new Core.Field.BaseField(this._deleteFormAction, "id", Core.Field.FieldType.PARAM_FIELD);
 	}
 	protected onConstructDetailAction(){
-		this._detailAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "detail");
-		this.addAction(this._detailAction);
-		var idField: Core.Field.BaseField = new Core.Field.BaseField("id", Core.Field.FieldType.PARAM_FIELD);
-		this._detailAction.addField(idField);
+		this._detailAction = new Core.Action.BaseAction(this, Core.Action.BaseAction.GET, "detail");
+		new Core.Field.BaseField(this._detailAction, "id", Core.Field.FieldType.PARAM_FIELD);
 	}
 	protected onConstructActionHandlers(){
-		// var onFormCreate = new OnFormCreateResource("horpyna/jade/createFormAction");
 		var onFormCreate = new OnFormCreateResource(this);
 		this.createFormAction.setActionHandler(onFormCreate.getActionHandler());
 
-		// var onFormUpdate = new OnFormUpdateResource(this.model, "horpyna/jade/updateFormAction", this.listAction, this.fileAction);
 		var onFormUpdate = new OnFormUpdateResource(this);
 		this.updateFormAction.setActionHandler(onFormUpdate.getActionHandler());
-		// var onFormDelete = new OnFormDeleteResource(this.model, "horpyna/jade/deleteFormAction", this.listAction, this.fileAction);
 		var onFormDelete = new OnFormDeleteResource(this);
 		this.deleteFormAction.setActionHandler(onFormDelete.getActionHandler());
 		var onUpdate = new OnUpdateResource(this);
@@ -128,56 +110,49 @@ class Resource extends Core.Module {
 			fieldType = Core.Field.FieldType.FILE_FIELD;
 			fieldOptions['maxFiles'] = options['fieldMaxFiles'] || 1;
 		}
-		var createField: Core.Field.BaseField = new Core.Field.BaseField(name, fieldType, fieldOptions);
+		var createField: Core.Field.BaseField = new Core.Field.BaseField(this.createAction, name, fieldType, fieldOptions);
 		createField.optional = optional;
 		createField.formInputType = formInputType;
-		this.createAction.addField(createField);
 
-		var updateField: Core.Field.BaseField = new Core.Field.BaseField(name, fieldType, fieldOptions);
+		var updateField: Core.Field.BaseField = new Core.Field.BaseField(this.updateAction, name, fieldType, fieldOptions);
 		updateField.optional = optional;
 		updateField.formInputType = formInputType;
-		this.updateAction.addField(updateField);
 		/**
 		 * Jeśli mamy do czynienia z edycją formularza, gdzie dane pole jest plikiem i jest opcjonalne
 		 * to tworzymy dodatkowe pole tekstowe - docelowo będzie to checkbox który pozwala oznaczyć by usunąć stary plik
 		 * bez dodania nowego
 		 */
 		if (formInputType === Core.Form.FormInputType.FILE && optional === true) {
-			var fileHelperField: Core.Field.BaseField = new Core.Field.BaseField(name, Core.Field.FieldType.BODY_FIELD, fieldOptions);
+			var fileHelperField: Core.Field.BaseField = new Core.Field.BaseField(this.updateAction, name, Core.Field.FieldType.BODY_FIELD, fieldOptions);
 			fileHelperField.formInputType = Core.Form.FormInputType.CHECKBOX;
 			fileHelperField.optional = true;
-			this.updateAction.addField(fileHelperField);
 		}
 		for (var i = 0; i < validatorFilterDataList.length; i++) {
 			var validatorFilterData = validatorFilterDataList[i];
 			if (validatorFilterData.class) {
 				validatorFilterData.params.unshift(validatorFilterData.name);
+				validatorFilterData.params.unshift(createField);
 				var createValidatorFilter = Object.create(validatorFilterData.class.prototype);
 				createValidatorFilter.constructor.apply(createValidatorFilter, validatorFilterData.params);
+				validatorFilterData.params[0] = createField;
 				var updateValidatorFilter = Object.create(validatorFilterData.class.prototype);
 				updateValidatorFilter.constructor.apply(updateValidatorFilter, validatorFilterData.params);
-				if (createValidatorFilter instanceof Core.Field.BaseValidator) {
-					createField.addValidator(createValidatorFilter);
-					updateField.addValidator(updateValidatorFilter);
-				} else if (createValidatorFilter instanceof Core.Field.BaseFilter) {
-					createField.addFilter(createValidatorFilter);
-					updateField.addFilter(updateValidatorFilter);
-				}
 			}
 		}
-
 		//na razie nie rozbudowujemy tego tak że system ma zamapowane typ forma a typy kolumn
+		var column:Core.Column.BaseColumn;
 		switch (formInputType){
 			case Core.Form.FormInputType.FILE:
 				if (options['db_file'] === true) {//znaczy że plik ma być zapisywany w bazie danych a nie na dysku
-					this.model.addColumn(new Core.Column.BlobColumn(name));
+					column = new Core.Column.BlobColumn(name);
 				} else {
-					this.model.addColumn(new Core.Column.JsonColumn(name));
+					column = new Core.Column.JsonColumn(name);
 				}
 				break;
 			default:
-				this.model.addColumn(new Core.Column.StringColumn(name, options['length'] || 50));
+				column = new Core.Column.StringColumn(name, options['length'] || 50);
 		}
+		this.model.addColumn(column);
 	}
 }
 export = Resource;

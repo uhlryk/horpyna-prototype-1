@@ -2,6 +2,7 @@
 import express = require("express");
 import Application = require("./Application");
 import Element = require("./Element");
+import Component = require("./component/Component");
 import Dispatcher = require("./dispatcher/Dispatcher");
 import ViewManager = require("./view/ViewManager");
 import SystemModule = require("./component/routeComponent/module/SystemModule");
@@ -52,8 +53,7 @@ class Bootstrap extends Element {
 	protected initSystemActions(){
 		var dispatcher = this.application.dispatcher;
 		var componentManager = this.application.componentManager;
-		var defaultModule: SystemModule = new SystemModule("default");
-		componentManager.addModule(defaultModule);
+		var defaultModule: SystemModule = new SystemModule(componentManager, "default");
 		var beginAction = defaultModule.getAction(SystemModule.ACTION_BEGIN);
 		dispatcher.setBeginAction(beginAction);
 		var finalAction = defaultModule.getAction(SystemModule.ACTION_FINAL);

@@ -114,54 +114,31 @@ describe("Funkcje podstawowe", function() {
 		});
 		it("should throw error when module name contain wrong chars 'ą'", function (done) {
 			expect(function () {
-				new Core.Module("abcABCą");
+				new Core.Module(myApp, "abcABCą");
 			}).to.throw(SyntaxError);
 			done();
 		});
 		it("should throw error when module name contain wrong chars -space", function (done) {
 			expect(function () {
-				new Core.Module("abcA BC");
+				new Core.Module(myApp, "abcA BC");
 			}).to.throw(SyntaxError);
 			done();
 		});
 		it("should NOT throw error when module name contain  chars a-zA-Z-", function (done) {
 			expect(function () {
-				new Core.Module("abcA-BC");
+				new Core.Module(myApp, "abcA-BC");
 			}).to.not.throw(SyntaxError);
 			done();
 		});
 	});
-	describe("Check if application protect from multiple use of Component single instance", function () {
-		var moduleParent1, moduleParent2;
-		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
-			moduleParent1 = new Core.Module("simple1");
-			moduleParent2 = new Core.Module("simple2");
-			done();
-		});
-		it("should throw error when child module is added to both moduleParent1 and moduleParent2", function (done) {
-			var moduleChild = new Core.Module("simple3");
-			moduleParent1.addModule(moduleChild);
-			expect(function () {
-				moduleParent2.addModule(moduleChild);
-			}).to.throw(SyntaxError);
-			done();
-		});
-	});
 	describe("Add to action params and then check route paths", function () {
-
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			var myModule = new Core.Module("mod1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			var myField1 = new Core.Field.BaseField("test", Core.Field.FieldType.PARAM_FIELD);
-			var myField2 = new Core.Field.BaseField("par2", Core.Field.FieldType.PARAM_FIELD);
-			myAction.addField(myField1);
-			myAction.addField(myField2);
+			var myModule = new Core.Module(myApp.root,"mod1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			var myField1 = new Core.Field.BaseField(myAction, "test", Core.Field.FieldType.PARAM_FIELD);
+			var myField2 = new Core.Field.BaseField(myAction, "par2", Core.Field.FieldType.PARAM_FIELD);
 
 			myApp.init();
 			// app.use(myApp.getMiddleware());
@@ -181,11 +158,9 @@ describe("Funkcje podstawowe", function() {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			var myModule = new Core.Module("module1");
-			myApp.addModule(myModule);
-			var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			myModule.addAction(myAction);
-			var myModel = new Core.Model("model1");
+			var myModule = new Core.Module(myApp.root, "module1");
+			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
+			var myModel = new Core.Model(myModule, "model1");
 			myModel.addColumn(new Core.Column.StringColumn("a1"));
 			myModel.addColumn(new Core.Column.TextColumn("a2"));
 			myModel.addColumn(new Core.Column.StringColumn("a3", 10, true));
@@ -195,7 +170,6 @@ describe("Funkcje podstawowe", function() {
 			// myModel.addColumn(new Core.Column.HstoreColumn("a4"));
 			myModel.addColumn(new Core.Column.JsonColumn("a5"));
 			myModel.addColumn(new Core.Column.JsonBColumn("a6"));
-			myModule.addModel(myModel);
 			// app.use(myApp.getMiddleware());
 			myApp.init().then(function () {
 				done();
@@ -214,15 +188,10 @@ describe("Funkcje podstawowe", function() {
 		beforeEach(function (done) {
 			app = require('./core/app')();
 			myApp = new Core.Application(app);
-			moduleParent1 = new Core.Module("modu1");
-			myApp.addModule(moduleParent1);
-			moduleChild1 = new Core.Module("child1");
-			moduleParent1.addModule(moduleChild1);
-			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "act1");
-			moduleChild1.addAction(action1);
-			moduleParent2 = new Core.Module("modu2");
-			myApp.addModule(moduleParent2);
-			// app.use(myApp.getMiddleware());
+			moduleParent1 = new Core.Module(myApp.root, "modu1");
+			moduleChild1 = new Core.Module(moduleParent1, "child1");
+			var action1 = new Core.Action.BaseAction(moduleChild1, Core.Action.BaseAction.GET, "act1");
+			moduleParent2 = new Core.Module(myApp.root, "modu2");
 			done();
 		});
 		it("kod 400 blokada 'on', nasłuch lokalny", function (done) {

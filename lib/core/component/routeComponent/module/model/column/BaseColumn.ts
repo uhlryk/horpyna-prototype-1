@@ -1,16 +1,19 @@
 /// <reference path="../../../../../../../typings/tsd.d.ts" />
-import Component = require("../../../../Component");
+import Element = require("../../../../../Element");
 import Sequelize = require("sequelize");
 import DataTypes = require("./DataTypes");
 
-class Column extends Component{
+class Column extends Element{
 	public static DataTypes = DataTypes;
 	private attributeOptions:Sequelize.AttributeOptions;
 	constructor(name:string){
-		super(name);
-		this.initDebug("column:"+this.name);
+		super();
+		this.initDebug("column");
 		this.attributeOptions = <Sequelize.AttributeOptions>{};
 		this.attributeOptions.field = name;
+	}
+	public getName():string{
+		return this.attributeOptions.field;
 	}
 	public setType(type:string){
 		this.debug("setType " + JSON.stringify(type));

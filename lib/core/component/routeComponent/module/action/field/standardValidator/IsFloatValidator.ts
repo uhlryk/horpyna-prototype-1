@@ -1,6 +1,7 @@
 import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./../ValidatorResponse");
 import BaseValidator = require("./../BaseValidator");
+import Field = require("./../Field");
 /**
  * sprawdza czy parametr który jest liczbą w danym przedziale
  */
@@ -11,8 +12,8 @@ class IsFloatValidator extends BaseValidator {
 	public message = "The input is not float"
 	public messageMin  = "The  input is lower than %d"
 	public messageMinMax = "The input should be float between %d and %d";
-	constructor(name: string, min?: number, max?: number) {
-		super(name, false);
+	constructor(parent: Field.BaseField, name: string, min?: number, max?: number) {
+		super(parent, name,false);
 		this.min = min;
 		this.max = max;
 	}

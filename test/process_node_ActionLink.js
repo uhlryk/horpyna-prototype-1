@@ -11,10 +11,8 @@ describe("Testy Node transform.ActionLink", function() {
 	beforeEach(function (done) {
 		app = require('./core/app')();
 		myApp = new Core.Application(app);
-		var myModule = new Core.Module("process");
-		myApp.addModule(myModule);
-		var myAction = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "myAction");
-		myModule.addAction(myAction);
+		var myModule = new Core.Module(myApp.root, "process");
+		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 
 		myProcessModel = new Core.Node.ProcessModel();
 		myAction.setActionHandler(myProcessModel.getActionHandler());
@@ -31,28 +29,16 @@ describe("Testy Node transform.ActionLink", function() {
 				afterMapping = data.getMappedEntry();
 				return null;
 		});
-		testAction1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "testAction1");
-		myModule.addAction(testAction1);
-		var p1 = new Core.Field.BaseField("p1", Core.Field.FieldType.PARAM_FIELD);
-		var p2 = new Core.Field.BaseField("p2", Core.Field.FieldType.PARAM_FIELD);
-		testAction1.addField(p1);
-		testAction1.addField(p2);
-		var q1 = new Core.Field.BaseField("q1", Core.Field.FieldType.QUERY_FIELD);
-		var q2 = new Core.Field.BaseField("q2", Core.Field.FieldType.QUERY_FIELD);
-		testAction1.addField(q1);
-		testAction1.addField(q2);
-
-		testAction2 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "testAction2");
-		var p1 = new Core.Field.BaseField("p1", Core.Field.FieldType.PARAM_FIELD);
-		var p3 = new Core.Field.BaseField("p3", Core.Field.FieldType.PARAM_FIELD);
-		testAction2.addField(p1);
-		testAction2.addField(p3);
-		var q1 = new Core.Field.BaseField("q1", Core.Field.FieldType.QUERY_FIELD);
-		var q3 = new Core.Field.BaseField("q3", Core.Field.FieldType.QUERY_FIELD);
-		testAction2.addField(q1);
-		testAction2.addField(q3);
-
-		myModule.addAction(testAction2);
+		testAction1 = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "testAction1");
+		var p1 = new Core.Field.BaseField(testAction1 ,"p1", Core.Field.FieldType.PARAM_FIELD);
+		var p2 = new Core.Field.BaseField(testAction1, "p2", Core.Field.FieldType.PARAM_FIELD);
+		var q1 = new Core.Field.BaseField(testAction1, "q1", Core.Field.FieldType.QUERY_FIELD);
+		var q2 = new Core.Field.BaseField(testAction1, "q2", Core.Field.FieldType.QUERY_FIELD);
+		testAction2 = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "testAction2");
+		var p1 = new Core.Field.BaseField(testAction2, "p1", Core.Field.FieldType.PARAM_FIELD);
+		var p3 = new Core.Field.BaseField(testAction2, "p3", Core.Field.FieldType.PARAM_FIELD);
+		var q1 = new Core.Field.BaseField(testAction2, "q1", Core.Field.FieldType.QUERY_FIELD);
+		var q3 = new Core.Field.BaseField(testAction2, "q3", Core.Field.FieldType.QUERY_FIELD);
 		myApp.init().then(function () {
 			done();
 		});

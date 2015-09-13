@@ -14,11 +14,8 @@ describe("Funkcje Modułu JadeCore.App.Module.Resource", function() {
 		before(function (done) {
 			app = require('./jade/app')();
 			myApp = new Core.Application(app);
-			module1 = new Core.Module("res1");
-			myApp.addModule(module1);
-			// myApp.setViewClass(Core.View.JadeView);
-			var action1 = new Core.Action.BaseAction(Core.Action.BaseAction.GET, "action1");
-			module1.addAction(action1);
+			module1 = new Core.Module(myApp.root, "res1");
+			var action1 = new Core.Action.BaseAction(module1, Core.Action.BaseAction.GET, "action1");
 			action1.setActionHandler(function (request, response) {
 				return Core.Util.Promise.resolve()
 				.then(function(){
@@ -44,20 +41,18 @@ describe("Funkcje Modułu JadeCore.App.Module.Resource", function() {
 			app = require('./jade/app')();
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
-			moduleResource1 = new Core.App.Module.Resource("res1");
-			myApp.addModule(moduleResource1);
-			var resModel = moduleResource1.getDefaultModel();
+			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
+			var resModel = moduleResource1.model;
 			var nameCol = new Core.Column.StringColumn("name", 50);
 			resModel.addColumn(nameCol);
 			var passCol = new Core.Column.StringColumn("pass", 50);
 			resModel.addColumn(passCol);
 			var createAction = moduleResource1.createAction;
-			createAction.addField(new Core.Field.BaseField("name", Core.Field.FieldType.BODY_FIELD));
-			createAction.addField(new Core.Field.BaseField("pass", Core.Field.FieldType.BODY_FIELD));
+			new Core.Field.BaseField(createAction, "name", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.BaseField(createAction, "pass", Core.Field.FieldType.BODY_FIELD);
 			var updateAction = moduleResource1.updateAction;
-			updateAction.addField(new Core.Field.BaseField("name", Core.Field.FieldType.BODY_FIELD));
-			updateAction.addField(new Core.Field.BaseField("pass", Core.Field.FieldType.BODY_FIELD));
-			// app.use(myApp.getMiddleware());
+			new Core.Field.BaseField(updateAction, "name", Core.Field.FieldType.BODY_FIELD);
+			new Core.Field.BaseField(updateAction, "pass", Core.Field.FieldType.BODY_FIELD);
 			myApp.init().then(function () {
 				done();
 			});

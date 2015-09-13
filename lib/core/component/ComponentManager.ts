@@ -1,4 +1,4 @@
-import Action = require("./routeComponent/module/action/Action");
+ import Action = require("./routeComponent/module/action/Action");
 import Module = require("./routeComponent/module/Module");
 import Component = require("./Component");
 import Util = require("../util/Util");
@@ -9,16 +9,15 @@ import CatchPromiseManager = require("../catchPromise/CatchPromiseManager");
 import Dispatcher = require("../dispatcher/Dispatcher");
 import DbManager = require("../dbManager/DbManager");
 class ComponentManager extends Component{
-	public static DISPATCHER_NONE: string = "Need 'dispatcher'";
-	public static DB_MANAGER_NONE: string = "Need 'dbManager'";
-
 	private _dispatcher: Dispatcher;
 	private _dbManager: DbManager;
 	private _actionCatchPromiseManager: CatchPromiseManager;
 	private _initCatchPromiseManager: CatchPromiseManager;
 	private _moduleList:Module[];
-	constructor() {
-		super("ComponentManager");
+	constructor(dispatcher: Dispatcher, dbManager: DbManager) {
+		super(this, "ComponentManager");
+		this._dispatcher = dispatcher;
+		this._dbManager = dbManager;
 		this._moduleList = [];
 		this.componentManager = this;
 		this._actionCatchPromiseManager = new CatchPromiseManager();
@@ -29,9 +28,11 @@ class ComponentManager extends Component{
 		// var finalInitCatchPromise = new FinalInitCatchPromise();
 		// this._initCatchPromiseManager.addCatch(finalInitCatchPromise);
 	}
-	public addModule(module: Module): Util.Promise<void> {
-		this._moduleList.push(module);
-		return module.prepare(this);
+	public addChild(child: Component) {
+		super.addChild(child);
+		if (child instanceof Module) {
+			this._moduleList.push(<Module>child);
+		}
 	}
 	public getModule(name:string){
 		return this._moduleList[name];
@@ -48,14 +49,8 @@ class ComponentManager extends Component{
 	public get initCatchPromiseManager(): CatchPromiseManager {
 		return this._initCatchPromiseManager;
 	}
-	public set dispatcher(v: Dispatcher){
-		this._dispatcher = v;
-	}
 	public get dispatcher(): Dispatcher{
 		return this._dispatcher;
-	}
-	public set dbManager(v:DbManager){
-		this._dbManager = v;
 	}
 	public get dbManager(): DbManager {
 		return this._dbManager;
@@ -66,27 +61,10 @@ class ComponentManager extends Component{
 	 * A one wywołują to w swoich. Proces idzie do samego dołu. Na tym etapie nie jest zbudowana
 	 * jeszcze cała struktura aplikacji. Niektóre komponenty mogą się rozbudowywać
 	 */
-	public init(): Util.Promise<void> {
-		if (this._dispatcher === undefined) {
-			throw new Error(ComponentManager.DISPATCHER_NONE);
-		}
-		if (this._dbManager === undefined) {
-			throw new Error(ComponentManager.DB_MANAGER_NONE);
-		}
-		this.isInit = true;
-		this._actionCatchPromiseManager.init();
-		this._initCatchPromiseManager.init();
-		var initPromise = Util.Promise.resolve()
-		.then(()=>{
-			return this.initModules();
-		});
-		initPromise = this._initCatchPromiseManager.catchToPromise(initPromise);
-		return initPromise;
-	}
-	public initModules(): Util.Promise<any> {
-		return Util.Promise.map(this._moduleList, (childModule: Module) => {
-			// childModule.setViewClass(this.viewClass);
-			return childModule.init();
+	protected onInit(): Util.Promise<void> {
+		return super.onInit().then(()=>{
+			this._actionCatchPromiseManager.init();
+			this._initCatchPromiseManager.init();
 		});
 	}
 	/**
@@ -96,8 +74,8 @@ class ComponentManager extends Component{
 	 * pasują do wzorca i jeśli tak odpalają callbacki.
 	 */
 	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
-		Util.Promise.map(this._moduleList, (module: Module) => {
-			return module.broadcastPublisher(request, response, type, subtype, emiterPath);
+		Util.Promise.map(this._moduleList, (childModule: Module) => {
+			return childModule.broadcastPublisher(request, response, type, subtype, emiterPath);
 		})
 		.then(() => {
 			done();

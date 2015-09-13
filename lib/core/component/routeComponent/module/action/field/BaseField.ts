@@ -1,4 +1,5 @@
 import Component = require("../../../../Component");
+import BaseAction = require("./../BaseAction");
 import FormInputType = require("./../../form/FormInputType");
 import BaseValidator = require("./BaseValidator");
 import BaseFilter = require("./BaseFilter");
@@ -22,8 +23,8 @@ class BaseField extends Component {
 	 * @param name określa nazwę będącą identyfikatorem komponentu | nazwa parametru otrzymanego z requesta
 	 * @param fieldType url, query, body app
 	 */
-	constructor(name:string, fieldType:string, options?:Object){
-		super(name);
+	constructor(parent: BaseAction,name:string, fieldType: string, options?: Object) {
+		super(<Component>parent, name);
 		this._options = options || {};
 		this._type = fieldType;
 		this._validatorList = [];
@@ -66,40 +67,51 @@ class BaseField extends Component {
 	public setFieldName(fieldName: string) {
 		this._fieldName = fieldName;
 	}
-	public init(): Util.Promise<void> {
-		return super.init()
-		.then(()=>{
-			return this.initValidators();
-		});
-	}
-	public initValidators(): Util.Promise<any> {
-		return Util.Promise.map(this._validatorList, (validator: BaseValidator) => {
-			validator.init();
-		});
-	}
-	public addValidator(validator: BaseValidator): Util.Promise<void> {
-		this._validatorList.push(validator);
-		if (this.isInit === true) {
+	public addChild(child: Component) {
+		if (this.isInit()) {
 			throw SyntaxError(Component.ADD_INIT_CANT);
 		}
-		return validator.prepare(this);
+		super.addChild(child);
+		if (child instanceof BaseValidator) {
+			this._validatorList.push(<BaseValidator>child);
+		} else if (child instanceof BaseFilter) {
+			this._filterList.push(<BaseFilter>child);
+		}
 	}
+	// public init(): Util.Promise<void> {
+	// 	return super.init()
+	// 	.then(()=>{
+	// 		return this.initValidators();
+	// 	});
+	// }
+	// public initValidators(): Util.Promise<any> {
+	// 	return Util.Promise.map(this._validatorList, (validator: BaseValidator) => {
+	// 		validator.init();
+	// 	});
+	// }
+	// public addValidator(validator: BaseValidator): Util.Promise<void> {
+	// 	this._validatorList.push(validator);
+	// 	if (this.isInit === true) {
+	// 		throw SyntaxError(Component.ADD_INIT_CANT);
+	// 	}
+	// 	return validator.prepare(this);
+	// }
 	public getValidatorList(): BaseValidator[] {
 		return this._validatorList;
 	}
 
-	public initFilters(): Util.Promise<any> {
-		return Util.Promise.map(this._filterList, (filter: BaseFilter) => {
-			filter.init();
-		});
-	}
-	public addFilter(filter: BaseFilter): Util.Promise<void> {
-		this._filterList.push(filter);
-		if (this.isInit === true) {
-			throw SyntaxError(Component.ADD_INIT_CANT);
-		}
-		return filter.prepare(this);
-	}
+	// public initFilters(): Util.Promise<any> {
+	// 	return Util.Promise.map(this._filterList, (filter: BaseFilter) => {
+	// 		filter.init();
+	// 	});
+	// }
+	// public addFilter(filter: BaseFilter): Util.Promise<void> {
+	// 	this._filterList.push(filter);
+	// 	if (this.isInit === true) {
+	// 		throw SyntaxError(Component.ADD_INIT_CANT);
+	// 	}
+	// 	return filter.prepare(this);
+	// }
 	public getFilterList(): BaseFilter[] {
 		return this._filterList;
 	}

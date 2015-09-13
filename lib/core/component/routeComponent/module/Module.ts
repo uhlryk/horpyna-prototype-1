@@ -1,88 +1,83 @@
 import RouteComponent = require("../RouteComponent");
+import ComponentManager = require("../../ComponentManager");
+import Component = require("../../Component");
 import Event = require("../../event/Event");
 import Action = require("./action/Action");
 import Model = require("./model/Model");
 import Util = require("../../../util/Util");
 class Module extends RouteComponent{
-	private actionList:Action.BaseAction[];
-	private _defaultAction:Action.BaseAction;
-	private modelList:Model[];
-	private defaultModel:Model;
-	private moduleList:Module[];
+	private _actionList:Action.BaseAction[];
+	// private _defaultAction:Action.BaseAction;
+	private _modelList:Model[];
+	// private _defaultModel:Model;
+	private _moduleList:Module[];
 	// private defaultModule : Module;
-	private subscriberList:Event.BaseEvent[];
-	constructor(name:string){
-		this.actionList = [];
+	private _subscriberList:Event.BaseEvent[];
+	constructor(parent: Module | ComponentManager, name: string) {
+		this._actionList = [];
 		// this.defaultActionList = [];
-		this.moduleList = [];
-		this.modelList = [];
-		this.subscriberList = [];
-		super(name);
+		this._moduleList = [];
+		this._modelList = [];
+		this._subscriberList = [];
+		super(<Component>parent, name);
 	}
 
-	public init(): Util.Promise<void> {
-		return super.init()
-		.then(() => {
-			return this.initModules();
-		})
-		.then(() => {
-			return this.initActions();
-		})
-		.then(() => {
-			return this.initModels();
-		});
-	}
-	public initModules(): Util.Promise<any> {
-		return Util.Promise.map(this.moduleList, (childModule: Module) => {
-			// childModule.setViewClass(this.getViewClass());
-			return childModule.init();
-		});
-	}
-	public initModels(): Util.Promise<any> {
-		return Util.Promise.map(this.modelList, (model: Model) => {
-			return model.init();
-		});
-	}
-	public initActions(): Util.Promise<any> {
-		return Util.Promise.map(this.actionList, (action: Action.BaseAction) => {
-			// action.setViewClass(this.getViewClass());
-			return action.init();
-		});
-	}
-	protected addAction(action: Action.BaseAction, isDefault?:boolean): Util.Promise<void> {
-		this.actionList.push(action);
-		return action.prepare(this);
-		if(isDefault === true){
-			this._defaultAction = action;
+	public addChild(child: Component) {
+		super.addChild(child);
+		if (child instanceof Module) {
+			this._moduleList.push(<Module>child);
+		} else if (child instanceof Action.BaseAction) {
+			this._actionList.push(<Action.BaseAction>child);
+		} else if (child instanceof Model) {
+			this._modelList.push(<Model>child);
 		}
 	}
+	// public initModules(): Util.Promise<any> {
+	// 	return Util.Promise.map(this._moduleList, (childModule: Module) => {
+	// 		return childModule.init();
+	// 	});
+	// }
+	// public initModels(): Util.Promise<any> {
+	// 	return Util.Promise.map(this._modelList, (model: Model) => {
+	// 		return model.init();
+	// 	});
+	// }
+	// public initActions(): Util.Promise<any> {
+	// 	return Util.Promise.map(this._actionList, (action: Action.BaseAction) => {
+	// 		return action.init();
+	// 	});
+	// }
+	// protected addAction(action: Action.BaseAction, isDefault?:boolean): Util.Promise<void> {
+	// 	this._actionList.push(action);
+	// 	return action.prepare(this);
+	// 	if(isDefault === true){
+	// 		this._defaultAction = action;
+	// 	}
+	// }
 	public getActionList():Action.BaseAction[]{
-		return this.actionList;
+		return this._actionList;
 	}
 	public getAction(name:string):Action.BaseAction{
-		for(var index in this.actionList){
-			var action:Action.BaseAction = this.actionList[index];
+		for(var index in this._actionList){
+			var action:Action.BaseAction = this._actionList[index];
 			if(action.name === name){
 				return action;
 			}
 		}
 	}
-	public get defaultAction():Action.BaseAction{
-		return this._defaultAction;
-	}
-	protected addModule(module: Module): Util.Promise<void> {
-		this.moduleList.push(module);
-		return module.prepare(this);
-		// if(isDefault === true){
-			// this.defaultModule = module;
-		// }
-	}
+	// public get defaultAction():Action.BaseAction{
+	// 	return this._defaultAction;
+	// }
+	// protected addModule(module: Module): Util.Promise<void> {
+	// 	this._moduleList.push(module);
+	// 	return module.prepare(this);
+	// }
 	public getModuleList():Module[]{
-		return this.moduleList;
+		return this._moduleList;
 	}
 	public getModule(name:string):Module{
-		for(var index in this.moduleList){
-			var module:Module = this.moduleList[index];
+		for(var index in this._moduleList){
+			var module:Module = this._moduleList[index];
 			if(module.name === name){
 				return module;
 			}
@@ -91,32 +86,32 @@ class Module extends RouteComponent{
 	// public getDefaultModule():Module{
 	// 	return this.defaultModule;
 	// }
-	protected addModel(model: Model, isDefault?: boolean): Util.Promise<void> {
-		this.modelList.push(model);
-		if(isDefault === true){
-			this.defaultModel = model;
-		}
-		return model.prepare(this);
-	}
+	// protected addModel(model: Model, isDefault?: boolean): Util.Promise<void> {
+	// 	this._modelList.push(model);
+	// 	if(isDefault === true){
+	// 		this._defaultModel = model;
+	// 	}
+	// 	return model.prepare(this);
+	// }
 	public getModelList():Model[]{
-		return this.modelList;
+		return this._modelList;
 	}
-	public getDefaultModel():Model{
-		return this.defaultModel;
-	}
+	// public getDefaultModel():Model{
+	// 	return this._defaultModel;
+	// }
 	public getModel(name:string):Model{
-		for(var index in this.modelList){
-			var model:Model = this.modelList[index];
+		for(var index in this._modelList){
+			var model:Model = this._modelList[index];
 			if(model.name === name){
 				return model;
 			}
 		}
 	}
 	public subscribe(subscriber:Event.BaseEvent){
-		this.subscriberList.push(subscriber);
+		this._subscriberList.push(subscriber);
 	}
 	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
-		Util.Promise.map(this.subscriberList, (subscriber: Event.BaseEvent) => {
+		Util.Promise.map(this._subscriberList, (subscriber: Event.BaseEvent) => {
 			if(subscriber.isPublic() !== isPublic) {
 				return;
 			}
@@ -147,12 +142,11 @@ class Module extends RouteComponent{
 			this.callSubscribers(request, response, type, subtype, emiterPath, true, resolve);
 		})
 		.then(()=> {
-			Util.Promise.map(this.moduleList, (module:Module)=> {
+			Util.Promise.map(this._moduleList, (module:Module)=> {
 				return module.broadcastPublisher(request, response, type, subtype, emiterPath);
 			})
 		});
 	}
-
 	/**
 	 * sprawdza czy dana ścieżka jest na nasłuchu
 	 */
@@ -162,6 +156,5 @@ class Module extends RouteComponent{
 		}
 		return false;
 	}
-
 }
 export = Module;

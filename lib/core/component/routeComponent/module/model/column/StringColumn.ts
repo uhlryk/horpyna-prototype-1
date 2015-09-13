@@ -2,7 +2,7 @@ import BaseColumn = require("./BaseColumn");
 class StringColumn extends BaseColumn{
 	private length:number;
 	private binary:boolean;
-	constructor(name:string, length?:number, binary?:boolean){
+	constructor(name: string, length?:number, binary?: boolean) {
 		super(name);
 		this.debug("String constructor length:" +length + " binary:"+binary);
 		this.length = length;

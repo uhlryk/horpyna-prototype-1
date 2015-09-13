@@ -1,6 +1,7 @@
 import Util = require("../../../../../../util/Util");
 import ValidatorResponse = require("./../ValidatorResponse");
 import BaseValidator = require("./../BaseValidator");
+import Field = require("./../Field");
 /**
  * sprawdza czy parametr który jest stringiem ma dany rozmiar
  */
@@ -10,8 +11,8 @@ class IsStringLengthValidator extends BaseValidator {
 	private max: number;
 	public messageMin = "The input is less than %s characters long"
 	public messageMax = "The input is more than %s characters long";
-	constructor(name: string, min: number, max?: number) {
-		super(name, false);
+	constructor(parent: Field.BaseField, name: string, min: number, max?: number) {
+		super(parent, name,false);
 		this.min = min;
 		this.max = max;
 	}

@@ -12,18 +12,15 @@ class SystemModule extends  Module{
 	public static ACTION_BEGIN = "begin";
 	public onConstructor(){
 		super.onConstructor();
-		var beginAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, SystemModule.ACTION_BEGIN);
-		this.addAction(beginAction);
+		var beginAction: Action.BaseAction = new Action.BaseAction(this, Action.BaseAction.ALL, SystemModule.ACTION_BEGIN);
 		beginAction.setActionHandler((request, response) => {
 			return this.onBeginAction(request, response);
 		});
-		var finalAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, SystemModule.ACTION_FINAL);
-		this.addAction(finalAction);
+		var finalAction: Action.BaseAction = new Action.BaseAction(this, Action.BaseAction.ALL, SystemModule.ACTION_FINAL);
 		finalAction.setActionHandler((request, response) => {
 			return this.onFinalAction(request, response);
 		});
-		var homeAction: Action.BaseAction = new Action.BaseAction(Action.BaseAction.ALL, SystemModule.ACTION_HOME);
-		this.addAction(homeAction);
+		var homeAction: Action.BaseAction = new Action.BaseAction(this, Action.BaseAction.ALL, SystemModule.ACTION_HOME);
 		homeAction.setActionHandler((request, response) => {
 			return this.onHomeAction(request, response);
 		});
