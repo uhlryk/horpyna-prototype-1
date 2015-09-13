@@ -1,7 +1,6 @@
 import IActionHandler = require("./IActionHandler");
 import Response = require("./Response");
 import Request = require("./Request");
-import BaseAction = require("./BaseAction");
 import Util = require("./../../../../util/Util");
 import Element = require("./../../../../Element");
 /**
@@ -15,7 +14,7 @@ class ActionHandlerController extends Element{
 		this.initDebug("ahc");
 		this._actionHandler = this.actionHandler;
 	}
-	protected actionHandler(request: Request, response: Response, action: BaseAction): Util.Promise<void> {
+	protected actionHandler(request: Request, response: Response): Util.Promise<void> {
 		return Util.Promise.resolve();
 	}
 	public setActionHandler(v: IActionHandler) {

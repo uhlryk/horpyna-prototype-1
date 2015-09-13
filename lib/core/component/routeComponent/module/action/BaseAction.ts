@@ -219,7 +219,7 @@ class BaseAction extends RouteComponent {
 			this.debug("action: check _actionHandler if exist");
 			if (this._actionHandler) {
 				this.debug("action: _actionHandler exist");
-				return this._actionHandler(request, response, this);
+				return this._actionHandler(request, response);
 			} else {
 				this.debug("action: _actionHandler not exist");
 			}

@@ -1,7 +1,6 @@
 import IActionHandler = require("./../routeComponent/module/action/IActionHandler");
 import Response = require("./../routeComponent/module/action/Response");
 import Request = require("./../routeComponent/module/action/Request");
-import BaseAction = require("./../routeComponent/module/action/BaseAction");
 import Util = require("./../../util/Util");
 
 import BaseNode = require("./BaseNode");
@@ -23,7 +22,7 @@ class ProcessModel extends BaseNode{
 		this.initDebug("process");
 		this._actionHandler = this.actionHandler;
 	}
-	protected actionHandler(request: Request, response: Response, action: BaseAction): Util.Promise<void> {
+	protected actionHandler(request: Request, response: Response): Util.Promise<void> {
 		return Util.Promise.resolve()
 		.then(()=>{
 			var processNodeList:IProcessObject[] = [];
@@ -89,8 +88,8 @@ class ProcessModel extends BaseNode{
 	 * @return {IActionHandler} [description]
 	 */
 	public getActionHandler():IActionHandler{
-		return (request, response, action) => {
-			return this._actionHandler(request, response, action);
+		return (request, response) => {
+			return this._actionHandler(request, response);
 		};
 	}
 }
