@@ -10,14 +10,33 @@ class List extends Core.Action.BaseAction {
 		super(parent, Core.Action.BaseAction.GET, name);
 	}
 	public onConstructor() {
-		//order
-		new Core.Field.BaseField(this, "o", Core.Field.FieldType.QUERY_FIELD, { optional: true });
-		//direction asc | desc
-		new Core.Field.BaseField(this, "d", Core.Field.FieldType.QUERY_FIELD, { optional: true });
-		//page num
-		new Core.Field.BaseField(this, "p", Core.Field.FieldType.QUERY_FIELD, { optional: true });
-		//page size
-		new Core.Field.BaseField(this, "s", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		var orderQuery = new Core.Field.BaseField(this, "o", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		var directionQuery = new Core.Field.BaseField(this, "d", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		var directionFilter = new Core.Field.BaseFilter(directionQuery, "val1", false);
+		directionFilter.setLogic(function(value) {
+			if(value !== 'asc' && value !== 'desc'){
+				value = 'asc';
+			}
+			return value;
+		});
+		var pageNumQuery = new Core.Field.BaseField(this, "p", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		new Core.Field.FilterStandard.ToInt(pageNumQuery, "intFilter");
+		var pageNumFilter = new Core.Field.BaseFilter(directionQuery, "sizeFilter", false);
+		pageNumFilter.setLogic(function(value) {
+			if (value < 1 ) {
+				value = 1;
+			}
+			return value;
+		});
+		var pageSizeQuery = new Core.Field.BaseField(this, "s", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		new Core.Field.FilterStandard.ToInt(pageSizeQuery, "intFilter");
+		var pageSizeFilter = new Core.Field.BaseFilter(pageSizeQuery, "sizeFilter", false);
+		pageNumFilter.setLogic(function(value) {
+			if (value < 1 ) {
+				value = 1;
+			}
+			return value;
+		});
 	}
 	public configProcessModel() {
 		var processModel = new Core.Node.ProcessModel();

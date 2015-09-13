@@ -38,8 +38,8 @@ class List extends BaseDbNode {
 	 */
 	protected getPageValue(data: NodeData, limit: number): number {
 		var value = Number(data.getMappedValue("page"));
-		if (value < 0 || value > limit) {
-			value = 0;
+		if (value < 1 || value > limit) {
+			value = 1;
 		}
 		return value
 	}

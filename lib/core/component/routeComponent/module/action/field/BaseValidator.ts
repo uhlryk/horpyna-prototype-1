@@ -11,10 +11,12 @@ class BaseValidator extends Component {
 	public message = "";
 	private _isFileValidator:boolean;
 	private _validatorPhase:string;
+	private _logic: (value: any, data: Object, response: ValidatorResponse) => boolean;
 	constructor(parent: BaseField, name: string, isFileValidator: boolean, validationPhase?: string) {
 		super(<Component>parent, name);
 		this._isFileValidator = isFileValidator;
 		this._validatorPhase = validationPhase ? validationPhase : BaseValidator.POSTUPLOAD_PHASE;
+		this._logic = this.setIsValid;
 	}
 	public isFileValidator():boolean{
 		return this._isFileValidator;
@@ -51,8 +53,11 @@ class BaseValidator extends Component {
 			validator: this.VALIDATOR_NAME,
 			field: this.getFieldName()
 		};
-		response.valid = this.setIsValid(value, data, response);
+		response.valid = this._logic(value, data, response);
 		done(response);
+	}
+	public setLogic(v: (value: any, data: Object, response: ValidatorResponse) => boolean) {
+		this._logic = v;
 	}
 	/**
 	 * Wydzielony fragment odpowiadający za określenie dla walidacji true|false
