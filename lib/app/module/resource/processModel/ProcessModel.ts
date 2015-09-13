@@ -1,1 +1,0 @@
-export import Detail = require("./Detail");

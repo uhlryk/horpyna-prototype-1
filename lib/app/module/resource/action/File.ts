@@ -1,17 +1,23 @@
 import Core = require("../../../../index");
 /**
-/**
  * Odpowiada za logikę akcji szczegółów
  */
-class OnFileResource extends Core.Node.ProcessModel {
+class File extends Core.Action.BaseAction {
 	private _module: Core.App.Module.Resource;
-	constructor(module: Core.App.Module.Resource) {
-		super();
-		this._module = module;
-		this.onConstructor();
+	constructor(parent: Core.App.Module.Resource, name:string) {
+		this._module = parent;
+		super(parent, Core.Action.BaseAction.GET, name);
 	}
-	protected onConstructor() {
-		var isValid = new Core.Node.Request.IsValid([this]);
+	public onConstructor() {
+		new Core.Field.BaseField(this, "id", Core.Field.FieldType.PARAM_FIELD);
+		new Core.Field.BaseField(this, "column", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+		new Core.Field.BaseField(this, "count", Core.Field.FieldType.QUERY_FIELD, { optional: true });
+	}
+	public configProcessModel(){
+		var processModel = new Core.Node.ProcessModel();
+		this.setActionHandler(processModel.getActionHandler());
+
+		var isValid = new Core.Node.Request.IsValid([processModel]);
 
 		var findDbData = new Core.Node.Db.Find([isValid]);
 		findDbData.setModel(this._module.model);
@@ -33,4 +39,4 @@ class OnFileResource extends Core.Node.ProcessModel {
 		var downloadFile = new Core.Node.Response.Download([fileToShow]);
 	}
 }
-export = OnFileResource;
+export = File;

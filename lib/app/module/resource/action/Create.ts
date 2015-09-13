@@ -1,23 +1,27 @@
 import Core = require("../../../../index");
 /**
- * Odpowiada za logikę tworzenia danych
+ * Odpowiada za logikę akcji szczegółów
  */
-class OnCreateResource extends Core.Node.ProcessModel {
+class Create extends Core.Action.BaseAction {
 	private _module: Core.App.Module.Resource;
-	constructor(module: Core.App.Module.Resource) {
-		super();
-		this._module = module;
-		this.onConstructor();
+	constructor(parent: Core.App.Module.Resource, name:string) {
+		this._module = parent;
+		super(parent, Core.Action.BaseAction.POST, name);
 	}
-	protected onConstructor() {
-		var isUnvalid = new Core.Node.Request.IsValid([this]);
+	public onConstructor() {
+	}
+	public configProcessModel(){
+		var processModel = new Core.Node.ProcessModel();
+		this.setActionHandler(processModel.getActionHandler());
+
+		var isUnvalid = new Core.Node.Request.IsValid([processModel]);
 		isUnvalid.setNegation();
 		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
 		errorResponseCode.setStatus(422);
 		var forwardToForm = new Core.Node.Response.Forward([isUnvalid]);
 		forwardToForm.setTargetAction(this._module.createFormAction);
 
-		var isValid = new Core.Node.Request.IsValid([this]);
+		var isValid = new Core.Node.Request.IsValid([processModel]);
 
 		var fileSavePrepare = new Core.App.Node.FileToSave([isValid]);
 		fileSavePrepare.setAction(this._module.fileAction);
@@ -35,4 +39,4 @@ class OnCreateResource extends Core.Node.ProcessModel {
 		var navSendDataNode = new Core.Node.Response.SendData([createDbData]);
 	}
 }
-export = OnCreateResource;
+export = Create;

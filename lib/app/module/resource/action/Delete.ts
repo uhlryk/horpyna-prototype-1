@@ -2,22 +2,27 @@ import Core = require("../../../../index");
 /**
  * Odpowiada za logikę akcji szczegółów
  */
-class OnDeleteResource extends Core.Node.ProcessModel {
-	private _module: Core.App.Module.Resource
-	constructor(module: Core.App.Module.Resource) {
-		super();
-		this._module = module;
-		this.onConstructor();
+class Delete extends Core.Action.BaseAction {
+	private _module: Core.App.Module.Resource;
+	constructor(parent: Core.App.Module.Resource, name:string) {
+		this._module = parent;
+		super(parent, Core.Action.BaseAction.POST, name);
 	}
-	protected onConstructor() {
-		var isUnvalid = new Core.Node.Request.IsValid([this]);
+	public onConstructor() {
+		var idField: Core.Field.BaseField = new Core.Field.BaseField(this, "id", Core.Field.FieldType.PARAM_FIELD);
+	}
+	public configProcessModel(){
+		var processModel = new Core.Node.ProcessModel();
+		this.setActionHandler(processModel.getActionHandler());
+
+		var isUnvalid = new Core.Node.Request.IsValid([processModel]);
 		isUnvalid.setNegation();
 		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
 		errorResponseCode.setStatus(422);
 		var forwardToForm = new Core.Node.Response.Forward([isUnvalid]);
 		forwardToForm.setTargetAction(this._module.deleteFormAction);
 
-		var isValid = new Core.Node.Request.IsValid([this]);
+		var isValid = new Core.Node.Request.IsValid([processModel]);
 
 		var findDbData = new Core.Node.Db.Find([isValid]);
 		findDbData.setModel(this._module.model);
@@ -44,4 +49,4 @@ class OnDeleteResource extends Core.Node.ProcessModel {
 		var navSendDataNode = new Core.Node.Response.SendData([findDbData]);
 	}
 }
-export = OnDeleteResource;
+export = Delete;

@@ -1,1 +1,9 @@
 export import Detail = require("./Detail");
+export import List = require("./List");
+export import File = require("./File");
+export import Create = require("./Create");
+export import CreateForm = require("./CreateForm");
+export import Update = require("./Update");
+export import UpdateForm = require("./UpdateForm");
+export import Delete = require("./Delete");
+export import DeleteForm = require("./DeleteForm");

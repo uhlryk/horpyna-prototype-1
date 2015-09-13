@@ -1,20 +1,25 @@
 import Core = require("../../../../index");
 /**
- * Odpowiada za wyświetlanie formularza z danymi które zostaną usunięte
+ * Odpowiada za logikę akcji szczegółów
  */
-class OnFormDelete extends Core.Node.ProcessModel {
+class DeleteForm extends Core.Action.BaseAction {
 	private _module: Core.App.Module.Resource;
-	constructor(module: Core.App.Module.Resource) {
-		super();
-		this._module = module;
-		this.onConstructor();
+	constructor(parent: Core.App.Module.Resource, name:string) {
+		this._module = parent;
+		super(parent, Core.Action.BaseAction.GET, name);
 	}
-	protected onConstructor() {
-		var formGenerator = new Core.Node.Form.Generate([this]);
+	public onConstructor() {
+		var idField: Core.Field.BaseField = new Core.Field.BaseField(this, "id", Core.Field.FieldType.PARAM_FIELD);
+	}
+	public configProcessModel(){
+		var processModel = new Core.Node.ProcessModel();
+		this.setActionHandler(processModel.getActionHandler());
+
+		var formGenerator = new Core.Node.Form.Generate([processModel]);
 		formGenerator.addFormAction(this._module.deleteAction);
 		formGenerator.addFormAction(this._module.deleteFormAction);
 
-		var findDbData = new Core.Node.Db.Find([this]);
+		var findDbData = new Core.Node.Db.Find([processModel]);
 		findDbData.setModel(this._module.model);
 		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
@@ -36,7 +41,7 @@ class OnFormDelete extends Core.Node.ProcessModel {
 		var sendPopulateDataForm = new Core.Node.Response.SendData([populateData]);
 		sendPopulateDataForm.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE);
 		sendPopulateDataForm.setStatus(200);
-		sendPopulateDataForm.setView("horpyna/jade/createFormAction");
+		sendPopulateDataForm.setView("horpyna/jade/deleteFormAction");
 	}
 }
-export = OnFormDelete;
+export = DeleteForm;

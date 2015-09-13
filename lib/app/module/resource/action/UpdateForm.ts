@@ -2,15 +2,20 @@ import Core = require("../../../../index");
 /**
  * Odpowiada za logikę wyświetlania danych do edycji danych
  */
-class OnFormCreateResource extends Core.Node.ProcessModel {
+class UpdateForm extends Core.Action.BaseAction {
 	private _module: Core.App.Module.Resource;
-	constructor(module: Core.App.Module.Resource) {
-		super();
-		this._module = module;
-		this.onConstructor();
+	constructor(parent: Core.App.Module.Resource, name:string) {
+		this._module = parent;
+		super(parent, Core.Action.BaseAction.GET, name);
 	}
-	protected onConstructor() {
-		var getValidationMessage = new Core.Node.Request.GetData([this]);
+	public onConstructor() {
+		var idField: Core.Field.BaseField = new Core.Field.BaseField(this, "id", Core.Field.FieldType.PARAM_FIELD);
+	}
+	public configProcessModel(){
+		var processModel = new Core.Node.ProcessModel();
+		this.setActionHandler(processModel.getActionHandler());
+
+		var getValidationMessage = new Core.Node.Request.GetData([processModel]);
 		getValidationMessage.setKey("validationError");
 
 		var ifValidationErrorDataExist = new Core.Node.Gateway.IfExist([getValidationMessage]);
@@ -18,11 +23,11 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 		var ifNoValidationError = new Core.Node.Gateway.IfExist([getValidationMessage]);
 		ifNoValidationError.setNegation();
 
-		var formGenerator = new Core.Node.Form.Generate([this]);
+		var formGenerator = new Core.Node.Form.Generate([processModel]);
 		formGenerator.addFormAction(this._module.updateAction);
 		formGenerator.addFormAction(this._module.updateFormAction);
 
-		var findDbData = new Core.Node.Db.Find([this]);
+		var findDbData = new Core.Node.Db.Find([processModel]);
 		findDbData.setModel(this._module.model);
 		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
@@ -52,4 +57,4 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 		sendPopulateDataForm.setView("horpyna/jade/createFormAction");
 	}
 }
-export = OnFormCreateResource;
+export = UpdateForm;

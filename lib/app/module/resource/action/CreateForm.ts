@@ -1,16 +1,20 @@
 import Core = require("../../../../index");
 /**
- * Odpowiada za logikę tworzenia danych
+ * Odpowiada za logikę akcji szczegółów
  */
-class OnFormCreateResource extends Core.Node.ProcessModel {
+class CreateForm extends Core.Action.BaseAction {
 	private _module: Core.App.Module.Resource;
-	constructor(module: Core.App.Module.Resource) {
-		super();
-		this._module = module;
-		this.onConstructor();
+	constructor(parent: Core.App.Module.Resource, name:string) {
+		this._module = parent;
+		super(parent, Core.Action.BaseAction.GET, name);
 	}
-	protected onConstructor() {
-		var getValidationMessage = new Core.Node.Request.GetData([this]);
+	public onConstructor() {
+	}
+	public configProcessModel(){
+		var processModel = new Core.Node.ProcessModel();
+		this.setActionHandler(processModel.getActionHandler());
+
+		var getValidationMessage = new Core.Node.Request.GetData([processModel]);
 		getValidationMessage.setKey("validationError");
 
 		var ifValidationErrorDataExist = new Core.Node.Gateway.IfExist([getValidationMessage]);
@@ -21,7 +25,7 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 		var errorResponseCode = new Core.Node.Response.SendData([ifValidationErrorDataExist]);
 		errorResponseCode.setStatus(422);
 
-		var formGenerator = new Core.Node.Form.Generate([this]);
+		var formGenerator = new Core.Node.Form.Generate([processModel]);
 		formGenerator.addFormAction(this._module.createAction);
 		formGenerator.addFormAction(this._module.createFormAction);
 
@@ -37,4 +41,4 @@ class OnFormCreateResource extends Core.Node.ProcessModel {
 		sendForm.setView("horpyna/jade/createFormAction");
 	}
 }
-export = OnFormCreateResource;
+export = CreateForm;
