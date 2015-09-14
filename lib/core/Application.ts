@@ -26,6 +26,7 @@ class Application extends Element {
 		this._frontController.dbManager = new DbManager();
 		this._frontController.componentManager = new ComponentManager(this._frontController.dispatcher, this._frontController.dbManager);
 		this._frontController.viewManager = new ViewManager();
+		this._frontController.dispatcher.setComponentManager(this._frontController.componentManager);
 		this._bootstrap = new Bootstrap(this, router);
 	}
 	/**

@@ -5,7 +5,7 @@ import Element = require("./Element");
 import Component = require("./component/Component");
 import Dispatcher = require("./dispatcher/Dispatcher");
 import ViewManager = require("./view/ViewManager");
-import SystemModule = require("./component/routeComponent/module/SystemModule");
+import DefaultModule = require("./component/routeComponent/module/DefaultModule");
 import DispatcherError = require("./dispatcher/DispatcherError");
 import Util = require("./util/Util");
 import CatchPromise = require("./catchPromise/CatchPromise");
@@ -39,7 +39,7 @@ class Bootstrap extends Element {
 	}
 	public init(){
 		this.initDispatcher();
-		this.initSystemActions();
+		this.initDefaultActions();
 		this.initView();
 		this.initCatchPromises();
 		this.initFileUpload();
@@ -50,16 +50,12 @@ class Bootstrap extends Element {
 		dispatcher.error = dispatcherError;
 		return dispatcher;
 	}
-	protected initSystemActions(){
+	protected initDefaultActions(){
 		var dispatcher = this.application.dispatcher;
 		var componentManager = this.application.componentManager;
-		var defaultModule: SystemModule = new SystemModule(componentManager, "default");
-		var beginAction = defaultModule.getAction(SystemModule.ACTION_BEGIN);
-		dispatcher.setBeginAction(beginAction);
-		var finalAction = defaultModule.getAction(SystemModule.ACTION_FINAL);
-		dispatcher.setFinalAction(finalAction);
-		var homeAction = defaultModule.getAction(SystemModule.ACTION_HOME);
-		dispatcher.setHomeAction(homeAction);
+		var defaultModule: DefaultModule = new DefaultModule(componentManager, "default");
+		dispatcher.setFallbackAction(defaultModule.getFallbackAction());
+		dispatcher.setHomeAction(defaultModule.getHomeAction());
 	}
 	protected initCatchPromises(){
 		var componentManager = this.application.componentManager;

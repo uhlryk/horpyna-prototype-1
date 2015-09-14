@@ -31,7 +31,7 @@ class Response{
 		this.viewParam = new Object();
 		this.expressResponse = expressResponse;
 		this._routePath = null;
-		// this._valid = true;
+		this._allow = true;
 	}
 	/**
 	 * Na podstawie express requesta wyciąga Horpyna request

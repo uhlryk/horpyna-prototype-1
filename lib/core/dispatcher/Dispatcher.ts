@@ -1,20 +1,13 @@
 /// <reference path="../../../typings/tsd.d.ts" />
+import Core = require("../../index");
 import express = require("express");
 import DispatcherError = require("./DispatcherError");
-import Util = require("./../util/Util");
 import ViewManager = require("./../view/ViewManager");
-import Module = require("./../component/routeComponent/module/Module");
-import RouteComponent = require("./../component/routeComponent/RouteComponent");
-import Action = require("./../component/routeComponent/module/action/Action");
-// import Response = require("./../component/routeComponent/module/action/Response");
-// import Request = require("./../component/routeComponent/module/action/Request");
-import Field = require("./../component/routeComponent/module/action/field/Field");
 import Element = require("../Element");
 class Dispatcher extends Element{
-	public static FINAL_ACTION_NOT_SET: string = "Final action is not set'";
-	public static BEGIN_ACTION_NOT_SET: string = "Begin action is not set'";
+	private _componentManager: Core.ComponentManager;
 	public static LAST_ERROR_NOT_SET: string = "Last error is not set'";
-	private router:express.Router;
+	private _router:express.Router;
 
 	private _viewManager: ViewManager;
 	/**
@@ -24,44 +17,39 @@ class Dispatcher extends Element{
 	/**
 	 * Akcja wywoływana na końcu
 	 */
-	private finalAction: Action.BaseAction;
+	private _fallbackAction: Core.Action.BaseAction;
 	/**
 	 * Akcja do obsługi routera '/'
 	 */
-	private homeAction: Action.BaseAction;
-	/**
-	 * Określa akcję wywoływaną przed wszystkimi. Możliwe że ta akcja będzie miała trochę inną
-	 */
-	private beginAction: Action.BaseAction;
-
+	private _homeAction: Core.Action.BaseAction;
 	private _subRouter: express.Router;
 	private _middlewareList: any[];
-	constructor(router: express.Router) {
+	constructor(_router: express.Router) {
 		super();
 		this.initDebug("dispatcher");
-		this.router = router;
+		this._router = _router;
 		this._subRouter = express.Router();
 		this._middlewareList = [];
 	}
 	public set viewManager(v : ViewManager) {
 		this._viewManager = v;
 	}
-	private createRequest(req:express.Request):Action.Request{
-		var request = new Action.Request(req);
+	private createRequest(req:express.Request):Core.Action.Request{
+		var request = new Core.Action.Request(req);
 		return request;
 	}
-	private createResponse(res:express.Response):Action.Response{
-		var response = new Action.Response(res);
+	private createResponse(res:express.Response):Core.Action.Response{
+		var response = new Core.Action.Response(res);
 		return response;
 	}
-	public setBeginAction(action: Action.BaseAction) {
-		this.beginAction = action;
+	public setComponentManager(v: Core.ComponentManager) {
+		this._componentManager = v;
 	}
-	public setHomeAction(action:Action.BaseAction){
-		this.homeAction = action;
+	public setHomeAction(action:Core.Action.BaseAction){
+		this._homeAction = action;
 	}
-	public setFinalAction(action:Action.BaseAction){
-		this.finalAction = action;
+	public setFallbackAction(action:Core.Action.BaseAction){
+		this._fallbackAction = action;
 	}
 	public set error(error:DispatcherError){
 		this._error = error;
@@ -84,7 +72,7 @@ class Dispatcher extends Element{
 	protected middlewareRoute(){
 		for (var i = 0; i < this._middlewareList.length; i++){
 			var middleware = this._middlewareList[i];
-			this.router.use(middleware);
+			this._router.use(middleware);
 		}
 	}
 	/**
@@ -92,26 +80,22 @@ class Dispatcher extends Element{
 	 * najpierw tworzy obiekty response i request które są wrapperami na req i res expressa
 	 */
 	private beginRoute(){
-		this.debug('before route');
-		this.router.use((req,res,next)=>{
-			var handler = this.beginAction.getRequestHandler();
+		this._router.use((req,res,next)=>{
+			this.debug('before route');
 			var request = this.createRequest(req);
 			req['horpynaRequest'] = request;
 			var response = this.createResponse(res);
 			res['horpynaResponse'] = response;
-			response.allow = true;
-			handler(request, response, next);
-			request.action = null;
+			this._componentManager.publish(request, response, "Dispatcher.OnBegin").then(() => { next();});
 		});
 	}
 	private homeRoute(){
-		if (this.homeAction) {
-			this.debug('home route');
-			this.router.all("/", (req, res, next) => {
-				var handler = this.homeAction.getRequestHandler();
-				var request: Action.Request = Action.Request.ExpressToRequest(req);
-				var response: Action.Response = Action.Response.ExpressToResponse(res);
-				response.allow = true;
+		if (this._homeAction) {
+			this._router.all("/", (req, res, next) => {
+				this.debug('home route');
+				var handler = this._homeAction.getRequestHandler();
+				var request: Core.Action.Request = Core.Action.Request.ExpressToRequest(req);
+				var response: Core.Action.Response = Core.Action.Response.ExpressToResponse(res);
 				response.routePath = "/";
 				handler(request, response, next);
 				request.action = null;
@@ -121,39 +105,50 @@ class Dispatcher extends Element{
 		}
 	}
 	private finalRoute(){
-		this.debug('final route');
-		this.router.use((req, res, next) => {
-			var handler = this.finalAction.getRequestHandler();
-			var request: Action.Request = Action.Request.ExpressToRequest(req);
-			var response: Action.Response = Action.Response.ExpressToResponse(res);
-			response.allow = true;
-			this.debug('final action ' + this.finalAction.name);
-			handler(request, response, next);
-			request.action = null;
+		this._router.use((req, res, next) => {
+			if (this._fallbackAction) {
+				var request: Core.Action.Request = Core.Action.Request.ExpressToRequest(req);
+				var response: Core.Action.Response = Core.Action.Response.ExpressToResponse(res);
+				if (response.routePath === null) {
+					this.debug('fallback route');
+					var handler = this._fallbackAction.getRequestHandler();
+					handler(request, response, next);
+				} else {
+					next();
+				}
+			} else {
+				next();
+			}
 		});
-		this.router.use((req, res) => {
+		this._router.use((req, res, next) => {
+			var request: Core.Action.Request = Core.Action.Request.ExpressToRequest(req);
+			var response: Core.Action.Response = Core.Action.Response.ExpressToResponse(res);
+			this.debug('final route');
+			this._componentManager.publish(request, response, "Dispatcher.OnFinal").then(() => { next(); });
+		});
+		this._router.use((req, res) => {
 			this.debug('final render');
-			var response: Action.Response = Action.Response.ExpressToResponse(res);
+			var response: Core.Action.Response = Core.Action.Response.ExpressToResponse(res);
 			this._viewManager.render(req, res);
 		});
 	}
 	private errorRoute(){
 		this.debug('error route');
-		this.router.use(this._error.getErrorHandler());
+		this._router.use(this._error.getErrorHandler());
 	}
 	/**
 	 * konfiguruje routy dla akcji
 	 */
 	private normalRoute(){
-		this.router.use(this._subRouter);
+		this._router.use(this._subRouter);
 	}
 	public addRoute(method:string, routePath:string, beforeHandlerList:Function[], handler:Function){
 		this.debug('standard route method:%s routePath:%s', method, routePath);
 		var routerArgs: any[] = beforeHandlerList.slice();
 		routerArgs.unshift(routePath);
 		routerArgs.push((req, res, next) => {
-			var request: Action.Request = Action.Request.ExpressToRequest(req);
-			var response: Action.Response = Action.Response.ExpressToResponse(res);
+			var request: Core.Action.Request = Core.Action.Request.ExpressToRequest(req);
+			var response: Core.Action.Response = Core.Action.Response.ExpressToResponse(res);
 			response.allow = true;
 			response.routePath = routePath;
 			this.runActionHandler(request, response, handler, next);
@@ -164,7 +159,7 @@ class Dispatcher extends Element{
 	 * dla danej akcji odpala w Promise jej handler,
 	 * jeśli akcja zwróci w response rządanie forwarda to rekurencyjnie funkcja odpali się ponownie
 	 */
-	private runActionHandler(actionRequest: Action.Request, actionResponse: Action.Response, handler: Function, next: () => void): Promise<void> {
+	private runActionHandler(actionRequest: Core.Action.Request, actionResponse: Core.Action.Response, handler: Function, next: () => void): Promise<void> {
 		return new Promise<void>((resolve: () => void) => {
 			handler(actionRequest, actionResponse, resolve);
 		})
@@ -179,26 +174,16 @@ class Dispatcher extends Element{
 		});
 	}
 	public init():void{
-		if(this.beginAction === undefined){
-			this.logger.error(Dispatcher.BEGIN_ACTION_NOT_SET);
-			throw new Error(Dispatcher.BEGIN_ACTION_NOT_SET);
-		}
-		if(this.finalAction === undefined){
-			this.logger.error(Dispatcher.FINAL_ACTION_NOT_SET);
-			throw new Error(Dispatcher.FINAL_ACTION_NOT_SET);
-		}
 		if(this._error === undefined){
 			this.logger.error(Dispatcher.LAST_ERROR_NOT_SET);
 			throw new Error(Dispatcher.LAST_ERROR_NOT_SET);
 		}
-		this.debug('start');
 		this.middlewareRoute();
 		this.beginRoute();
 		this.homeRoute();
 		this.normalRoute();
 		this.finalRoute();
 		this.errorRoute();
-		this.debug('end');
 	}
 }
 export = Dispatcher;
