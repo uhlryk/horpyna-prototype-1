@@ -80,9 +80,6 @@ class Component extends Element {
 	public set componentManager(v: ComponentManager) {
 		this._componentManager = v;
 	}
-	// public static initComponentManager(v: ComponentManager) {
-	// 	Component._componentManager = v;
-	// }
 	public get componentManager() : ComponentManager {
 		return this._componentManager;
 	}
@@ -92,24 +89,6 @@ class Component extends Element {
 	public isInit() : boolean {
 		return this._isInit;
 	}
-	/**
-	 * Komponent się sam inicjuje gdy rodzic wywoła setParent i gdy rodzic jest zainicjowany
-	 * Komponent jest inicjowany przez rodzica gdy tamten ma swoją inicjację
-	 * Komponent w init się inicjuje i inicjuje swoje podrzędne komponenty
-	 */
-	// public init(): Util.Promise<void> {
-		/**
-		 * Brak rodzica przy inicjacji to błąd. komponent może być inicjowany tylko względem rodzica
-		 * A wiec zainicjowany komponent zawsze ma rodzica
-		 */
-	// 	if(!this.parent){
-	// 		throw SyntaxError(Component.INIT_NULL_PARENT);
-	// 	}
-	// 	this.isInit = true;
-	// 	this.componentManager = this.parent.componentManager;
-	// 	return Util.Promise.resolve();
-	// }
-
 	/**
 	 * Każdy komponent musi zostać zainicjowany.
 	 * Inicjacja składa się z dwóch etapów:
@@ -140,28 +119,6 @@ class Component extends Element {
 			return;
 		});
 	}
-	// protected onInit():void{}
-	/**
-	 * Metoda wywoływana jest przez rodzica gdy dany komponent jest dodawany do struktury innego komponentu.
-	 * Dodaje do komponentu referencje na parent component. Dodatkowo sprawdza czy dany komponent
-	 * nie ma już parenta. Dana instancja komponentu może mieć tylko jeden parent.
-	 * @param parent
-	 */
-	// public prepare(v: Component): Util.Promise<void> {
-	// 	if(this._parent){
-	// 		throw SyntaxError(Component.MULTIPLE_PARENT);
-	// 	}
-	// 	this._parent = v;
-		/**
-		 * znaczy że rodzic jest już zainicjowany, więc może się ten moduł sam zainicjować
-		 */
-	// 	if(this.parent.isInit === true){
-	// 		var initPromise = this.init();
-	// 		initPromise = this.componentManager.initCatchPromiseManager.catchToPromise(initPromise);
-	// 		return initPromise;
-	// 	}
-	// 	return Util.Promise.resolve();
-	// }
 	public get parent():Component{
 		return this._parent;
 	}
@@ -211,7 +168,7 @@ class Component extends Element {
 	private emitPublisher(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string): Util.Promise<void> {
 		emiterPath = "/" + this.name + emiterPath;
 		return new Util.Promise<void>((resolve: () => void) => {
-			this.callSubscribers(request, response, type, subtype, emiterPath, false, resolve);
+			this.callEventListeners(request, response, type, subtype, emiterPath, false, resolve);
 		})
 		.then(() => {
 			if (this.parent !== this) {
@@ -222,7 +179,7 @@ class Component extends Element {
 	/**
 	 * Nadpisywane przez moduł, bo w tym miejscu będziemy sprawdzać subskrpycje
 	 */
-	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
+	protected callEventListeners(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
 		done();
 	}
 }

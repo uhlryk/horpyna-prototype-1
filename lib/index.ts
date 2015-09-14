@@ -1,8 +1,9 @@
 export import Application = require("./core/Application");
+export import Component = require("./core/component/Component");
 export import RouteComponent = require("./core/component/routeComponent/RouteComponent");
 export import Module = require("./core/component/routeComponent/module/Module");
 export import Util = require("./core/util/Util");
-export import Event = require("./core/component/event/Event");
+export import EventListener = require("./core/component/eventListener/EventListener");
 export import Node = require("./core/component/process/Node");
 export import Model = require("./core/component/routeComponent/module/model/Model");
 export import Column = require("./core/component/routeComponent/module/model/column/Column");

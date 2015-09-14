@@ -23,13 +23,13 @@ describe("Eventy", function() {
 			done();
 		});
 		it("kod 400 blokada 'on', nasłuch lokalny", function (done) {
-			var event1 = new Core.Event.Action.OnBegin();
-			event1.addCallback(function (request, response, done) {
+			var event1 = new Core.EventListener.Action.OnBegin(moduleChild1, "event1");
+			event1.setHandler(function (request, response, done) {
+				console.log("A1");
 				response.setStatus(400);
 				response.allow =false;
 				done();
 			});
-			moduleChild1.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -39,12 +39,11 @@ describe("Eventy", function() {
 			});
 		});
 		it("kod 200 blokada 'off', nasłuch lokalny", function (done) {
-			var event1 = new Core.Event.Action.OnBegin();
-			event1.addCallback(function (request, response, done) {
+			var event1 = new Core.EventListener.Action.OnBegin(moduleChild1, "event1");
+			event1.setHandler(function (request, response, done) {
 				response.allow =true;
 				done();
 			});
-			moduleChild1.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -54,13 +53,12 @@ describe("Eventy", function() {
 			});
 		});
 		it("kod 400 blokada 'on', nasłuch lokalny od parent module", function (done) {
-			var event1 = new Core.Event.Action.OnBegin();
-			event1.addCallback(function (request, response, done) {
+			var event1 = new Core.EventListener.Action.OnBegin(moduleParent1, "event1");
+			event1.setHandler(function (request, response, done) {
 				response.setStatus(400);
 				response.allow =false;
 				done();
 			});
-			moduleParent1.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -70,12 +68,11 @@ describe("Eventy", function() {
 			});
 		});
 		it("kod 200 blokada 'on' - nie zadziała bo nasłuch lokalny ale od modułu niespokrewnionego", function (done) {
-			var event1 = new Core.Event.Action.OnBegin();
-			event1.addCallback(function(request, response, done) {
+			var event1 = new Core.EventListener.Action.OnBegin(moduleParent2, "event1");
+			event1.setHandler(function(request, response, done) {
 				response.allow =false;
 				done();
 			});
-			moduleParent2.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -85,13 +82,12 @@ describe("Eventy", function() {
 			});
 		});
 		it("kod 400 blokada 'on', nasłuch publiczny od modułu niespokrewnionego", function (done) {
-			var event1 = new Core.Event.Action.OnBegin(true);
-			event1.addCallback(function (request, response, done) {
+			var event1 = new Core.EventListener.Action.OnBegin(moduleParent2, "event1", true);
+			event1.setHandler(function (request, response, done) {
 				response.setStatus(400);
 				response.allow =false;
 				done();
 			});
-			moduleParent2.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -101,13 +97,12 @@ describe("Eventy", function() {
 			});
 		});
 		it("kod 200 blokada 'on' - nie zadziała bo nasłuch oczekuje podtypu 'dummy' którego event nie ma", function (done) {
-			var event1 = new Core.Event.Action.OnBegin();
+			var event1 = new Core.EventListener.Action.OnBegin(moduleParent1, "event1");
 			event1.setSubtype("dummy");
-			event1.addCallback(function (request, response, done) {
+			event1.setHandler(function (request, response, done) {
 				response.allow =false;
 				done();
 			});
-			moduleParent1.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -117,14 +112,13 @@ describe("Eventy", function() {
 			});
 		});
 		it("kod 400 blokada 'on' - nasłuch publiczny, emiter path '/act1'", function (done) {
-			var event1 = new Core.Event.Action.OnBegin(true);
+			var event1 = new Core.EventListener.Action.OnBegin(moduleParent2, "event1", true);
 			event1.setEmiterRegexp(/act1/);
-			event1.addCallback(function (request, response, done) {
+			event1.setHandler(function (request, response, done) {
 				response.setStatus(400);
 				response.allow =false;
 				done();
 			});
-			moduleParent2.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -134,13 +128,12 @@ describe("Eventy", function() {
 			});
 		});
 		it("kod 200 blokada 'on' - nasłuch publiczny, emiter path '/dummy' -nie ma takiej ścieżki", function (done) {
-			var event1 = new Core.Event.Action.OnBegin(true);
+			var event1 = new Core.EventListener.Action.OnBegin(moduleParent2, "event1", true);
 			event1.setEmiterRegexp(/dummy/);
-			event1.addCallback(function (request, response, done) {
+			event1.setHandler(function (request, response, done) {
 				response.allow =false;
 				done();
 			});
-			moduleParent2.subscribe(event1);
 			myApp.init().then(function () {
 				request(app).get("/modu1/child1/act1")
 					.end(function (err, res) {
@@ -159,10 +152,9 @@ describe("Eventy", function() {
 			moduleChild1 = new Core.Module(moduleParent1, "child1");
 			var action1 = new Core.Action.BaseAction(moduleChild1, Core.Action.BaseAction.GET, "act1");
 			moduleParent2 = new Core.Module(myApp.root, "modu2");
-			var event1 = new Core.Event.Action.OnBegin();
+			var event1 = new Core.EventListener.Action.OnBegin(moduleChild1, "event1");
 			var processModel =new Core.Node.ProcessModel(event1);
 			myNode1 = new Core.Node.BaseNode([processModel]);
-			moduleChild1.subscribe(event1);
 			done();
 		});
 		it("kod 400 blokada 'on', nasłuch lokalny", function (done) {

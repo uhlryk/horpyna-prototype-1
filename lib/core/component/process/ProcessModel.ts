@@ -7,7 +7,7 @@ import BaseNode = require("./BaseNode");
  */
 class ProcessModel extends BaseNode{
 	private _allNodeList: Core.Node.BaseNode[];
-	constructor(parent: Core.Action.BaseAction | Core.Event.BaseEvent){
+	constructor(parent: Core.Action.BaseAction | Core.EventListener.BaseEventListener){
 		this._allNodeList = [];
 		this.setProcessModel(this);
 		super();
@@ -16,8 +16,8 @@ class ProcessModel extends BaseNode{
 			parent.setActionHandler((request, response) => {
 				return this.handler(request, response);
 			});
-		} else if (parent instanceof Core.Event.BaseEvent) {
-			parent.addCallback((request, response, done) => {
+		} else if (parent instanceof Core.EventListener.BaseEventListener) {
+			parent.setHandler((request, response, done) => {
 				this.handler(request, response)
 				.then(()=>{
 					done();

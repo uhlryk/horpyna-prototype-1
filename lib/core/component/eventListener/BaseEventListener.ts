@@ -1,37 +1,38 @@
+import Component = require("./../Component");
+import Core = require("./../../../index");
 import Util = require("../../util/Util");
-import Element = require("../../Element");
 import Action = require("../routeComponent/module/action/Action");
-import ISubscriberCallback = require("./ISubscriberCallback");
-
+import IEventListenerHandler = require("./IEventListenerHandler");
 /**
  * Wywoływany by odebrać event
  */
-class BaseEvent extends Element {
+class BaseEventListener extends Component {
 	private type: string;
 	private subtype:string;
-	private callback: ISubscriberCallback;
+	private _handler: IEventListenerHandler;
 	public publicEvent:boolean;
 	/**
-	 * warunek określający czy subscirber ma nasłuchiwać na dany event
+	 * warunek określający czy eventListener ma nasłuchiwać na dany event
 	 * zawiera nazwy komponentów od których wyszedł event,
 	 * /mod2/mod1/akcja1
 	 */
 	private emiterRegExp:RegExp;
-	constructor(type: string, publicEvent?: boolean) {
-		super();
+	constructor(parent: Core.Module, name:string, type: string, publicEvent?: boolean) {
 		this.type = type;
 		this.initDebug("event:" + this.type);
 		if (publicEvent === undefined) publicEvent = false;
 		this.publicEvent = publicEvent;
+		this._handler = this.eventHandler;
+		super(parent, name);
 	}
-		public getType(): string {
+	public getType(): string {
 		return this.type;
 	}
-	public addCallback(callback: ISubscriberCallback) {
-		this.callback = callback;
+	public setHandler(v: IEventListenerHandler) {
+		this._handler = v;
 	}
-	public getCallback():ISubscriberCallback{
-		return this.callback;
+	public getHandler():IEventListenerHandler{
+		return this._handler;
 	}
 	public isPublic():boolean{
 		return this.publicEvent;
@@ -48,5 +49,8 @@ class BaseEvent extends Element {
 	public getEmiterRegExp():RegExp{
 		return this.emiterRegExp;
 	}
+	protected eventHandler(request: Action.Request, response: Action.Response, done): void {
+		done();
+	}
 }
-export = BaseEvent;
+export = BaseEventListener;

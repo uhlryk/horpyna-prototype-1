@@ -73,7 +73,7 @@ class ComponentManager extends Component{
 	 * zależnych modułów, a te do swoich zależnych. Każdy moduł sprawdza listę subskrybentów czy
 	 * pasują do wzorca i jeśli tak odpalają callbacki.
 	 */
-	protected callSubscribers(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
+	protected callEventListeners(request: Action.Request, response: Action.Response, type: string, subtype: string, emiterPath: string, isPublic: boolean, done): void {
 		Util.Promise.map(this._moduleList, (childModule: Module) => {
 			return childModule.broadcastPublisher(request, response, type, subtype, emiterPath);
 		})
