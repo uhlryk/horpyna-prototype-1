@@ -42,7 +42,7 @@ class BaseAction extends RouteComponent {
 	 * Buduje route
 	 */
 	protected addRoute(){
-		this.componentManager.dispatcher.addRoute(this._method, this.getRoutePath(true), this.getFileHandler(), this.getRequestHandler());
+		this.componentManager.dispatcher.addRoute(this._method, this.getRoutePath(true), [this.getFileHandler()], this.getRequestHandler());
 	}
 	public addChild(child: Core.Component) {
 		if (this.isInit()) {

@@ -147,15 +147,18 @@ class Dispatcher extends Element{
 	private normalRoute(){
 		this.router.use(this._subRouter);
 	}
-	public addRoute(method:string, routePath:string, fileHandler:Function, handler:Function){
+	public addRoute(method:string, routePath:string, beforeHandlerList:Function[], handler:Function){
 		this.debug('standard route method:%s routePath:%s', method, routePath);
-		this._subRouter[method](routePath, fileHandler, (req, res, next) => {
+		var routerArgs: any[] = beforeHandlerList.slice();
+		routerArgs.unshift(routePath);
+		routerArgs.push((req, res, next) => {
 			var request: Action.Request = Action.Request.ExpressToRequest(req);
 			var response: Action.Response = Action.Response.ExpressToResponse(res);
 			response.allow = true;
 			response.routePath = routePath;
 			this.runActionHandler(request, response, handler, next);
 		});
+		this._subRouter[method].apply(this._subRouter, routerArgs);
 	}
 	/**
 	 * dla danej akcji odpala w Promise jej handler,
