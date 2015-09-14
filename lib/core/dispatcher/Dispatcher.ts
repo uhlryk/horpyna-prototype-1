@@ -86,7 +86,7 @@ class Dispatcher extends Element{
 			req['horpynaRequest'] = request;
 			var response = this.createResponse(res);
 			res['horpynaResponse'] = response;
-			this._componentManager.publish(request, response, "Dispatcher.OnBegin").then(() => { next();});
+			this._componentManager.publish(request, response, Core.EventListener.Dispatcher.OnBegin.EVENT_NAME).then(() => { next(); });
 		});
 	}
 	private homeRoute(){
@@ -124,7 +124,7 @@ class Dispatcher extends Element{
 			var request: Core.Action.Request = Core.Action.Request.ExpressToRequest(req);
 			var response: Core.Action.Response = Core.Action.Response.ExpressToResponse(res);
 			this.debug('final route');
-			this._componentManager.publish(request, response, "Dispatcher.OnFinal").then(() => { next(); });
+			this._componentManager.publish(request, response, Core.EventListener.Dispatcher.OnFinal.EVENT_NAME).then(() => { next(); });
 		});
 		this._router.use((req, res) => {
 			this.debug('final render');
