@@ -65,6 +65,11 @@ class Dispatcher extends Element{
 	public addMiddleware(middleware:any){
 		this._middlewareList.push(middleware);
 	}
+	public addMiddlewareList(middlewareList: any[]) {
+		for (var i = 0; i < middlewareList.length; i++) {
+			this._middlewareList.push(middlewareList[i]);
+		}
+	}
 	/**
 	 * Pierwszy route w aplikacji
 	 * Dodaje w pętli wszystkie middleware

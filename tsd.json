@@ -40,6 +40,21 @@
     },
     "multer/multer.d.ts": {
       "commit": "4df20c9706ce6ca27137617770b57f3a0d3f9689"
+    },
+    "passport/passport.d.ts": {
+      "commit": "7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+    },
+    "acl/acl.d.ts": {
+      "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
+    },
+    "redis/redis.d.ts": {
+      "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
+    },
+    "mongodb/mongodb.d.ts": {
+      "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
+    },
+    "passport-strategy/passport-strategy.d.ts": {
+      "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
     }
   }
 }

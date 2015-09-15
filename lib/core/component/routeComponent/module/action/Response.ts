@@ -1,5 +1,4 @@
 /// <reference path="../../../../../../typings/tsd.d.ts" />
-// import View = require("../../../../view/View");
 import express = require("express");
 import Util = require("./../../../../util/Util");
 import BaseAction = require("./BaseAction");
@@ -38,6 +37,9 @@ class Response{
 	 */
 	public static ExpressToResponse(res: express.Response): Response {
 		return res['horpynaResponse'];
+	}
+	public getExpressResponse():express.Response{
+		return this.expressResponse;
 	}
 	public set routePath(v : string) {
 		this._routePath = v;

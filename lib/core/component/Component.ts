@@ -55,7 +55,7 @@ class Component extends Element {
 	 * Id jest stałe od momentu budowy aplikacji. Ponowna budowa spowoduje przydzielenie nowego id
 	 */
 	public static getById(id:number):Component{
-		return Component.componentList[id];
+		return Component.componentList[id-1];
 	}
 	public onConstructor(){}
 	/**
