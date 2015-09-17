@@ -22,7 +22,7 @@ class BaseEventListener extends Component {
 		this.initDebug("event:" + this.type);
 		if (publicEvent === undefined) publicEvent = false;
 		this.publicEvent = publicEvent;
-		this._handler = this.eventHandler;
+		// this._handler = this.eventHandler;
 		super(parent, name);
 	}
 	public getType(): string {
@@ -49,8 +49,8 @@ class BaseEventListener extends Component {
 	public getEmiterRegExp():RegExp{
 		return this.emiterRegExp;
 	}
-	protected eventHandler(request: Action.Request, response: Action.Response, done): void {
-		done();
-	}
+	// protected eventHandler(request: Action.Request, response: Action.Response, done): void {
+	// 	done();
+	// }
 }
 export = BaseEventListener;

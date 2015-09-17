@@ -1,10 +1,10 @@
-export import TokenSession = require("./core/session/TokenSession");
+// export import TokenSession = require("./core/session/TokenSession");
 export import AccessControl = require("./core/accessControl/AccessControl");
 export import Action = require("./core/component/routeComponent/module/action/Action");
 export import ActionRequest = require("./core/component/routeComponent/module/action/Request");
 export import ActionResponse = require("./core/component/routeComponent/module/action/Response");
 export import Application = require("./core/Application");
-export import Authentication = require("./core/authentication/Authentication");
+export import Authentication = require("./core/authentication/index");
 export import Column = require("./core/component/routeComponent/module/model/column/Column");
 export import Component = require("./core/component/Component");
 export import ComponentManager = require("./core/component/ComponentManager");

@@ -1,6 +1,6 @@
 import IValidationFilterData = require("./../IValidationFilterData");
 import Core = require("../../../index");
-import Action = require("./action/Action");
+import Action = require("./action/index");
 class Resource extends Core.Module {
 	private _model: Core.Model;
 	private _listAction: Action.List;
@@ -17,6 +17,7 @@ class Resource extends Core.Module {
 		this.onConstructModels();
 		this.onConstructActions();
 		this.onConstructActionHandlers();
+		this.configActions();
 	}
 	protected onConstructModels(){
 		this._model = new Core.Model(this, "default");
@@ -37,11 +38,15 @@ class Resource extends Core.Module {
 		this._listAction.configProcessModel();
 		this.fileAction.configProcessModel();
 		this.createAction.configProcessModel();
-		this.createFormAction.configProcessModel();
 		this.updateAction.configProcessModel();
 		this.updateFormAction.configProcessModel();
 		this.deleteAction.configProcessModel();
 		this.deleteFormAction.configProcessModel();
+	}
+	protected configActions(){
+		this.createFormAction.formGenerator.addFormAction(this.createAction);
+		this.createFormAction.formGenerator.addFormAction(this.createFormAction);
+		this.createFormAction.formGenerator.setTargetAction(this.createAction);
 	}
 	public get model(): Core.Model{return this._model; }
 	public get listAction(): Action.List { return this._listAction; }
@@ -89,7 +94,7 @@ class Resource extends Core.Module {
 				validatorFilterData.params.unshift(createField);
 				var createValidatorFilter = Object.create(validatorFilterData.class.prototype);
 				createValidatorFilter.constructor.apply(createValidatorFilter, validatorFilterData.params);
-				validatorFilterData.params[0] = createField;
+				validatorFilterData.params[0] = updateField;
 				var updateValidatorFilter = Object.create(validatorFilterData.class.prototype);
 				updateValidatorFilter.constructor.apply(updateValidatorFilter, validatorFilterData.params);
 			}

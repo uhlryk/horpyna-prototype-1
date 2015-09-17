@@ -10,6 +10,12 @@ import Component = require("./../component/Component");
  * Czyli uprawnienia określają zakres
  */
 class AccessControl extends Component {
+	/**
+	 * każda akcja jeśli ma przyznawaną jakąś rolę to dostaje również tą.
+	 * Dzięki czemu łatwo będzie pobrać wszystkie akcje z rolami
+	 */
+	private ALL_RESOURCE_ROLE = "all_resource_role";
+
 	public static STORAGE_DATABASE = "database";
 	public static STORAGE_MEMORY = "memory";
 	private _acl: any;
@@ -25,6 +31,7 @@ class AccessControl extends Component {
 		}
 	}
 	public allow(roleList: string[], actionList: Core.Action.BaseAction[]): Core.Util.Promise<void>{
+		roleList.push(this.ALL_RESOURCE_ROLE);
 		var componentIdList:string[] = [];
 		for (var i = 0; i < actionList.length; i++){
 			var action = actionList[i];
@@ -32,7 +39,13 @@ class AccessControl extends Component {
 		}
 		return this._acl.allow(roleList, componentIdList, '*');
 	}
-	public isRoleAllowedResource(role: string, action: Core.Action.BaseAction): Core.Util.Promise<any> {
+	public isAllowed(userId: number, action: Core.Action.BaseAction): Core.Util.Promise<boolean> {
+		return this._acl.isAllowed(userId, action.id.toString(), '*');
+	}
+	public isActionRestricted(action: Core.Action.BaseAction): Core.Util.Promise<boolean> {
+		return this._acl.areAnyRolesAllowed(this.ALL_RESOURCE_ROLE, action.id.toString(), 'any');
+	}
+	public isRoleAllowedAction(role: string, action: Core.Action.BaseAction): Core.Util.Promise<boolean> {
 		return this._acl.areAnyRolesAllowed(role, action.id.toString(), 'any');
 	}
 }

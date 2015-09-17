@@ -3,14 +3,13 @@ import Core = require("../../../../index");
  * Odpowiada za logikę akcji szczegółów
  */
 class CreateForm extends Core.Action.BaseAction {
-	private _module: Core.App.Module.Resource;
-	constructor(parent: Core.App.Module.Resource, name:string) {
-		this._module = parent;
+	private _formGenerator : Core.Node.Form.Generate;
+	private _view: string;
+	constructor(parent: Core.Module, name:string) {
 		super(parent, Core.Action.BaseAction.GET, name);
+		this._view = "horpyna/jade/createFormAction";
 	}
 	public onConstructor() {
-	}
-	public configProcessModel(){
 		var processModel = new Core.Node.ProcessModel(this);
 
 		var getValidationMessage = new Core.Node.Request.GetData([processModel]);
@@ -24,20 +23,27 @@ class CreateForm extends Core.Action.BaseAction {
 		var errorResponseCode = new Core.Node.Response.SendData([ifValidationErrorDataExist]);
 		errorResponseCode.setStatus(422);
 
-		var formGenerator = new Core.Node.Form.Generate([processModel]);
-		formGenerator.addFormAction(this._module.createAction);
-		formGenerator.addFormAction(this._module.createFormAction);
+		this._formGenerator = new Core.Node.Form.Generate([processModel]);
 
-		var populateValidationMessage = new Core.Node.Form.PopulateValidation([formGenerator, ifValidationErrorDataExist]);
+		var populateValidationMessage = new Core.Node.Form.PopulateValidation([this._formGenerator, ifValidationErrorDataExist]);
 		populateValidationMessage.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
 		populateValidationMessage.setValidationMessage(Core.Node.SourceType.RESPONSE_NODE_2);
 
 		var sendForm = new Core.Node.Response.SendData([populateValidationMessage]);
-		sendForm.setView("horpyna/jade/createFormAction");
+		sendForm.setView(this._view);
 
-		var sendForm = new Core.Node.Response.SendData([formGenerator, ifNoValidationError]);
-		populateValidationMessage.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
-		sendForm.setView("horpyna/jade/createFormAction");
+		var sendForm = new Core.Node.Response.SendData([this._formGenerator, ifNoValidationError]);
+		sendForm.addEntryMapSource(Core.Node.SourceType.RESPONSE_NODE_1);
+		sendForm.setView(this._view);
+	}
+	public get formGenerator(): Core.Node.Form.Generate {
+		return this._formGenerator;
+	}
+	public get view():string{
+		return this._view;
+	}
+	public set view(v:string){
+		this._view = v;
 	}
 }
 export = CreateForm;
