@@ -48,5 +48,8 @@ class AccessControl extends Component {
 	public isRoleAllowedAction(role: string, action: Core.Action.BaseAction): Core.Util.Promise<boolean> {
 		return this._acl.areAnyRolesAllowed(role, action.id.toString(), 'any');
 	}
+	public addUserRoles(userId:number, roleList:string[]): Core.Util.Promise<void> {
+		return this._acl.addUserRoles(userId.toString(), roleList);
+	}
 }
 export = AccessControl;

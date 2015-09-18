@@ -47,6 +47,7 @@ class AuthenticationToken{
 		}
 	}
 	public authenticate(request: Core.Action.Request):Core.Util.Promise<number> {
+		var token = this.getToken(request);
 		return this._token.getOwnerId(this.getToken(request))
 		.then((ownerId)=>{
 			if (ownerId){//ustawiamy

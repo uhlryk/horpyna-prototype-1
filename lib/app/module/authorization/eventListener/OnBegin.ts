@@ -15,11 +15,10 @@ class OnBegin extends Core.EventListener.Action.OnBegin {
 	public setAuthentication(v: Core.Authentication.AuthenticationToken) {
 		this._authentication = v;
 	}
+	/**
+	 * sprawdza czy dana akcja wymaga jakiejś roli jeśli tak, to musimy przeprowadzić autentykację
+	 */
 	protected eventHandler(request: Core.Action.Request, response: Core.Action.Response, done): void {
-		console.log("run event from auth Action.OnBegin");
-		/**
-		 * sprawdza czy dana akcja wymaga jakiejś roli jeśli tak, to musimy przeprowadzić autentykację
-		 */
 		this._accessControl.isActionRestricted(request.action)
 		.then((isRestricted) => {
 			if (isRestricted) {
