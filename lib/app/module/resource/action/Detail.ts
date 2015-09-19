@@ -19,26 +19,29 @@ class Detail extends Core.Action.BaseAction {
 		findDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		findDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 
-		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
 		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
 		ifDataNotExist.setNegation();
 
-		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
-		redirectAction.setTargetAction(this._module.listAction);
+		var errorResponseCode = new Core.Node.Response.SendData([ifDataNotExist]);
+		errorResponseCode.setStatus(422);
+		// var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
+		// redirectAction.setTargetAction(this._module.listAction);
+
+		var ifDataExist = new Core.Node.Gateway.IfExist([findDbData]);
 
 		var addActionLinkToListElement = new Core.App.Node.AddActionLinkToEach([ifDataExist]);
-		addActionLinkToListElement.addAction(this._module.updateFormAction);
-		addActionLinkToListElement.addAction(this._module.deleteFormAction);
+		addActionLinkToListElement.addAction(this._module.updateAction);
+		addActionLinkToListElement.addAction(this._module.deleteAction);
 
 		var sendDataNode = new Core.Node.Response.SendData([addActionLinkToListElement]);
-		sendDataNode.setView("horpyna/jade/detailAction");
+		sendDataNode.setStatus(200);
 
-		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([processModel]);
-		addSecondaryActionLinksNode.addAction(this._module.createFormAction);
-		addSecondaryActionLinksNode.addAction(this._module.listAction);
+		// var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([processModel]);
+		// addSecondaryActionLinksNode.addAction(this._module.createFormAction);
+		// addSecondaryActionLinksNode.addAction(this._module.listAction);
 
-		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
-		navSendDataNode.setResponseKey("navigation");
+		// var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
+		// navSendDataNode.setResponseKey("navigation");
 	}
 }
 export = Detail;

@@ -233,8 +233,8 @@ describe("Test uploadu: ", function(){
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
-			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
-			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);
+			moduleResource1.addField("sometext", [], {length:50});
+			moduleResource1.addFileField("field1", []);
 			myApp.init().then(function () {
 				done();
 			});
@@ -253,7 +253,6 @@ describe("Test uploadu: ", function(){
 				.field("sometext", "ala")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -298,7 +297,6 @@ describe("Test uploadu: ", function(){
 				.end(function (err, res) {
 					expect(isPath(filePath)).to.be.false;
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -306,7 +304,6 @@ describe("Test uploadu: ", function(){
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -320,8 +317,8 @@ describe("Test uploadu: ", function(){
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
-			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
-			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, [], {optional:true});
+			moduleResource1.addField("sometext", [], {length:50});
+			moduleResource1.addFileField("field1", [], {optional:true});
 			myApp.init().then(function () {
 				done();
 			});
@@ -333,7 +330,6 @@ describe("Test uploadu: ", function(){
 					console.log(res.body);
 					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -343,7 +339,6 @@ describe("Test uploadu: ", function(){
 				.end(function (err, res) {
 					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -354,7 +349,6 @@ describe("Test uploadu: ", function(){
 				.end(function (err, res) {
 					expect(isAnyFileInUploadDir(uploadDir)).to.be.true;
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -372,7 +366,6 @@ describe("Test uploadu: ", function(){
 				.field("sometext", "ala111")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -393,7 +386,6 @@ describe("Test uploadu: ", function(){
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
 					expect(isAnyFileInUploadDir(uploadDir)).to.be.false;
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -416,8 +408,8 @@ describe("Test uploadu: ", function(){
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
-			moduleResource1.addField("sometext", Core.Form.FormInputType.TEXT, [], {length:50});
-			moduleResource1.addField("field1", Core.Form.FormInputType.FILE, []);
+			moduleResource1.addField("sometext",[], {length:50});
+			moduleResource1.addFileField("field1", []);
 			myApp.init().then(function () {
 				done();
 			});

@@ -4,7 +4,6 @@ import Application = require("./Application");
 import Element = require("./Element");
 import Component = require("./component/Component");
 import Dispatcher = require("./dispatcher/Dispatcher");
-import ViewManager = require("./view/ViewManager");
 import DefaultModule = require("./component/routeComponent/module/DefaultModule");
 import DispatcherError = require("./dispatcher/DispatcherError");
 import Util = require("./util/Util");
@@ -39,7 +38,6 @@ class Bootstrap extends Element {
 	public init(){
 		this.initDispatcher();
 		this.initDefaultActions();
-		this.initView();
 		this.initCatchPromises();
 		this.initFileUpload();
 	}
@@ -62,11 +60,6 @@ class Bootstrap extends Element {
 		componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.FinalCatchPromise(), true);
 		// componentManager.actionCatchPromiseManager.addCatch(new CatchPromise.Action.DbConnectionCatchPromise());
 		// componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.DbConnectionCatchPromise());
-	}
-	protected initView(){
-		var viewManager = this.application.viewManager;
-		viewManager.defaultView = "horpyna/jade/default";
-		return viewManager;
 	}
 	protected initFileUpload(){
 		this.addGlobalValue("uploadDirectory","./upload");

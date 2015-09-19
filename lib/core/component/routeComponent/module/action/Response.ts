@@ -108,12 +108,6 @@ class Response{
 	public getForwardAction():BaseAction{
 		return this._forward;
 	}
-	public set view(name:string){
-		this.viewParam['view'] = name;
-	}
-	public get view():string{
-		return this.viewParam['view'];
-	}
 	public addValue(name:string, value:any){
 		this._data[name] = value;
 	}

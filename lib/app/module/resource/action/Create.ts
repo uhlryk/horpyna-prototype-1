@@ -15,10 +15,14 @@ class Create extends Core.Action.BaseAction {
 
 		var isUnvalid = new Core.Node.Request.IsValid([processModel]);
 		isUnvalid.setNegation();
-		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
+
+		var getValidationMessage = new Core.Node.Request.GetData([isUnvalid]);
+		getValidationMessage.setKey("validationError");
+
+		var errorResponseCode = new Core.Node.Response.SendData([getValidationMessage]);
 		errorResponseCode.setStatus(422);
-		var forwardToForm = new Core.Node.Response.Forward([isUnvalid]);
-		forwardToForm.setTargetAction(this._module.createFormAction);
+		// var forwardToForm = new Core.Node.Response.Forward([isUnvalid]);
+		// forwardToForm.setTargetAction(this._module.createFormAction);
 
 		var isValid = new Core.Node.Request.IsValid([processModel]);
 
@@ -32,10 +36,11 @@ class Create extends Core.Action.BaseAction {
 		createDbData.addData(Core.Node.SourceType.PARAM_FIELD);
 		createDbData.addData(Core.Node.SourceType.APP_FIELD);
 
-		var redirectAction = new Core.Node.Response.Redirect([createDbData]);
-		redirectAction.setTargetAction(this._module.listAction);
+		// var redirectAction = new Core.Node.Response.Redirect([createDbData]);
+		// redirectAction.setTargetAction(this._module.listAction);
 
-		var navSendDataNode = new Core.Node.Response.SendData([createDbData]);
+		var sendDataNode = new Core.Node.Response.SendData([createDbData]);
+		sendDataNode.setStatus(200);
 	}
 }
 export = Create;

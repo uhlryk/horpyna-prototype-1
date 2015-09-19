@@ -15,28 +15,20 @@ describe("Testy filtrów i walidacji przy szybkim tworzeniu przez Core.App.Modul
 		done();
 	});
 	it("powinien zwrócić błąd walidacji gdy damy validator rozmiaru i za dużą wartość", function(done){
-		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [{
-			name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6]
-		}], {length:50});
+		moduleResource.addField("model", [{name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,6] }], {length:50});
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
 			.send({model: "olekfsasfsa"})
 				.end(function (err, res) {
 					var formList = res.body.content;
 					var form = formList[0];
-					expect(form.valid).to.be.false;
-					var field = form.fields[0];
-					var error = field.errorList[0];
-					expect(field).to.include.property("name","model");
-					expect(error).to.be.equal("The input is more than 6 characters long");
+					expect(form.responseValidatorList).to.include.some.property("field","model");
 					done();
 				});
 		});
 	});
 	it("powinien zwrócić przefiltrowaną wartość gdy damy filtr", function(done){
-		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [{
-			name:"size", class: Core.Field.FilterStandard.Blacklist,params:["ab"]
-		}]);
+		moduleResource.addField("model", [{name:"size", class: Core.Field.FilterStandard.Blacklist,params:["ab"] }]);
 		myApp.init().then(function () {
 			request(app).post("/res1/create")
 			.send({model: "abcdabcd"})
@@ -47,7 +39,7 @@ describe("Testy filtrów i walidacji przy szybkim tworzeniu przez Core.App.Modul
 		});
 	});
 	it("powinien zwrócić przefiltrowaną wartość gdy damy filtr i walidator który przejdzie na true", function(done){
-		moduleResource.addField("model", Core.Form.FormInputType.TEXT, [
+		moduleResource.addField("model", [
 			{name:"size", class: Core.Field.FilterStandard.Blacklist,params:["ab"]},
 			{name:"size", class: Core.Field.ValidatorStandard.IsStringLengthValidator,params:[3,10]}
 			]);

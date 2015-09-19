@@ -13,8 +13,8 @@ describe("Testy autoryzacji", function() {
 		myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 		var moduleToGoIn = new Core.App.Module.Resource(myApp.root, "goin");
 		var moduleWithAuthData = new Core.App.Module.Resource(myApp.root, "authres");
-		moduleWithAuthData.addField("name", Core.Form.FormInputType.TEXT, []);
-		moduleWithAuthData.addField("password", Core.Form.FormInputType.TEXT, []);
+		moduleWithAuthData.addField("name", []);
+		moduleWithAuthData.addField("password", []);
 		moduleAuthorization = new Core.App.Module.Authorization(myApp.root, "auth");
 		var localAuthorizationStrategy = new Core.App.Module.AuthorizationStrategy.Local(moduleAuthorization, "loginPassword");
 		localAuthorizationStrategy.setModel(moduleWithAuthData.model);

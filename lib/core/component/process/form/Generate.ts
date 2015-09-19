@@ -12,7 +12,7 @@ import IForm = require("./../../routeComponent/module/form/IForm");
  */
 class Generate extends BaseNode {
 	private _actionList: BaseAction[];
-	private _action: BaseAction;
+	// private _action: BaseAction;
 	constructor(parentNodeList: BaseNode[]) {
 		super(parentNodeList);
 		this.addMapSource("action_param", SourceType.PARAM_FIELD);
@@ -23,9 +23,9 @@ class Generate extends BaseNode {
 	public addFormAction(v: BaseAction) {
 		this._actionList.push(v);
 	}
-	public setTargetAction(v: BaseAction) {
-		this._action = v;
-	}
+	// public setTargetAction(v: BaseAction) {
+	// 	this._action = v;
+	// }
 	protected content(data: NodeData): any {
 		this.debug("begin");
 		var processResponse = [];
@@ -34,18 +34,15 @@ class Generate extends BaseNode {
 			var action = this._actionList[i];
 			formGenerator.addFieldList(action.getFieldList());
 		}
+		//zastąpimy generator i sami będziemy generować widok w tym miejscu
 		var form:IForm = formGenerator.createForm();
-
-		var actionParam = data.getMappedObject("action_param");
-		var actionQuery = data.getMappedObject("action_query");
-		if (this._action) {
-			var url: string = this._action.populateRoutePathWithQuery(actionParam, actionQuery);
-			formGenerator.setTarget(form, url);
-			formGenerator.setMethod(form, this._action.getMethod());
-		}
-		var sourceAction = data.getActionRequest().action;
-		url = sourceAction.populateRoutePathWithQuery(actionParam, actionQuery);
-		formGenerator.setSourceHiddenField(form, url);
+		// var actionParam = data.getMappedObject("action_param");
+		// var actionQuery = data.getMappedObject("action_query");
+		// if (this._action) {
+		// 	var url: string = this._action.populateRoutePathWithQuery(actionParam, actionQuery);
+		// 	formGenerator.setTarget(form, url);
+		// 	formGenerator.setMethod(form, this._action.getMethod());
+		// }
 		processResponse.push(form);
 		this.debug(processResponse);
 		return processResponse;

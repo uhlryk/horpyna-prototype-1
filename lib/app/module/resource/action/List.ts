@@ -58,33 +58,35 @@ class List extends Core.Action.BaseAction {
 		var joinToOneList = new Core.Node.Transform.JoinArray([objectElementNode]);
 
 		var addActionLinkToListElement = new Core.App.Node.AddActionLinkToEach([joinToOneList]);
-		addActionLinkToListElement.addAction(this._module.updateFormAction);
-		addActionLinkToListElement.addAction(this._module.deleteFormAction);
+		addActionLinkToListElement.addAction(this._module.updateAction);
+		addActionLinkToListElement.addAction(this._module.deleteAction);
 		addActionLinkToListElement.addAction(this._module.detailAction);
 
 		var sendDataNode = new Core.Node.Response.SendData([addActionLinkToListElement]);
-		sendDataNode.setView("horpyna/jade/listAction");
+		sendDataNode.setStatus(200);
 
-		var sortNavigation = new Core.App.Node.SortLinks([joinToOneList]);
-		sortNavigation.setAction(this._module.listAction);
+		//zamiast paginacji dodajmy do wyniku listę całkowita (lub info że jest więcej niż np  500) i aktualną liczbę
 
-		var orderSendDataNode = new Core.Node.Response.SendData([sortNavigation]);
-		orderSendDataNode.setResponseKey("order");
+		// var sortNavigation = new Core.App.Node.SortLinks([joinToOneList]);
+		// sortNavigation.setAction(this._module.listAction);
 
-		var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([isValid]);
-		addSecondaryActionLinksNode.addAction(this._module.createFormAction);
+		// var orderSendDataNode = new Core.Node.Response.SendData([sortNavigation]);
+		// orderSendDataNode.setResponseKey("order");
 
-		var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
-		navSendDataNode.setResponseKey("navigation");
+		// var addSecondaryActionLinksNode = new Core.Node.Transform.ActionLink([isValid]);
+		// addSecondaryActionLinksNode.addAction(this._module.createFormAction);
 
-		var pagination = new Core.App.Node.Pagination([listNode]);
-		pagination.setAction(this._module.listAction);
-		pagination.setPage(Core.Node.SourceType.RESPONSE_NODE, "page");
-		pagination.setSize(Core.Node.SourceType.RESPONSE_NODE, "size");
-		pagination.setAllSize(Core.Node.SourceType.RESPONSE_NODE, "allSize");
+		// var navSendDataNode = new Core.Node.Response.SendData([addSecondaryActionLinksNode]);
+		// navSendDataNode.setResponseKey("navigation");
 
-		var paginationSendData = new Core.Node.Response.SendData([pagination]);
-		paginationSendData.setResponseKey("pagination");
+		// var pagination = new Core.App.Node.Pagination([listNode]);
+		// pagination.setAction(this._module.listAction);
+		// pagination.setPage(Core.Node.SourceType.RESPONSE_NODE, "page");
+		// pagination.setSize(Core.Node.SourceType.RESPONSE_NODE, "size");
+		// pagination.setAllSize(Core.Node.SourceType.RESPONSE_NODE, "allSize");
+
+		// var paginationSendData = new Core.Node.Response.SendData([pagination]);
+		// paginationSendData.setResponseKey("pagination");
 	}
 }
 export = List;

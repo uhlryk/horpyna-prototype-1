@@ -5,9 +5,9 @@ import IInputForm = require("./IInputForm");
 interface IForm {
 	method: string;
 	action: string;
-	valid: boolean;
+	// valid: boolean;
 	isMultipart: boolean;
 	fields: IInputForm[];
-	errorList: string[];
+	// errorList: string[];
 }
 export = IForm;

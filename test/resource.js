@@ -34,15 +34,13 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
-		it("kod 200 detail gdy brak elementu", function (done) {
+		it("kod 422 detail gdy brak elementu", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
+					expect(res.status).to.be.equal(422);
 					done();
 				});
 		});
@@ -60,7 +58,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 				.end(function (err, res) {
 					console.log(res.body);
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -92,7 +89,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 				.send({pass: "doda"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -100,7 +96,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -134,15 +129,13 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
-		it("kod 200 detail gdy brak elementu", function (done) {
+		it("kod 422 detail gdy brak elementu", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
+					expect(res.status).to.be.equal(422);
 					done();
 				});
 		});
@@ -159,7 +152,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 				.send({pass: "bolek"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -191,7 +183,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 				.send({pass: "doda"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -199,7 +190,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -211,8 +201,8 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 			myApp = new Core.Application(app);
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
-			moduleResource1.addField("name", Core.Form.FormInputType.TEXT, []);
-			moduleResource1.addField("pass", Core.Form.FormInputType.TEXT, []);
+			moduleResource1.addField("name", []);
+			moduleResource1.addField("pass", []);
 			myApp.init().then(function () {
 				done();
 			});
@@ -221,15 +211,13 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 			request(app).get("/res1/update/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
-		it("kod 200 detail gdy brak elementu", function (done) {
+		it("kod 422 detail gdy brak elementu", function (done) {
 			request(app).get("/res1/detail/1")
 				.end(function (err, res) {
-					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
+					expect(res.status).to.be.equal(422);
 					done();
 				});
 		});
@@ -247,7 +235,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 				.end(function (err, res) {
 					console.log(res.body);
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -279,7 +266,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 				.send({pass: "doda"})
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});
@@ -287,7 +273,6 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 			request(app).post("/res1/delete/1")
 				.end(function (err, res) {
 					expect(res.status).to.be.equal(200);
-					expect(res.body.redirect.status).to.be.equal(302);
 					done();
 				});
 		});

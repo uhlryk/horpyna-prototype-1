@@ -16,10 +16,12 @@ class Update extends Core.Action.BaseAction {
 
 		var isUnvalid = new Core.Node.Request.IsValid([processModel]);
 		isUnvalid.setNegation();
-		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
+
+		var getValidationMessage = new Core.Node.Request.GetData([isUnvalid]);
+		getValidationMessage.setKey("validationError");
+
+		var errorResponseCode = new Core.Node.Response.SendData([getValidationMessage]);
 		errorResponseCode.setStatus(422);
-		var forwardToForm = new Core.Node.Response.Forward([isUnvalid]);
-		forwardToForm.setTargetAction(this._module.updateFormAction);
 
 		var isValid = new Core.Node.Request.IsValid([processModel]);
 
@@ -32,8 +34,8 @@ class Update extends Core.Action.BaseAction {
 		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
 		ifDataNotExist.setNegation();
 
-		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
-		redirectAction.setTargetAction(this._module.listAction);
+		var errorResponseCode = new Core.Node.Response.SendData([ifDataNotExist]);
+		errorResponseCode.setStatus(422);
 
 		var fileSavePrepare = new Core.App.Node.FileToSave([isValid]);
 		fileSavePrepare.setAction(this._module.fileAction);
@@ -50,10 +52,8 @@ class Update extends Core.Action.BaseAction {
 		updateDbData.addWhere(Core.Node.SourceType.PARAM_FIELD);
 		updateDbData.addWhere(Core.Node.SourceType.APP_FIELD);
 
-		var redirectAction = new Core.Node.Response.Redirect([updateDbData]);
-		redirectAction.setTargetAction(this._module.listAction);
-
-		var navSendDataNode = new Core.Node.Response.SendData([fileUpdatePrepare, updateDbData]);
+		var sendDataNode = new Core.Node.Response.SendData([updateDbData]);
+		sendDataNode.setStatus(200);
 	}
 }
 export = Update;

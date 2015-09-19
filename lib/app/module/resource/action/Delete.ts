@@ -16,10 +16,12 @@ class Delete extends Core.Action.BaseAction {
 
 		var isUnvalid = new Core.Node.Request.IsValid([processModel]);
 		isUnvalid.setNegation();
-		var errorResponseCode = new Core.Node.Response.SendData([isUnvalid]);
+
+		var getValidationMessage = new Core.Node.Request.GetData([isUnvalid]);
+		getValidationMessage.setKey("validationError");
+
+		var errorResponseCode = new Core.Node.Response.SendData([getValidationMessage]);
 		errorResponseCode.setStatus(422);
-		var forwardToForm = new Core.Node.Response.Forward([isUnvalid]);
-		forwardToForm.setTargetAction(this._module.deleteFormAction);
 
 		var isValid = new Core.Node.Request.IsValid([processModel]);
 
@@ -32,8 +34,8 @@ class Delete extends Core.Action.BaseAction {
 		var ifDataNotExist = new Core.Node.Gateway.IfExist([findDbData]);
 		ifDataNotExist.setNegation();
 
-		var redirectAction = new Core.Node.Response.Redirect([ifDataNotExist]);
-		redirectAction.setTargetAction(this._module.listAction);
+		var DataNotExistResponseCode = new Core.Node.Response.SendData([ifDataNotExist]);
+		DataNotExistResponseCode.setStatus(422);
 
 		var deleteDbData = new Core.Node.Db.Delete([ifDataExist]);
 		deleteDbData.setModel(this._module.model);
@@ -42,10 +44,8 @@ class Delete extends Core.Action.BaseAction {
 
 		var removeFiles = new Core.App.Node.RemoveFile([ifDataExist]);
 
-		var redirectAction = new Core.Node.Response.Redirect([findDbData]);
-		redirectAction.setTargetAction(this._module.listAction);
-
-		var navSendDataNode = new Core.Node.Response.SendData([findDbData]);
+		var finalResponseCode = new Core.Node.Response.SendData([findDbData]);
+		finalResponseCode.setStatus(200);
 	}
 }
 export = Delete;

@@ -1,6 +1,5 @@
 import Component = require("../../../../Component");
 import BaseAction = require("./../BaseAction");
-import FormInputType = require("./../../form/FormInputType");
 import BaseValidator = require("./BaseValidator");
 import BaseFilter = require("./BaseFilter");
 import FieldType = require("./FieldType");
@@ -10,7 +9,6 @@ import Util = require("./../../../../../util/Util");
  * Parametr może być dodany do post body, url param, url query
  */
 class BaseField extends Component {
-
 	private _validatorList:BaseValidator[];
 	private _filterList:BaseFilter[];
 	private _fieldName:string;//nazaw pola
@@ -18,7 +16,6 @@ class BaseField extends Component {
 	private _options: Object;
 	private _optional: boolean;
 	private _labelForm: string;
-	private _formInputType: string;
 	/**
 	 * @param name określa nazwę będącą identyfikatorem komponentu | nazwa parametru otrzymanego z requesta
 	 * @param fieldType url, query, body app
@@ -32,10 +29,6 @@ class BaseField extends Component {
 		this._optional = this._options['optional'] || false;
 		this._fieldName = this._options['fieldName'] || name;
 		this.labelForm = name;
-		this.formInputType = FormInputType.TEXT;
-		if (fieldType === FieldType.FILE_FIELD){
-			this.formInputType = FormInputType.FILE;
-		}
 	}
 	public set optional(val:boolean){
 		this._optional = val;
@@ -52,18 +45,6 @@ class BaseField extends Component {
 	public get labelForm() : string {
 		return this._labelForm;
 	}
-	/**
-	 * Jakiego typu jest pole na formularzu FormInputType typ
-	 */
-	public set formInputType(v : string) {
-		this._formInputType = v;
-	}
-	/**
-	 * Jakiego typu jest pole na formularzu FormInputType typ
-	 */
-	public get formInputType() : string {
-		return this._formInputType;
-	}
 	public setFieldName(fieldName: string) {
 		this._fieldName = fieldName;
 	}
@@ -78,44 +59,12 @@ class BaseField extends Component {
 			this._filterList.push(<BaseFilter>child);
 		}
 	}
-	// public init(): Util.Promise<void> {
-	// 	return super.init()
-	// 	.then(()=>{
-	// 		return this.initValidators();
-	// 	});
-	// }
-	// public initValidators(): Util.Promise<any> {
-	// 	return Util.Promise.map(this._validatorList, (validator: BaseValidator) => {
-	// 		validator.init();
-	// 	});
-	// }
-	// public addValidator(validator: BaseValidator): Util.Promise<void> {
-	// 	this._validatorList.push(validator);
-	// 	if (this.isInit === true) {
-	// 		throw SyntaxError(Component.ADD_INIT_CANT);
-	// 	}
-	// 	return validator.prepare(this);
-	// }
 	public getValidatorList(): BaseValidator[] {
 		return this._validatorList;
 	}
-
-	// public initFilters(): Util.Promise<any> {
-	// 	return Util.Promise.map(this._filterList, (filter: BaseFilter) => {
-	// 		filter.init();
-	// 	});
-	// }
-	// public addFilter(filter: BaseFilter): Util.Promise<void> {
-	// 	this._filterList.push(filter);
-	// 	if (this.isInit === true) {
-	// 		throw SyntaxError(Component.ADD_INIT_CANT);
-	// 	}
-	// 	return filter.prepare(this);
-	// }
 	public getFilterList(): BaseFilter[] {
 		return this._filterList;
 	}
-
 	/**
 	 * Po tym identyfikujemy pole. Domyślnie może być takie samo jak name pola
 	 */
