@@ -55,6 +55,9 @@
     },
     "passport-strategy/passport-strategy.d.ts": {
       "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
+    },
+    "angular2/http.d.ts": {
+      "commit": "b5f756bfbc1df8d488ef720df9c2c77e087e388b"
     }
   }
 }

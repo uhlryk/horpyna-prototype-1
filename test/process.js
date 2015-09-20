@@ -10,8 +10,8 @@ describe("Funkcje ProcessModel Nodes", function() {
 	describe("Testowanie mapowania danych z jednego źródła", function () {
 		var myNode2, beforeMapping, afterMapping, mapType;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "process");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 			var myProcessModel = new Core.Node.ProcessModel(myAction);
@@ -570,8 +570,8 @@ describe("Funkcje ProcessModel Nodes", function() {
 	describe("Testowanie mapowania danych z dwóch źródeł", function () {
 		var myNode2, beforeMapping1, beforeMapping2, afterMapping, mapType;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "process");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 

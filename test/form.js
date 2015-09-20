@@ -42,8 +42,8 @@ var uploadDir="./upload";
 describe("Testy formularzy", function() {
 	var moduleResource;
 	beforeEach(function (done) {
-		app = require('./core/app')();
-		myApp = new Core.Application(app);
+		myApp = new Core.Application();
+		app = myApp.appServer;
 		myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 		moduleResource = new Core.App.Module.Resource(myApp.root, "res1");
 		done();

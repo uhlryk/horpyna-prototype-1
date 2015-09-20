@@ -9,8 +9,8 @@ var myApp;
 describe("Testy Node transform.MultiplicationCombine", function() {
 	var myProcessModel, myNode2, testNode, beforeMapping1, beforeMapping2, afterMapping;
 	beforeEach(function (done) {
-		app = require('./core/app')();
-		myApp = new Core.Application(app);
+		myApp = new Core.Application();
+		app = myApp.appServer;
 		var myModule = new Core.Module(myApp.root, "process");
 		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 		myProcessModel = new Core.Node.ProcessModel(myAction);

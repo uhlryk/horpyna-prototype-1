@@ -9,8 +9,8 @@ var myApp;
 describe("Testy Node transform.ActionLink", function() {
 	var myProcessModel, myNode2, myNode1, testNode, beforeMapping, afterMapping, testAction1, testAction2;
 	beforeEach(function (done) {
-		app = require('./core/app')();
-		myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 		var myModule = new Core.Module(myApp.root, "process");
 		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 

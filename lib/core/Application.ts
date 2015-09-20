@@ -1,3 +1,5 @@
+/// <reference path="../../typings/tsd.d.ts" />
+import express = require('express');
 /**
  * Jest to wyższy poziom abstrakcji frontControllera,
  * na tym poziomie może wyglądać jak wrapper tylko.
@@ -5,6 +7,7 @@
  * i na tym poziomie będzie można je zmieniać i wstawiać do frontControllera
  */
 import Bootstrap = require("./Bootstrap");
+import Server = require("./Server");
 import FrontController = require("./FrontController");
 import Element = require("./Element");
 import Dispatcher = require("./dispatcher/Dispatcher");
@@ -18,23 +21,19 @@ import ViewManager = require("./view/ViewManager");
 class Application extends Element {
 	private _frontController:FrontController;
 	private _bootstrap: Bootstrap;
-	constructor(router) {
+	private _server: Server;
+	constructor() {
 		super();
+		this._server = new Server();
 		this._frontController = new FrontController();
 		this._frontController.debug("application:constructor:");
-		this._frontController.dispatcher = new Dispatcher(router);
+		this._frontController.dispatcher = new Dispatcher(this._server.app);
 		this._frontController.dbManager = new DbManager();
 		this._frontController.componentManager = new ComponentManager(this._frontController.dispatcher, this._frontController.dbManager);
 		this._frontController.viewManager = new ViewManager();
 		this._frontController.dispatcher.setComponentManager(this._frontController.componentManager);
-		this._bootstrap = new Bootstrap(this, router);
+		this._bootstrap = new Bootstrap(this, this._server.app);
 	}
-	/**
-	 * dpdaje nowy moduł
-	 */
-	// public addModule(moduleInstance: Module): Util.Promise<void> {
-	// 	return this._frontController.componentManager.addModule(moduleInstance);
-	// }
 	/**
 	 * zwraca moduł po nazwie
 	 */
@@ -56,6 +55,9 @@ class Application extends Element {
 	public get root(): ComponentManager {
 		return this._frontController.componentManager;
 	}
+	public get appServer(): express.Express {
+		return this._server.app;
+	}
 	public get viewManager(): ViewManager {
 		return this._frontController.viewManager;
 	}
@@ -70,6 +72,11 @@ class Application extends Element {
 		this._frontController.debug("application:frontController.init()");
 		var promise = this._frontController.init();
 		return promise;
+	}
+	public run(): Promise<any> {
+		return this.init().then(()=> {
+			this._server.run();
+		});
 	}
 }
 export = Application;

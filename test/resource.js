@@ -10,8 +10,8 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 	describe("podstawowe Core.App.Module.Resource", function () {
 		var moduleResource1;
 		before(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 
@@ -103,8 +103,8 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 	describe("moduł dodany po zainicjowaniu aplikacji a więc wywołany później init", function () {
 		var moduleResource1;
 		before(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			myApp.init().then(function () {
 				moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
@@ -197,8 +197,8 @@ describe("Funkcje Modułu Core.App.Module.Resource", function() {
 	describe("Skonfigurowany przez metodę skrótową", function () {
 		var moduleResource1;
 		before(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer
 			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 			moduleResource1.addField("name", []);

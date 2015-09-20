@@ -12,8 +12,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją BaseValidation", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
 			myAction.setActionHandler(function(request, response, action){
@@ -68,8 +68,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją ContainsValidation", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -118,8 +118,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją EqualsValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -160,8 +160,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją MatchesValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -201,8 +201,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsAlphaValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -242,8 +242,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsAlnumValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -283,8 +283,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsNumericValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -324,8 +324,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsBooleanValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -365,8 +365,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsStringLengthValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -414,8 +414,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsDateValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -455,8 +455,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsEmailValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -496,8 +496,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsFloatValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -553,8 +553,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsIntValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
@@ -610,8 +610,8 @@ describe("Walidacja", function() {
 	describe("Sprawdzenie akcji z walidacją IsInValidator", function () {
 		var myField1;
 		beforeEach(function (done) {
-			app = require('./core/app')();
-			myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");

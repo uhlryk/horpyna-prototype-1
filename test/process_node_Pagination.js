@@ -9,8 +9,8 @@ var myApp;
 describe("Testy Node transform.Pagination", function() {
 	var myProcessModel, myNode2, myNode1, testNode, beforeMapping, afterMapping, myAction;
 	beforeEach(function (done) {
-		app = require('./core/app')();
-		myApp = new Core.Application(app);
+			myApp = new Core.Application();
+			app = myApp.appServer;
 		var myModule = new Core.Module(myApp.root, "process");
 		myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");
 		var q1 = new Core.Field.BaseField(myAction, "test", Core.Field.FieldType.QUERY_FIELD, {optional:true});
