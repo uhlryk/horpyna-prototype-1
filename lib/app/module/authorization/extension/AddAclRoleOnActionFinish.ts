@@ -5,17 +5,18 @@ import IValidationFilterData = require("./../../IValidationFilterData");
  * akcje czy się zakończyły, jeśli konkretna akcja się zakończy to pozwoli to
  * odpalić callback do ustawienia roli lub ustawi wybraną rolę automatycznie.
  */
-class OnTargetActionFinish extends Core.Component {
-	private _module: Core.App.Module.Authorization;
+class AddAclRoleOnActionFinish extends Core.Extension {
 	private _targetAction: Core.Action.BaseAction;
 	private _roleList: string[];
 	private _handler: (request: Core.Action.Request, response: Core.Action.Response) => { id: number; roleList:string[]};
-	constructor(parent: Core.App.Module.Authorization, name: string) {
-		this._module = parent;
-		super(parent, name);
+	constructor(parent: Core.App.Module.Authorization) {
+		super(parent);
+	}
+	protected getComponent(): Core.App.Module.Authorization {
+		return <Core.App.Module.Authorization>super.getComponent();
 	}
 	public onConstructor() {
-		var event = new Core.EventListener.Action.OnFinish(this._module, "checkActionFinish",true);
+		var event = new Core.EventListener.Action.OnFinish(this.getComponent(), "checkActionFinish", true);
 		/**
 		 * event sprawdza zakończenie wszystkich akcji w aplikacji
 		 */
@@ -32,13 +33,13 @@ class OnTargetActionFinish extends Core.Component {
 						Core.Util.Promise.resolve()
 						.then(()=>{
 							if (this._roleList && response.content && response.content[0] && response.content[0].id){
-								return this._module.addUserRoles(response.content[0].id, this._roleList);
+								return this.getComponent().addUserRoles(response.content[0].id, this._roleList);
 							}
 						})
 						.then(()=>{
 							if (this._handler){
 								var roleUserIdObj = this._handler(request, response);
-								return this._module.addUserRoles(roleUserIdObj.id, roleUserIdObj.roleList);
+								return this.getComponent().addUserRoles(roleUserIdObj.id, roleUserIdObj.roleList);
 							}
 						})
 						.then(() => {
@@ -70,4 +71,4 @@ class OnTargetActionFinish extends Core.Component {
 		this._handler = v;
 	}
 }
-export = OnTargetActionFinish;
+export = AddAclRoleOnActionFinish;

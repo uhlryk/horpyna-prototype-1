@@ -13,11 +13,11 @@ describe("Testy autoryzacji", function() {
 		moduleWithAuthData.addField("name", []);
 		moduleWithAuthData.addField("password", []);
 		moduleAuthorization = new Core.App.Module.Authorization(myApp.root, "auth");
-		var localAuthorizationStrategy = new Core.App.Module.AuthorizationStrategy.Local(moduleAuthorization, "loginPassword");
+		var localAuthorizationStrategy = new Core.App.Module.AuthorizationExtension.LocalStrategy(moduleAuthorization);
 		localAuthorizationStrategy.setModel(moduleWithAuthData.model);
 		localAuthorizationStrategy.addField("name", []);
 		localAuthorizationStrategy.addField("password", []);
-		var setRoleModule = new Core.App.Module.AuthorizationComponent.OnTargetActionFinish(moduleAuthorization, "setRoleModule");
+		var setRoleModule = new Core.App.Module.AuthorizationExtension.AddAclRoleOnActionFinish(moduleAuthorization);
 		setRoleModule.setTargetAction(moduleWithAuthData.createAction);
 		setRoleModule.setRole(["member"]);
 		myApp.init()

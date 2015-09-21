@@ -1,23 +1,25 @@
 import Core = require("../../../../index");
 import IValidationFilterData = require("./../../IValidationFilterData");
 /**
- * Odpowiada za strategię autoryzacji przez podaniu w formularzu
+ * Dodatek wzbogacający autoryzację o strategię uwierzytelniającą przez login i hasło znajdujące się w danym zasobie
+ * Extension nie ogranicza się do konkretnie loginu i hasła. mogą to być dowolne pola z dowolnego zasobu które muszą się zgadzać
  */
-class Local extends Core.Component {
-	private _module: Core.App.Module.Authorization;
+class LocalStrategy extends Core.Extension {
 	private _model : Core.Model;
 	private _loginFormAction: Core.App.Module.ResourceAction.Form;
 	private _loginAction: Core.Action.BaseAction;
 	private _tokenGenerator: Core.App.Node.GenerateToken;
 	private _findDbData: Core.Node.Db.Find;
-	constructor(parent: Core.App.Module.Authorization, name: string) {
-		this._module = parent;
-		super(parent, name);
-		this._tokenGenerator.setToken(this._module.token);
+	constructor(parent: Core.App.Module.Authorization) {
+		super(parent);
+		this._tokenGenerator.setToken(this.getComponent().token);
+	}
+	protected getComponent(): Core.App.Module.Authorization {
+		return <Core.App.Module.Authorization>super.getComponent();
 	}
 	public onConstructor() {
-		this._loginFormAction = new Core.App.Module.ResourceAction.Form(this._module, "login");
-		this._loginAction = new Core.Action.BaseAction(this._module, Core.Action.BaseAction.POST, "login");
+		this._loginFormAction = new Core.App.Module.ResourceAction.Form(this.getComponent(), "login");
+		this._loginAction = new Core.Action.BaseAction(this.getComponent(), Core.Action.BaseAction.POST, "login");
 		this._loginFormAction.formGenerator.addFormAction(this._loginAction);
 		this._loginFormAction.formGenerator.addFormAction(this._loginFormAction);
 		this.configProcessModel();
@@ -49,4 +51,4 @@ class Local extends Core.Component {
 		Core.App.Module.Resource.createFieldsValidators([loginField], validatorFilterDataList);
 	}
 }
-export = Local;
+export = LocalStrategy;

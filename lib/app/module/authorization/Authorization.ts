@@ -1,5 +1,4 @@
 import Core = require("../../../index");
-import StrategyComponent = require("./strategyComponent/index");
 class Authorization extends Core.Module {
 	/**
 	 * Jeśli autentykacja się uda id danego usera będzie w polu request.app[_appFieldName]

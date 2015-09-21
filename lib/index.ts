@@ -7,6 +7,7 @@ export import Application = require("./core/Application");
 export import Authentication = require("./core/authentication/index");
 export import Column = require("./core/component/routeComponent/module/model/column/Column");
 export import Component = require("./core/component/Component");
+export import Extension = require("./core/component/Extension");
 export import ComponentManager = require("./core/component/ComponentManager");
 export import EventListener = require("./core/component/eventListener/EventListener");
 export import Field = require("./core/component/routeComponent/module/action/field/Field");
