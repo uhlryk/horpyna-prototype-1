@@ -12,7 +12,7 @@ describe("Filtracja", function() {
 	describe("filtracja BaseFilter", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -60,7 +60,7 @@ describe("Filtracja", function() {
 	describe("filtracja z dwoma BaseFilter", function () {
 		var myField1, finalValue, filter1, filter2;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -96,7 +96,7 @@ describe("Filtracja", function() {
 	describe("filtracja Blacklist", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -158,7 +158,7 @@ describe("Filtracja", function() {
 	describe("filtracja Whitelist", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -220,7 +220,7 @@ describe("Filtracja", function() {
 	describe("filtracja Escape", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -260,7 +260,7 @@ describe("Filtracja", function() {
 	describe("filtracja LeftTrim", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -300,7 +300,7 @@ describe("Filtracja", function() {
 	describe("filtracja RightTrim", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -340,7 +340,7 @@ describe("Filtracja", function() {
 	describe("filtracja Trim", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -380,7 +380,7 @@ describe("Filtracja", function() {
 	describe("filtracja ToBoolean", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -442,7 +442,7 @@ describe("Filtracja", function() {
 	describe("filtracja ToDate", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -508,7 +508,7 @@ describe("Filtracja", function() {
 	describe("filtracja ToFloat", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -562,7 +562,7 @@ describe("Filtracja", function() {
 	describe("filtracja ToInt", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -616,7 +616,7 @@ describe("Filtracja", function() {
 	describe("filtracja ToString", function () {
 		var myField1, finalValue, filter;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");

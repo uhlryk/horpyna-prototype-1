@@ -9,7 +9,7 @@ var myApp;
 describe("Testy Node transform.ObjectAddElement", function() {
 	var myProcessModel, myNode2, myNode1a, myNode1b, testNode, beforeMapping1a, beforeMapping1b, afterMapping;
 	beforeEach(function (done) {
-		myApp = new Core.Application();
+		myApp = new Core.Application(require("./config/config"));
 		app = myApp.appServer;
 		var myModule = new Core.Module(myApp.root, "process");
 		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");

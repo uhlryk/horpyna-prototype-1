@@ -9,7 +9,7 @@ var myApp;
 describe("Testy Node transform.AdditionCombine", function() {
 	var myProcessModel, myNode2, testNode, beforeMapping1, beforeMapping2, afterMapping;
 	beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 		var myModule = new Core.Module(myApp.root, "process");
 		var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");

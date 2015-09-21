@@ -7,6 +7,7 @@ import express = require('express');
  * i na tym poziomie będzie można je zmieniać i wstawiać do frontControllera
  */
 import Bootstrap = require("./Bootstrap");
+import Config = require("./Config");
 import Server = require("./Server");
 import FrontController = require("./FrontController");
 import Element = require("./Element");
@@ -22,9 +23,18 @@ class Application extends Element {
 	private _frontController:FrontController;
 	private _bootstrap: Bootstrap;
 	private _server: Server;
-	constructor() {
+	private _config: Config;
+	constructor(config?: Object, env?: string) {
 		super();
-		this._server = new Server();
+		this._config = new Config(env || process.env.NODE_ENV);
+		if (config){
+			this._config.setConfig(config);
+		}
+		var port;
+		if(this.config.isKey("app")){
+			port = this.config.getKey("app").port;
+		}
+		this._server = new Server(port);
 		this._frontController = new FrontController();
 		this._frontController.debug("application:constructor:");
 		this._frontController.dispatcher = new Dispatcher(this._server.app);
@@ -33,6 +43,9 @@ class Application extends Element {
 		this._frontController.viewManager = new ViewManager();
 		this._frontController.dispatcher.setComponentManager(this._frontController.componentManager);
 		this._bootstrap = new Bootstrap(this, this._server.app);
+	}
+	public get config(): Config{
+		return this._config;
 	}
 	/**
 	 * zwraca moduł po nazwie
@@ -54,6 +67,9 @@ class Application extends Element {
 	}
 	public get root(): ComponentManager {
 		return this._frontController.componentManager;
+	}
+	public get server():Server {
+		return this._server;
 	}
 	public get appServer(): express.Express {
 		return this._server.app;

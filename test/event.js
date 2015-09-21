@@ -14,7 +14,7 @@ describe("Eventy", function() {
 	describe("sprawdza działanie subskrypcji na event Action.OnBegin", function () {
 		var moduleParent1, moduleParent2, moduleChild1;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			moduleParent1 = new Core.Module(myApp.root, "modu1");
 			moduleChild1 = new Core.Module(moduleParent1, "child1");
@@ -146,7 +146,7 @@ describe("Eventy", function() {
 	describe("sprawdza działanie eventów z użyciem Nodów", function () {
 		var moduleParent1, moduleParent2, moduleChild1, myNode1;
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			moduleParent1 = new Core.Module(myApp.root, "modu1");
 			moduleChild1 = new Core.Module(moduleParent1, "child1");

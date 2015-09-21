@@ -40,14 +40,14 @@ var isPath = function(path) {
 		return false;
 	}
 };
-var sourceDir="./test/upload";
-var uploadDir="./upload";
+var sourceDir="./test/testfiles";
+var uploadDir="./test/upload";
 describe("Test uploadu: ", function(){
 	describe("Sprawdzenie uploadu zdjęcia bez walidacji", function () {
 		var myField1;
 		beforeEach(function (done) {
 			deleteFolderRecursive(uploadDir);
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "act1");
@@ -100,7 +100,7 @@ describe("Test uploadu: ", function(){
 		var myField1;
 		beforeEach(function (done) {
 			deleteFolderRecursive(uploadDir);
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var fileAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "file");
@@ -179,7 +179,7 @@ describe("Test uploadu: ", function(){
 		var myField1;
 		beforeEach(function (done) {
 			deleteFolderRecursive(uploadDir);
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 			var myModule = new Core.Module(myApp.root, "mod1");
 			var fileAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.POST, "file");
@@ -229,9 +229,8 @@ describe("Test uploadu: ", function(){
 		var filePath;
 		before(function (done) {
 			deleteFolderRecursive(uploadDir);
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
-			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 			moduleResource1.addField("sometext", [], {length:50});
 			moduleResource1.addFileField("field1", []);
@@ -313,9 +312,8 @@ describe("Test uploadu: ", function(){
 		var filePath;
 		before(function (done) {
 			deleteFolderRecursive(uploadDir);
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
-			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 			moduleResource1.addField("sometext", [], {length:50});
 			moduleResource1.addFileField("field1", [], {optional:true});
@@ -404,9 +402,8 @@ describe("Test uploadu: ", function(){
 		var filePath;
 		before(function (done) {
 			deleteFolderRecursive(uploadDir);
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
-			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 			moduleResource1 = new Core.App.Module.Resource(myApp.root, "res1");
 			moduleResource1.addField("sometext",[], {length:50});
 			moduleResource1.addFileField("field1", []);

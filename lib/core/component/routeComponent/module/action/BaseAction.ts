@@ -249,9 +249,9 @@ class BaseAction extends RouteComponent {
 	public getFileHandler(){
 		this.debug("action:getFileHandler()");
 		var fileUpload: Util.FileUpload = new Util.FileUpload();
-		fileUpload.directory = this._options['uploadDirectory'] || this.getGlobalValue("uploadDirectory");
-		fileUpload.fileSize = this._options['fileMaxSize'] || this.getGlobalValue("fileMaxSize");
-		fileUpload.maxFileCount = this._options['maxFiles'] || this.getGlobalValue("formMaxFiles");
+		fileUpload.directory = this._options['directory'] || this.getGlobalValue("directory");
+		fileUpload.maxSize = this._options['maxSize'] || this.getGlobalValue("maxSize");
+		fileUpload.maxFiles = this._options['maxFiles'] || this.getGlobalValue("maxFiles");
 		var fileFields: Object[] = this.populateFileFields();
 		fileUpload.fileFilterHandler = (request: Core.Action.Request, file, done) => {
 			this.fileFilterHandler(request, file, done);
@@ -288,12 +288,10 @@ class BaseAction extends RouteComponent {
 	}
 	/**
 	 * Na potrzeby FileUpload tworzy listę pól które ma akcje i które są polami plików
-	 * @return {[name, count]} [description]
 	 */
 	protected populateFileFields():Object[]{
 		this.debug("action:populateFileFields()");
 		var fileFields: Object[] = [];
-		// var fieldList: Core.Field.BaseField[] = this.getFieldList();
 		for (var index in this._fieldList) {
 			var field: Core.Field.BaseField = this._fieldList[index];
 			if (field.getType() === FieldType.FILE_FIELD) {

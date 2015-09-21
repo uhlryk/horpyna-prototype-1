@@ -19,16 +19,23 @@ class AccessControl extends Component {
 	public static STORAGE_DATABASE = "database";
 	public static STORAGE_MEMORY = "memory";
 	private _acl: any;
+	private _type: string;
 	constructor(parent: Core.Module, name: string, type: string) {
 		super(<Component>parent, name);
-		var connection = this.componentManager.dbManager.getConnection();
-		switch(type){
-			case AccessControl.STORAGE_DATABASE:
-				this._acl = new acl(new aclSeq(connection.getDb(), { prefix: name+'_' }));
-				break;
-			default:
-				this._acl = new acl(new acl.memoryBackend());
-		}
+		this._type = type;
+	}
+	protected onInit(): Core.Util.Promise<void> {
+		return super.onInit()
+		.then(()=>{
+			var connection = this.componentManager.dbManager.getConnection();
+			switch (this._type) {
+				case AccessControl.STORAGE_DATABASE:
+					this._acl = new acl(new aclSeq(connection.getDb(), { prefix: this.name+'_' }));
+					break;
+				default:
+					this._acl = new acl(new acl.memoryBackend());
+			}
+		});
 	}
 	public allow(roleList: string[], actionList: Core.Action.BaseAction[]): Core.Util.Promise<void>{
 		roleList.push(this.ALL_RESOURCE_ROLE);

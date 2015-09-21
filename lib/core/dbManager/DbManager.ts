@@ -24,6 +24,9 @@ class DbManager extends Element{
 			this._defaultConnection = connection;
 		}
 	}
+	public isDefaultConnection():boolean{
+		return this._defaultConnection ? true : false;
+	}
 	public getConnection(name?:string):Connection{
 		if(!name){//zwracamy defaultowe
 			if(!this._defaultConnection){

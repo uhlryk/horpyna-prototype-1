@@ -8,11 +8,11 @@ class FileUpload{
 	/**
 	 * rozmiar pliku wyrażony w MB
 	 */
-	private _fileSize: number;
+	private _maxSize: number;
 	/**
-	 * Maksymalna liczba plików w formularzu
+	 * Maksymalna liczba plików w danym polu uploadu
 	 */
-	private _maxFilesCount: number;
+	private _maxFiles: number;
 	/**
 	 * callback na starcie pozwalający zmienić nazwę pliku
 	 */
@@ -26,9 +26,9 @@ class FileUpload{
 	 */
 	private _fileFilterHandler: (req, file, cb: (error, result: boolean) => void) => void;
 	constructor(){
-		this._directory = "./tmp";
-		this._fileSize = 12;
-		this._maxFilesCount = 5;
+		// this._directory = "./tmp";
+		// this._maxSize = 12;
+		// this._maxFiles = 5;
 	}
 	/**
 	 * setter i getter na ścieżkę do katalogu w którym mają być pliki zapisywane.
@@ -42,17 +42,17 @@ class FileUpload{
 	public set directory(v:string){
 		this._directory = v;
 	}
-	public get fileSize(): number {
-		return this._fileSize;
+	public get maxSize(): number {
+		return this._maxSize;
 	}
-	public set fileSize(v: number) {
-		this._fileSize = v;
+	public set maxSize(v: number) {
+		this._maxSize = v;
 	}
-	public get maxFileCount(): number {
-		return this._maxFilesCount;
+	public get maxFiles(): number {
+		return this._maxFiles;
 	}
-	public set maxFileCount(v: number) {
-		this._maxFilesCount = v;
+	public set maxFiles(v: number) {
+		this._maxFiles = v;
 	}
 	/**
 	 * Opcjonalny uchwyt na zmianę nazwy pliku na początku procesu
@@ -110,8 +110,8 @@ class FileUpload{
 			storage: storage,
 			fileFilter: this._fileFilterHandler,
 			limits:{
-				fileSize: 1024 * 1024 * this._fileSize,//maksymalny rozmiar każdego pliku
-				files:5,//maksymalna liczba plików
+				fileSize: 1024 * 1024 * this._maxSize,//maksymalny rozmiar każdego pliku
+				files: this._maxFiles,//maksymalna liczba plików
 			}
 		}).fields(fields);
 	}

@@ -8,8 +8,10 @@ var favicon = require('serve-favicon');
 class Server{
 	private _app: express.Express;
 	private _server: http.Server;
-	constructor(){
+	private _port: number;
+	constructor(port :number){
 		this._app = express();
+		this._port = port;
 		// app.use(favicon(__dirname + '/../public/favicon.ico'));
 		this._app.use(bodyParser.json());
 		this._app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,7 +20,7 @@ class Server{
 		return this._app;
 	}
 	public prepareServer() {
-		this._app.set('port', 8885);
+		this._app.set('port', this._port);
 		this._server = http.createServer(this._app);
 		this._server.on('error', onError);
 		this._server.on('listening', onListening);

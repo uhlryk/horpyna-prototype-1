@@ -9,7 +9,7 @@ var myApp;
 describe("Testy Node transform.Pagination", function() {
 	var myProcessModel, myNode2, myNode1, testNode, beforeMapping, afterMapping, myAction;
 	beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			app = myApp.appServer;
 		var myModule = new Core.Module(myApp.root, "process");
 		myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "myAction");

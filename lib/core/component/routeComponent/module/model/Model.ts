@@ -14,9 +14,9 @@ class Model extends Component{
 		this.columntNameList = [];
 		this.columntNameList.push('id');
 		super(<Component>parent, name);
-		this.connection = this.componentManager.dbManager.getConnection();
 	}
 	protected onInit(): Util.Promise<void> {
+		this.connection = this.componentManager.dbManager.getConnection();
 		return super.onInit()
 		.then(()=>{
 			return this.build();

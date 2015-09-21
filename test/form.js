@@ -37,14 +37,13 @@ var isPath = function(path) {
 		return false;
 	}
 };
-var sourceDir="./test/upload";
-var uploadDir="./upload";
+var sourceDir="./test/testfiles";
+var uploadDir="./test/upload";
 describe("Testy formularzy", function() {
 	var moduleResource;
 	beforeEach(function (done) {
-		myApp = new Core.Application();
+		myApp = new Core.Application(require("./config/config"));
 		app = myApp.appServer;
-		myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 		moduleResource = new Core.App.Module.Resource(myApp.root, "res1");
 		done();
 	});

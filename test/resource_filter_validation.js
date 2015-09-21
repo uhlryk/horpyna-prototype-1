@@ -8,9 +8,8 @@ var myApp;
 describe("Testy filtrów i walidacji przy szybkim tworzeniu przez Core.App.Module.Resource", function() {
 	var moduleResource;
 	beforeEach(function (done) {
-		myApp = new Core.Application();
+		myApp = new Core.Application(require("./config/config"));
 		app = myApp.appServer;
-		myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
 		moduleResource = new Core.App.Module.Resource(myApp.root, "res1");
 		done();
 	});

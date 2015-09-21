@@ -12,7 +12,7 @@ var myApp;
 describe("Funkcje podstawowe", function() {
 	describe("Aplikacja nie ma dodanych modułów, domyślnie niezainicjowana, ma route '/' z kodem 201 i fallback z 404 ", function () {
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			done();
 		});
 		it("zwraca kod 201, przy '/'", function (done) {
@@ -73,7 +73,7 @@ describe("Funkcje podstawowe", function() {
 	});
 	describe("Sprawdza czy nadane nazwy komponentom są poprawne", function () {
 		before(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			done();
 		});
 		it("should throw error when module name contain wrong chars 'ą'", function (done) {
@@ -97,7 +97,7 @@ describe("Funkcje podstawowe", function() {
 	});
 	describe("Sprawdza czy dodanie parametrów do akcji zmieni ich routy", function () {
 		beforeEach(function (done) {
-			myApp = new Core.Application();
+			myApp = new Core.Application(require("./config/config"));
 			var myModule = new Core.Module(myApp.root,"mod1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
 			var myField1 = new Core.Field.BaseField(myAction, "test", Core.Field.FieldType.PARAM_FIELD);
@@ -115,8 +115,7 @@ describe("Funkcje podstawowe", function() {
 	});
 	describe("Sprawdzenie połączenia do bazy danych", function () {
 		beforeEach(function (done) {
-			myApp = new Core.Application();
-			myApp.setDbDefaultConnection("postgres", "localhost", 5432, "horpyna", "root", "root");
+			myApp = new Core.Application(require("./config/config"));
 			var myModule = new Core.Module(myApp.root, "module1");
 			var myAction = new Core.Action.BaseAction(myModule, Core.Action.BaseAction.GET, "act1");
 			var myModel = new Core.Model(myModule, "model1");

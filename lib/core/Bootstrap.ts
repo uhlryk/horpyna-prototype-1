@@ -27,7 +27,6 @@ class Bootstrap extends Element {
 	}
 	protected onConstruct(){
 		this.initLogger();
-		this.configCORS();
 	}
 	protected initLogger(){
 		var logger = new Util.Logger("./log");
@@ -36,19 +35,14 @@ class Bootstrap extends Element {
 		this.serverApp.use(morgan.handler);
 		return logger;
 	}
-	protected configCORS() {
-		this._serverApp.use(function(req, res, next) {
-			res.header('Access-Control-Allow-Origin', "*");
-			res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-			res.header('Access-Control-Allow-Headers', 'Content-Type, Access-Token, Accept, Origin, X-Requested-With');
-			next();
-		});
-	}
 	public init(){
 		this.initDispatcher();
 		this.initDefaultActions();
 		this.initCatchPromises();
 		this.initFileUpload();
+		this.configCORS();
+		this.initDbConnection();
+		this.initServer();
 	}
 	protected initDispatcher(){
 		var dispatcher = this.application.dispatcher;
@@ -71,9 +65,37 @@ class Bootstrap extends Element {
 		// componentManager.initCatchPromiseManager.addCatch(new CatchPromise.Init.DbConnectionCatchPromise());
 	}
 	protected initFileUpload(){
-		this.addGlobalValue("uploadDirectory","./upload");
-		this.addGlobalValue("fileMaxSize", 12);
-		this.addGlobalValue("formMaxFiles", 5);
+		var config = this._application.config;
+		if (config.isKey("upload")) {
+			var upload = config.getKey("upload");
+			this.addGlobalValue("directory", upload.directory);
+			this.addGlobalValue("maxSize", upload.maxSize);
+			this.addGlobalValue("maxFiles", upload.maxFiles);
+		} else {
+			this.addGlobalValue("uploadDirectory", "./upload");
+			this.addGlobalValue("maxSize", 12);
+			this.addGlobalValue("maxFiles", 5);
+		}
+	}
+	protected configCORS() {
+		this._serverApp.use(function(req, res, next) {
+			res.header('Access-Control-Allow-Origin', "*");
+			res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+			res.header('Access-Control-Allow-Headers', 'Content-Type, Access-Token, Accept, Origin, X-Requested-With');
+			next();
+		});
+	}
+	protected initDbConnection(){
+		if (this._application.frontController.dbManager.isDefaultConnection() === false) {
+			var config = this._application.config;
+			if (config.isKey("db")) {
+				var db = config.getKey("db");
+				this._application.setDbDefaultConnection(db.type,db.host, db.port, db.dbName, db.user, db.password);
+			}
+		}
+	}
+	protected initServer(){
+		this.application.server.prepareServer();
 	}
 }
 export = Bootstrap;
