@@ -6,6 +6,11 @@ config.default = {};
 //konfiguracja aplikacji
 config.default.app = {};
 config.default.app.port = 8885;
+//konfiguracja do jwt tokena
+config.default.jwt = {};
+config.default.jwt.secret = "";
+config.default.jwt.issuer = "";
+config.default.jwt.age = 20; //w sekundach ile token jest ważny
 //konfiguracja bazy danych - domyślnego połącznia
 config.default.db = {};
 config.default.db.type = "";

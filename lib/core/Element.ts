@@ -1,6 +1,8 @@
 import Util = require("./util/Util");
+import Config = require("./Config");
 class Element{
 	private static _globalData: Object = new Object();
+	private static _config: Config;
 	private _data: Object;
 	private static _logger: Util.Logger;
 	private _debugger: Util.Debugger;
@@ -18,6 +20,12 @@ class Element{
 	}
 	public get logger(): Util.Logger {
 		return Element._logger;
+	}
+	public static setConfig(v: Config) {
+		Element._config = v;
+	}
+	public getConfig():Config{
+		return Element._config;
 	}
 	public addGlobalValue(name:string, v:any){
 		Element._globalData[name] = v;

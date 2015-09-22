@@ -6,6 +6,10 @@ config.default = {};
 
 config.default.app = {};
 config.default.app.port = 8885;
+config.default.jwt = {};
+config.default.jwt.secret = "ffnkfasnfsa";
+config.default.jwt.issuer = "horpyna";
+config.default.jwt.age = 20;
 
 config.default.db = {};
 config.default.db.type = "postgres";

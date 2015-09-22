@@ -15,7 +15,9 @@ class Authorization extends Core.Module {
 		this.setOnBeginEventListener();
 	}
 	protected configToken(){
-		this._token = new Core.Authentication.Token.JwtToken("jakissekret");
+		var config = this.getConfig();
+		var jwt = config.getKey("jwt")
+		this._token = new Core.Authentication.Token.JwtToken(jwt["secret"], jwt["issuer"], jwt["age"]);
 	}
 	protected configAuthentication() {
 		this._authentication = new Core.Authentication.AuthenticationToken(this._token);

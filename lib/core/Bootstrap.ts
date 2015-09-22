@@ -27,6 +27,7 @@ class Bootstrap extends Element {
 	}
 	protected onConstruct(){
 		this.initLogger();
+		this.setConfig();
 	}
 	protected initLogger(){
 		var logger = new Util.Logger("./log");
@@ -34,6 +35,9 @@ class Bootstrap extends Element {
 		var morgan = new Util.Morgan("combined", logger.getStream());
 		this.serverApp.use(morgan.handler);
 		return logger;
+	}
+	protected setConfig(){
+		Element.setConfig(this._application.config);
 	}
 	public init(){
 		this.initDispatcher();
