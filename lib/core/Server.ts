@@ -22,10 +22,7 @@ class Server{
 	public prepareServer() {
 		this._app.set('port', this._port);
 		this._server = http.createServer(this._app);
-		this._server.on('error', onError);
-		this._server.on('listening', onListening);
-		this._server.on('close', onClose);
-		function onError(error) {
+		this._server.on('error', (error)=>{
 			if (error.syscall !== 'listen') {
 				throw error;
 			}
@@ -41,15 +38,15 @@ class Server{
 				default:
 					throw error;
 			}
-		}
-		function onClose() {
-			console.log("Server Stopped");
-		}
-		function onListening() {
+		});
+		this._server.on('listening', ()=>{
 			var addr = this._server.address();
 			var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
 			console.log('Listening on ' + bind);
-		}
+		});
+		this._server.on('close', ()=>{
+			console.log("Server Stopped");
+		});
 	}
 	public run(): http.Server {
 		this._server.listen(this._app.get("port"));
