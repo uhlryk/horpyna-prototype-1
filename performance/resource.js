@@ -3,7 +3,7 @@ var Core = require('./../js/index');
 
 var count = 0;
 var errorCount = 0;
-var max = 1000;
+var max = 10000;
 var start, end, time;
 
 var myApp = new Core.Application(require("./config/config"));
@@ -36,7 +36,7 @@ myApp.run()
 .then(function(){
 		start = new Date().getTime();
 		for(var i =0; i < max; i++){
-			callApi('http://localhost:8885/test1/list');
+			setTimeout(callApi('http://localhost:8885/test1/list'),60);
 		}
 });
 function callApi(url){
@@ -47,6 +47,7 @@ function callApi(url){
 			errorCount++
 			console.log(error);
 		}
+		console.log(count);
 		checkFinish();
 	});
 }

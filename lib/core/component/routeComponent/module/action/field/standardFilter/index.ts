@@ -9,3 +9,4 @@ export import LeftTrim = require("./LeftTrim");
 export import Trim = require("./Trim");
 export import RightTrim = require("./RightTrim");
 export import ToBoolean = require("./ToBoolean");
+export import HashSha = require("./HashSha");

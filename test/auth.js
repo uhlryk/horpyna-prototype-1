@@ -11,12 +11,12 @@ describe("Testy autoryzacji", function() {
 		var moduleToGoIn = new Core.App.Module.Resource(myApp.root, "goin");
 		var moduleWithAuthData = new Core.App.Module.Resource(myApp.root, "authres");
 		moduleWithAuthData.addField("name", []);
-		moduleWithAuthData.addField("password", []);
+		moduleWithAuthData.addField("password", [{name:"sha1", class: Core.Field.FilterStandard.HashSha,params:["testsalt"]}],{length:100});
 		moduleAuthorization = new Core.App.Module.Authorization(myApp.root, "auth");
 		var localAuthorizationStrategy = new Core.App.Module.AuthorizationExtension.LocalStrategy(moduleAuthorization);
 		localAuthorizationStrategy.setModel(moduleWithAuthData.model);
 		localAuthorizationStrategy.addField("name", []);
-		localAuthorizationStrategy.addField("password", []);
+		localAuthorizationStrategy.addField("password", [{name:"sha1", class: Core.Field.FilterStandard.HashSha,params:["testsalt"]}]);
 		var setRoleModule = new Core.App.Module.AuthorizationExtension.AddAclRoleOnActionFinish(moduleAuthorization);
 		setRoleModule.setTargetAction(moduleWithAuthData.createAction);
 		setRoleModule.setRole(["member"]);
