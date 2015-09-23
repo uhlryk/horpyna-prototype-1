@@ -91,7 +91,7 @@ class Application extends Element {
 	}
 	public run(): Promise<any> {
 		return this.init().then(()=> {
-			this._server.run();
+			return this._server.run();
 		});
 	}
 }

@@ -35,10 +35,17 @@ moduleResource.addField("model4", [{name:"size", class: Core.Field.ValidatorStan
 myApp.run()
 .then(function(){
 		start = new Date().getTime();
-		for(var i =0; i < max; i++){
-			setTimeout(callApi('http://localhost:8885/test1/list'),60);
-		}
+		callTimeoutApi(0)
 });
+function callTimeoutApi(i){
+	if(i < max){
+		setTimeout(function(){
+			i++;
+			callApi('http://localhost:8885/test1/list');
+			callTimeoutApi(i);
+		}, 1);
+	}
+}
 function callApi(url){
 	request(url, function (error, response, body) {
 		count++;

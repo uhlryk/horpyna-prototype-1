@@ -4,7 +4,7 @@ import bodyParser = require("body-parser");
 import http = require("http");
 var morgan = require("morgan");
 var favicon = require('serve-favicon');
-
+import Util = require("./util/Util");
 class Server{
 	private _app: express.Express;
 	private _server: http.Server;
@@ -48,9 +48,12 @@ class Server{
 			console.log("Server Stopped");
 		});
 	}
-	public run(): http.Server {
-		this._server.listen(this._app.get("port"));
-		return this._server;
+	public run(): Util.Promise<http.Server> {
+		return new Util.Promise<http.Server>((resolve:(server)=>void) => {
+			this._server.listen(this._app.get("port"), (error)=>{
+				resolve(this._server);
+			});
+		});
 	}
 }
 export = Server;

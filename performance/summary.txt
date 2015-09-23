@@ -1,1 +1,1 @@
-22.09 1000x resouce.js 2.4s -m niezauważalny wzrost czasu przy dodaniu do aplikacji pól i modułów
+23.09 10000x resouce.js 31.77s
